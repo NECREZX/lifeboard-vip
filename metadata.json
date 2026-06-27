@@ -1,0 +1,6 @@
+{
+  "name": "Lifeboard",
+  "description": "Lifeboard - Sistem manajemen keuangan pribadi, tabungan, anggaran belanja, wishlist, dan perencanaan aktivitas harian terpadu dengan desain premium.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
