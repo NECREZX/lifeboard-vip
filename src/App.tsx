@@ -153,8 +153,8 @@ export default function App() {
 
   const [settings, setSettings] = useState<UserSettings>(() => {
     const saved = localStorage.getItem('fin_settings');
-    let parsed = saved ? JSON.parse(saved) : {
-      uiStyle: 'modern',
+    const defaultSettings: UserSettings = {
+      uiStyle: 'glass',
       cardStyle: 'shadowed',
       cardRadius: 'rounded',
       tableStyle: 'compact',
@@ -162,14 +162,18 @@ export default function App() {
       themeColor: 'indigo',
       isDarkMode: false
     };
-    
-    // Migration: force modern to glass
-    if (parsed.uiStyle === 'modern') {
-        parsed.uiStyle = 'glass';
-        localStorage.setItem('fin_settings', JSON.stringify(parsed));
+
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Merge saved settings with defaults to keep all properties intact
+        return { ...defaultSettings, ...parsed };
+      } catch (e) {
+        return defaultSettings;
+      }
     }
     
-    return parsed;
+    return defaultSettings;
   });
 
   // --- UI/Interaction States ---
@@ -325,15 +329,6 @@ export default function App() {
       localStorage.setItem('fin_activities', JSON.stringify([]));
       localStorage.setItem('fin_wishlists', JSON.stringify([]));
       localStorage.setItem('fin_notifications', JSON.stringify([]));
-      localStorage.setItem('fin_settings', JSON.stringify({
-        uiStyle: 'glass',
-        cardStyle: 'shadowed',
-        cardRadius: 'rounded',
-        tableStyle: 'compact',
-        fontStyle: 'sans',
-        themeColor: 'indigo',
-        isDarkMode: false
-      }));
       
       setTransactions([]);
       setSavings([]);
