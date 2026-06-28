@@ -305,7 +305,7 @@ export function CategoryPieChart({ transactions, categories }: CategoryPieChartP
       return {
         id: cat.id,
         name: cat.name,
-        color: CHART_COLORS[index % CHART_COLORS.length],
+        color: cat.color || CHART_COLORS[index % CHART_COLORS.length],
         icon: cat.icon,
         amount,
         percentage: totalExpense > 0 ? (amount / totalExpense) * 100 : 0
@@ -436,7 +436,7 @@ export function SourcePieChart({ transactions, sources }: SourcePieChartProps) {
       return {
         id: src.id,
         name: src.name,
-        color: CHART_COLORS[index % CHART_COLORS.length],
+        color: src.color || CHART_COLORS[index % CHART_COLORS.length],
         icon: src.icon,
         amount,
         percentage: totalIncome > 0 ? (amount / totalIncome) * 100 : 0
@@ -546,7 +546,7 @@ export function CategoryBarChart({ transactions, categories, month, year }: Cate
   const data = categories.map((cat, index) => ({
     name: cat.name,
     amount: filtered.filter(t => t.categoryId === cat.id).reduce((sum, t) => sum + t.amount, 0),
-    fill: CHART_COLORS[index % CHART_COLORS.length]
+    fill: cat.color || CHART_COLORS[index % CHART_COLORS.length]
   })).filter(d => d.amount > 0);
 
   return (
@@ -572,7 +572,7 @@ export function SourceBarChart({ transactions, sources, month, year }: SourcePie
   const data = sources.map((src, index) => ({
     name: src.name,
     amount: filtered.filter(t => t.sourceId === src.id).reduce((sum, t) => sum + t.amount, 0),
-    fill: CHART_COLORS[index % CHART_COLORS.length]
+    fill: src.color || CHART_COLORS[index % CHART_COLORS.length]
   })).filter(d => d.amount > 0);
 
   return (

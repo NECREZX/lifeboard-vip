@@ -389,30 +389,33 @@ export default function App() {
   const [categoryEditId, setCategoryEditId] = useState<string | null>(null);
   const [categoryFormName, setCategoryFormName] = useState<string>('');
   const [categoryFormIcon, setCategoryFormIcon] = useState<string>('');
+  const [categoryFormColor, setCategoryFormColor] = useState<string>('#ef4444');
 
   const startEditCategory = (c: Category) => {
     setCategoryEditId(c.id);
     setCategoryFormName(c.name);
     setCategoryFormIcon(c.icon || 'Utensils');
+    setCategoryFormColor(c.color || '#ef4444');
   };
 
   const resetCategoryForm = () => {
     setCategoryEditId(null);
     setCategoryFormName('');
     setCategoryFormIcon('');
+    setCategoryFormColor('#ef4444');
   };
 
   const handleSaveCategory = (e: React.FormEvent) => {
     e.preventDefault();
     if (categoryEditId) {
-      setCategories(prev => prev.map(c => c.id === categoryEditId ? { ...c, name: categoryFormName, icon: categoryFormIcon } : c));
+      setCategories(prev => prev.map(c => c.id === categoryEditId ? { ...c, name: categoryFormName, icon: categoryFormIcon, color: categoryFormColor } : c));
       triggerNotification('✏️ Kategori Diperbarui', `Kategori "${categoryFormName}" berhasil disimpan.`, 'info');
     } else {
       const newCategory: Category = {
         id: `c-${Date.now()}`,
         name: categoryFormName,
         icon: categoryFormIcon,
-        color: '#ef4444'
+        color: categoryFormColor
       };
       setCategories(prev => [...prev, newCategory]);
       triggerNotification('Kategori Ditambahkan', `Kategori baru "${categoryFormName}" telah aktif.`, 'success');
@@ -440,30 +443,33 @@ export default function App() {
   const [sourceEditId, setSourceEditId] = useState<string | null>(null);
   const [sourceFormName, setSourceFormName] = useState<string>('');
   const [sourceFormIcon, setSourceFormIcon] = useState<string>('');
+  const [sourceFormColor, setSourceFormColor] = useState<string>('#10b981');
 
   const startEditSource = (s: IncomeSource) => {
     setSourceEditId(s.id);
     setSourceFormName(s.name);
     setSourceFormIcon(s.icon || 'Briefcase');
+    setSourceFormColor(s.color || '#10b981');
   };
 
   const resetSourceForm = () => {
     setSourceEditId(null);
     setSourceFormName('');
     setSourceFormIcon('');
+    setSourceFormColor('#10b981');
   };
 
   const handleSaveSource = (e: React.FormEvent) => {
     e.preventDefault();
     if (sourceEditId) {
-      setSources(prev => prev.map(s => s.id === sourceEditId ? { ...s, name: sourceFormName, icon: sourceFormIcon } : s));
+      setSources(prev => prev.map(s => s.id === sourceEditId ? { ...s, name: sourceFormName, icon: sourceFormIcon, color: sourceFormColor } : s));
       triggerNotification('✏️ Sumber Diperbarui', `Sumber "${sourceFormName}" berhasil disimpan.`, 'info');
     } else {
       const newSource: IncomeSource = {
         id: `s-${Date.now()}`,
         name: sourceFormName,
         icon: sourceFormIcon,
-        color: '#10b981'
+        color: sourceFormColor
       };
       setSources(prev => [...prev, newSource]);
       triggerNotification('Sumber Ditambahkan', `Sumber pendapatan baru "${sourceFormName}" telah aktif.`, 'success');
@@ -1835,6 +1841,8 @@ export default function App() {
             setCategoryFormName={setCategoryFormName}
             categoryFormIcon={categoryFormIcon}
             setCategoryFormIcon={setCategoryFormIcon}
+            categoryFormColor={categoryFormColor}
+            setCategoryFormColor={setCategoryFormColor}
             handleSaveCategory={handleSaveCategory}
             resetCategoryForm={resetCategoryForm}
             sourceEditId={sourceEditId}
@@ -1842,8 +1850,11 @@ export default function App() {
             setSourceFormName={setSourceFormName}
             sourceFormIcon={sourceFormIcon}
             setSourceFormIcon={setSourceFormIcon}
+            sourceFormColor={sourceFormColor}
+            setSourceFormColor={setSourceFormColor}
             handleSaveSource={handleSaveSource}
             resetSourceForm={resetSourceForm}
+            settings={settings}
           />
         )}
 
