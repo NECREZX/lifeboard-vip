@@ -388,7 +388,7 @@ export default function App() {
   // --- Manage Category Form States & Handlers ---
   const [categoryEditId, setCategoryEditId] = useState<string | null>(null);
   const [categoryFormName, setCategoryFormName] = useState<string>('');
-  const [categoryFormIcon, setCategoryFormIcon] = useState<string>('');
+  const [categoryFormIcon, setCategoryFormIcon] = useState<string>('Utensils');
   const [categoryFormColor, setCategoryFormColor] = useState<string>('#ef4444');
 
   const startEditCategory = (c: Category) => {
@@ -401,7 +401,7 @@ export default function App() {
   const resetCategoryForm = () => {
     setCategoryEditId(null);
     setCategoryFormName('');
-    setCategoryFormIcon('');
+    setCategoryFormIcon('Utensils');
     setCategoryFormColor('#ef4444');
   };
 
@@ -442,7 +442,7 @@ export default function App() {
   // --- Manage Source Form States & Handlers ---
   const [sourceEditId, setSourceEditId] = useState<string | null>(null);
   const [sourceFormName, setSourceFormName] = useState<string>('');
-  const [sourceFormIcon, setSourceFormIcon] = useState<string>('');
+  const [sourceFormIcon, setSourceFormIcon] = useState<string>('Briefcase');
   const [sourceFormColor, setSourceFormColor] = useState<string>('#10b981');
 
   const startEditSource = (s: IncomeSource) => {
@@ -455,7 +455,7 @@ export default function App() {
   const resetSourceForm = () => {
     setSourceEditId(null);
     setSourceFormName('');
-    setSourceFormIcon('');
+    setSourceFormIcon('Briefcase');
     setSourceFormColor('#10b981');
   };
 

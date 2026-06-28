@@ -217,6 +217,22 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 </div>
               </div>
 
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon Kategori</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {['Utensils', 'Car', 'Coffee', 'Zap', 'ShoppingBag', 'Laptop', 'PiggyBank', 'Briefcase', 'TrendingUp'].map(icon => (
+                    <button 
+                      key={icon} 
+                      type="button" 
+                      onClick={() => setCategoryFormIcon(icon)} 
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center border transition ${categoryFormIcon === icon ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-950 shadow-sm' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 text-slate-400'}`}
+                    >
+                      <IconRenderer name={icon} className="w-4 h-4" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="flex gap-2 pt-2">
                 <button type="submit" className={`flex-1 py-2.5 rounded-xl text-xs font-bold text-white shadow-sm transition ${getAccentBg()}`}>
                   {categoryEditId ? 'Simpan Perubahan' : 'Tambahkan Kategori'}
@@ -234,7 +250,12 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             {categories.map(c => (
               <div key={c.id} className={getCardClasses() + " p-3 flex items-center justify-between group"}>
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: c.color || '#ef4444' }} />
+                  <div 
+                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-sm" 
+                    style={{ backgroundColor: c.color || '#ef4444' }}
+                  >
+                    <IconRenderer name={c.icon || 'Utensils'} className="w-3.5 h-3.5 text-white" />
+                  </div>
                   <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{c.name}</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -306,6 +327,22 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 </div>
               </div>
 
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon Sumber</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {['Briefcase', 'Laptop', 'TrendingUp', 'CircleDollarSign', 'Landmark', 'BadgeDollarSign', 'Wallet'].map(icon => (
+                    <button 
+                      key={icon} 
+                      type="button" 
+                      onClick={() => setSourceFormIcon(icon)} 
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center border transition ${sourceFormIcon === icon ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-950 shadow-sm' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 text-slate-400'}`}
+                    >
+                      <IconRenderer name={icon} className="w-4 h-4" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="flex gap-2 pt-2">
                 <button type="submit" className={`flex-1 py-2.5 rounded-xl text-xs font-bold text-white shadow-sm transition ${getAccentBg()}`}>
                   {sourceEditId ? 'Simpan Perubahan' : 'Tambahkan Sumber'}
@@ -323,7 +360,12 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             {sources.map(s => (
               <div key={s.id} className={getCardClasses() + " p-3 flex items-center justify-between group"}>
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: s.color || '#10b981' }} />
+                  <div 
+                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-sm" 
+                    style={{ backgroundColor: s.color || '#10b981' }}
+                  >
+                    <IconRenderer name={s.icon || 'Briefcase'} className="w-3.5 h-3.5 text-white" />
+                  </div>
                   <span className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate">{s.name}</span>
                 </div>
                 <div className="flex items-center gap-1">
