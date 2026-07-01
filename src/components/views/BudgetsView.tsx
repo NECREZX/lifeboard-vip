@@ -81,7 +81,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
 
       {/* Month Summary Card */}
       {filteredBudgets.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-900/60">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-900/60">
           <div className="flex flex-col">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Anggaran ({getIndonesianMonthName(selectedMonth)})</span>
             <span className="text-sm font-black text-slate-700 dark:text-slate-300 mt-1">{formatIDR(totalBudgeted)}</span>
@@ -89,12 +89,6 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
           <div className="flex flex-col border-t sm:border-t-0 sm:border-l border-slate-200/60 dark:border-slate-800/60 pt-2 sm:pt-0 sm:pl-4">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Terpakai</span>
             <span className="text-sm font-black text-slate-700 dark:text-slate-300 mt-1">{formatIDR(totalSpend)}</span>
-          </div>
-          <div className="flex flex-col border-t sm:border-t-0 sm:border-l border-slate-200/60 dark:border-slate-800/60 pt-2 sm:pt-0 sm:pl-4">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Overbudget</span>
-            <span className={`text-sm font-black mt-1 ${overBudgetCount > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>
-              {overBudgetCount > 0 ? `${overBudgetCount} Kategori Over` : 'Semua Aman ✨'}
-            </span>
           </div>
         </div>
       )}

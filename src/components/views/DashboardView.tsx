@@ -310,7 +310,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className={getCardClasses() + " p-4"}>
            <div className="flex justify-between items-center mb-2">
              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Anggaran</h4>
-             <button onClick={() => setActiveTab('budgeting')} className="text-[10px] font-bold text-indigo-500 hover:underline">Lihat Semua</button>
+             <button onClick={() => setActiveTab('anggaran')} className="text-[10px] font-bold text-indigo-500 hover:underline">Lihat Semua</button>
            </div>
            <table className="w-full text-[11px]">
              <thead>
