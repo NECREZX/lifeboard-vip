@@ -103,33 +103,34 @@ export default function FormsModal({
   // Effect to handle edit data and initial tab
   React.useEffect(() => {
     if (isOpen) {
+      const targetForm = initialTab || activeForm;
       if (initialTab) {
         setActiveForm(initialTab);
       }
       
       if (editData) {
-        if (activeForm === 'pengeluaran' || activeForm === 'pemasukan') {
+        if (targetForm === 'pengeluaran' || targetForm === 'pemasukan') {
           setAmount(editData.amount.toString());
           setDescription(editData.description || '');
           setDate(editData.date);
           setSelectedWalletId(editData.walletId);
           if (editData.categoryId) setSelectedCategoryId(editData.categoryId);
           if (editData.sourceId) setSelectedSourceId(editData.sourceId);
-        } else if (activeForm === 'budgeting') {
+        } else if (targetForm === 'budgeting') {
           setBudgetLimit(editData.limitAmount.toString());
           setBudgetCategoryId(editData.categoryId);
           setBudgetMonth(editData.month);
-        } else if (activeForm === 'tabungan') {
+        } else if (targetForm === 'tabungan') {
           setSavingName(editData.name);
           setSavingTarget(editData.targetAmount.toString());
           setSavingCurrent(editData.currentAmount.toString());
           setSavingDeadline(editData.deadline);
           setSavingColor(editData.color);
-        } else if (activeForm === 'aktivitas') {
+        } else if (targetForm === 'aktivitas') {
           setActivityTitle(editData.title);
           setActivityDesc(editData.description || '');
           setActivityDeadline(editData.deadline);
-        } else if (activeForm === 'wishlist') {
+        } else if (targetForm === 'wishlist') {
           setWishlistTitle(editData.title);
           setWishlistMonth(editData.month);
           setWishlistPrice(editData.price?.toString() || '');
@@ -138,6 +139,12 @@ export default function FormsModal({
       } else {
         // Reset to defaults if not editing
         resetForms();
+        if (wallets.length > 0) setSelectedWalletId(wallets[0].id);
+        if (categories.length > 0) {
+          setSelectedCategoryId(categories[0].id);
+          setBudgetCategoryId(categories[0].id);
+        }
+        if (sources.length > 0) setSelectedSourceId(sources[0].id);
       }
     }
   }, [isOpen, editData, initialTab]);
