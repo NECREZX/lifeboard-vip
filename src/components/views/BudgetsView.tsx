@@ -66,7 +66,6 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div>
           <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Budgeting</h1>
-          <p className="text-xs text-slate-400 font-medium">Batas pengeluaran bulanan berdasarkan kategori</p>
         </div>
         <div className="flex items-center gap-2.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 px-3.5 py-1.5 rounded-xl shadow-sm self-start sm:self-auto">
           <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Periode:</span>
