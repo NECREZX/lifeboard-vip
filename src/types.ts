@@ -53,6 +53,7 @@ export interface Budget {
   categoryId: string;
   limitAmount: number;
   month: string; // YYYY-MM
+  walletId?: string; // Optional for backward compatibility, represents the wallet this budget belongs to
 }
 
 export interface Activity {

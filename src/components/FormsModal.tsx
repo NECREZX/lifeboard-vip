@@ -35,8 +35,8 @@ interface FormsModalProps {
     categoryId?: string;
     sourceId?: string;
   }) => void;
-  onAddBudget: (data: { categoryId: string; limitAmount: number; month: string }) => void;
-  onUpdateBudget?: (id: string, data: { categoryId: string; limitAmount: number; month: string }) => void;
+  onAddBudget: (data: { categoryId: string; limitAmount: number; month: string; walletId?: string }) => void;
+  onUpdateBudget?: (id: string, data: { categoryId: string; limitAmount: number; month: string; walletId?: string }) => void;
   onAddSaving: (data: { name: string; targetAmount: number; currentAmount: number; deadline: string; color: string }) => void;
   onUpdateSaving?: (id: string, data: { name: string; targetAmount: number; currentAmount: number; deadline: string; color: string }) => void;
   onAddActivity: (data: { title: string; description: string; deadline: string }) => void;
@@ -81,6 +81,7 @@ export default function FormsModal({
   const [budgetLimit, setBudgetLimit] = useState('');
   const [budgetCategoryId, setBudgetCategoryId] = useState(categories[0]?.id || '');
   const [budgetMonth, setBudgetMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
+  const [budgetWalletId, setBudgetWalletId] = useState(wallets[0]?.id || '');
 
   // Saving states
   const [savingName, setSavingName] = useState('');
@@ -120,6 +121,7 @@ export default function FormsModal({
           setBudgetLimit(editData.limitAmount.toString());
           setBudgetCategoryId(editData.categoryId);
           setBudgetMonth(editData.month);
+          setBudgetWalletId(editData.walletId || wallets[0]?.id || '');
         } else if (targetForm === 'tabungan') {
           setSavingName(editData.name);
           setSavingTarget(editData.targetAmount.toString());
@@ -139,7 +141,10 @@ export default function FormsModal({
       } else {
         // Reset to defaults if not editing
         resetForms();
-        if (wallets.length > 0) setSelectedWalletId(wallets[0].id);
+        if (wallets.length > 0) {
+          setSelectedWalletId(wallets[0].id);
+          setBudgetWalletId(wallets[0].id);
+        }
         if (categories.length > 0) {
           setSelectedCategoryId(categories[0].id);
           setBudgetCategoryId(categories[0].id);
@@ -180,6 +185,7 @@ export default function FormsModal({
     setAmount('');
     setDescription('');
     setBudgetLimit('');
+    setBudgetWalletId(wallets[0]?.id || '');
     setSavingName('');
     setSavingTarget('');
     setSavingCurrent('0');
@@ -251,11 +257,13 @@ export default function FormsModal({
       const parsedLimit = parseFloat(budgetLimit);
       if (isNaN(parsedLimit) || parsedLimit <= 0) return showError('Anggaran limit harus valid!');
       if (!budgetCategoryId) return showError('Silakan tentukan kategori anggaran!');
+      if (!budgetWalletId) return showError('Silakan tentukan dompet anggaran!');
 
       const data = {
         categoryId: budgetCategoryId,
         limitAmount: parsedLimit,
-        month: budgetMonth
+        month: budgetMonth,
+        walletId: budgetWalletId
       };
 
       if (isEdit && onUpdateBudget) {
@@ -397,9 +405,16 @@ export default function FormsModal({
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0"
                     min="1"
-                    className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className="w-full pl-9 pr-16 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setAmount(prev => prev ? prev + '000' : '1000')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                  >
+                    +000
+                  </button>
                 </div>
               </div>
 
@@ -468,6 +483,22 @@ export default function FormsModal({
           {/* BUDGETING FORM */}
           {activeForm === 'budgeting' && (
             <>
+              {/* Wallet Dropdown for Budgeting */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pilih Dompet / Akun</label>
+                <select
+                  value={budgetWalletId}
+                  onChange={(e) => setBudgetWalletId(e.target.value)}
+                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  required
+                >
+                  <option value="" disabled>-- Pilih Dompet --</option>
+                  {wallets.map((w) => (
+                    <option key={w.id} value={w.id}>{w.name}</option>
+                  ))}
+                </select>
+              </div>
+
               <div className="flex flex-col gap-1.5">
                 <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kategori Pengeluaran</label>
                 <select
@@ -484,14 +515,24 @@ export default function FormsModal({
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Batas Belanja Bulanan (Rp)</label>
-                <input
-                  type="number"
-                  value={budgetLimit}
-                  onChange={(e) => setBudgetLimit(e.target.value)}
-                  placeholder="Estimasi limit pengeluaran"
-                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
-                  required
-                />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
+                  <input
+                    type="number"
+                    value={budgetLimit}
+                    onChange={(e) => setBudgetLimit(e.target.value)}
+                    placeholder="Estimasi limit pengeluaran"
+                    className="w-full pl-9 pr-16 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setBudgetLimit(prev => prev ? prev + '000' : '1000')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                  >
+                    +000
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -522,26 +563,44 @@ export default function FormsModal({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Target Jumlah (Rp)</label>
-                  <input
-                    type="number"
-                    value={savingTarget}
-                    onChange={(e) => setSavingTarget(e.target.value)}
-                    placeholder="0"
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={savingTarget}
+                      onChange={(e) => setSavingTarget(e.target.value)}
+                      placeholder="0"
+                      className="w-full pl-3.5 pr-14 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setSavingTarget(prev => prev ? prev + '000' : '1000')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                    >
+                      +000
+                    </button>
+                  </div>
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dana Terkumpul Awal (Rp)</label>
-                  <input
-                    type="number"
-                    value={savingCurrent}
-                    onChange={(e) => setSavingCurrent(e.target.value)}
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={savingCurrent}
+                      onChange={(e) => setSavingCurrent(e.target.value)}
+                      className="w-full pl-3.5 pr-14 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setSavingCurrent(prev => prev ? prev + '000' : '1000')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                    >
+                      +000
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -631,13 +690,22 @@ export default function FormsModal({
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Estimasi Harga (Optional)</label>
-                  <input
-                    type="number"
-                    value={wishlistPrice}
-                    onChange={(e) => setWishlistPrice(e.target.value)}
-                    placeholder="0"
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={wishlistPrice}
+                      onChange={(e) => setWishlistPrice(e.target.value)}
+                      placeholder="0"
+                      className="w-full pl-3.5 pr-14 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setWishlistPrice(prev => prev ? prev + '000' : '1000')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                    >
+                      +000
+                    </button>
+                  </div>
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Target Bulan Rencana</label>

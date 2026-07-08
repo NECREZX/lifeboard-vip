@@ -32,7 +32,9 @@ import {
   ArrowUpRight,
   ChevronRight,
   Info,
-  Palette
+  Palette,
+  ChevronUp,
+  ArrowUp
 } from 'lucide-react';
 
 import {
@@ -207,6 +209,9 @@ export default function App() {
   // Transaction show all toggle
   const [showAllTransactions, setShowAllTransactions] = useState<boolean>(false);
 
+  // Scroll to top state
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
   const showConfirm = (title: string, message: string, onConfirm: () => void, type: 'danger' | 'warning' | 'info' = 'warning') => {
     const isDark = settings.isDarkMode;
     Swal.fire({
@@ -315,6 +320,28 @@ export default function App() {
     document.documentElement.style.setProperty('--font-sans', fontFamilyStr);
     document.documentElement.style.setProperty('--font-display', fontFamilyStr);
   }, [settings]);
+
+  // Scroll to top effect and scroll handler
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   // --- Clean slate check on mount ---
   useEffect(() => {
@@ -666,7 +693,7 @@ export default function App() {
     );
   };
 
-  const handleAddBudget = (data: { categoryId: string; limitAmount: number; month: string }) => {
+  const handleAddBudget = (data: { categoryId: string; limitAmount: number; month: string; walletId?: string }) => {
     const newBudget: Budget = {
       id: `b-${Date.now()}`,
       ...data
@@ -1601,6 +1628,43 @@ export default function App() {
     }
   };
 
+  const getScrollTopClasses = () => {
+    let radiusClass = 'rounded-full'; // circular is extremely elegant and modern for floating action buttons
+    if (settings.cardRadius === 'sharp') radiusClass = 'rounded-none';
+    else if (settings.cardRadius === 'rounded') radiusClass = 'rounded-2xl';
+    else if (settings.cardRadius === 'extra') radiusClass = 'rounded-full';
+
+    let colorClass = '';
+    let glowClass = '';
+    let borderClass = '';
+    let textClass = 'text-white';
+    
+    switch (settings.themeColor) {
+      case 'emerald':
+        colorClass = 'bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-700';
+        glowClass = 'shadow-[0_8px_30px_rgba(16,185,129,0.4)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.55)] hover:scale-110';
+        borderClass = 'border-emerald-400/30 dark:border-emerald-500/20';
+        break;
+      case 'amber':
+        colorClass = 'bg-gradient-to-br from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-700';
+        glowClass = 'shadow-[0_8px_30px_rgba(245,158,11,0.4)] hover:shadow-[0_15px_35px_rgba(245,158,11,0.55)] hover:scale-110';
+        borderClass = 'border-amber-400/30 dark:border-amber-500/20';
+        break;
+      case 'rose':
+        colorClass = 'bg-gradient-to-br from-rose-500 to-pink-600 dark:from-rose-600 dark:to-pink-700';
+        glowClass = 'shadow-[0_8px_30px_rgba(244,63,94,0.4)] hover:shadow-[0_15px_35px_rgba(244,63,94,0.55)] hover:scale-110';
+        borderClass = 'border-rose-400/30 dark:border-rose-500/20';
+        break;
+      default: // indigo
+        colorClass = 'bg-gradient-to-br from-indigo-600 to-blue-600 dark:from-indigo-700 dark:to-blue-700';
+        glowClass = 'shadow-[0_8px_30px_rgba(99,102,241,0.4)] hover:shadow-[0_15px_35px_rgba(99,102,241,0.55)] hover:scale-110';
+        borderClass = 'border-indigo-400/30 dark:border-indigo-500/20';
+        break;
+    }
+
+    return `fixed right-6 top-1/2 -translate-y-1/2 z-50 w-12 h-14 flex flex-col items-center justify-center ${radiusClass} ${colorClass} ${textClass} border ${borderClass} ${glowClass} active:scale-95 transition-all duration-300 focus:outline-none group cursor-pointer`;
+  };
+
   // --- Filtered Transactions list ---
   const filteredTransactions = transactions.filter((t) => {
     const matchesType = txTypeFilter === 'semua' || t.type === txTypeFilter;
@@ -1779,6 +1843,7 @@ export default function App() {
             budgets={budgets}
             categories={categories}
             transactions={transactions}
+            wallets={wallets}
             getCardClasses={getCardClasses}
             handleDeleteBudget={(id) => {
               showConfirm('Hapus Anggaran', 'Hapus batas anggaran ini?', () => {
@@ -1883,13 +1948,26 @@ export default function App() {
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Saldo Awal (Directly Impacts Total)</label>
-                <input
-                  type="number"
-                  value={editingWallet.initialBalance}
-                  onChange={(e) => setEditingWallet({ ...editingWallet, initialBalance: parseFloat(e.target.value) || 0 })}
-                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-800 dark:text-white font-mono"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={editingWallet.initialBalance || ''}
+                    onChange={(e) => setEditingWallet({ ...editingWallet, initialBalance: parseFloat(e.target.value) || 0 })}
+                    className="w-full pl-3.5 pr-16 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-800 dark:text-white font-mono"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEditingWallet(prev => {
+                      if (!prev) return prev;
+                      const nextBal = prev.initialBalance ? prev.initialBalance.toString() + '000' : '1000';
+                      return { ...prev, initialBalance: parseFloat(nextBal) || 0 };
+                    })}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                  >
+                    +000
+                  </button>
+                </div>
               </div>
               <div className="flex items-center justify-between gap-3 pt-2">
                 <button
@@ -2301,6 +2379,20 @@ export default function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Cool Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={handleScrollToTop}
+          className={getScrollTopClasses()}
+          title="Scroll Ke Atas"
+        >
+          <ArrowUp className="w-4 h-4 stroke-[2.5] transition-transform duration-300 group-hover:-translate-y-0.5" />
+          <span className="text-[8px] font-black tracking-widest uppercase mt-0.5 transition-transform duration-300 group-hover:scale-110 leading-none">
+            TOP
+          </span>
+        </button>
       )}
 
     </div>

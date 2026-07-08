@@ -13,15 +13,18 @@ import {
   Landmark,
   CreditCard,
   PiggyBank,
-  BadgeDollarSign
+  BadgeDollarSign,
+  Smartphone,
+  Banknote
 } from 'lucide-react';
 
 interface IconRendererProps {
   name: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-export const IconRenderer: React.FC<IconRendererProps> = ({ name, className }) => {
+export const IconRenderer: React.FC<IconRendererProps> = ({ name, className, style }) => {
   const icons: Record<string, React.FC<any>> = {
     Wallet,
     Utensils,
@@ -36,10 +39,12 @@ export const IconRenderer: React.FC<IconRendererProps> = ({ name, className }) =
     Landmark,
     CreditCard,
     PiggyBank,
-    BadgeDollarSign
+    BadgeDollarSign,
+    Smartphone,
+    Banknote
   };
 
   const IconComponent = icons[name] || Wallet;
   
-  return <IconComponent className={className || "w-5 h-5"} />;
+  return <IconComponent className={className || "w-5 h-5"} style={style} />;
 };

@@ -121,11 +121,20 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">{walletEditId ? 'Edit Dompet' : 'Tambah Dompet Baru'}</h3>
             <form onSubmit={handleSaveWallet} className="flex flex-col gap-4">
               <input type="text" placeholder="Nama Dompet (cth: BCA, Jago)" value={walletFormName} onChange={e => setWalletFormName(e.target.value)} required className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none" />
-              <input type="number" placeholder="Saldo Awal (Rp)" value={walletFormBalance} onChange={e => setWalletFormBalance(e.target.value)} required className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none" />
+              <div className="relative">
+                <input type="number" placeholder="Saldo Awal (Rp)" value={walletFormBalance} onChange={e => setWalletFormBalance(e.target.value)} required className="w-full pl-4 pr-16 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none" />
+                <button
+                  type="button"
+                  onClick={() => setWalletFormBalance(prev => prev ? prev + '000' : '1000')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                >
+                  +000
+                </button>
+              </div>
               <div className="flex flex-col gap-2">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon</span>
                 <div className="flex flex-wrap gap-2">
-                  {['Wallet', 'CreditCard', 'Banknote', 'PiggyBank', 'Briefcase'].map(icon => (
+                  {['Wallet', 'CreditCard', 'Banknote', 'PiggyBank', 'Briefcase', 'Smartphone'].map(icon => (
                     <button key={icon} type="button" onClick={() => setWalletFormIcon(icon)} className={`w-10 h-10 rounded-xl flex items-center justify-center border transition ${walletFormIcon === icon ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-950 shadow-md' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 text-slate-400'}`}>
                       <IconRenderer name={icon} className="w-5 h-5" />
                     </button>
