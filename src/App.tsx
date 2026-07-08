@@ -1629,10 +1629,10 @@ export default function App() {
   };
 
   const getScrollTopClasses = () => {
-    let radiusClass = 'rounded-full'; // circular is extremely elegant and modern for floating action buttons
+    let radiusClass = 'rounded-l-full'; // default sticking to the right edge is a semi-capsule
     if (settings.cardRadius === 'sharp') radiusClass = 'rounded-none';
-    else if (settings.cardRadius === 'rounded') radiusClass = 'rounded-2xl';
-    else if (settings.cardRadius === 'extra') radiusClass = 'rounded-full';
+    else if (settings.cardRadius === 'rounded') radiusClass = 'rounded-l-2xl';
+    else if (settings.cardRadius === 'extra') radiusClass = 'rounded-l-full';
 
     let colorClass = '';
     let glowClass = '';
@@ -1641,28 +1641,28 @@ export default function App() {
     
     switch (settings.themeColor) {
       case 'emerald':
-        colorClass = 'bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-700';
-        glowClass = 'shadow-[0_8px_30px_rgba(16,185,129,0.4)] hover:shadow-[0_15px_35px_rgba(16,185,129,0.55)] hover:scale-110';
+        colorClass = 'bg-gradient-to-l from-emerald-600 via-emerald-500 to-teal-500 dark:from-emerald-700 dark:via-emerald-600 dark:to-teal-600';
+        glowClass = 'shadow-[-5px_8px_30px_rgba(16,185,129,0.35)] hover:shadow-[-5px_15px_35px_rgba(16,185,129,0.5)] hover:-translate-x-1';
         borderClass = 'border-emerald-400/30 dark:border-emerald-500/20';
         break;
       case 'amber':
-        colorClass = 'bg-gradient-to-br from-amber-500 to-orange-600 dark:from-amber-600 dark:to-orange-700';
-        glowClass = 'shadow-[0_8px_30px_rgba(245,158,11,0.4)] hover:shadow-[0_15px_35px_rgba(245,158,11,0.55)] hover:scale-110';
+        colorClass = 'bg-gradient-to-l from-amber-600 via-amber-500 to-orange-500 dark:from-amber-700 dark:via-amber-600 dark:to-orange-600';
+        glowClass = 'shadow-[-5px_8px_30px_rgba(245,158,11,0.35)] hover:shadow-[-5px_15px_35px_rgba(245,158,11,0.5)] hover:-translate-x-1';
         borderClass = 'border-amber-400/30 dark:border-amber-500/20';
         break;
       case 'rose':
-        colorClass = 'bg-gradient-to-br from-rose-500 to-pink-600 dark:from-rose-600 dark:to-pink-700';
-        glowClass = 'shadow-[0_8px_30px_rgba(244,63,94,0.4)] hover:shadow-[0_15px_35px_rgba(244,63,94,0.55)] hover:scale-110';
+        colorClass = 'bg-gradient-to-l from-rose-600 via-rose-500 to-pink-500 dark:from-rose-700 dark:via-rose-600 dark:to-pink-600';
+        glowClass = 'shadow-[-5px_8px_30px_rgba(244,63,94,0.35)] hover:shadow-[-5px_15px_35px_rgba(244,63,94,0.5)] hover:-translate-x-1';
         borderClass = 'border-rose-400/30 dark:border-rose-500/20';
         break;
       default: // indigo
-        colorClass = 'bg-gradient-to-br from-indigo-600 to-blue-600 dark:from-indigo-700 dark:to-blue-700';
-        glowClass = 'shadow-[0_8px_30px_rgba(99,102,241,0.4)] hover:shadow-[0_15px_35px_rgba(99,102,241,0.55)] hover:scale-110';
+        colorClass = 'bg-gradient-to-l from-indigo-700 via-indigo-600 to-blue-600 dark:from-indigo-800 dark:via-indigo-700 dark:to-blue-700';
+        glowClass = 'shadow-[-5px_8px_30px_rgba(99,102,241,0.35)] hover:shadow-[-5px_15px_35px_rgba(99,102,241,0.5)] hover:-translate-x-1';
         borderClass = 'border-indigo-400/30 dark:border-indigo-500/20';
         break;
     }
 
-    return `fixed right-6 top-1/2 -translate-y-1/2 z-50 w-12 h-14 flex flex-col items-center justify-center ${radiusClass} ${colorClass} ${textClass} border ${borderClass} ${glowClass} active:scale-95 transition-all duration-300 focus:outline-none group cursor-pointer`;
+    return `fixed right-0 top-1/2 -translate-y-1/2 z-50 w-11 h-14 flex flex-col items-center justify-center pl-2 pr-1 ${radiusClass} ${colorClass} ${textClass} border border-r-0 ${borderClass} ${glowClass} active:scale-95 transition-all duration-300 focus:outline-none group cursor-pointer`;
   };
 
   // --- Filtered Transactions list ---
