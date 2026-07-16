@@ -32,9 +32,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
     return new Date().toISOString().slice(0, 7); // "YYYY-MM"
   });
 
-  const [selectedWalletId, setSelectedWalletId] = React.useState<string>(() => {
-    return wallets[0]?.id || 'all';
-  });
+  const [selectedWalletId, setSelectedWalletId] = React.useState<string>('all');
 
   const getIndonesianMonthName = (monthStr: string) => {
     if (!monthStr) return '';
@@ -98,6 +96,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
               onChange={(e) => setSelectedWalletId(e.target.value)}
               className="text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer p-0 w-full truncate text-right sm:text-left"
             >
+              <option value="all">Semua Dompet</option>
               {wallets.map((w) => (
                 <option key={w.id} value={w.id}>{w.name}</option>
               ))}
