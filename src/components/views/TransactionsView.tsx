@@ -14,8 +14,8 @@ interface TransactionsViewProps {
   wallets: Wallet[];
   categories: Category[];
   sources: IncomeSource[];
-  txTypeFilter: 'semua' | 'pemasukan' | 'pengeluaran';
-  setTxTypeFilter: (val: 'semua' | 'pemasukan' | 'pengeluaran') => void;
+  txTypeFilter: 'semua' | 'pemasukan' | 'pengeluaran' | 'transfer';
+  setTxTypeFilter: (val: 'semua' | 'pemasukan' | 'pengeluaran' | 'transfer') => void;
   txCategoryFilter: string;
   setTxCategoryFilter: (val: string) => void;
   txWalletFilter: string;
@@ -121,6 +121,12 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition ${txTypeFilter === 'pengeluaran' ? 'bg-rose-500 text-white shadow-sm' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}
             >
               Pengeluaran
+            </button>
+            <button
+              onClick={() => setTxTypeFilter('transfer')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition ${txTypeFilter === 'transfer' ? 'bg-blue-500 text-white shadow-sm' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}
+            >
+              Transfer
             </button>
           </div>
 
@@ -278,35 +284,55 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                         </tr>
                         {dateTxs.map((t, idx) => {
                           const wallet = wallets.find((w) => w.id === t.walletId);
+                          const toWallet = t.toWalletId ? wallets.find((w) => w.id === t.toWalletId) : null;
                           const isIncome = t.type === 'pemasukan';
+                          const isTransfer = t.type === 'transfer';
                           const catName = isIncome 
                             ? sources.find(s => s.id === t.sourceId)
-                            : categories.find(c => c.id === t.categoryId);
+                            : (isTransfer ? null : categories.find(c => c.id === t.categoryId));
                           return (
                             <tr key={t.id} className={getTableRowClasses(idx)}>
                               <td className={getTableRowPadding() + " font-semibold text-slate-800 dark:text-slate-200"}>{t.description}</td>
                               <td className={getTableRowPadding()}>
-                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${isIncome ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400' : 'bg-rose-50 text-rose-500 dark:bg-rose-950/20 dark:text-rose-400'}`}>
+                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                                  isIncome 
+                                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400' 
+                                    : isTransfer 
+                                      ? 'bg-blue-50 text-blue-500 dark:bg-blue-950/20 dark:text-blue-400' 
+                                      : 'bg-rose-50 text-rose-500 dark:bg-rose-950/20 dark:text-rose-400'
+                                }`}>
                                   {t.type}
                                 </span>
                               </td>
                               <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium"}>
-                                <span className="flex items-center gap-1.5">
-                                  {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3.5 h-3.5" />}
-                                  <span>{wallet?.name || 'Dompet Terhapus'}</span>
-                                </span>
+                                {isTransfer ? (
+                                  <span className="flex items-center gap-1 text-[11px]">
+                                    <span>{wallet?.name || 'Dompet Terhapus'}</span>
+                                    <span className="text-slate-300 dark:text-slate-600">→</span>
+                                    <span>{toWallet?.name || 'Dompet Terhapus'}</span>
+                                  </span>
+                                ) : (
+                                  <span className="flex items-center gap-1.5">
+                                    {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3.5 h-3.5" />}
+                                    <span>{wallet?.name || 'Dompet Terhapus'}</span>
+                                  </span>
+                                )}
                               </td>
                               <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium"}>
-                                <span className="flex items-center gap-1.5">
-                                  {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5" />}
-                                  <span>{catName?.name || 'Kustom'}</span>
-                                </span>
+                                {isTransfer ? (
+                                  <span className="text-slate-400 dark:text-slate-500 italic text-[11px]">Transfer Saldo</span>
+                                ) : (
+                                  <span className="flex items-center gap-1.5">
+                                    {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5" />}
+                                    <span>{catName?.name || 'Kustom'}</span>
+                                  </span>
+                                )}
                               </td>
                               <td className={getTableRowPadding() + " font-mono text-slate-400 dark:text-slate-300"}>
                                 {new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </td>
-                              <td className={getTableRowPadding() + ` font-mono font-bold ${isIncome ? 'text-emerald-500' : 'text-rose-500'}`}>
-                                {isIncome ? '+' : '-'}{formatIDR(t.amount)}
+                              <td className={getTableRowPadding() + ` font-mono font-bold ${isIncome ? 'text-emerald-500' : (isTransfer ? 'text-blue-500' : 'text-rose-500')}`}>
+                                {isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(t.amount)}
                               </td>
                               <td className={getTableRowPadding() + " text-right"}>
                                 <div className="flex items-center justify-end gap-1">

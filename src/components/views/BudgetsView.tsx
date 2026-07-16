@@ -32,7 +32,9 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
     return new Date().toISOString().slice(0, 7); // "YYYY-MM"
   });
 
-  const [selectedWalletId, setSelectedWalletId] = React.useState<string>('all');
+  const [selectedWalletId, setSelectedWalletId] = React.useState<string>(() => {
+    return wallets[0]?.id || 'all';
+  });
 
   const getIndonesianMonthName = (monthStr: string) => {
     if (!monthStr) return '';
@@ -87,29 +89,28 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
         <div>
           <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Budgeting</h1>
         </div>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Wallet Selector Dropdown */}
-          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 px-3.5 py-1.5 rounded-xl shadow-sm self-start sm:self-auto">
-            <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Dompet:</span>
+          <div className="flex items-center justify-between sm:justify-start gap-1.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 px-3 py-1.5 rounded-xl shadow-sm">
+            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">Dompet:</span>
             <select
               value={selectedWalletId}
               onChange={(e) => setSelectedWalletId(e.target.value)}
-              className="text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer p-0"
+              className="text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer p-0 w-full truncate text-right sm:text-left"
             >
-              <option value="all">Semua Dompet</option>
               {wallets.map((w) => (
                 <option key={w.id} value={w.id}>{w.name}</option>
               ))}
             </select>
           </div>
 
-          <div className="flex items-center gap-2.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 px-3.5 py-1.5 rounded-xl shadow-sm self-start sm:self-auto">
-            <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Periode:</span>
+          <div className="flex items-center justify-between sm:justify-start gap-1.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 px-3 py-1.5 rounded-xl shadow-sm">
+            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">Periode:</span>
             <input
               type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer p-0"
+              className="text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer p-0 w-full text-right sm:text-left"
             />
           </div>
         </div>
@@ -117,14 +118,14 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
 
       {/* Month Summary Card */}
       {filteredBudgets.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-100 dark:border-slate-900/60">
+        <div className={getCardClasses() + " p-4 grid grid-cols-1 sm:grid-cols-2 gap-4 relative overflow-hidden"}>
           <div className="flex flex-col">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Anggaran ({getIndonesianMonthName(selectedMonth)})</span>
-            <span className="text-sm font-black text-slate-700 dark:text-slate-300 mt-1">{formatIDR(totalBudgeted)}</span>
+            <span className="text-lg font-black text-slate-800 dark:text-slate-200 mt-1">{formatIDR(totalBudgeted)}</span>
           </div>
-          <div className="flex flex-col border-t sm:border-t-0 sm:border-l border-slate-200/60 dark:border-slate-800/60 pt-2 sm:pt-0 sm:pl-4">
+          <div className="flex flex-col border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800/60 pt-3 sm:pt-0 sm:pl-5">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Terpakai</span>
-            <span className="text-sm font-black text-slate-700 dark:text-slate-300 mt-1">{formatIDR(totalSpend)}</span>
+            <span className="text-lg font-black text-slate-800 dark:text-slate-200 mt-1">{formatIDR(totalSpend)}</span>
           </div>
         </div>
       )}

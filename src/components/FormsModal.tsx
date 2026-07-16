@@ -18,22 +18,24 @@ interface FormsModalProps {
   initialTab?: FormType;
   editData?: any;
   onAddTransaction: (data: {
-    type: 'pemasukan' | 'pengeluaran';
+    type: 'pemasukan' | 'pengeluaran' | 'transfer';
     amount: number;
     description: string;
     date: string;
     walletId: string;
     categoryId?: string;
     sourceId?: string;
+    toWalletId?: string;
   }) => void;
   onUpdateTransaction?: (id: string, data: {
-    type: 'pemasukan' | 'pengeluaran';
+    type: 'pemasukan' | 'pengeluaran' | 'transfer';
     amount: number;
     description: string;
     date: string;
     walletId: string;
     categoryId?: string;
     sourceId?: string;
+    toWalletId?: string;
   }) => void;
   onAddBudget: (data: { categoryId: string; limitAmount: number; month: string; walletId?: string }) => void;
   onUpdateBudget?: (id: string, data: { categoryId: string; limitAmount: number; month: string; walletId?: string }) => void;
@@ -45,7 +47,7 @@ interface FormsModalProps {
   onUpdateWishlist?: (id: string, data: { title: string; month: string; price?: number; notes?: string }) => void;
 }
 
-type FormType = 'pengeluaran' | 'pemasukan' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist';
+type FormType = 'pengeluaran' | 'pemasukan' | 'transfer' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist';
 
 export default function FormsModal({
   isOpen,
@@ -74,8 +76,21 @@ export default function FormsModal({
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedWalletId, setSelectedWalletId] = useState(wallets[0]?.id || '');
+  const [selectedToWalletId, setSelectedToWalletId] = useState(() => {
+    const remaining = wallets.filter(w => w.id !== (wallets[0]?.id || ''));
+    return remaining[0]?.id || '';
+  });
   const [selectedCategoryId, setSelectedCategoryId] = useState(categories[0]?.id || '');
   const [selectedSourceId, setSelectedSourceId] = useState(sources[0]?.id || '');
+
+  React.useEffect(() => {
+    if (selectedWalletId === selectedToWalletId) {
+      const other = wallets.find(w => w.id !== selectedWalletId);
+      if (other) {
+        setSelectedToWalletId(other.id);
+      }
+    }
+  }, [selectedWalletId, wallets]);
 
   // Budget states
   const [budgetLimit, setBudgetLimit] = useState('');
@@ -110,11 +125,12 @@ export default function FormsModal({
       }
       
       if (editData) {
-        if (targetForm === 'pengeluaran' || targetForm === 'pemasukan') {
+        if (targetForm === 'pengeluaran' || targetForm === 'pemasukan' || targetForm === 'transfer') {
           setAmount(editData.amount.toString());
           setDescription(editData.description || '');
           setDate(editData.date);
           setSelectedWalletId(editData.walletId);
+          if (editData.toWalletId) setSelectedToWalletId(editData.toWalletId);
           if (editData.categoryId) setSelectedCategoryId(editData.categoryId);
           if (editData.sourceId) setSelectedSourceId(editData.sourceId);
         } else if (targetForm === 'budgeting') {
@@ -143,6 +159,8 @@ export default function FormsModal({
         resetForms();
         if (wallets.length > 0) {
           setSelectedWalletId(wallets[0].id);
+          const remaining = wallets.filter(w => w.id !== wallets[0].id);
+          setSelectedToWalletId(remaining[0]?.id || '');
           setBudgetWalletId(wallets[0].id);
         }
         if (categories.length > 0) {
@@ -184,6 +202,10 @@ export default function FormsModal({
   const resetForms = () => {
     setAmount('');
     setDescription('');
+    if (wallets.length > 0) {
+      const remaining = wallets.filter(w => w.id !== wallets[0].id);
+      setSelectedToWalletId(remaining[0]?.id || '');
+    }
     setBudgetLimit('');
     setBudgetWalletId(wallets[0]?.id || '');
     setSavingName('');
@@ -246,6 +268,27 @@ export default function FormsModal({
         date,
         walletId: selectedWalletId,
         sourceId: selectedSourceId
+      };
+
+      if (isEdit && onUpdateTransaction) {
+        onUpdateTransaction(editData.id, data);
+      } else {
+        onAddTransaction(data);
+      }
+    } else if (activeForm === 'transfer') {
+      const parsedAmount = parseFloat(amount);
+      if (isNaN(parsedAmount) || parsedAmount <= 0) return showError('Jumlah transfer harus valid!');
+      if (!selectedWalletId) return showError('Silakan pilih dompet asal!');
+      if (!selectedToWalletId) return showError('Silakan pilih dompet tujuan!');
+      if (selectedWalletId === selectedToWalletId) return showError('Dompet asal dan tujuan tidak boleh sama!');
+
+      const data = {
+        type: 'transfer' as const,
+        amount: parsedAmount,
+        description: description.trim() || 'Transfer Saldo',
+        date,
+        walletId: selectedWalletId,
+        toWalletId: selectedToWalletId
       };
 
       if (isEdit && onUpdateTransaction) {
@@ -350,7 +393,7 @@ export default function FormsModal({
         {/* Tab Selection */}
         <div className="p-3 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/80">
           <div className="flex bg-slate-100/80 dark:bg-slate-800/60 p-1 rounded-xl overflow-x-auto scrollbar-none gap-0.5">
-            {(['pengeluaran', 'pemasukan', 'budgeting', 'tabungan', 'aktivitas', 'wishlist'] as FormType[]).map((tab) => {
+            {(['pengeluaran', 'pemasukan', 'transfer', 'budgeting', 'tabungan', 'aktivitas', 'wishlist'] as FormType[]).map((tab) => {
               const isActive = activeForm === tab;
               return (
                 <button
@@ -363,7 +406,7 @@ export default function FormsModal({
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                   }`}
                 >
-                  {tab}
+                  {tab === 'pengeluaran' ? 'Pengeluaran' : tab === 'pemasukan' ? 'Pemasukan' : tab === 'transfer' ? 'Transfer' : tab}
                 </button>
               );
             })}
@@ -473,6 +516,96 @@ export default function FormsModal({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Beli kopi, jajan dll"
+                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* TRANSFER BALDO INPUTS */}
+          {activeForm === 'transfer' && (
+            <>
+              {/* Source & Destination Wallets */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dompet Asal (Dari)</label>
+                  <select
+                    value={selectedWalletId}
+                    onChange={(e) => setSelectedWalletId(e.target.value)}
+                    className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    required
+                  >
+                    <option value="" disabled>-- Pilih Asal --</option>
+                    {wallets.map((w) => (
+                      <option key={w.id} value={w.id}>
+                        {w.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dompet Tujuan (Ke)</label>
+                  <select
+                    value={selectedToWalletId}
+                    onChange={(e) => setSelectedToWalletId(e.target.value)}
+                    className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    required
+                  >
+                    <option value="" disabled>-- Pilih Tujuan --</option>
+                    {wallets.map((w) => (
+                      <option key={w.id} value={w.id}>
+                        {w.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Amount */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Jumlah Transfer</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
+                  <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="0"
+                    min="1"
+                    className="w-full pl-9 pr-16 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setAmount(prev => prev ? prev + '000' : '1000')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                  >
+                    +000
+                  </button>
+                </div>
+              </div>
+
+              {/* Tanggal & Deskripsi */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tanggal</label>
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    required
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Keterangan</label>
+                  <input
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Mutasi, Tarik ATM, dll"
                     className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
                   />
                 </div>

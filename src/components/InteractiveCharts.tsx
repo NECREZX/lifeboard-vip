@@ -57,10 +57,10 @@ interface TrendChartProps {
 }
 
 export function TrendChart({ transactions, themeColor }: TrendChartProps) {
-  const [hoveredBar, setHoveredBar] = useState<{ label: string; type: 'income' | 'expense'; value: number; x: number; y: number } | null>(null);
+  const [hoveredBar, setHoveredBar] = useState<{ label: string; type: 'income' | 'expense' | 'transfer'; value: number; x: number; y: number } | null>(null);
 
   // Group transactions by date
-  const groupedData: { [date: string]: { income: number; expense: number } } = {};
+  const groupedData: { [date: string]: { income: number; expense: number; transfer: number } } = {};
   
   // Sort transactions chronologically
   const sortedTrans = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
@@ -68,12 +68,14 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
   // Get last 7 unique dates or past few days
   sortedTrans.forEach((t) => {
     if (!groupedData[t.date]) {
-      groupedData[t.date] = { income: 0, expense: 0 };
+      groupedData[t.date] = { income: 0, expense: 0, transfer: 0 };
     }
     if (t.type === 'pemasukan') {
       groupedData[t.date].income += t.amount;
-    } else {
+    } else if (t.type === 'pengeluaran') {
       groupedData[t.date].expense += t.amount;
+    } else if (t.type === 'transfer') {
+      groupedData[t.date].transfer += t.amount;
     }
   });
 
@@ -86,11 +88,12 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
       rawDate: date,
       income: groupedData[date].income,
       expense: groupedData[date].expense,
+      transfer: groupedData[date].transfer,
     };
   });
 
   // Calculate scales
-  const maxVal = Math.max(...chartData.map(d => Math.max(d.income, d.expense, 500000)));
+  const maxVal = Math.max(...chartData.map(d => Math.max(d.income, d.expense, d.transfer, 500000)));
   const padMax = maxVal * 1.15; // padding top
 
   // Chart dimensions
@@ -108,11 +111,11 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
     return (
       <div className="relative w-full h-full flex flex-col justify-between" id="trend-chart-container">
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Trend Keuangan (Pemasukan vs Pengeluaran)</h4>
+          <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Trend Keuangan</h4>
         </div>
         <div className="flex flex-col items-center justify-center p-6 text-center min-h-[180px] bg-slate-50/50 dark:bg-slate-900/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-800/80">
           <p className="text-xs text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-wider">Belum Ada Transaksi</p>
-          <p className="text-[10px] text-slate-400/80 dark:text-slate-500/80 mt-1 max-w-xs leading-normal">Catat pemasukan atau pengeluaran untuk melihat grafik perkembangan keuangan Anda secara otomatis.</p>
+          <p className="text-[10px] text-slate-400/80 dark:text-slate-500/80 mt-1 max-w-xs leading-normal">Catat transaksi keuangan Anda untuk melihat grafik perkembangan secara otomatis.</p>
         </div>
       </div>
     );
@@ -120,9 +123,9 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
 
   return (
     <div className="relative w-full h-full flex flex-col justify-between" id="trend-chart-container">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Trend Keuangan (Pemasukan vs Pengeluaran)</h4>
-        <div className="flex items-center gap-3 text-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Trend Keuangan</h4>
+        <div className="flex flex-wrap items-center gap-3 text-xs">
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
             <span className="text-slate-500 dark:text-slate-400">Pemasukan</span>
@@ -130,6 +133,10 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
             <span className="text-slate-500 dark:text-slate-400">Pengeluaran</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+            <span className="text-slate-500 dark:text-slate-400">Transfer</span>
           </div>
         </div>
       </div>
@@ -170,18 +177,23 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
           {/* Render Bars */}
           {chartData.map((d, i) => {
             const sectionWidth = chartWidth / chartData.length;
-            const barWidth = sectionWidth * 0.32;
+            const barWidth = sectionWidth * 0.23;
             const xCenter = paddingLeft + i * sectionWidth + sectionWidth / 2;
 
             // Coordinates for Income Bar
             const incomeHeight = (d.income / padMax) * chartHeight;
-            const incomeX = xCenter - barWidth - 2;
+            const incomeX = xCenter - barWidth * 1.5 - 2;
             const incomeY = paddingTop + chartHeight - incomeHeight;
 
             // Coordinates for Expense Bar
             const expenseHeight = (d.expense / padMax) * chartHeight;
-            const expenseX = xCenter + 2;
+            const expenseX = xCenter - barWidth / 2;
             const expenseY = paddingTop + chartHeight - expenseHeight;
+
+            // Coordinates for Transfer Bar
+            const transferHeight = (d.transfer / padMax) * chartHeight;
+            const transferX = xCenter + barWidth / 2 + 2;
+            const transferY = paddingTop + chartHeight - transferHeight;
 
             return (
               <g key={i}>
@@ -191,11 +203,10 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
                   y={incomeY}
                   width={barWidth}
                   height={Math.max(incomeHeight, 2)}
-                  rx="3"
+                  rx="2.5"
                   fill="#10b981"
                   className="transition-all duration-300 hover:fill-emerald-400 cursor-pointer"
                   onMouseEnter={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
                     setHoveredBar({
                       label: d.dateLabel,
                       type: 'income',
@@ -213,7 +224,7 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
                   y={expenseY}
                   width={barWidth}
                   height={Math.max(expenseHeight, 2)}
-                  rx="3"
+                  rx="2.5"
                   fill="#ef4444"
                   className="transition-all duration-300 hover:fill-rose-400 cursor-pointer"
                   onMouseEnter={(e) => {
@@ -223,6 +234,27 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
                       value: d.expense,
                       x: expenseX + barWidth / 2,
                       y: expenseY
+                    });
+                  }}
+                  onMouseLeave={() => setHoveredBar(null)}
+                />
+
+                {/* Transfer Bar (Blue) */}
+                <rect
+                  x={transferX}
+                  y={transferY}
+                  width={barWidth}
+                  height={Math.max(transferHeight, 2)}
+                  rx="2.5"
+                  fill="#3b82f6"
+                  className="transition-all duration-300 hover:fill-blue-400 cursor-pointer"
+                  onMouseEnter={(e) => {
+                    setHoveredBar({
+                      label: d.dateLabel,
+                      type: 'transfer',
+                      value: d.transfer,
+                      x: transferX + barWidth / 2,
+                      y: transferY
                     });
                   }}
                   onMouseLeave={() => setHoveredBar(null)}
@@ -266,8 +298,8 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
             }}
           >
             <span className="font-semibold text-[10px] text-slate-400 uppercase tracking-wider">{hoveredBar.label}</span>
-            <span className={`font-bold flex items-center gap-1 ${hoveredBar.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {hoveredBar.type === 'income' ? '▲ Pemasukan:' : '▼ Pengeluaran:'}
+            <span className={`font-bold flex items-center gap-1 ${hoveredBar.type === 'income' ? 'text-emerald-400' : hoveredBar.type === 'transfer' ? 'text-blue-400' : 'text-rose-400'}`}>
+              {hoveredBar.type === 'income' ? '▲ Pemasukan:' : hoveredBar.type === 'transfer' ? '⇄ Transfer:' : '▼ Pengeluaran:'}
               <span className="font-mono">{formatIDR(hoveredBar.value)}</span>
             </span>
           </div>

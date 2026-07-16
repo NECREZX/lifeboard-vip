@@ -184,7 +184,7 @@ export default function App() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [modalFormTab, setModalFormTab] = useState<'pengeluaran' | 'pemasukan' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist'>('pengeluaran');
+  const [modalFormTab, setModalFormTab] = useState<'pengeluaran' | 'pemasukan' | 'transfer' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist'>('pengeluaran');
   const [modalEditData, setModalEditData] = useState<any>(null);
   
   // PWA Install prompt state
@@ -195,7 +195,7 @@ export default function App() {
   const [editingWallet, setEditingWallet] = useState<Wallet | null>(null);
   
   // Filters States
-  const [txTypeFilter, setTxTypeFilter] = useState<'semua' | 'pemasukan' | 'pengeluaran'>('semua');
+  const [txTypeFilter, setTxTypeFilter] = useState<'semua' | 'pemasukan' | 'pengeluaran' | 'transfer'>('semua');
   const [txCategoryFilter, setTxCategoryFilter] = useState<string>('semua');
   const [txWalletFilter, setTxWalletFilter] = useState<string>('semua');
   const [txSearch, setTxSearch] = useState<string>('');
@@ -554,9 +554,15 @@ export default function App() {
     const expenses = transactions
       .filter(t => t.type === 'pengeluaran' && t.walletId === w.id)
       .reduce((sum, t) => sum + t.amount, 0);
+    const incomingTransfers = transactions
+      .filter(t => t.type === 'transfer' && t.toWalletId === w.id)
+      .reduce((sum, t) => sum + t.amount, 0);
+    const outgoingTransfers = transactions
+      .filter(t => t.type === 'transfer' && t.walletId === w.id)
+      .reduce((sum, t) => sum + t.amount, 0);
     return {
       ...w,
-      currentBalance: w.initialBalance + incomes - expenses
+      currentBalance: w.initialBalance + incomes - expenses + incomingTransfers - outgoingTransfers
     };
   });
 
@@ -636,13 +642,14 @@ export default function App() {
 
   // --- Add Entities Handlers ---
   const handleAddTransaction = (data: {
-    type: 'pemasukan' | 'pengeluaran';
+    type: 'pemasukan' | 'pengeluaran' | 'transfer';
     amount: number;
     description: string;
     date: string;
     walletId: string;
     categoryId?: string;
     sourceId?: string;
+    toWalletId?: string;
   }) => {
     const newTx: Transaction = {
       id: `t-${Date.now()}`,
@@ -686,8 +693,12 @@ export default function App() {
       }
     }
 
+    let title = 'Pengeluaran Baru';
+    if (data.type === 'pemasukan') title = 'Pemasukan Baru';
+    else if (data.type === 'transfer') title = 'Transfer Saldo Berhasil';
+
     triggerNotification(
-      data.type === 'pemasukan' ? 'Pemasukan Baru' : 'Pengeluaran Baru',
+      title,
       `${data.description} sebesar ${formatIDR(data.amount)} berhasil dicatat.`,
       'success'
     );
@@ -1668,11 +1679,17 @@ export default function App() {
   // --- Filtered Transactions list ---
   const filteredTransactions = transactions.filter((t) => {
     const matchesType = txTypeFilter === 'semua' || t.type === txTypeFilter;
-    const matchesWallet = txWalletFilter === 'semua' || t.walletId === txWalletFilter;
+    const matchesWallet = txWalletFilter === 'semua' || t.walletId === txWalletFilter || (t.type === 'transfer' && t.toWalletId === txWalletFilter);
     
     let matchesCategory = true;
     if (txCategoryFilter !== 'semua') {
-      matchesCategory = t.type === 'pengeluaran' ? t.categoryId === txCategoryFilter : t.sourceId === txCategoryFilter;
+      if (t.type === 'pengeluaran') {
+        matchesCategory = t.categoryId === txCategoryFilter;
+      } else if (t.type === 'pemasukan') {
+        matchesCategory = t.sourceId === txCategoryFilter;
+      } else {
+        matchesCategory = false;
+      }
     }
 
     const matchesSearch = txSearch.trim() === '' || 
@@ -1822,7 +1839,7 @@ export default function App() {
             getTableRowClasses={getTableRowClasses}
             handleDeleteTransaction={handleDeleteTransaction}
             onAdd={(type) => openAddModal(type)}
-            onEdit={(tx) => openAddModal(tx.type === 'pemasukan' ? 'pemasukan' : 'pengeluaran', tx)}
+            onEdit={(tx) => openAddModal(tx.type, tx)}
           />
         )}
 

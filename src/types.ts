@@ -26,7 +26,7 @@ export interface IncomeSource {
   color: string;
 }
 
-export type TransactionType = 'pemasukan' | 'pengeluaran';
+export type TransactionType = 'pemasukan' | 'pengeluaran' | 'transfer';
 
 export interface Transaction {
   id: string;
@@ -37,6 +37,7 @@ export interface Transaction {
   walletId: string;
   categoryId?: string; // Only for 'pengeluaran'
   sourceId?: string; // Only for 'pemasukan'
+  toWalletId?: string; // Only for 'transfer'
 }
 
 export interface Saving {
