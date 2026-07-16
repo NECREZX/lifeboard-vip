@@ -615,8 +615,71 @@ export default function App() {
     setIsAddModalOpen(true);
   };
 
+  const checkBudgetLimit = (txData: {
+    type: 'pemasukan' | 'pengeluaran' | 'transfer';
+    amount: number;
+    description: string;
+    date: string;
+    walletId: string;
+    categoryId?: string;
+    sourceId?: string;
+  }, excludeTxId?: string, customTxList?: Transaction[]) => {
+    if (txData.type === 'pengeluaran' && txData.categoryId) {
+      const txMonth = txData.date.slice(0, 7); // e.g. "2026-06"
+      const budget = budgets.find((b) => b.categoryId === txData.categoryId && b.month === txMonth && (!b.walletId || b.walletId === txData.walletId));
+      if (budget) {
+        const budgetLimit = budget.limitAmount;
+        const txList = customTxList || transactions;
+        // Calculate other expenses in the same category and same month and same wallet constraint
+        const catExpenses = txList
+          .filter((t) => {
+            const isSameTx = t.id === excludeTxId;
+            const isExpense = t.type === 'pengeluaran';
+            const isSameCategory = t.categoryId === txData.categoryId;
+            const isSameMonth = t.date.slice(0, 7) === txMonth;
+            const isSameWallet = !budget.walletId || t.walletId === budget.walletId;
+            return !isSameTx && isExpense && isSameCategory && isSameMonth && isSameWallet;
+          })
+          .reduce((sum, t) => sum + t.amount, 0) + txData.amount;
+        
+        const catName = categories.find(c => c.id === txData.categoryId)?.name || '';
+        const walletName = wallets.find(w => w.id === (budget.walletId || txData.walletId))?.name || '';
+        const walletText = budget.walletId ? ` di dompet [ ${walletName} ]` : '';
+        const walletTextNotif = budget.walletId ? ` [Dompet: ${walletName}]` : '';
+
+        if (catExpenses > budgetLimit) {
+          triggerNotification(
+            '🚨 Anggaran Melebihi Batas!',
+            `Peringatan: Pengeluaran bulanan kategori ${catName}${walletTextNotif} telah melebihi batas anggaran Rp ${budgetLimit.toLocaleString('id-ID')}! (Tercatat: Rp ${catExpenses.toLocaleString('id-ID')})`,
+            'warning'
+          );
+          // Highlight with immediate custom alert so user is fully aware
+          setTimeout(() => {
+            showAlert(
+              'NOTIFIKASI PERINGATAN!',
+              `Pengeluaran untuk kategori [ ${catName} ]${walletText} telah MELEBIHI batas anggaran bulan ini!\n\nBatas Anggaran: Rp ${budgetLimit.toLocaleString('id-ID')}\nTotal Pengeluaran: Rp ${catExpenses.toLocaleString('id-ID')}`
+            );
+          }, 100);
+        } else if (catExpenses > budgetLimit * 0.8) {
+          triggerNotification(
+            'Anggaran Mendekati Limit',
+            `Pengeluaran kategori ${catName}${walletTextNotif} telah mencapai 80% dari batas Rp ${budgetLimit.toLocaleString('id-ID')}`,
+            'warning'
+          );
+        }
+      }
+    }
+  };
+
   const handleUpdateTransaction = (id: string, data: any) => {
-    setTransactions(prev => prev.map(t => t.id === id ? { ...t, ...data } : t));
+    setTransactions(prev => {
+      const updated = prev.map(t => t.id === id ? { ...t, ...data } : t);
+      // Run budget limit check with the updated list to avoid stale state
+      setTimeout(() => {
+        checkBudgetLimit(data, id, updated);
+      }, 50);
+      return updated;
+    });
     triggerNotification('Transaksi Diperbarui', 'Perubahan transaksi berhasil disimpan.', 'success');
   };
 
@@ -659,38 +722,7 @@ export default function App() {
     
     // Warn budget limits if expense added
     if (data.type === 'pengeluaran' && data.categoryId) {
-      const txMonth = data.date.slice(0, 7); // e.g. "2026-06"
-      const budget = budgets.find((b) => b.categoryId === data.categoryId && b.month === txMonth);
-      if (budget) {
-        const budgetLimit = budget.limitAmount;
-        // Calculate other expenses in the same category and same month
-        const catExpenses = transactions
-          .filter((t) => t.type === 'pengeluaran' && t.categoryId === data.categoryId && t.date.slice(0, 7) === txMonth)
-          .reduce((sum, t) => sum + t.amount, 0) + data.amount;
-        
-        const catName = categories.find(c => c.id === data.categoryId)?.name || '';
-        
-        if (catExpenses > budgetLimit) {
-          triggerNotification(
-            '🚨 Anggaran Melebihi Batas!',
-            `Peringatan: Pengeluaran bulanan kategori ${catName} telah melebihi batas anggaran Rp ${budgetLimit.toLocaleString('id-ID')}! (Tercatat: Rp ${catExpenses.toLocaleString('id-ID')})`,
-            'warning'
-          );
-          // Highlight with immediate custom alert so user is fully aware
-          setTimeout(() => {
-            showAlert(
-              'NOTIFIKASI PERINGATAN!',
-              `Pengeluaran untuk kategori [ ${catName} ] telah MELEBIHI batas anggaran bulan ini!\n\nBatas Anggaran: Rp ${budgetLimit.toLocaleString('id-ID')}\nTotal Pengeluaran: Rp ${catExpenses.toLocaleString('id-ID')}`
-            );
-          }, 100);
-        } else if (catExpenses > budgetLimit * 0.8) {
-          triggerNotification(
-            'Anggaran Mendekati Limit',
-            `Pengeluaran kategori ${catName} telah mencapai 80% dari batas Rp ${budgetLimit.toLocaleString('id-ID')}`,
-            'warning'
-          );
-        }
-      }
+      checkBudgetLimit(data);
     }
 
     let title = 'Pengeluaran Baru';
@@ -886,10 +918,17 @@ export default function App() {
     csv += '=== LAPORAN TRANSAKSI ===\n';
     csv += 'ID,Tipe,Nominal,Keterangan,Tanggal,Dompet,Kategori/Sumber\n';
     transactions.forEach(t => {
-      const wallet = wallets.find(w => w.id === t.walletId)?.name || '';
-      const catOrSrc = t.type === 'pengeluaran'
-        ? categories.find(c => c.id === t.categoryId)?.name || ''
-        : sources.find(s => s.id === t.sourceId)?.name || '';
+      let wallet = wallets.find(w => w.id === t.walletId)?.name || '';
+      let catOrSrc = '';
+      if (t.type === 'pengeluaran') {
+        catOrSrc = categories.find(c => c.id === t.categoryId)?.name || '';
+      } else if (t.type === 'pemasukan') {
+        catOrSrc = sources.find(s => s.id === t.sourceId)?.name || '';
+      } else if (t.type === 'transfer') {
+        const toWallet = wallets.find(w => w.id === t.toWalletId)?.name || '';
+        wallet = `${wallet} -> ${toWallet}`;
+        catOrSrc = 'Transfer Saldo';
+      }
       csv += `"${t.id}","${t.type}",${t.amount},"${t.description.replace(/"/g, '""')}","${t.date}","${wallet}","${catOrSrc}"\n`;
     });
 
@@ -942,25 +981,49 @@ export default function App() {
     // 1. Transactions List Table rows
     let rowsHtml = '';
     filteredTransactions.forEach((t, index) => {
-      const wallet = wallets.find(w => w.id === t.walletId)?.name || 'Dompet Utama';
-      const catOrSrc = t.type === 'pengeluaran'
-        ? categories.find(c => c.id === t.categoryId)?.name || 'Pengeluaran'
-        : sources.find(s => s.id === t.sourceId)?.name || 'Pemasukan';
-      const isIncome = t.type === 'pemasukan';
+      let wallet = wallets.find(w => w.id === t.walletId)?.name || 'Dompet Utama';
+      let catOrSrc = '';
+      let badgeClass = 'badge-expense';
+      let badgeText = 'PENGELUARAN';
+      let amountColor = '#dc2626';
+      let amountPrefix = '-';
+
+      if (t.type === 'pemasukan') {
+        catOrSrc = sources.find(s => s.id === t.sourceId)?.name || 'Pemasukan';
+        badgeClass = 'badge-income';
+        badgeText = 'PEMASUKAN';
+        amountColor = '#059669';
+        amountPrefix = '+';
+      } else if (t.type === 'pengeluaran') {
+        catOrSrc = categories.find(c => c.id === t.categoryId)?.name || 'Pengeluaran';
+        badgeClass = 'badge-expense';
+        badgeText = 'PENGELUARAN';
+        amountColor = '#dc2626';
+        amountPrefix = '-';
+      } else if (t.type === 'transfer') {
+        const toWallet = wallets.find(w => w.id === t.toWalletId)?.name || 'Dompet Tujuan';
+        wallet = `${wallet} → ${toWallet}`;
+        catOrSrc = 'Transfer Saldo';
+        badgeClass = 'badge-transfer';
+        badgeText = 'TRANSFER';
+        amountColor = '#2563eb';
+        amountPrefix = '⇄ ';
+      }
+
       rowsHtml += `
         <tr class="${index % 2 === 1 ? 'stripe-row' : ''}">
           <td style="text-align: center; font-weight: bold; color: #64748b;">${index + 1}</td>
           <td style="font-weight: 700; color: #0f172a;">${t.description}</td>
           <td style="text-align: center;">
-            <span class="badge ${isIncome ? 'badge-income' : 'badge-expense'}">
-              ${isIncome ? 'PEMASUKAN' : 'PENGELUARAN'}
+            <span class="badge ${badgeClass}">
+              ${badgeText}
             </span>
           </td>
           <td>${wallet}</td>
           <td>${catOrSrc}</td>
           <td style="font-family: monospace; color: #64748b; font-size: 10px;">${new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
-          <td class="amount font-mono" style="color: ${isIncome ? '#059669' : '#dc2626'};">
-            ${isIncome ? '+' : '-'}${formatIDR(t.amount)}
+          <td class="amount font-mono" style="color: ${amountColor};">
+            ${amountPrefix}${formatIDR(t.amount)}
           </td>
         </tr>
       `;
@@ -1291,6 +1354,10 @@ export default function App() {
     .badge-expense {
       background-color: #fee2e2;
       color: #991b1b;
+    }
+    .badge-transfer {
+      background-color: #dbeafe;
+      color: #1d4ed8;
     }
     .badge-warning {
       background-color: #fef3c7;
