@@ -320,7 +320,14 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                               </td>
                               <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium"}>
                                 {isTransfer ? (
-                                  <span className="text-slate-400 dark:text-slate-500 italic text-[11px]">Transfer Saldo</span>
+                                  <div className="flex flex-col">
+                                    <span className="text-slate-400 dark:text-slate-500 italic text-[11px]">Transfer Saldo</span>
+                                    {t.adminFee && t.adminFee > 0 ? (
+                                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
+                                        Biaya Admin: {formatIDR(t.adminFee)}
+                                      </span>
+                                    ) : null}
+                                  </div>
                                 ) : (
                                   <span className="flex items-center gap-1.5">
                                     {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5" />}
@@ -332,7 +339,14 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                                 {new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </td>
                               <td className={getTableRowPadding() + ` font-mono font-bold ${isIncome ? 'text-emerald-500' : (isTransfer ? 'text-blue-500' : 'text-rose-500')}`}>
-                                {isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(t.amount)}
+                                <div className="flex flex-col">
+                                  <span>{isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(t.amount)}</span>
+                                  {isTransfer && t.adminFee && t.adminFee > 0 ? (
+                                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">
+                                      Keluar Asal: {formatIDR(t.amount + t.adminFee)}
+                                    </span>
+                                  ) : null}
+                                </div>
                               </td>
                               <td className={getTableRowPadding() + " text-right"}>
                                 <div className="flex items-center justify-end gap-1">

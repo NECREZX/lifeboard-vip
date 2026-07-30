@@ -12,6 +12,9 @@ import {
   ShoppingBag, 
   Target, 
   PieChart,
+  Receipt,
+  Eye,
+  EyeOff,
   Wallet as WalletIcon 
 } from 'lucide-react';
 import { IconRenderer } from '../IconRenderer';
@@ -47,6 +50,7 @@ interface DashboardViewProps {
   totalWalletBalance: number;
   totalIncome: number;
   totalExpense: number;
+  totalTransferAdminFees: number;
   getCardClasses: () => string;
   getAccentBg: () => string;
   isInstallable: boolean;
@@ -68,6 +72,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   totalWalletBalance,
   totalIncome,
   totalExpense,
+  totalTransferAdminFees,
   getCardClasses,
   getAccentBg,
   isInstallable,
@@ -79,6 +84,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [tempMonth, setTempMonth] = useState(selectedMonth);
   const [tempYear, setTempYear] = useState(selectedYear);
+
+  // Eye Toggle & Admin Fee mode state
+  const [showHideBalance, setShowHideBalance] = useState<boolean>(() => {
+    return localStorage.getItem('lifeboard_hide_balance') === 'true';
+  });
+  const [includeAdminFee, setIncludeAdminFee] = useState<boolean>(true);
+
+  const toggleHideBalance = () => {
+    setShowHideBalance(prev => {
+      const next = !prev;
+      localStorage.setItem('lifeboard_hide_balance', next.toString());
+      return next;
+    });
+  };
+
+  const saldoWithAdmin = totalSaldoUtama; // Includes admin fee deduction
+  const saldoWithoutAdmin = totalSaldoUtama + totalTransferAdminFees; // Raw total before admin fee deduction
+  const activeDisplaySaldo = includeAdminFee ? saldoWithAdmin : saldoWithoutAdmin;
 
   const handleApplyFilter = () => {
     setSelectedMonth(tempMonth);
@@ -161,51 +184,115 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       </div>
 
       {/* Row 1: Primary Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-6 rounded-2xl text-white bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 shadow-xl flex flex-col justify-between min-h-[140px] relative overflow-hidden group hover:scale-[1.01] transition-all duration-300 border-0">
+      <div className="flex flex-col gap-4">
+        {/* Main Balance Banner Card */}
+        <div className="p-6 rounded-2xl text-white bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 shadow-xl flex flex-col justify-between min-h-[160px] relative overflow-hidden group transition-all duration-300 border-0">
           <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-white/20 rounded-full blur-2xl group-hover:bg-white/30 transition duration-500" />
           <div className="absolute -left-6 -top-6 w-24 h-24 bg-cyan-300/30 rounded-full blur-xl" />
-          <div className="flex items-start justify-between relative z-10">
+          
+          {/* Header Row */}
+          <div className="flex items-center justify-between relative z-10 gap-2">
             <div>
               <span className="text-[10px] font-black uppercase tracking-wider text-white drop-shadow-md block">TOTAL SALDO UTAMA</span>
             </div>
-            <div className="p-2 rounded-lg bg-white/30 backdrop-blur-md border border-white/50">
-              <LayoutDashboard className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={toggleHideBalance}
+                title={showHideBalance ? "Tampilkan Saldo Utama" : "Sembunyikan Saldo Utama"}
+                className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 transition flex items-center justify-center text-white focus:outline-none shadow-sm cursor-pointer"
+              >
+                {showHideBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+              <div className="p-1.5 rounded-lg bg-white/20 backdrop-blur-md border border-white/40 text-white">
+                <LayoutDashboard className="w-4 h-4" />
+              </div>
             </div>
           </div>
+
+          {/* Amount Display */}
           <div className="my-2 relative z-10">
-            <h2 className="text-2xl font-extrabold tracking-tight font-mono text-white dark:text-white drop-shadow-md">{formatIDR(totalSaldoUtama)}</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono text-white drop-shadow-md">
+              {showHideBalance ? '••••••••' : formatIDR(activeDisplaySaldo)}
+            </h2>
           </div>
-          <div className="flex items-center justify-between text-[10px] pt-2 border-t border-white/20 relative z-10">
-            <span className="font-bold opacity-80">Terakumulasi dari semua dompet</span>
-            <button onClick={() => setActiveTab('kelola')} className="font-black underline decoration-2 underline-offset-4 hover:text-white transition">Detail</button>
-          </div>
-        </div>
 
-        <div className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[140px]"}>
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pendapatan</span>
-            <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 flex items-center justify-center text-emerald-500"><TrendingUp className="w-4 h-4" /></div>
-          </div>
-          <div>
-            <h3 className="text-xl font-extrabold text-emerald-500 tracking-tight font-mono">{formatIDR(totalIncome)}</h3>
-            <div className="flex items-center gap-1.5 mt-2">
-              <span className="text-[9px] font-bold text-slate-400 uppercase">Pemasukan</span>
-              <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+          {/* Bottom Row: Option Switcher Buttons */}
+          <div className="pt-2.5 border-t border-white/20 relative z-10 flex items-center justify-between gap-2">
+            <div className="inline-flex items-center bg-black/25 backdrop-blur-md p-0.5 rounded-lg border border-white/25 shadow-inner">
+              <button
+                type="button"
+                onClick={() => setIncludeAdminFee(true)}
+                className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all duration-200 cursor-pointer select-none ${
+                  includeAdminFee
+                    ? 'bg-white text-slate-900 shadow-sm font-extrabold'
+                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                Termasuk Biaya Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => setIncludeAdminFee(false)}
+                className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all duration-200 cursor-pointer select-none ${
+                  !includeAdminFee
+                    ? 'bg-white text-slate-900 shadow-sm font-extrabold'
+                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                Tanpa Biaya Admin
+              </button>
             </div>
           </div>
         </div>
 
-        <div className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[140px]"}>
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</span>
-            <div className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-rose-500"><TrendingDown className="w-4 h-4" /></div>
+        {/* Secondary Metrics: 3 Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[130px]"}>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pendapatan</span>
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 flex items-center justify-center text-emerald-500"><TrendingUp className="w-4 h-4" /></div>
+            </div>
+            <div>
+              <h3 className="text-xl font-extrabold text-emerald-500 tracking-tight font-mono">
+                {showHideBalance ? '••••••••' : formatIDR(totalIncome)}
+              </h3>
+              <div className="flex items-center gap-1.5 mt-2">
+                <span className="text-[9px] font-bold text-slate-400 uppercase">Pemasukan</span>
+                <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+              </div>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-extrabold text-rose-500 tracking-tight font-mono">{formatIDR(totalExpense)}</h3>
-            <div className="flex items-center gap-1.5 mt-2">
-              <span className="text-[9px] font-bold text-slate-400 uppercase">Pengeluaran</span>
-              <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+
+          <div className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[130px]"}>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</span>
+              <div className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-rose-500"><TrendingDown className="w-4 h-4" /></div>
+            </div>
+            <div>
+              <h3 className="text-xl font-extrabold text-rose-500 tracking-tight font-mono">
+                {showHideBalance ? '••••••••' : formatIDR(totalExpense)}
+              </h3>
+              <div className="flex items-center gap-1.5 mt-2">
+                <span className="text-[9px] font-bold text-slate-400 uppercase">Pengeluaran</span>
+                <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+              </div>
+            </div>
+          </div>
+
+          <div className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[130px]"}>
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Biaya Admin Transfer</span>
+              <div className="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/20 flex items-center justify-center text-amber-500"><Receipt className="w-4 h-4" /></div>
+            </div>
+            <div>
+              <h3 className="text-xl font-extrabold text-amber-500 tracking-tight font-mono">
+                {showHideBalance ? '••••••••' : formatIDR(totalTransferAdminFees)}
+              </h3>
+              <div className="flex items-center gap-1.5 mt-2">
+                <span className="text-[9px] font-bold text-slate-400 uppercase">Potongan Admin</span>
+                <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -227,7 +314,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
               <div>
                 <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-100 truncate">{w.name}</h4>
-                <p className="text-sm font-black font-mono text-slate-900 dark:text-slate-100 mt-0.5">{formatIDR(w.currentBalance)}</p>
+                <p className="text-sm font-black font-mono text-slate-900 dark:text-slate-100 mt-0.5">
+                  {showHideBalance ? '••••••••' : formatIDR(w.currentBalance)}
+                </p>
               </div>
             </div>
           ))}

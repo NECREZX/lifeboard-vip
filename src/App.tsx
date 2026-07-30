@@ -559,7 +559,7 @@ export default function App() {
       .reduce((sum, t) => sum + t.amount, 0);
     const outgoingTransfers = transactions
       .filter(t => t.type === 'transfer' && t.walletId === w.id)
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + t.amount + (t.adminFee || 0), 0);
     return {
       ...w,
       currentBalance: w.initialBalance + incomes - expenses + incomingTransfers - outgoingTransfers
@@ -579,8 +579,13 @@ export default function App() {
     .filter((t) => t.type === 'pengeluaran')
     .reduce((sum, t) => sum + t.amount, 0);
 
-  // Total Main Balance (Total Saldo Utama) = Initial Wallets + Incomes - Expenses
-  const totalSaldoUtama = totalWalletBalance + totalIncome - totalExpense;
+  // Total Transfer Admin Fees
+  const totalTransferAdminFees = transactions
+    .filter((t) => t.type === 'transfer')
+    .reduce((sum, t) => sum + (t.adminFee || 0), 0);
+
+  // Total Main Balance (Total Saldo Utama) = Initial Wallets + Incomes - Expenses - Transfer Admin Fees
+  const totalSaldoUtama = totalWalletBalance + totalIncome - totalExpense - totalTransferAdminFees;
 
   // --- Notification triggers & warnings ---
   const triggerNotification = (title: string, message: string, type: 'info' | 'warning' | 'success') => {
@@ -916,7 +921,7 @@ export default function App() {
   const handleExportCSV = () => {
     let csv = '\uFEFF'; // Excel UTF-8 BOM
     csv += '=== LAPORAN TRANSAKSI ===\n';
-    csv += 'ID,Tipe,Nominal,Keterangan,Tanggal,Dompet,Kategori/Sumber\n';
+    csv += 'ID,Tipe,Nominal,Biaya Admin,Keterangan,Tanggal,Dompet,Kategori/Sumber\n';
     transactions.forEach(t => {
       let wallet = wallets.find(w => w.id === t.walletId)?.name || '';
       let catOrSrc = '';
@@ -927,9 +932,9 @@ export default function App() {
       } else if (t.type === 'transfer') {
         const toWallet = wallets.find(w => w.id === t.toWalletId)?.name || '';
         wallet = `${wallet} -> ${toWallet}`;
-        catOrSrc = 'Transfer Saldo';
+        catOrSrc = t.adminFee ? `Transfer Saldo (Admin: Rp ${t.adminFee.toLocaleString('id-ID')})` : 'Transfer Saldo';
       }
-      csv += `"${t.id}","${t.type}",${t.amount},"${t.description.replace(/"/g, '""')}","${t.date}","${wallet}","${catOrSrc}"\n`;
+      csv += `"${t.id}","${t.type}",${t.amount},${t.adminFee || 0},"${t.description.replace(/"/g, '""')}","${t.date}","${wallet}","${catOrSrc}"\n`;
     });
 
     csv += '\n=== LAPORAN TABUNGAN ===\n';
@@ -1003,7 +1008,7 @@ export default function App() {
       } else if (t.type === 'transfer') {
         const toWallet = wallets.find(w => w.id === t.toWalletId)?.name || 'Dompet Tujuan';
         wallet = `${wallet} → ${toWallet}`;
-        catOrSrc = 'Transfer Saldo';
+        catOrSrc = t.adminFee ? `Transfer Saldo (Admin: ${formatIDR(t.adminFee)})` : 'Transfer Saldo';
         badgeClass = 'badge-transfer';
         badgeText = 'TRANSFER';
         amountColor = '#2563eb';
@@ -1867,6 +1872,7 @@ export default function App() {
             totalWalletBalance={totalWalletBalance}
             totalIncome={totalIncome}
             totalExpense={totalExpense}
+            totalTransferAdminFees={totalTransferAdminFees}
             getCardClasses={getCardClasses}
             getAccentBg={getAccentBg}
             isInstallable={isInstallable}

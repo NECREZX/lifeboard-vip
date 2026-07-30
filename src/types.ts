@@ -32,6 +32,7 @@ export interface Transaction {
   id: string;
   type: TransactionType;
   amount: number;
+  adminFee?: number; // Biaya admin transfer (opsional)
   description: string;
   date: string; // YYYY-MM-DD
   walletId: string;

@@ -57,10 +57,10 @@ interface TrendChartProps {
 }
 
 export function TrendChart({ transactions, themeColor }: TrendChartProps) {
-  const [hoveredBar, setHoveredBar] = useState<{ label: string; type: 'income' | 'expense' | 'transfer'; value: number; x: number; y: number } | null>(null);
+  const [hoveredBar, setHoveredBar] = useState<{ label: string; type: 'income' | 'expense' | 'transfer' | 'adminFee'; value: number; x: number; y: number } | null>(null);
 
   // Group transactions by date
-  const groupedData: { [date: string]: { income: number; expense: number; transfer: number } } = {};
+  const groupedData: { [date: string]: { income: number; expense: number; transfer: number; adminFee: number } } = {};
   
   // Sort transactions chronologically
   const sortedTrans = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
@@ -68,7 +68,7 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
   // Get last 7 unique dates or past few days
   sortedTrans.forEach((t) => {
     if (!groupedData[t.date]) {
-      groupedData[t.date] = { income: 0, expense: 0, transfer: 0 };
+      groupedData[t.date] = { income: 0, expense: 0, transfer: 0, adminFee: 0 };
     }
     if (t.type === 'pemasukan') {
       groupedData[t.date].income += t.amount;
@@ -76,6 +76,9 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
       groupedData[t.date].expense += t.amount;
     } else if (t.type === 'transfer') {
       groupedData[t.date].transfer += t.amount;
+    }
+    if (t.adminFee && t.adminFee > 0) {
+      groupedData[t.date].adminFee += t.adminFee;
     }
   });
 
@@ -89,11 +92,12 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
       income: groupedData[date].income,
       expense: groupedData[date].expense,
       transfer: groupedData[date].transfer,
+      adminFee: groupedData[date].adminFee,
     };
   });
 
   // Calculate scales
-  const maxVal = Math.max(...chartData.map(d => Math.max(d.income, d.expense, d.transfer, 500000)));
+  const maxVal = Math.max(...chartData.map(d => Math.max(d.income, d.expense, d.transfer, d.adminFee, 500000)));
   const padMax = maxVal * 1.15; // padding top
 
   // Chart dimensions
@@ -125,18 +129,22 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
     <div className="relative w-full h-full flex flex-col justify-between" id="trend-chart-container">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
         <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Trend Keuangan</h4>
-        <div className="flex flex-wrap items-center gap-3 text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+        <div className="flex items-center flex-nowrap gap-2 sm:gap-2.5 text-[11px] sm:text-xs whitespace-nowrap overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 inline-block"></span>
             <span className="text-slate-500 dark:text-slate-400">Pemasukan</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-500 inline-block"></span>
             <span className="text-slate-500 dark:text-slate-400">Pengeluaran</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-blue-500 inline-block"></span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-blue-500 inline-block"></span>
             <span className="text-slate-500 dark:text-slate-400">Transfer</span>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-500 inline-block"></span>
+            <span className="text-slate-500 dark:text-slate-400">Biaya Admin</span>
           </div>
         </div>
       </div>
@@ -177,23 +185,28 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
           {/* Render Bars */}
           {chartData.map((d, i) => {
             const sectionWidth = chartWidth / chartData.length;
-            const barWidth = sectionWidth * 0.23;
+            const barWidth = sectionWidth * 0.17;
             const xCenter = paddingLeft + i * sectionWidth + sectionWidth / 2;
 
             // Coordinates for Income Bar
             const incomeHeight = (d.income / padMax) * chartHeight;
-            const incomeX = xCenter - barWidth * 1.5 - 2;
+            const incomeX = xCenter - 2 * barWidth - 3;
             const incomeY = paddingTop + chartHeight - incomeHeight;
 
             // Coordinates for Expense Bar
             const expenseHeight = (d.expense / padMax) * chartHeight;
-            const expenseX = xCenter - barWidth / 2;
+            const expenseX = xCenter - barWidth - 1;
             const expenseY = paddingTop + chartHeight - expenseHeight;
 
             // Coordinates for Transfer Bar
             const transferHeight = (d.transfer / padMax) * chartHeight;
-            const transferX = xCenter + barWidth / 2 + 2;
+            const transferX = xCenter + 1;
             const transferY = paddingTop + chartHeight - transferHeight;
+
+            // Coordinates for Admin Fee Bar
+            const adminHeight = (d.adminFee / padMax) * chartHeight;
+            const adminX = xCenter + barWidth + 3;
+            const adminY = paddingTop + chartHeight - adminHeight;
 
             return (
               <g key={i}>
@@ -260,6 +273,27 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
                   onMouseLeave={() => setHoveredBar(null)}
                 />
 
+                {/* Admin Fee Bar (Amber) */}
+                <rect
+                  x={adminX}
+                  y={adminY}
+                  width={barWidth}
+                  height={Math.max(adminHeight, 2)}
+                  rx="2.5"
+                  fill="#f59e0b"
+                  className="transition-all duration-300 hover:fill-amber-400 cursor-pointer"
+                  onMouseEnter={(e) => {
+                    setHoveredBar({
+                      label: d.dateLabel,
+                      type: 'adminFee',
+                      value: d.adminFee,
+                      x: adminX + barWidth / 2,
+                      y: adminY
+                    });
+                  }}
+                  onMouseLeave={() => setHoveredBar(null)}
+                />
+
                 {/* Date Label */}
                 <text
                   x={xCenter}
@@ -298,8 +332,22 @@ export function TrendChart({ transactions, themeColor }: TrendChartProps) {
             }}
           >
             <span className="font-semibold text-[10px] text-slate-400 uppercase tracking-wider">{hoveredBar.label}</span>
-            <span className={`font-bold flex items-center gap-1 ${hoveredBar.type === 'income' ? 'text-emerald-400' : hoveredBar.type === 'transfer' ? 'text-blue-400' : 'text-rose-400'}`}>
-              {hoveredBar.type === 'income' ? '▲ Pemasukan:' : hoveredBar.type === 'transfer' ? '⇄ Transfer:' : '▼ Pengeluaran:'}
+            <span className={`font-bold flex items-center gap-1 ${
+              hoveredBar.type === 'income'
+                ? 'text-emerald-400'
+                : hoveredBar.type === 'transfer'
+                ? 'text-blue-400'
+                : hoveredBar.type === 'adminFee'
+                ? 'text-amber-400'
+                : 'text-rose-400'
+            }`}>
+              {hoveredBar.type === 'income'
+                ? '▲ Pemasukan:'
+                : hoveredBar.type === 'transfer'
+                ? '⇄ Transfer:'
+                : hoveredBar.type === 'adminFee'
+                ? '🧾 Biaya Admin:'
+                : '▼ Pengeluaran:'}
               <span className="font-mono">{formatIDR(hoveredBar.value)}</span>
             </span>
           </div>

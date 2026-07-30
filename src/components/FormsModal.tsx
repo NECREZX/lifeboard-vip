@@ -20,6 +20,7 @@ interface FormsModalProps {
   onAddTransaction: (data: {
     type: 'pemasukan' | 'pengeluaran' | 'transfer';
     amount: number;
+    adminFee?: number;
     description: string;
     date: string;
     walletId: string;
@@ -30,6 +31,7 @@ interface FormsModalProps {
   onUpdateTransaction?: (id: string, data: {
     type: 'pemasukan' | 'pengeluaran' | 'transfer';
     amount: number;
+    adminFee?: number;
     description: string;
     date: string;
     walletId: string;
@@ -92,7 +94,8 @@ export default function FormsModal({
     }
   }, [selectedWalletId, wallets]);
 
-  // Budget states
+  // Transfer extra state
+  const [adminFee, setAdminFee] = useState('');
   const [budgetLimit, setBudgetLimit] = useState('');
   const [budgetCategoryId, setBudgetCategoryId] = useState(categories[0]?.id || '');
   const [budgetMonth, setBudgetMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
@@ -127,6 +130,7 @@ export default function FormsModal({
       if (editData) {
         if (targetForm === 'pengeluaran' || targetForm === 'pemasukan' || targetForm === 'transfer') {
           setAmount(editData.amount.toString());
+          setAdminFee(editData.adminFee ? editData.adminFee.toString() : '');
           setDescription(editData.description || '');
           setDate(editData.date);
           setSelectedWalletId(editData.walletId);
@@ -201,6 +205,7 @@ export default function FormsModal({
 
   const resetForms = () => {
     setAmount('');
+    setAdminFee('');
     setDescription('');
     if (wallets.length > 0) {
       const remaining = wallets.filter(w => w.id !== wallets[0].id);
@@ -277,7 +282,9 @@ export default function FormsModal({
       }
     } else if (activeForm === 'transfer') {
       const parsedAmount = parseFloat(amount);
+      const parsedAdminFee = adminFee ? parseFloat(adminFee) : 0;
       if (isNaN(parsedAmount) || parsedAmount <= 0) return showError('Jumlah transfer harus valid!');
+      if (isNaN(parsedAdminFee) || parsedAdminFee < 0) return showError('Biaya admin harus angka valid!');
       if (!selectedWalletId) return showError('Silakan pilih dompet asal!');
       if (!selectedToWalletId) return showError('Silakan pilih dompet tujuan!');
       if (selectedWalletId === selectedToWalletId) return showError('Dompet asal dan tujuan tidak boleh sama!');
@@ -285,6 +292,7 @@ export default function FormsModal({
       const data = {
         type: 'transfer' as const,
         amount: parsedAmount,
+        adminFee: parsedAdminFee,
         description: description.trim() || 'Transfer Saldo',
         date,
         walletId: selectedWalletId,
@@ -563,29 +571,49 @@ export default function FormsModal({
                 </div>
               </div>
 
-              {/* Amount */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Jumlah Transfer</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0"
-                    min="1"
-                    className="w-full pl-9 pr-16 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setAmount(prev => prev ? prev + '000' : '1000')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
-                  >
-                    +000
-                  </button>
+              {/* Amount & Admin Fee */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Jumlah Transfer</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0"
+                      min="1"
+                      className="w-full pl-9 pr-16 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setAmount(prev => prev ? prev + '000' : '1000')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                    >
+                      +000
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Biaya Admin (Opsional)</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
+                    <input
+                      type="number"
+                      value={adminFee}
+                      onChange={(e) => setAdminFee(e.target.value)}
+                      placeholder="0 (misal: 1200)"
+                      min="0"
+                      className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                    />
+                  </div>
                 </div>
               </div>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 -mt-2">
+                * Biaya admin hanya dipotong dari Dompet Asal dan tidak menambah saldo Dompet Tujuan.
+              </p>
 
               {/* Tanggal & Deskripsi */}
               <div className="grid grid-cols-2 gap-4">
