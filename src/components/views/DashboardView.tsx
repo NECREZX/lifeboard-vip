@@ -320,7 +320,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Row 2: Individual Wallets (Dompet Saya) */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">Dompet Saya</h3>
+          <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">Saldo Dompet</h3>
           <button onClick={() => setActiveTab('kelola')} className="text-[10px] font-bold text-indigo-500 hover:underline">Kelola Dompet</button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
