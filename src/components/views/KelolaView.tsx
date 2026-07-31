@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Check } from 'lucide-react';
 import { Wallet, Category, IncomeSource } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
@@ -41,6 +41,8 @@ interface KelolaViewProps {
   setWalletFormBalance: (val: string) => void;
   walletFormIcon: string;
   setWalletFormIcon: (val: string) => void;
+  walletFormColor: string;
+  setWalletFormColor: (val: string) => void;
   handleSaveWallet: (e: React.FormEvent) => void;
   resetWalletForm: () => void;
   categoryEditId: string | null;
@@ -83,6 +85,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   setWalletFormBalance,
   walletFormIcon,
   setWalletFormIcon,
+  walletFormColor,
+  setWalletFormColor,
   handleSaveWallet,
   resetWalletForm,
   categoryEditId,
@@ -141,6 +145,27 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   ))}
                 </div>
               </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Warna Dompet (Identitas Card)</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  {PRESET_COLORS.map(color => (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => setWalletFormColor(color)}
+                      className="w-7 h-7 rounded-full border-2 transition transform hover:scale-110 flex items-center justify-center relative shadow-sm"
+                      style={{ 
+                        backgroundColor: color,
+                        borderColor: walletFormColor === color ? (settings?.isDarkMode ? '#ffffff' : '#0f172a') : 'transparent' 
+                      }}
+                    >
+                      {walletFormColor === color && (
+                        <Check className="w-3.5 h-3.5 text-white drop-shadow-md" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="flex gap-2 pt-2">
                 <button type="submit" className={`flex-1 py-2.5 rounded-xl text-xs font-bold text-white shadow-sm transition ${getAccentBg()}`}>{walletEditId ? 'Simpan Perubahan' : 'Tambahkan Dompet'}</button>
                 {walletEditId && <button type="button" onClick={resetWalletForm} className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 hover:bg-slate-200 transition">Batal</button>}
@@ -149,9 +174,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           </div>
           <div className="flex flex-col gap-3">
             {walletsWithCurrentBalance.map(w => (
-              <div key={w.id} className={getCardClasses() + " p-4 flex items-center justify-between group"}>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+              <div key={w.id} className={getCardClasses() + " p-4 flex items-center justify-between group relative overflow-hidden"}>
+                <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: w.color || '#10b981' }} />
+                <div className="flex items-center gap-3 pl-2">
+                  <div 
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xs shadow-xs"
+                    style={{ backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
+                  >
                     {w.icon && <IconRenderer name={w.icon} className="w-5 h-5" />}
                   </div>
                   <div>

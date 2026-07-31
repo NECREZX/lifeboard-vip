@@ -249,50 +249,68 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Secondary Metrics: 3 Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[130px]"}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pendapatan</span>
-              <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 flex items-center justify-center text-emerald-500"><TrendingUp className="w-4 h-4" /></div>
-            </div>
-            <div>
-              <h3 className="text-xl font-extrabold text-emerald-500 tracking-tight font-mono">
+          {/* Card 1: Total Pendapatan */}
+          <div className={getCardClasses() + " p-5 sm:p-6 min-h-[110px] relative overflow-hidden flex items-center justify-center group"}>
+            {/* Bottom-left circle bubble */}
+            <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-emerald-100/60 dark:bg-emerald-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
+            
+            <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-6">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
                 {showHideBalance ? '••••••••' : formatIDR(totalIncome)}
               </h3>
-              <div className="flex items-center gap-1.5 mt-2">
-                <span className="text-[9px] font-bold text-slate-400 uppercase">Pemasukan</span>
-                <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
+                Total Pendapatan
+              </p>
+            </div>
+
+            {/* Top-right circle bubble with icon */}
+            <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-emerald-100/80 dark:bg-emerald-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
+              <div className="-translate-x-2 translate-y-2 text-emerald-600 dark:text-emerald-400">
+                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
             </div>
           </div>
 
-          <div className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[130px]"}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Pengeluaran</span>
-              <div className="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-950/20 flex items-center justify-center text-rose-500"><TrendingDown className="w-4 h-4" /></div>
-            </div>
-            <div>
-              <h3 className="text-xl font-extrabold text-rose-500 tracking-tight font-mono">
+          {/* Card 2: Total Pengeluaran */}
+          <div className={getCardClasses() + " p-5 sm:p-6 min-h-[110px] relative overflow-hidden flex items-center justify-center group"}>
+            {/* Bottom-left circle bubble */}
+            <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-rose-100/60 dark:bg-rose-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
+
+            <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-6">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
                 {showHideBalance ? '••••••••' : formatIDR(totalExpense)}
               </h3>
-              <div className="flex items-center gap-1.5 mt-2">
-                <span className="text-[9px] font-bold text-slate-400 uppercase">Pengeluaran</span>
-                <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
+                Total Pengeluaran
+              </p>
+            </div>
+
+            {/* Top-right circle bubble with icon */}
+            <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-rose-100/80 dark:bg-rose-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
+              <div className="-translate-x-2 translate-y-2 text-rose-600 dark:text-rose-400">
+                <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
             </div>
           </div>
 
-          <div className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[130px]"}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Biaya Admin Transfer</span>
-              <div className="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-950/20 flex items-center justify-center text-amber-500"><Receipt className="w-4 h-4" /></div>
-            </div>
-            <div>
-              <h3 className="text-xl font-extrabold text-amber-500 tracking-tight font-mono">
+          {/* Card 3: Biaya Admin Transfer */}
+          <div className={getCardClasses() + " p-5 sm:p-6 min-h-[110px] relative overflow-hidden flex items-center justify-center group"}>
+            {/* Bottom-left circle bubble */}
+            <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-amber-100/60 dark:bg-amber-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
+
+            <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-6">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
                 {showHideBalance ? '••••••••' : formatIDR(totalTransferAdminFees)}
               </h3>
-              <div className="flex items-center gap-1.5 mt-2">
-                <span className="text-[9px] font-bold text-slate-400 uppercase">Potongan Admin</span>
-                <div className="flex-1 h-px bg-slate-100 dark:bg-slate-800"></div>
+              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
+                Biaya Admin Transfer
+              </p>
+            </div>
+
+            {/* Top-right circle bubble with icon */}
+            <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-amber-100/80 dark:bg-amber-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
+              <div className="-translate-x-2 translate-y-2 text-amber-600 dark:text-amber-400">
+                <Receipt className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
             </div>
           </div>
@@ -307,15 +325,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {wallets.map((w: any) => (
-            <div key={w.id} className={getCardClasses() + " p-4 flex flex-col gap-2 group relative overflow-hidden"}>
-              <div className="flex items-center justify-between">
-                <div className={`w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs shadow-sm`}>
-                  <IconRenderer name={w.icon} className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+            <div key={w.id} className={getCardClasses() + " p-4 min-h-[90px] relative overflow-hidden flex items-center justify-between group"}>
+              {/* Left-side vertical color indicator line */}
+              <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: w.color || '#10b981' }} />
+              
+              <div className="z-10 pl-2.5 w-full flex flex-col justify-center">
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-5 h-5 rounded-md flex items-center justify-center text-xs shrink-0"
+                    style={{ backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
+                  >
+                    <IconRenderer name={w.icon} className="w-3.5 h-3.5" />
+                  </div>
+                  <h4 className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">{w.name}</h4>
                 </div>
-              </div>
-              <div>
-                <h4 className="text-[11px] font-bold text-slate-800 dark:text-slate-100 truncate">{w.name}</h4>
-                <p className="text-sm font-black font-mono text-slate-900 dark:text-slate-100 mt-0.5">
+                <p className="text-xs sm:text-sm font-black font-mono text-slate-900 dark:text-slate-100 mt-1.5">
                   {showHideBalance ? '••••••••' : formatIDR(w.currentBalance)}
                 </p>
               </div>

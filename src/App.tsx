@@ -374,20 +374,23 @@ export default function App() {
   const [walletEditId, setWalletEditId] = useState<string | null>(null);
   const [walletFormName, setWalletFormName] = useState<string>('');
   const [walletFormBalance, setWalletFormBalance] = useState<string>('');
-  const [walletFormIcon, setWalletFormIcon] = useState<string>('💵');
+  const [walletFormIcon, setWalletFormIcon] = useState<string>('Wallet');
+  const [walletFormColor, setWalletFormColor] = useState<string>('#10b981');
 
   const startEditWallet = (w: Wallet) => {
     setWalletEditId(w.id);
     setWalletFormName(w.name);
     setWalletFormBalance(w.initialBalance.toString());
     setWalletFormIcon(w.icon || 'Wallet');
+    setWalletFormColor(w.color || '#10b981');
   };
 
   const resetWalletForm = () => {
     setWalletEditId(null);
     setWalletFormName('');
     setWalletFormBalance('');
-    setWalletFormIcon('💵');
+    setWalletFormIcon('Wallet');
+    setWalletFormColor('#10b981');
   };
 
   const handleSaveWallet = (e: React.FormEvent) => {
@@ -395,7 +398,7 @@ export default function App() {
     const balance = parseFloat(walletFormBalance) || 0;
     if (walletEditId) {
       // Editing
-      setWallets(prev => prev.map(w => w.id === walletEditId ? { ...w, name: walletFormName, initialBalance: balance, icon: walletFormIcon } : w));
+      setWallets(prev => prev.map(w => w.id === walletEditId ? { ...w, name: walletFormName, initialBalance: balance, icon: walletFormIcon, color: walletFormColor } : w));
       triggerNotification('✏️ Dompet Diperbarui', `Dompet "${walletFormName}" berhasil disimpan.`, 'info');
     } else {
       // Adding
@@ -404,7 +407,7 @@ export default function App() {
         name: walletFormName,
         initialBalance: balance,
         icon: walletFormIcon,
-        color: '#4f46e5'
+        color: walletFormColor || '#10b981'
       };
       setWallets(prev => [...prev, newWallet]);
       triggerNotification('Dompet Ditambahkan', `Dompet baru "${walletFormName}" telah aktif.`, 'success');
@@ -1989,6 +1992,8 @@ export default function App() {
             setWalletFormBalance={setWalletFormBalance}
             walletFormIcon={walletFormIcon}
             setWalletFormIcon={setWalletFormIcon}
+            walletFormColor={walletFormColor}
+            setWalletFormColor={setWalletFormColor}
             handleSaveWallet={handleSaveWallet}
             resetWalletForm={resetWalletForm}
             categoryEditId={categoryEditId}
