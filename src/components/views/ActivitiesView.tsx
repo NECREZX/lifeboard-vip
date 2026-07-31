@@ -36,8 +36,8 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
   onEditWishlist
 }) => {
   return (
-    <div className="flex flex-col gap-5" id="view-activities">
-      <div className="flex flex-col gap-4 mb-6">
+    <div className="flex flex-col gap-6" id="view-activities">
+      <div className="flex flex-col gap-4 mb-2">
         <div>
           <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Aktivitas dan Wishlist</h1>
         </div>
@@ -59,7 +59,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
       </div>
 
       {activeSubTab === 'agenda' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {activities.length === 0 ? (
             <div className="col-span-full py-12 text-center text-slate-400">
               Belum ada agenda aktivitas terjadwal.
@@ -104,7 +104,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {wishlists.length === 0 ? (
             <div className="col-span-full py-12 text-center text-slate-400">
               Daftar keinginan masih kosong.

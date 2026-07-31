@@ -81,7 +81,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
   }).length;
 
   return (
-    <div className="flex flex-col gap-5" id="view-budgeting">
+    <div className="flex flex-col gap-6" id="view-budgeting">
       {/* Header & Month Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div>

@@ -1818,7 +1818,7 @@ export default function App() {
         className="sticky top-0 z-40 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 no-print"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 12px)' }}
       >
-        <div className="max-w-xl mx-auto pb-3 px-4 flex items-center justify-between">
+        <div className="max-w-2xl mx-auto pb-3 px-4 sm:px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Elegant Geometric Fintech Logomark */}
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-[1.2rem] overflow-hidden shadow-sm flex items-center justify-center shrink-0 border border-slate-200/50 dark:border-slate-700/50 bg-transparent">
@@ -1855,7 +1855,7 @@ export default function App() {
       </header>
 
       {/* 2. MAIN CONTAINER CONTENT */}
-      <main className="max-w-xl mx-auto px-4 pt-6 pb-12 no-print relative z-10">
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-6 pb-28 no-print relative z-10">
         
         {activeTab === 'dashboard' && (
           <DashboardView 

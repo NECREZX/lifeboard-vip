@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Wallet, Target, PieChart, CheckSquare, Database } from 'lucide-react';
+import { LayoutGrid, WalletCards, PiggyBank, PieChart, Activity, SlidersHorizontal } from 'lucide-react';
 
 interface BottomNavProps {
   activeTab: string;
@@ -10,17 +10,17 @@ interface BottomNavProps {
 
 export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddClick }: BottomNavProps) {
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'transaksi', label: 'Transaksi', icon: Wallet },
-    { id: 'tabungan', label: 'Tabungan', icon: Target },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
+    { id: 'transaksi', label: 'Transaksi', icon: WalletCards },
+    { id: 'tabungan', label: 'Tabungan', icon: PiggyBank },
     { id: 'anggaran', label: 'Anggaran', icon: PieChart },
-    { id: 'aktivitas', label: 'Aktivitas', icon: CheckSquare },
-    { id: 'kelola', label: 'Kelola', icon: Database },
+    { id: 'aktivitas', label: 'Aktivitas', icon: Activity },
+    { id: 'kelola', label: 'Kelola', icon: SlidersHorizontal },
   ];
 
   // Map theme colors to CSS active highlight colors
   const getActiveStyles = (isActive: boolean) => {
-    if (!isActive) return 'text-slate-400 dark:text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-200';
+    if (!isActive) return 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
     
     switch (accentColor) {
       case 'emerald': return 'text-emerald-500 dark:text-emerald-400';
@@ -55,9 +55,9 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
   };
 
   return (
-    <div className="fixed bottom-6 left-4 right-4 z-40 max-w-xl mx-auto no-print">
+    <div className="fixed bottom-4 left-0 right-0 z-40 px-3 sm:px-4 max-w-2xl mx-auto pointer-events-none no-print">
       <div 
-        className="bg-white/90 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/60 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.06)] px-2 py-2 flex items-center justify-between relative"
+        className="pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full"
         id="bottom-dock-container"
       >
         {tabs.slice(0, 3).map((tab) => {
@@ -68,14 +68,24 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
+              className={`group w-full flex flex-col items-center justify-center py-1 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
               id={`nav-tab-${tab.id}`}
             >
-              <Icon className="w-5 h-5 stroke-[2.5]" />
+              <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-105' : 'w-5 h-5 stroke-[2] group-hover:scale-110'}`} />
               
+              <span 
+                className={`text-[9px] sm:text-[10px] font-bold tracking-tight transition-all duration-200 text-center leading-tight truncate max-w-full ${
+                  isActive 
+                    ? 'opacity-100 max-h-4 mt-0.5 block' 
+                    : 'opacity-0 group-hover:opacity-100 max-h-0 group-hover:max-h-4 group-hover:mt-0.5 overflow-hidden'
+                }`}
+              >
+                {tab.label}
+              </span>
+
               {isActive && (
                 <span 
-                  className={`absolute -bottom-1 w-5 h-1 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
+                  className={`absolute -bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
                 />
               )}
             </button>
@@ -83,13 +93,13 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
         })}
 
         {/* Center Add Button */}
-        <div className="flex-1 flex justify-center -mt-6">
+        <div className="w-full flex justify-center items-center -mt-6 sm:-mt-7 z-10">
           <button
             onClick={onAddClick}
-            className={`w-12 h-12 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-4 border-slate-50 dark:border-slate-950`}
+            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-4 border-slate-50 dark:border-slate-950 shrink-0`}
             title="Catat Baru (Pemasukan, Pengeluaran, Anggaran, Tabungan, dll)"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           </button>
         </div>
 
@@ -101,14 +111,24 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
+              className={`group w-full flex flex-col items-center justify-center py-1 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
               id={`nav-tab-${tab.id}`}
             >
-              <Icon className="w-5 h-5 stroke-[2.5]" />
+              <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-105' : 'w-5 h-5 stroke-[2] group-hover:scale-110'}`} />
               
+              <span 
+                className={`text-[9px] sm:text-[10px] font-bold tracking-tight transition-all duration-200 text-center leading-tight truncate max-w-full ${
+                  isActive 
+                    ? 'opacity-100 max-h-4 mt-0.5 block' 
+                    : 'opacity-0 group-hover:opacity-100 max-h-0 group-hover:max-h-4 group-hover:mt-0.5 overflow-hidden'
+                }`}
+              >
+                {tab.label}
+              </span>
+
               {isActive && (
                 <span 
-                  className={`absolute -bottom-1 w-5 h-1 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
+                  className={`absolute -bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
                 />
               )}
             </button>
@@ -118,3 +138,4 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
     </div>
   );
 }
+

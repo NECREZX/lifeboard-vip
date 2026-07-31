@@ -87,7 +87,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
 
   return (
     <div className="flex flex-col gap-5" id="view-transactions">
-      <div className="mb-6">
+      <div className="mb-2">
         <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Transaksi Keuangan</h1>
       </div>
 

@@ -29,8 +29,8 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
   onEdit
 }) => {
   return (
-    <div className="flex flex-col gap-5" id="view-savings">
-      <div className="mb-6">
+    <div className="flex flex-col gap-6" id="view-savings">
+      <div className="mb-2">
         <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Tabungan</h1>
       </div>
 
@@ -55,7 +55,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {savings
           .filter((s) => {
             if (savingFilter === 'berjalan') return s.currentAmount < s.targetAmount;
@@ -67,15 +67,15 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
             const isDone = s.currentAmount >= s.targetAmount;
             
             return (
-              <div key={s.id} className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[220px] h-auto relative"}>
-                <div className="flex items-start justify-between">
+              <div key={s.id} className={getCardClasses() + " p-4 flex flex-col justify-between gap-3 min-h-[160px] relative"}>
+                <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{s.name}</h4>
+                    <h4 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200">{s.name}</h4>
                     <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mt-0.5">
                       Tenggat: {new Date(s.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </span>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 shrink-0">
                     <button onClick={() => onEdit(s)} className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition">
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
@@ -85,21 +85,21 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                   </div>
                 </div>
 
-                <div className="my-2.5">
+                <div className="my-1">
                   <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="font-semibold text-slate-500">Progres Pengumpulan</span>
-                    <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                    <span className="font-semibold text-slate-500 text-[11px]">Progres</span>
+                    <span className="font-mono font-bold text-slate-800 dark:text-slate-200 text-[11px]">
                       {formatIDR(s.currentAmount)} / {formatIDR(s.targetAmount)}
                     </span>
                   </div>
-                  <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div className={`h-full rounded-full transition-all duration-500 ${isDone ? 'bg-gradient-to-r from-emerald-500 to-teal-500 animate-pulse' : 'bg-indigo-500'}`} style={{ width: `${pct}%` }} />
                   </div>
                   <span className="text-[10px] text-slate-400 font-bold block mt-1 text-right">{pct.toFixed(0)}% Terkumpul</span>
                 </div>
 
                 {!isDone && (
-                  <div className="flex items-center gap-2 border-t border-slate-100 dark:border-slate-800/80 pt-3">
+                  <div className="flex items-center gap-2 border-t border-slate-100 dark:border-slate-800/80 pt-2.5">
                     <input
                       type="number"
                       placeholder="Tambah tabungan (Rp)"
@@ -128,8 +128,10 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                 )}
 
                 {isDone && (
-                  <div className="absolute right-4 bottom-4 px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 font-bold text-[10px] uppercase flex items-center gap-1 tracking-wider shadow-sm">
-                    <Check className="w-3 h-3 stroke-[3]" /> Target Tercapai
+                  <div className="flex items-center justify-end border-t border-slate-100 dark:border-slate-800/80 pt-2">
+                    <span className="px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400 font-bold text-[10px] uppercase flex items-center gap-1 tracking-wider shadow-sm">
+                      <Check className="w-3 h-3 stroke-[3]" /> Target Tercapai
+                    </span>
                   </div>
                 )}
               </div>

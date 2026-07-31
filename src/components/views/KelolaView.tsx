@@ -106,8 +106,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   settings
 }) => {
   return (
-    <div className="flex flex-col gap-8" id="view-manage">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex flex-col gap-6" id="view-manage">
+      <div className="flex items-center justify-between mb-2">
         <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Kelola Dompet</h1>
         <div className="flex flex-col items-end">
           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total Saldo Awal</span>

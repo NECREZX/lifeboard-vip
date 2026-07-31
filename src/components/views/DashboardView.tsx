@@ -217,32 +217,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </h2>
           </div>
 
-          {/* Bottom Row: Option Switcher Buttons */}
-          <div className="pt-2.5 border-t border-white/20 relative z-10 flex items-center justify-between gap-2">
-            <div className="inline-flex items-center bg-black/25 backdrop-blur-md p-0.5 rounded-lg border border-white/25 shadow-inner">
-              <button
-                type="button"
-                onClick={() => setIncludeAdminFee(true)}
-                className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all duration-200 cursor-pointer select-none ${
+          {/* Bottom Row: Option Toggle Switch */}
+          <div className="pt-2 border-t border-white/20 relative z-10 flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setIncludeAdminFee(prev => !prev)}
+              className="group flex items-center justify-between gap-3 px-3.5 py-1.5 rounded-full bg-black/25 hover:bg-black/35 backdrop-blur-md border border-white/30 transition-all cursor-pointer select-none"
+              title={includeAdminFee ? "Termasuk Biaya Admin (Klik untuk ubah)" : "Tanpa Biaya Admin (Klik untuk ubah)"}
+            >
+              <span className="text-[10.5px] font-bold text-white transition-colors text-left min-w-[125px] sm:min-w-[130px]">
+                {includeAdminFee ? 'Termasuk Biaya Admin' : 'Tanpa Biaya Admin'}
+              </span>
+              
+              {/* Glossy 3D Toggle Switch with consistent track styling */}
+              <div
+                className={`relative w-9 h-5 rounded-full p-0.5 transition-all duration-300 ease-in-out shadow-inner border border-white/30 ${
                   includeAdminFee
-                    ? 'bg-white text-slate-900 shadow-sm font-extrabold'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                    ? 'bg-white/30'
+                    : 'bg-white/15'
                 }`}
               >
-                Termasuk Biaya Admin
-              </button>
-              <button
-                type="button"
-                onClick={() => setIncludeAdminFee(false)}
-                className={`px-2.5 py-1 text-[10px] font-bold rounded-md transition-all duration-200 cursor-pointer select-none ${
-                  !includeAdminFee
-                    ? 'bg-white text-slate-900 shadow-sm font-extrabold'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                Tanpa Biaya Admin
-              </button>
-            </div>
+                <div
+                  className={`w-4 h-4 rounded-full bg-gradient-to-b from-white via-slate-50 to-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.35)] transform transition-transform duration-300 ease-in-out ${
+                    includeAdminFee ? 'translate-x-4' : 'translate-x-0'
+                  }`}
+                />
+              </div>
+            </button>
           </div>
         </div>
 
