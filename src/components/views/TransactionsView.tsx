@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Search, Filter, Trash2, Edit2, PlusCircle, X, Calendar, Wallet as WalletIcon, Tag, RotateCcw, SlidersHorizontal } from 'lucide-react';
+import { Search, Filter, Trash2, Edit2, PlusCircle, X, Calendar, Wallet as WalletIcon, Tag, RotateCcw, SlidersHorizontal, ChevronUp, ChevronDown } from 'lucide-react';
 import { Transaction, Wallet, Category, IncomeSource } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
@@ -145,10 +145,10 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
           </div>
 
           {/* Type Filter Pills */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100/80 dark:bg-slate-900/80 rounded-xl border border-slate-200/60 dark:border-slate-800 overflow-x-auto scrollbar-none">
+          <div className="grid grid-cols-4 w-full gap-1 p-1 bg-slate-100/80 dark:bg-slate-900/80 rounded-xl border border-slate-200/60 dark:border-slate-800">
             <button
               onClick={() => setTxTypeFilter('semua')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 shrink-0 ${
+              className={`py-1.5 px-1 sm:px-3 rounded-lg text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
                 txTypeFilter === 'semua'
                   ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60'
@@ -158,7 +158,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             </button>
             <button
               onClick={() => setTxTypeFilter('pemasukan')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 shrink-0 ${
+              className={`py-1.5 px-1 sm:px-3 rounded-lg text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
                 txTypeFilter === 'pemasukan'
                   ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20'
                   : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
@@ -168,7 +168,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             </button>
             <button
               onClick={() => setTxTypeFilter('pengeluaran')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 shrink-0 ${
+              className={`py-1.5 px-1 sm:px-3 rounded-lg text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
                 txTypeFilter === 'pengeluaran'
                   ? 'bg-rose-500 text-white shadow-sm shadow-rose-500/20'
                   : 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40'
@@ -178,7 +178,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             </button>
             <button
               onClick={() => setTxTypeFilter('transfer')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 shrink-0 ${
+              className={`py-1.5 px-1 sm:px-3 rounded-lg text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
                 txTypeFilter === 'transfer'
                   ? 'bg-blue-500 text-white shadow-sm shadow-blue-500/20'
                   : 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40'
@@ -312,6 +312,35 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
           </div>
         ) : (
           <>
+            {/* Top Bar with Toggle */}
+            {filteredTransactions.length > 5 && (
+              <div className="px-4 pt-3 pb-3.5 bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800 flex justify-end">
+                <button
+                  onClick={() => {
+                    if (showAllTransactions) {
+                      setShowAllTransactions(false);
+                      document.getElementById('view-transactions')?.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                      setShowAllTransactions(true);
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 shrink-0"
+                >
+                  {showAllTransactions ? (
+                    <>
+                      <span>Ringkaskan</span>
+                      <ChevronUp className="w-3.5 h-3.5" />
+                    </>
+                  ) : (
+                    <>
+                      <span>Lihat Semua</span>
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
             <div className="overflow-x-auto">
               <table className={getTableClasses()}>
                 <thead className="bg-slate-50 dark:bg-slate-900/80 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -423,16 +452,6 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                 </tbody>
               </table>
             </div>
-            {filteredTransactions.length > 5 && (
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/20">
-                <button
-                  onClick={() => setShowAllTransactions(!showAllTransactions)}
-                  className="w-full py-2 text-xs font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition uppercase tracking-widest"
-                >
-                  {showAllTransactions ? 'Sembunyikan Sebagian' : `Lihat Semua (${filteredTransactions.length})`}
-                </button>
-              </div>
-            )}
           </>
         )}
       </div>
