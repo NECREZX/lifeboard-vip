@@ -310,7 +310,7 @@ export default function App() {
       case 'jakarta': fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
       case 'grotesk': fontFamilyStr = "'Space Grotesk', sans-serif"; break;
       case 'ios': fontFamilyStr = "-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Text', 'Segoe UI', Roboto, sans-serif"; break;
-      case 'neobrutalism': fontFamilyStr = "'Epilogue', sans-serif"; break;
+      case 'neobrutalism': fontFamilyStr = "'Playwrite AU NSW', cursive"; break;
       case 'pixel': fontFamilyStr = "'Chakra Petch', sans-serif"; break;
       case 'mono': fontFamilyStr = "'JetBrains Mono', monospace"; break;
       case 'serif': fontFamilyStr = "'Playfair Display', serif"; break;
@@ -2340,7 +2340,7 @@ export default function App() {
                     <option value="jakarta">Jakarta Sans (Modern & Clean)</option>
                     <option value="grotesk">Space Grotesk (Tech & Edgy)</option>
                     <option value="ios">SF Pro / iOS (Klasik Apple)</option>
-                    <option value="neobrutalism">Epilogue (Tegas & Berani)</option>
+                    <option value="neobrutalism">Playwrite AU NSW (Tulisan Tangan / Cursive)</option>
                     <option value="pixel">Chakra Petch (Cyberpunk & Tech)</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">

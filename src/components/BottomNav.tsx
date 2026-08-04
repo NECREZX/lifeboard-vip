@@ -1,5 +1,6 @@
 import React from 'react';
-import { LayoutGrid, WalletCards, PiggyBank, PieChart, Activity, SlidersHorizontal } from 'lucide-react';
+import { PieChart, SlidersHorizontal } from 'lucide-react';
+import { DashboardNavIcon, TransaksiIcon, TabunganIcon, AktivitasIcon } from './CustomIcons';
 
 interface BottomNavProps {
   activeTab: string;
@@ -10,11 +11,11 @@ interface BottomNavProps {
 
 export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddClick }: BottomNavProps) {
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutGrid },
-    { id: 'transaksi', label: 'Transaksi', icon: WalletCards },
-    { id: 'tabungan', label: 'Tabungan', icon: PiggyBank },
+    { id: 'dashboard', label: 'Beranda', icon: DashboardNavIcon },
+    { id: 'transaksi', label: 'Transaksi', icon: TransaksiIcon },
+    { id: 'tabungan', label: 'Tabungan', icon: TabunganIcon },
     { id: 'anggaran', label: 'Anggaran', icon: PieChart },
-    { id: 'aktivitas', label: 'Aktivitas', icon: Activity },
+    { id: 'aktivitas', label: 'Aktivitas', icon: AktivitasIcon },
     { id: 'kelola', label: 'Kelola', icon: SlidersHorizontal },
   ];
 

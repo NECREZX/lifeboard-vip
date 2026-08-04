@@ -4,7 +4,8 @@
  */
 
 import React, { useRef, useEffect } from 'react';
-import { Bell, Check, Trash2, X, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { Check, Trash2, X, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { NotificationIcon as CustomNotificationIcon } from './CustomIcons';
 import { NotificationItem } from '../types';
 
 interface NotificationPanelProps {
@@ -72,7 +73,7 @@ export default function NotificationPanel({
         className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition relative focus:outline-none"
         id="notification-toggle-btn"
       >
-        <Bell className="w-5.5 h-5.5" />
+        <CustomNotificationIcon className="w-5.5 h-5.5" />
         {unreadCount > 0 && (
           <span className={`absolute top-1.5 right-1.5 w-4 h-4 text-[9px] font-bold text-white rounded-full flex items-center justify-center animate-pulse ${getAccentBg()}`}>
             {unreadCount}
@@ -121,7 +122,7 @@ export default function NotificationPanel({
           <div className="max-h-[340px] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
             {notifications.length === 0 ? (
               <div className="p-8 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center justify-center gap-2">
-                <Bell className="w-10 h-10 stroke-[1.2] opacity-50" />
+                <CustomNotificationIcon className="w-10 h-10 opacity-50" />
                 <p className="text-xs font-medium">Tidak ada notifikasi baru</p>
               </div>
             ) : (
