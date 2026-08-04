@@ -19,9 +19,12 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
     { id: 'kelola', label: 'Kelola', icon: SlidersHorizontal },
   ];
 
+  const isHex = accentColor.startsWith('#');
+
   // Map theme colors to CSS active highlight colors
   const getActiveStyles = (isActive: boolean) => {
     if (!isActive) return 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
+    if (isHex) return '';
     
     switch (accentColor) {
       case 'emerald': return 'text-emerald-500 dark:text-emerald-400';
@@ -34,6 +37,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
   };
 
   const getAccentGradient = () => {
+    if (isHex) return '';
     switch (accentColor) {
       case 'emerald': return 'from-emerald-400 to-emerald-500';
       case 'amber': return 'from-amber-400 to-amber-500';
@@ -45,6 +49,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
   };
 
   const getAccentLine = () => {
+    if (isHex) return '';
     switch (accentColor) {
       case 'emerald': return 'bg-emerald-500';
       case 'amber': return 'bg-amber-500';
@@ -70,6 +75,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`group w-full flex flex-col items-center justify-center py-1 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
+              style={isActive && isHex ? { color: accentColor } : undefined}
               id={`nav-tab-${tab.id}`}
             >
               <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-105' : 'w-5 h-5 stroke-[2] group-hover:scale-110'}`} />
@@ -87,6 +93,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
               {isActive && (
                 <span 
                   className={`absolute -bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
+                  style={isHex ? { backgroundColor: accentColor } : undefined}
                 />
               )}
             </button>
@@ -98,6 +105,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
           <button
             onClick={onAddClick}
             className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-4 border-slate-50 dark:border-slate-950 shrink-0`}
+            style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none', boxShadow: `0 8px 25px ${accentColor}66` } : undefined}
             title="Catat Baru (Pemasukan, Pengeluaran, Anggaran, Tabungan, dll)"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
@@ -113,6 +121,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`group w-full flex flex-col items-center justify-center py-1 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
+              style={isActive && isHex ? { color: accentColor } : undefined}
               id={`nav-tab-${tab.id}`}
             >
               <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-105' : 'w-5 h-5 stroke-[2] group-hover:scale-110'}`} />
@@ -130,6 +139,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
               {isActive && (
                 <span 
                   className={`absolute -bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
+                  style={isHex ? { backgroundColor: accentColor } : undefined}
                 />
               )}
             </button>

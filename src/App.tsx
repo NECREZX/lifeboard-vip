@@ -309,9 +309,9 @@ export default function App() {
     switch (settings.fontStyle) {
       case 'jakarta': fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
       case 'grotesk': fontFamilyStr = "'Space Grotesk', sans-serif"; break;
-      case 'ios': fontFamilyStr = "-apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Text', 'Segoe UI', Roboto, sans-serif"; break;
-      case 'neobrutalism': fontFamilyStr = "'Playwrite AU NSW', cursive"; break;
-      case 'pixel': fontFamilyStr = "'Chakra Petch', sans-serif"; break;
+      case 'ios': fontFamilyStr = "'Playfair Display', serif"; break;
+      case 'neobrutalism': fontFamilyStr = "'Edu VIC WA NT Hand', cursive"; break;
+      case 'pixel': fontFamilyStr = "'Fragment Mono', monospace"; break;
       case 'mono': fontFamilyStr = "'JetBrains Mono', monospace"; break;
       case 'serif': fontFamilyStr = "'Playfair Display', serif"; break;
       case 'sans': default: fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
@@ -319,6 +319,21 @@ export default function App() {
     document.body.style.fontFamily = fontFamilyStr;
     document.documentElement.style.setProperty('--font-sans', fontFamilyStr);
     document.documentElement.style.setProperty('--font-display', fontFamilyStr);
+
+    // Apply accent color CSS variable
+    let accentHex = '#6366f1';
+    if (settings.themeColor === 'custom') {
+      accentHex = settings.customAccentColor || '#8b5cf6';
+    } else {
+      switch (settings.themeColor) {
+        case 'emerald': accentHex = '#10b981'; break;
+        case 'amber': accentHex = '#f59e0b'; break;
+        case 'rose': accentHex = '#f43f5e'; break;
+        case 'classic': accentHex = '#0f172a'; break;
+        case 'indigo': default: accentHex = '#6366f1'; break;
+      }
+    }
+    document.documentElement.style.setProperty('--accent-color', accentHex);
   }, [settings]);
 
   // Scroll to top effect and scroll handler
@@ -1687,11 +1702,23 @@ export default function App() {
     return 'py-3.5 px-4 ';
   };
 
+  const getAccentColorHex = () => {
+    if (settings.themeColor === 'custom') return settings.customAccentColor || '#8b5cf6';
+    switch (settings.themeColor) {
+      case 'emerald': return '#10b981';
+      case 'amber': return '#f59e0b';
+      case 'rose': return '#f43f5e';
+      case 'classic': return '#0f172a';
+      case 'indigo': default: return '#6366f1';
+    }
+  };
+
   const getAccentGradient = () => {
     switch (settings.themeColor) {
       case 'emerald': return 'from-emerald-500 to-teal-500 shadow-emerald-500/20';
       case 'amber': return 'from-amber-500 to-orange-500 shadow-amber-500/20';
       case 'rose': return 'from-rose-500 to-pink-500 shadow-rose-500/20';
+      case 'custom': return '';
       default: return 'from-indigo-600 to-blue-500 shadow-indigo-600/20';
     }
   };
@@ -1701,6 +1728,7 @@ export default function App() {
       case 'emerald': return 'bg-emerald-500 hover:bg-emerald-600';
       case 'amber': return 'bg-amber-500 hover:bg-amber-600';
       case 'rose': return 'bg-rose-500 hover:bg-rose-600';
+      case 'custom': return '';
       default: return 'bg-indigo-600 hover:bg-indigo-700';
     }
   };
@@ -1710,6 +1738,7 @@ export default function App() {
       case 'emerald': return 'text-emerald-500 dark:text-emerald-400';
       case 'amber': return 'text-amber-500 dark:text-amber-400';
       case 'rose': return 'text-rose-500 dark:text-rose-400';
+      case 'custom': return '';
       default: return 'text-indigo-600 dark:text-indigo-400';
     }
   };
@@ -1725,6 +1754,10 @@ export default function App() {
     let borderClass = '';
     let textClass = 'text-white';
     
+    if (settings.themeColor === 'custom') {
+      return `fixed right-0 top-1/2 -translate-y-1/2 z-50 w-11 h-14 flex flex-col items-center justify-center pl-2 pr-1 ${radiusClass} text-white border border-r-0 border-white/20 shadow-[-5px_8px_30px_rgba(0,0,0,0.3)] hover:-translate-x-1 active:scale-95 transition-all duration-300 focus:outline-none group cursor-pointer`;
+    }
+
     switch (settings.themeColor) {
       case 'emerald':
         colorClass = 'bg-gradient-to-l from-emerald-600 via-emerald-500 to-teal-500 dark:from-emerald-700 dark:via-emerald-600 dark:to-teal-600';
@@ -2093,7 +2126,7 @@ export default function App() {
         wallets={wallets}
         categories={categories}
         sources={sources}
-        accentColor={settings.themeColor}
+        accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
         initialTab={modalFormTab}
         editData={modalEditData}
         onAddTransaction={handleAddTransaction}
@@ -2114,7 +2147,7 @@ export default function App() {
       <BottomNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        accentColor={settings.themeColor}
+        accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
         onAddClick={() => {
           if (activeTab === 'aktivitas') {
             if (activeActivitiesSubTab === 'agenda') openAddModal('aktivitas');
@@ -2298,7 +2331,7 @@ export default function App() {
               {/* Theme palettes 10% accent selection */}
               <div>
                 <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-400 block mb-2 uppercase tracking-widest">1. Warna Aksen</span>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                   {[
                     { id: 'indigo', label: 'Indigo', colorClass: 'bg-indigo-600' },
                     { id: 'emerald', label: 'Emerald', colorClass: 'bg-emerald-500' },
@@ -2309,6 +2342,7 @@ export default function App() {
                     return (
                       <button
                         key={p.id}
+                        type="button"
                         onClick={() => setSettings({ ...settings, themeColor: p.id as ThemeColor })}
                         className={`p-2.5 rounded-xl border text-center transition flex flex-col items-center gap-1.5 select-none focus:outline-none ${
                           isActive 
@@ -2325,7 +2359,67 @@ export default function App() {
                       </button>
                     );
                   })}
+
+                  {/* Custom Color Option */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (settings.themeColor !== 'custom') {
+                        setSettings({ ...settings, themeColor: 'custom', customAccentColor: settings.customAccentColor || '#8b5cf6' });
+                      }
+                    }}
+                    className={`p-2.5 rounded-xl border text-center transition flex flex-col items-center gap-1.5 select-none focus:outline-none ${
+                      settings.themeColor === 'custom' 
+                        ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-sm' 
+                        : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
+                    }`}
+                  >
+                    <span 
+                      className="w-5 h-5 rounded-full shadow-sm block relative border border-black/10 shrink-0"
+                      style={{ backgroundColor: settings.customAccentColor || '#8b5cf6' }}
+                    >
+                      {settings.themeColor === 'custom' && (
+                        <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-[10px]">✓</span>
+                      )}
+                    </span>
+                    <span className="text-[10px] text-slate-800 dark:text-slate-200 font-semibold">Bebas</span>
+                  </button>
                 </div>
+
+                {/* Custom Color Picker Tool */}
+                {settings.themeColor === 'custom' && (
+                  <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 animate-in fade-in duration-200">
+                    <div className="flex items-center gap-2.5">
+                      <div className="relative w-8 h-8 rounded-lg overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm shrink-0">
+                        <input 
+                          type="color" 
+                          value={settings.customAccentColor || '#8b5cf6'}
+                          onChange={(e) => setSettings({ ...settings, themeColor: 'custom', customAccentColor: e.target.value })}
+                          className="absolute -top-2 -left-2 w-12 h-12 cursor-pointer border-0 p-0"
+                          title="Pilih Warna Aksen Kustom"
+                        />
+                      </div>
+                      <div>
+                        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block">Pilih Warna Bebas</span>
+                        <span className="text-[9px] text-slate-400 dark:text-slate-500 block">Klik ikon untuk pilih via color picker</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs font-mono font-bold text-slate-400">#</span>
+                      <input 
+                        type="text" 
+                        value={(settings.customAccentColor || '#8b5cf6').replace('#', '')}
+                        onChange={(e) => {
+                          const val = e.target.value.trim();
+                          setSettings({ ...settings, themeColor: 'custom', customAccentColor: `#${val}` });
+                        }}
+                        className="w-20 px-2 py-1 text-xs font-mono font-bold uppercase rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        placeholder="8B5CF6"
+                        maxLength={6}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Font Style Scheme */}
@@ -2339,9 +2433,9 @@ export default function App() {
                   >
                     <option value="jakarta">Jakarta Sans (Modern & Clean)</option>
                     <option value="grotesk">Space Grotesk (Tech & Edgy)</option>
-                    <option value="ios">SF Pro / iOS (Klasik Apple)</option>
-                    <option value="neobrutalism">Playwrite AU NSW (Tulisan Tangan / Cursive)</option>
-                    <option value="pixel">Chakra Petch (Cyberpunk & Tech)</option>
+                    <option value="ios">Playfair Display (Klasik Serif)</option>
+                    <option value="neobrutalism">Edu VIC WA NT Hand (Tulisan Tangan / Cursive)</option>
+                    <option value="pixel">Fragment Mono (Monospace)</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -2468,6 +2562,7 @@ export default function App() {
               <button
                 onClick={() => setShowSettingsModal(false)}
                 className={`w-full py-2.5 text-xs font-bold text-white rounded-xl transition ${getAccentBg()}`}
+                style={settings.themeColor === 'custom' ? { backgroundColor: getAccentColorHex() } : undefined}
               >
                 Terapkan Perubahan Tampilan
               </button>
@@ -2481,6 +2576,7 @@ export default function App() {
         <button
           onClick={handleScrollToTop}
           className={getScrollTopClasses()}
+          style={settings.themeColor === 'custom' ? { backgroundColor: getAccentColorHex() } : undefined}
           title="Scroll Ke Atas"
         >
           <ArrowUp className="w-4 h-4 stroke-[2.5] transition-transform duration-300 group-hover:-translate-y-0.5" />

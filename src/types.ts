@@ -89,7 +89,7 @@ export type CardStyle = 'flat' | 'bordered' | 'shadowed';
 export type CardRadius = 'sharp' | 'rounded' | 'extra';
 export type TableStyle = 'compact' | 'spacious' | 'striped';
 export type FontStyle = 'sans' | 'mono' | 'serif' | 'jakarta' | 'grotesk' | 'ios' | 'neobrutalism' | 'pixel';
-export type ThemeColor = 'classic' | 'emerald' | 'amber' | 'indigo' | 'rose';
+export type ThemeColor = 'classic' | 'emerald' | 'amber' | 'indigo' | 'rose' | 'custom';
 
 export interface UserProfile {
   name: string;
@@ -103,5 +103,6 @@ export interface UserSettings {
   tableStyle: TableStyle;
   fontStyle: FontStyle;
   themeColor: ThemeColor;
+  customAccentColor?: string;
   isDarkMode: boolean;
 }

@@ -178,7 +178,10 @@ export default function FormsModal({
 
   if (!isOpen) return null;
 
+  const isHex = accentColor.startsWith('#');
+
   const getAccentBg = () => {
+    if (isHex) return '';
     switch (accentColor) {
       case 'emerald': return 'bg-emerald-500 hover:bg-emerald-600';
       case 'amber': return 'bg-amber-500 hover:bg-amber-600';
@@ -189,6 +192,7 @@ export default function FormsModal({
 
   const getAccentText = (active: boolean) => {
     if (!active) return 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200';
+    if (isHex) return 'font-bold';
     switch (accentColor) {
       case 'emerald': return 'text-emerald-500 font-bold border-emerald-500';
       case 'amber': return 'text-amber-500 font-bold border-amber-500';
@@ -908,6 +912,7 @@ export default function FormsModal({
             <button
               type="submit"
               className={`px-5 py-2 rounded-xl text-xs font-bold text-white shadow-sm transition ${getAccentBg()}`}
+              style={isHex ? { backgroundColor: accentColor } : undefined}
             >
               Simpan Catatan
             </button>
