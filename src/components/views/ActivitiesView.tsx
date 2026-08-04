@@ -4,9 +4,10 @@
  */
 
 import React from 'react';
-import { Trash2, CheckCircle, Circle, Calendar, Bookmark, Edit2, PlusCircle, ShoppingBag, CheckSquare } from 'lucide-react';
+import { Trash2, CheckCircle, Circle, Calendar, Bookmark, Edit2, PlusCircle } from 'lucide-react';
 import { Activity, Wishlist } from '../../types';
 import { formatIDR } from '../../lib/formatters';
+import { AgendaKerjaIcon, WishlistIcon } from '../CustomIcons';
 
 interface ActivitiesViewProps {
   activities: Activity[];
@@ -42,18 +43,42 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
           <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Aktivitas dan Wishlist</h1>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2 bg-slate-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 w-fit backdrop-blur-sm">
           <button
             onClick={() => setActiveSubTab('agenda')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${activeSubTab === 'agenda' ? 'bg-slate-900 text-white dark:bg-indigo-600' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+              activeSubTab === 'agenda'
+                ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm shadow-slate-900/20'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+            }`}
           >
-            <CheckSquare className="w-4 h-4" /> Agenda Kerja
+            <AgendaKerjaIcon className="w-4 h-4 fill-current shrink-0" />
+            <span>Agenda Kerja</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
+              activeSubTab === 'agenda'
+                ? 'bg-white/20 text-white'
+                : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+            }`}>
+              {activities.length}
+            </span>
           </button>
           <button
             onClick={() => setActiveSubTab('wishlist')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${activeSubTab === 'wishlist' ? 'bg-slate-900 text-white dark:bg-indigo-600' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+              activeSubTab === 'wishlist'
+                ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm shadow-slate-900/20'
+                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+            }`}
           >
-            <ShoppingBag className="w-4 h-4" /> Daftar Keinginan
+            <WishlistIcon className="w-4 h-4 fill-current shrink-0" />
+            <span>Daftar Keinginan</span>
+            <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
+              activeSubTab === 'wishlist'
+                ? 'bg-white/20 text-white'
+                : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+            }`}>
+              {wishlists.length}
+            </span>
           </button>
         </div>
       </div>
@@ -135,7 +160,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                 </div>
                 <div className="flex items-center justify-between pt-2 mt-auto border-t border-slate-100 dark:border-slate-800/80">
                   <div className="flex items-center gap-1.5 text-slate-400">
-                    <ShoppingBag className="w-3 h-3" />
+                    <WishlistIcon className="w-3 h-3 fill-current" />
                     <span className="text-[10px] font-bold uppercase tracking-wider">Wishlist</span>
                   </div>
                   <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg ${w.isPurchased ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}`}>

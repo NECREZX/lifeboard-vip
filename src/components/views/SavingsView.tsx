@@ -34,24 +34,57 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
         <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Tabungan</h1>
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2 bg-slate-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 w-fit backdrop-blur-sm">
         <button
           onClick={() => setSavingFilter('semua')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition ${savingFilter === 'semua' ? 'bg-slate-900 text-white dark:bg-indigo-600' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+            savingFilter === 'semua'
+              ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm shadow-slate-900/20'
+              : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+          }`}
         >
-          Semua Target
+          <span>Semua</span>
+          <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
+            savingFilter === 'semua'
+              ? 'bg-white/20 text-white'
+              : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+          }`}>
+            {savings.length}
+          </span>
         </button>
         <button
           onClick={() => setSavingFilter('berjalan')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition ${savingFilter === 'berjalan' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+            savingFilter === 'berjalan'
+              ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/20'
+              : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+          }`}
         >
-          Berjalan
+          <span>Berjalan</span>
+          <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
+            savingFilter === 'berjalan'
+              ? 'bg-white/20 text-white'
+              : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+          }`}>
+            {savings.filter((s) => s.currentAmount < s.targetAmount).length}
+          </span>
         </button>
         <button
           onClick={() => setSavingFilter('tercapai')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition ${savingFilter === 'tercapai' ? 'bg-emerald-500 text-white shadow-sm' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
+            savingFilter === 'tercapai'
+              ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20'
+              : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
+          }`}
         >
-          Tercapai 🎉
+          <span>Tercapai</span>
+          <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
+            savingFilter === 'tercapai'
+              ? 'bg-white/20 text-white'
+              : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+          }`}>
+            {savings.filter((s) => s.currentAmount >= s.targetAmount).length}
+          </span>
         </button>
       </div>
 

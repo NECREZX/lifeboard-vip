@@ -88,7 +88,7 @@ export type UIStyle = 'modern' | 'minimal' | 'glass';
 export type CardStyle = 'flat' | 'bordered' | 'shadowed';
 export type CardRadius = 'sharp' | 'rounded' | 'extra';
 export type TableStyle = 'compact' | 'spacious' | 'striped';
-export type FontStyle = 'sans' | 'mono' | 'serif' | 'jakarta' | 'grotesk' | 'ios' | 'neobrutalism' | 'pixel';
+export type FontStyle = 'sans' | 'mono' | 'serif' | 'jakarta' | 'grotesk' | 'ios' | 'neobrutalism' | 'pixel' | 'iceberg';
 export type ThemeColor = 'classic' | 'emerald' | 'amber' | 'indigo' | 'rose' | 'custom';
 
 export interface UserProfile {
