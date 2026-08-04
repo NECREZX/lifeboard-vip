@@ -96,7 +96,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
               onChange={(e) => setSelectedWalletId(e.target.value)}
               className="text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer p-0 w-full truncate text-right sm:text-left"
             >
-              <option value="all">Semua Dompet</option>
+              <option value="all">Semua</option>
               {wallets.map((w) => (
                 <option key={w.id} value={w.id}>{w.name}</option>
               ))}

@@ -200,7 +200,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
               onChange={(e) => setTxWalletFilter(e.target.value)}
               className="w-full text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer truncate"
             >
-              <option value="semua">Semua Dompet</option>
+              <option value="semua">Semua</option>
               {wallets.map((w) => (
                 <option key={w.id} value={w.id}>{w.name}</option>
               ))}
