@@ -314,7 +314,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
           <>
             {/* Top Bar with Toggle */}
             {filteredTransactions.length > 5 && (
-              <div className="px-4 pt-3 pb-3.5 bg-slate-50/80 dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800 flex justify-end">
+              <div className="px-4 pt-3 pb-3.5 bg-white dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800 flex justify-end">
                 <button
                   onClick={() => {
                     if (showAllTransactions) {
@@ -343,7 +343,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
 
             <div className="overflow-x-auto">
               <table className={getTableClasses()}>
-                <thead className="bg-slate-50 dark:bg-slate-900/80 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <thead className="bg-white dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   <tr>
                     <th className={getTableRowPadding()}>Deskripsi</th>
                     <th className={getTableRowPadding()}>Tipe</th>
@@ -362,7 +362,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                     });
                     return (
                       <React.Fragment key={dateStr}>
-                        <tr className="bg-slate-50/50 dark:bg-slate-900/40 select-none border-y border-slate-100/80 dark:border-slate-800/80">
+                        <tr className="bg-slate-50/40 dark:bg-slate-900/60 select-none border-y border-slate-100/80 dark:border-slate-800/80">
                           <td colSpan={7} className="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-cyan-400 font-mono tracking-tight">
                             {formattedDate} ({dateTxs.length} Transaksi)
                           </td>
