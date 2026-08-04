@@ -52,7 +52,6 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                 : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
             }`}
           >
-            <AgendaKerjaIcon className="w-4 h-4 fill-current shrink-0" />
             <span>Agenda Kerja</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
               activeSubTab === 'agenda'
@@ -70,7 +69,6 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                 : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
             }`}
           >
-            <WishlistIcon className="w-4 h-4 fill-current shrink-0" />
             <span>Daftar Keinginan</span>
             <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
               activeSubTab === 'wishlist'
