@@ -14,6 +14,7 @@ interface BudgetsViewProps {
   categories: Category[];
   transactions: Transaction[];
   wallets: Wallet[];
+  uiStyle?: string;
   getCardClasses: () => string;
   handleDeleteBudget: (id: string) => void;
   onEdit: (budget: Budget) => void;
@@ -24,6 +25,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
   categories,
   transactions,
   wallets,
+  uiStyle,
   getCardClasses,
   handleDeleteBudget,
   onEdit
@@ -89,7 +91,11 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
         </div>
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Wallet Selector Dropdown */}
-          <div className="flex items-center justify-between sm:justify-start gap-1.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 px-3 py-1.5 rounded-xl shadow-sm">
+          <div className={`flex items-center justify-between sm:justify-start gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+            uiStyle === 'glass'
+              ? 'glass-input'
+              : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-sm'
+          }`}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">Dompet:</span>
             <select
               value={selectedWalletId}
@@ -103,7 +109,11 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
             </select>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-start gap-1.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 px-3 py-1.5 rounded-xl shadow-sm">
+          <div className={`flex items-center justify-between sm:justify-start gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+            uiStyle === 'glass'
+              ? 'glass-input'
+              : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-sm'
+          }`}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">Periode:</span>
             <input
               type="month"

@@ -14,6 +14,7 @@ interface TransactionsViewProps {
   wallets: Wallet[];
   categories: Category[];
   sources: IncomeSource[];
+  uiStyle?: string;
   txTypeFilter: 'semua' | 'pemasukan' | 'pengeluaran' | 'transfer';
   setTxTypeFilter: (val: 'semua' | 'pemasukan' | 'pengeluaran' | 'transfer') => void;
   txCategoryFilter: string;
@@ -45,6 +46,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
   wallets,
   categories,
   sources,
+  uiStyle,
   txTypeFilter,
   setTxTypeFilter,
   txCategoryFilter,
@@ -121,23 +123,27 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
       </div>
 
       {/* Filter Panel */}
-      <div className={getCardClasses() + " p-4 md:p-5 flex flex-col gap-4 border border-slate-200/80 dark:border-slate-800 shadow-sm"}>
+      <div className={`${getCardClasses()} p-4 md:p-5 flex flex-col gap-4`}>
         {/* Top Controls Header */}
         <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
           {/* Search bar */}
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10" />
             <input
               type="text"
               placeholder="Cari transaksi berdasarkan judul..."
               value={txSearch}
               onChange={(e) => setTxSearch(e.target.value)}
-              className="w-full pl-10 pr-9 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+              className={`w-full pl-10 pr-9 py-2 text-xs font-medium rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 ${
+                uiStyle === 'glass' 
+                  ? 'glass-input text-slate-800 dark:text-slate-100' 
+                  : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100'
+              }`}
             />
             {txSearch && (
               <button
                 onClick={() => setTxSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition z-10"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -145,43 +151,63 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
           </div>
 
           {/* Type Filter Pills */}
-          <div className="grid grid-cols-4 w-full gap-1 p-1 bg-slate-100/80 dark:bg-slate-900/80 rounded-xl border border-slate-200/60 dark:border-slate-800">
+          <div className={`grid grid-cols-4 w-full gap-1 p-1 rounded-2xl transition-all ${
+            uiStyle === 'glass' 
+              ? 'bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner' 
+              : 'bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800'
+          }`}>
             <button
               onClick={() => setTxTypeFilter('semua')}
-              className={`py-1.5 px-1 sm:px-3 rounded-lg text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
+              className={`py-1.5 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
                 txTypeFilter === 'semua'
-                  ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60'
+                  ? (uiStyle === 'glass' 
+                      ? 'bg-white/85 dark:bg-white/20 text-slate-950 dark:text-white font-black shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_1px_1.5px_rgba(255,255,255,0.9)] border border-white dark:border-white/30 backdrop-blur-md scale-[1.02]' 
+                      : 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm')
+                  : (uiStyle === 'glass'
+                      ? 'text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/10'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60')
               }`}
             >
               Semua
             </button>
             <button
               onClick={() => setTxTypeFilter('pemasukan')}
-              className={`py-1.5 px-1 sm:px-3 rounded-lg text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
+              className={`py-1.5 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
                 txTypeFilter === 'pemasukan'
-                  ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20'
-                  : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                  ? (uiStyle === 'glass' 
+                      ? 'bg-emerald-500/90 text-white font-black shadow-[0_4px_12px_rgba(16,185,129,0.3),inset_0_1px_1.5px_rgba(255,255,255,0.5)] border border-emerald-300/40 backdrop-blur-md scale-[1.02]'
+                      : 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20')
+                  : (uiStyle === 'glass'
+                      ? 'text-emerald-700 dark:text-emerald-300 font-bold hover:bg-emerald-500/10'
+                      : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40')
               }`}
             >
               Pemasukan
             </button>
             <button
               onClick={() => setTxTypeFilter('pengeluaran')}
-              className={`py-1.5 px-1 sm:px-3 rounded-lg text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
+              className={`py-1.5 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
                 txTypeFilter === 'pengeluaran'
-                  ? 'bg-rose-500 text-white shadow-sm shadow-rose-500/20'
-                  : 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40'
+                  ? (uiStyle === 'glass'
+                      ? 'bg-rose-500/90 text-white font-black shadow-[0_4px_12px_rgba(244,63,94,0.3),inset_0_1px_1.5px_rgba(255,255,255,0.5)] border border-rose-300/40 backdrop-blur-md scale-[1.02]'
+                      : 'bg-rose-500 text-white shadow-sm shadow-rose-500/20')
+                  : (uiStyle === 'glass'
+                      ? 'text-rose-700 dark:text-rose-300 font-bold hover:bg-rose-500/10'
+                      : 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40')
               }`}
             >
               Pengeluaran
             </button>
             <button
               onClick={() => setTxTypeFilter('transfer')}
-              className={`py-1.5 px-1 sm:px-3 rounded-lg text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
+              className={`py-1.5 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
                 txTypeFilter === 'transfer'
-                  ? 'bg-blue-500 text-white shadow-sm shadow-blue-500/20'
-                  : 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40'
+                  ? (uiStyle === 'glass'
+                      ? 'bg-blue-500/90 text-white font-black shadow-[0_4px_12px_rgba(59,130,246,0.3),inset_0_1px_1.5px_rgba(255,255,255,0.5)] border border-blue-300/40 backdrop-blur-md scale-[1.02]'
+                      : 'bg-blue-500 text-white shadow-sm shadow-blue-500/20')
+                  : (uiStyle === 'glass'
+                      ? 'text-blue-700 dark:text-blue-300 font-bold hover:bg-blue-500/10'
+                      : 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40')
               }`}
             >
               Transfer
@@ -192,7 +218,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
         {/* Secondary Filter Row: Wallet & Category Selects */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-100 dark:border-slate-800/60">
           {/* Wallet Dropdown */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60">
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all ${
+            uiStyle === 'glass' 
+              ? 'glass-input' 
+              : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+          }`}>
             <WalletIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Dompet:</span>
             <select
@@ -200,15 +230,19 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
               onChange={(e) => setTxWalletFilter(e.target.value)}
               className="w-full text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer truncate"
             >
-              <option value="semua">Semua</option>
+              <option value="semua" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">Semua</option>
               {wallets.map((w) => (
-                <option key={w.id} value={w.id}>{w.name}</option>
+                <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">{w.name}</option>
               ))}
             </select>
           </div>
 
           {/* Category & Source Dropdown */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60 sm:col-span-1 lg:col-span-1">
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl sm:col-span-1 lg:col-span-1 transition-all ${
+            uiStyle === 'glass' 
+              ? 'glass-input' 
+              : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+          }`}>
             <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Kategori:</span>
             <select
@@ -216,22 +250,26 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
               onChange={(e) => setTxCategoryFilter(e.target.value)}
               className="w-full text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer truncate"
             >
-              <option value="semua">Semua Kategori & Sumber</option>
-              <optgroup label="Pengeluaran">
+              <option value="semua" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">Semua Kategori & Sumber</option>
+              <optgroup label="Pengeluaran" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-bold">
                 {categories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                  <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">{c.name}</option>
                 ))}
               </optgroup>
-              <optgroup label="Pemasukan">
+              <optgroup label="Pemasukan" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-bold">
                 {sources.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                  <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">{s.name}</option>
                 ))}
               </optgroup>
             </select>
           </div>
 
           {/* Date Selector */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60">
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all ${
+            uiStyle === 'glass' 
+              ? 'glass-input' 
+              : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+          }`}>
             <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Tanggal:</span>
             <input
@@ -254,7 +292,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
           </div>
 
           {/* Month / Year Combo */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60">
+          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all ${
+            uiStyle === 'glass' 
+              ? 'glass-input' 
+              : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+          }`}>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Bulan/Thn:</span>
             <select
               value={txMonthFilter}
@@ -314,7 +356,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
           <>
             {/* Top Bar with Toggle */}
             {filteredTransactions.length > 5 && (
-              <div className="px-4 pt-3 pb-3.5 bg-white dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800 flex justify-end">
+              <div className={`px-4 pt-3 pb-3.5 flex justify-end transition-all ${
+                uiStyle === 'glass'
+                  ? 'border-b border-white/20 dark:border-white/10 bg-transparent'
+                  : 'bg-white dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800'
+              }`}>
                 <button
                   onClick={() => {
                     if (showAllTransactions) {
@@ -324,7 +370,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                       setShowAllTransactions(true);
                     }
                   }}
-                  className="px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 shrink-0"
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
+                    uiStyle === 'glass'
+                      ? 'glass-panel hover:scale-105 active:scale-95 text-slate-800 dark:text-slate-100 shadow-sm'
+                      : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
+                  }`}
                 >
                   {showAllTransactions ? (
                     <>
@@ -352,7 +402,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                   <col className="w-[140px]" />
                   <col className="w-[80px]" />
                 </colgroup>
-                <thead className="bg-white dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <thead className={`border-b text-[10px] font-bold uppercase tracking-wider transition-all ${
+                  uiStyle === 'glass'
+                    ? 'bg-white/40 dark:bg-slate-900/50 backdrop-blur-md border-white/30 dark:border-white/10 text-slate-700 dark:text-slate-300'
+                    : 'bg-white dark:bg-slate-900/90 border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'
+                }`}>
                   <tr>
                     <th className={getTableRowPadding()}>Deskripsi</th>
                     <th className={getTableRowPadding()}>Tipe</th>
@@ -372,7 +426,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                     });
                     return (
                       <React.Fragment key={dateStr}>
-                        <tr className="bg-slate-50/40 dark:bg-slate-900/60 select-none border-y border-slate-100/80 dark:border-slate-800/80">
+                        <tr className={`select-none border-y transition-all ${
+                          uiStyle === 'glass'
+                            ? 'bg-white/30 dark:bg-slate-900/40 backdrop-blur-sm border-white/20 dark:border-white/10'
+                            : 'bg-slate-50/40 dark:bg-slate-900/60 border-slate-100/80 dark:border-slate-800/80'
+                        }`}>
                           <td colSpan={7} className="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-cyan-400 font-mono tracking-tight whitespace-nowrap">
                             {formattedDate} ({totalDateTxsCount} Transaksi)
                           </td>

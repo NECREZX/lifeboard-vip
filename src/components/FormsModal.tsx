@@ -14,6 +14,7 @@ interface FormsModalProps {
   wallets: Wallet[];
   categories: Category[];
   sources: IncomeSource[];
+  uiStyle?: string;
   accentColor: string;
   initialTab?: FormType;
   editData?: any;
@@ -57,6 +58,7 @@ export default function FormsModal({
   wallets,
   categories,
   sources,
+  uiStyle,
   accentColor,
   initialTab,
   editData,
@@ -380,31 +382,58 @@ export default function FormsModal({
     onClose();
   };
 
+  const getFormInputClass = (extra = "") => {
+    if (uiStyle === 'glass') {
+      return `glass-input text-slate-950 dark:text-white font-extrabold placeholder:text-slate-500/80 dark:placeholder:text-slate-400/80 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 transition-all ${extra}`;
+    }
+    return `border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 font-medium transition-all focus:outline-none ${extra}`;
+  };
+
   return (
     <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto no-print">
-      <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 dark:border-slate-800/80 my-8">
+      <div className={`w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl my-8 transition-all ${
+        uiStyle === 'glass' 
+          ? 'glass-panel !border-white/60 dark:!border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)]' 
+          : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80'
+      }`}>
         {/* Modal Header */}
-        <div className="p-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between">
+        <div className={`p-5 border-b flex items-center justify-between transition-all ${
+          uiStyle === 'glass' 
+            ? 'bg-white/30 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10' 
+            : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'
+        }`}>
           <div>
             <h3 className="font-bold text-sm text-slate-900 dark:text-white tracking-tight">
               {editData ? 'Perbarui' : 'Tambah'} {activeForm.charAt(0).toUpperCase() + activeForm.slice(1)}
             </h3>
-            <p className="text-[10px] text-slate-400 dark:text-slate-400 font-medium">Isi form di bawah ini untuk menyimpan perubahan</p>
+            <p className="text-[10px] text-slate-600 dark:text-slate-300 font-semibold">Isi form di bawah ini untuk menyimpan perubahan</p>
           </div>
           <button
             onClick={() => {
               resetForms();
               onClose();
             }}
-            className="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-400 dark:text-slate-300 transition focus:outline-none"
+            className={`p-1.5 rounded-full transition focus:outline-none ${
+              uiStyle === 'glass'
+                ? 'bg-white/50 dark:bg-white/10 hover:bg-white/80 dark:hover:bg-white/20 text-slate-800 dark:text-slate-100 border border-white/70 dark:border-white/20 shadow-sm'
+                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-400 dark:text-slate-300'
+            }`}
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Tab Selection */}
-        <div className="p-3 bg-slate-50 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/80">
-          <div className="flex bg-slate-100/80 dark:bg-slate-800/60 p-1 rounded-xl overflow-x-auto scrollbar-none gap-0.5">
+        {/* Tab Selection Navigation (iOS Liquid Glass Style) */}
+        <div className={`p-3 border-b transition-all ${
+          uiStyle === 'glass'
+            ? 'bg-white/20 dark:bg-slate-950/20 backdrop-blur-md border-white/30 dark:border-white/10'
+            : 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800/80'
+        }`}>
+          <div className={`flex p-1.5 rounded-2xl overflow-x-auto scrollbar-none gap-1 transition-all ${
+            uiStyle === 'glass'
+              ? 'bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner'
+              : 'bg-slate-100/80 dark:bg-slate-800/60'
+          }`}>
             {(['pengeluaran', 'pemasukan', 'transfer', 'budgeting', 'tabungan', 'aktivitas', 'wishlist'] as FormType[]).map((tab) => {
               const isActive = activeForm === tab;
               return (
@@ -412,10 +441,14 @@ export default function FormsModal({
                   key={tab}
                   type="button"
                   onClick={() => setActiveForm(tab)}
-                  className={`flex-1 min-w-[76px] text-center py-1.5 text-[11px] font-semibold rounded-lg transition-all duration-200 uppercase tracking-tight focus:outline-none ${
+                  className={`flex-1 min-w-[76px] text-center py-2 px-2 text-[11px] font-bold rounded-xl transition-all duration-200 uppercase tracking-tight focus:outline-none whitespace-nowrap ${
                     isActive 
-                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-bold' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                      ? (uiStyle === 'glass' 
+                          ? 'bg-white/85 dark:bg-white/20 text-indigo-950 dark:text-white font-black shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_1.5px_rgba(255,255,255,0.9)] border border-white dark:border-white/30 backdrop-blur-xl scale-[1.02]' 
+                          : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-bold') 
+                      : (uiStyle === 'glass'
+                          ? 'text-slate-700 dark:text-slate-200 font-bold hover:text-slate-950 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/10'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200')
                   }`}
                 >
                   {tab === 'pengeluaran' ? 'Pengeluaran' : tab === 'pemasukan' ? 'Pemasukan' : tab === 'transfer' ? 'Transfer' : tab}
@@ -433,16 +466,16 @@ export default function FormsModal({
             <>
               {/* Wallet Dropdown */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Metode / Dompet</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Metode / Dompet</label>
                 <select
                   value={selectedWalletId}
                   onChange={(e) => setSelectedWalletId(e.target.value)}
-                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 >
-                  <option value="" disabled>-- Pilih Dompet --</option>
+                  <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-500 font-semibold">-- Pilih Dompet --</option>
                   {wallets.map((w) => (
-                    <option key={w.id} value={w.id}>
+                    <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">
                       {w.name} (Saldo: Rp {w.initialBalance.toLocaleString('id-ID')})
                     </option>
                   ))}
@@ -451,22 +484,22 @@ export default function FormsModal({
 
               {/* Amount */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Jumlah (Nominal Rupiah)</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Jumlah (Nominal Rupiah)</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
                   <input
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="0"
                     min="1"
-                    className="w-full pl-9 pr-16 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-sm rounded-xl font-mono")}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setAmount(prev => prev ? prev + '000' : '1000')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                   >
                     +000
                   </button>
@@ -476,16 +509,16 @@ export default function FormsModal({
               {/* Kategori Pengeluaran (Only for Pengeluaran) */}
               {activeForm === 'pengeluaran' && (
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kategori Pengeluaran</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Kategori Pengeluaran</label>
                   <select
                     value={selectedCategoryId}
                     onChange={(e) => setSelectedCategoryId(e.target.value)}
-                    className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                     required
                   >
-                    <option value="" disabled>-- Pilih Kategori --</option>
+                    <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-500 font-semibold">-- Pilih Kategori --</option>
                     {categories.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
+                      <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{c.name}</option>
                     ))}
                   </select>
                 </div>
@@ -494,16 +527,16 @@ export default function FormsModal({
               {/* Sumber Pendapatan (Only for Pemasukan) */}
               {activeForm === 'pemasukan' && (
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Sumber Pendapatan</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Sumber Pendapatan</label>
                   <select
                     value={selectedSourceId}
                     onChange={(e) => setSelectedSourceId(e.target.value)}
-                    className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                     required
                   >
-                    <option value="" disabled>-- Pilih Sumber --</option>
+                    <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-500 font-semibold">-- Pilih Sumber --</option>
                     {sources.map((s) => (
-                      <option key={s.id} value={s.id}>{s.name}</option>
+                      <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{s.name}</option>
                     ))}
                   </select>
                 </div>
@@ -512,23 +545,23 @@ export default function FormsModal({
               {/* Tanggal & Deskripsi */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tanggal</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Tanggal</label>
                   <input
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                     required
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Catatan/Keterangan</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Catatan/Keterangan</label>
                   <input
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Beli kopi, jajan dll"
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                   />
                 </div>
               </div>
@@ -541,16 +574,16 @@ export default function FormsModal({
               {/* Source & Destination Wallets */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dompet Asal (Dari)</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Dompet Asal (Dari)</label>
                   <select
                     value={selectedWalletId}
                     onChange={(e) => setSelectedWalletId(e.target.value)}
-                    className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                     required
                   >
-                    <option value="" disabled>-- Pilih Asal --</option>
+                    <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-500 font-semibold">-- Pilih Asal --</option>
                     {wallets.map((w) => (
-                      <option key={w.id} value={w.id}>
+                      <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">
                         {w.name}
                       </option>
                     ))}
@@ -558,16 +591,16 @@ export default function FormsModal({
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dompet Tujuan (Ke)</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Dompet Tujuan (Ke)</label>
                   <select
                     value={selectedToWalletId}
                     onChange={(e) => setSelectedToWalletId(e.target.value)}
-                    className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                     required
                   >
-                    <option value="" disabled>-- Pilih Tujuan --</option>
+                    <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-500 font-semibold">-- Pilih Tujuan --</option>
                     {wallets.map((w) => (
-                      <option key={w.id} value={w.id}>
+                      <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">
                         {w.name}
                       </option>
                     ))}
@@ -578,22 +611,22 @@ export default function FormsModal({
               {/* Amount & Admin Fee */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Jumlah Transfer</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Jumlah Transfer</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
                     <input
                       type="number"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="0"
                       min="1"
-                      className="w-full pl-9 pr-16 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                      className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-sm rounded-xl font-mono")}
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setAmount(prev => prev ? prev + '000' : '1000')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                     >
                       +000
                     </button>
@@ -601,44 +634,44 @@ export default function FormsModal({
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Biaya Admin (Opsional)</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Biaya Admin (Opsional)</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
                     <input
                       type="number"
                       value={adminFee}
                       onChange={(e) => setAdminFee(e.target.value)}
                       placeholder="0 (misal: 1200)"
                       min="0"
-                      className="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                      className={getFormInputClass("w-full pl-9 pr-3 py-2.5 text-sm rounded-xl font-mono")}
                     />
                   </div>
                 </div>
               </div>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 -mt-2">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium -mt-2">
                 * Biaya admin hanya dipotong dari Dompet Asal dan tidak menambah saldo Dompet Tujuan.
               </p>
 
               {/* Tanggal & Deskripsi */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tanggal</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Tanggal</label>
                   <input
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                     required
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Keterangan</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Keterangan</label>
                   <input
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Mutasi, Tarik ATM, dll"
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                   />
                 </div>
               </div>
@@ -650,50 +683,50 @@ export default function FormsModal({
             <>
               {/* Wallet Dropdown for Budgeting */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pilih Dompet / Akun</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Pilih Dompet / Akun</label>
                 <select
                   value={budgetWalletId}
                   onChange={(e) => setBudgetWalletId(e.target.value)}
-                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 >
-                  <option value="" disabled>-- Pilih Dompet --</option>
+                  <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-500 font-semibold">-- Pilih Dompet --</option>
                   {wallets.map((w) => (
-                    <option key={w.id} value={w.id}>{w.name}</option>
+                    <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{w.name}</option>
                   ))}
                 </select>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kategori Pengeluaran</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Kategori Pengeluaran</label>
                 <select
                   value={budgetCategoryId}
                   onChange={(e) => setBudgetCategoryId(e.target.value)}
-                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 >
                   {categories.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
+                    <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{c.name}</option>
                   ))}
                 </select>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Batas Belanja Bulanan (Rp)</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Batas Belanja Bulanan (Rp)</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-xs text-slate-400 dark:text-slate-400">Rp</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
                   <input
                     type="number"
                     value={budgetLimit}
                     onChange={(e) => setBudgetLimit(e.target.value)}
                     placeholder="Estimasi limit pengeluaran"
-                    className="w-full pl-9 pr-16 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-xs rounded-xl font-mono")}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setBudgetLimit(prev => prev ? prev + '000' : '1000')}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                   >
                     +000
                   </button>
@@ -701,12 +734,12 @@ export default function FormsModal({
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bulan Anggaran</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Bulan Anggaran</label>
                 <input
                   type="month"
                   value={budgetMonth}
                   onChange={(e) => setBudgetMonth(e.target.value)}
-                  className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                   required
                 />
               </div>
@@ -717,51 +750,51 @@ export default function FormsModal({
           {activeForm === 'tabungan' && (
             <>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nama Target Tabungan</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Nama Target Tabungan</label>
                 <input
                   type="text"
                   value={savingName}
                   onChange={(e) => setSavingName(e.target.value)}
                   placeholder="Contoh: Beli Laptop Baru, Liburan"
-                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Target Jumlah (Rp)</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Target Jumlah (Rp)</label>
                   <div className="relative">
                     <input
                       type="number"
                       value={savingTarget}
                       onChange={(e) => setSavingTarget(e.target.value)}
                       placeholder="0"
-                      className="w-full pl-3.5 pr-14 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                      className={getFormInputClass("w-full pl-3.5 pr-14 py-2 text-xs rounded-xl font-mono")}
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setSavingTarget(prev => prev ? prev + '000' : '1000')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                     >
                       +000
                     </button>
                   </div>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dana Terkumpul Awal (Rp)</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Dana Terkumpul Awal (Rp)</label>
                   <div className="relative">
                     <input
                       type="number"
                       value={savingCurrent}
                       onChange={(e) => setSavingCurrent(e.target.value)}
-                      className="w-full pl-3.5 pr-14 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                      className={getFormInputClass("w-full pl-3.5 pr-14 py-2 text-xs rounded-xl font-mono")}
                     />
                     <button
                       type="button"
                       onClick={() => setSavingCurrent(prev => prev ? prev + '000' : '1000')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                     >
                       +000
                     </button>
@@ -771,17 +804,17 @@ export default function FormsModal({
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Deadline Target</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Deadline Target</label>
                   <input
                     type="date"
                     value={savingDeadline}
                     onChange={(e) => setSavingDeadline(e.target.value)}
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                     required
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pilih Warna Tag</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Pilih Warna Tag</label>
                   <div className="flex gap-2 items-center h-full pt-1">
                     {['#10b981', '#3b82f6', '#a855f7', '#f59e0b', '#ef4444'].map((color) => (
                       <button
@@ -802,35 +835,35 @@ export default function FormsModal({
           {activeForm === 'aktivitas' && (
             <>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Judul Aktivitas Harian</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Judul Aktivitas Harian</label>
                 <input
                   type="text"
                   value={activityTitle}
                   onChange={(e) => setActivityTitle(e.target.value)}
                   placeholder="Contoh: Belajar Coding React, Bayar BPJS"
-                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Detail Deskripsi</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Detail Deskripsi</label>
                 <textarea
                   value={activityDesc}
                   onChange={(e) => setActivityDesc(e.target.value)}
                   placeholder="Keterangan singkat aktivitas..."
                   rows={2}
-                  className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Batas Waktu (Deadline)</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Batas Waktu (Deadline)</label>
                 <input
                   type="date"
                   value={activityDeadline}
                   onChange={(e) => setActivityDeadline(e.target.value)}
-                  className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                   required
                 />
               </div>
@@ -841,71 +874,75 @@ export default function FormsModal({
           {activeForm === 'wishlist' && (
             <>
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nama Barang Wishlist</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Nama Barang Wishlist</label>
                 <input
                   type="text"
                   value={wishlistTitle}
                   onChange={(e) => setWishlistTitle(e.target.value)}
                   placeholder="Contoh: Sepatu Adidas Samba, Meja Kerja"
-                  className="px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Estimasi Harga (Optional)</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Estimasi Harga (Optional)</label>
                   <div className="relative">
                     <input
                       type="number"
                       value={wishlistPrice}
                       onChange={(e) => setWishlistPrice(e.target.value)}
                       placeholder="0"
-                      className="w-full pl-3.5 pr-14 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 font-mono text-slate-800 dark:text-slate-100 focus:outline-none"
+                      className={getFormInputClass("w-full pl-3.5 pr-14 py-2.5 text-xs rounded-xl font-mono")}
                     />
                     <button
                       type="button"
                       onClick={() => setWishlistPrice(prev => prev ? prev + '000' : '1000')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-slate-300 rounded hover:bg-indigo-100 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                     >
                       +000
                     </button>
                   </div>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Target Bulan Rencana</label>
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Target Bulan Rencana</label>
                   <input
                     type="month"
                     value={wishlistMonth}
                     onChange={(e) => setWishlistMonth(e.target.value)}
-                    className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                     required
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Catatan Tambahan</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Catatan Tambahan</label>
                 <textarea
                   value={wishlistNotes}
                   onChange={(e) => setWishlistNotes(e.target.value)}
                   placeholder="Keterangan atau link produk..."
                   rows={2}
-                  className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-800 dark:text-slate-100 focus:outline-none"
+                  className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                 />
               </div>
             </>
           )}
 
           {/* Form Submit Footer */}
-          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 bg-white dark:bg-slate-900">
+          <div className={`mt-4 pt-4 border-t flex justify-end gap-3 transition-all ${
+            uiStyle === 'glass' 
+              ? 'border-white/20 dark:border-white/10 bg-transparent' 
+              : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900'
+          }`}>
             <button
               type="button"
               onClick={() => {
                 resetForms();
                 onClose();
               }}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition"
             >
               Batal
             </button>

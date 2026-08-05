@@ -1725,11 +1725,12 @@ export default function App() {
 
   const getAccentBg = () => {
     switch (settings.themeColor) {
-      case 'emerald': return 'bg-emerald-500 hover:bg-emerald-600';
-      case 'amber': return 'bg-amber-500 hover:bg-amber-600';
-      case 'rose': return 'bg-rose-500 hover:bg-rose-600';
-      case 'custom': return '';
-      default: return 'bg-indigo-600 hover:bg-indigo-700';
+      case 'emerald': return 'bg-emerald-600 hover:bg-emerald-700 text-white';
+      case 'amber': return 'bg-amber-600 hover:bg-amber-700 text-white';
+      case 'rose': return 'bg-rose-600 hover:bg-rose-700 text-white';
+      case 'classic': return 'bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900';
+      case 'custom': return 'bg-indigo-600 hover:bg-indigo-700 text-white';
+      default: return 'bg-indigo-600 hover:bg-indigo-700 text-white';
     }
   };
 
@@ -1859,9 +1860,9 @@ export default function App() {
 
       {/* 1. STICKY TOP BAR */}
       <header 
-        className={`sticky top-0 z-40 w-full transition-colors duration-300 no-print ${
+        className={`sticky top-0 z-40 w-full transition-all duration-300 no-print ${
           settings.uiStyle === 'glass' 
-            ? 'bg-white/50 dark:bg-slate-950/50 backdrop-blur-2xl border-b border-white/60 dark:border-white/10 shadow-sm' 
+            ? 'glass-panel !border-x-0 !border-t-0 !rounded-none shadow-sm' 
             : 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60'
         }`}
         style={{ paddingTop: 'max(env(safe-area-inset-top), 12px)' }}
@@ -1936,6 +1937,7 @@ export default function App() {
             wallets={wallets}
             categories={categories}
             sources={sources}
+            uiStyle={settings.uiStyle}
             txTypeFilter={txTypeFilter}
             setTxTypeFilter={setTxTypeFilter}
             txCategoryFilter={txCategoryFilter}
@@ -1982,6 +1984,7 @@ export default function App() {
             categories={categories}
             transactions={transactions}
             wallets={wallets}
+            uiStyle={settings.uiStyle}
             getCardClasses={getCardClasses}
             handleDeleteBudget={(id) => {
               showConfirm('Hapus Anggaran', 'Hapus batas anggaran ini?', () => {
@@ -2138,6 +2141,7 @@ export default function App() {
         wallets={wallets}
         categories={categories}
         sources={sources}
+        uiStyle={settings.uiStyle}
         accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
         initialTab={modalFormTab}
         editData={modalEditData}
