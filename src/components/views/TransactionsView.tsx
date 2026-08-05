@@ -341,17 +341,17 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
               </div>
             )}
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-thin">
               <table className={getTableClasses()}>
                 <thead className="bg-white dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   <tr>
-                    <th className={getTableRowPadding()}>Deskripsi</th>
-                    <th className={getTableRowPadding()}>Tipe</th>
-                    <th className={getTableRowPadding()}>Dompet</th>
-                    <th className={getTableRowPadding()}>Kategori/Aliran</th>
-                    <th className={getTableRowPadding()}>Tanggal</th>
-                    <th className={getTableRowPadding()}>Jumlah</th>
-                    <th className={getTableRowPadding() + " text-right"}>Aksi</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[160px]`}>Deskripsi</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[100px]`}>Tipe</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[140px]`}>Dompet</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[140px]`}>Kategori/Aliran</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[110px]`}>Tanggal</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[130px]`}>Jumlah</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[80px] text-right`}>Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -363,7 +363,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                     return (
                       <React.Fragment key={dateStr}>
                         <tr className="bg-slate-50/40 dark:bg-slate-900/60 select-none border-y border-slate-100/80 dark:border-slate-800/80">
-                          <td colSpan={7} className="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-cyan-400 font-mono tracking-tight">
+                          <td colSpan={7} className="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-cyan-400 font-mono tracking-tight whitespace-nowrap">
                             {formattedDate} ({dateTxs.length} Transaksi)
                           </td>
                         </tr>
@@ -377,9 +377,9 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                             : (isTransfer ? null : categories.find(c => c.id === t.categoryId));
                           return (
                             <tr key={t.id} className={getTableRowClasses(idx)}>
-                              <td className={getTableRowPadding() + " font-semibold text-slate-800 dark:text-slate-200"}>{t.description}</td>
-                              <td className={getTableRowPadding()}>
-                                <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                              <td className={getTableRowPadding() + " font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap"} title={t.description}>{t.description}</td>
+                              <td className={getTableRowPadding() + " whitespace-nowrap"}>
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                                   isIncome 
                                     ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400' 
                                     : isTransfer 
@@ -389,21 +389,21 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                                   {t.type}
                                 </span>
                               </td>
-                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium"}>
+                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap"}>
                                 {isTransfer ? (
-                                  <span className="flex items-center gap-1 text-[11px]">
+                                  <span className="flex items-center gap-1.5 text-[11px] whitespace-nowrap">
                                     <span>{wallet?.name || 'Dompet Terhapus'}</span>
                                     <span className="text-slate-300 dark:text-slate-600">→</span>
                                     <span>{toWallet?.name || 'Dompet Terhapus'}</span>
                                   </span>
                                 ) : (
-                                  <span className="flex items-center gap-1.5">
-                                    {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3.5 h-3.5" />}
+                                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                                    {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3.5 h-3.5 shrink-0" />}
                                     <span>{wallet?.name || 'Dompet Terhapus'}</span>
                                   </span>
                                 )}
                               </td>
-                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium"}>
+                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap"}>
                                 {isTransfer ? (
                                   <div className="flex flex-col">
                                     <span className="text-slate-400 dark:text-slate-500 italic text-[11px]">Transfer Saldo</span>
@@ -414,16 +414,16 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                                     ) : null}
                                   </div>
                                 ) : (
-                                  <span className="flex items-center gap-1.5">
-                                    {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5" />}
+                                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                                    {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5 shrink-0" />}
                                     <span>{catName?.name || 'Kustom'}</span>
                                   </span>
                                 )}
                               </td>
-                              <td className={getTableRowPadding() + " font-mono text-slate-400 dark:text-slate-300"}>
+                              <td className={getTableRowPadding() + " font-mono text-slate-400 dark:text-slate-300 whitespace-nowrap"}>
                                 {new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                               </td>
-                              <td className={getTableRowPadding() + ` font-mono font-bold ${isIncome ? 'text-emerald-500' : (isTransfer ? 'text-blue-500' : 'text-rose-500')}`}>
+                              <td className={getTableRowPadding() + ` font-mono font-bold whitespace-nowrap ${isIncome ? 'text-emerald-500' : (isTransfer ? 'text-blue-500' : 'text-rose-500')}`}>
                                 <div className="flex flex-col">
                                   <span>{isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(t.amount)}</span>
                                   {isTransfer && t.adminFee && t.adminFee > 0 ? (
@@ -433,7 +433,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                                   ) : null}
                                 </div>
                               </td>
-                              <td className={getTableRowPadding() + " text-right"}>
+                              <td className={getTableRowPadding() + " text-right whitespace-nowrap"}>
                                 <div className="flex items-center justify-end gap-1">
                                   <button onClick={() => onEdit(t)} className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition inline-flex items-center">
                                     <Edit2 className="w-3.5 h-3.5" />
