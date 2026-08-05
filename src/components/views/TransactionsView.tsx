@@ -342,21 +342,22 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             )}
 
             <div className="overflow-x-auto scrollbar-thin">
-              <table className={getTableClasses()}>
+              <table className={`${getTableClasses()} min-w-[700px]`}>
                 <thead className="bg-white dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   <tr>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[160px]`}>Deskripsi</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[100px]`}>Tipe</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[140px]`}>Dompet</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[140px]`}>Kategori/Aliran</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[110px]`}>Tanggal</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[130px]`}>Jumlah</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap min-w-[80px] text-right`}>Aksi</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[22%]`}>Deskripsi</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[11%]`}>Tipe</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[18%]`}>Dompet</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[18%]`}>Kategori/Aliran</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[12%]`}>Tanggal</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[13%]`}>Jumlah</th>
+                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[6%] text-right`}>Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {sortedDates.map((dateStr) => {
                     const dateTxs = groupedByDate[dateStr];
+                    const totalDateTxsCount = filteredTransactions.filter(t => t.date === dateStr).length;
                     const formattedDate = new Date(dateStr).toLocaleDateString('id-ID', {
                       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
                     });
@@ -364,7 +365,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                       <React.Fragment key={dateStr}>
                         <tr className="bg-slate-50/40 dark:bg-slate-900/60 select-none border-y border-slate-100/80 dark:border-slate-800/80">
                           <td colSpan={7} className="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-cyan-400 font-mono tracking-tight whitespace-nowrap">
-                            {formattedDate} ({dateTxs.length} Transaksi)
+                            {formattedDate} ({totalDateTxsCount} Transaksi)
                           </td>
                         </tr>
                         {dateTxs.map((t, idx) => {
