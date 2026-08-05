@@ -390,23 +390,22 @@ export default function FormsModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto no-print">
+    <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/75 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto no-print">
       <div className={`w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl my-8 transition-all ${
         uiStyle === 'glass' 
-          ? 'glass-panel !border-white/60 dark:!border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)]' 
+          ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)]' 
           : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80'
       }`}>
         {/* Modal Header */}
         <div className={`p-5 border-b flex items-center justify-between transition-all ${
           uiStyle === 'glass' 
-            ? 'bg-white/30 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10' 
+            ? 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-white/50 dark:border-white/10' 
             : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'
         }`}>
           <div>
-            <h3 className="font-bold text-sm text-slate-900 dark:text-white tracking-tight">
+            <h3 className="font-extrabold text-base text-slate-950 dark:text-white tracking-tight">
               {editData ? 'Perbarui' : 'Tambah'} {activeForm.charAt(0).toUpperCase() + activeForm.slice(1)}
             </h3>
-            <p className="text-[10px] text-slate-600 dark:text-slate-300 font-semibold">Isi form di bawah ini untuk menyimpan perubahan</p>
           </div>
           <button
             onClick={() => {
@@ -415,7 +414,7 @@ export default function FormsModal({
             }}
             className={`p-1.5 rounded-full transition focus:outline-none ${
               uiStyle === 'glass'
-                ? 'bg-white/50 dark:bg-white/10 hover:bg-white/80 dark:hover:bg-white/20 text-slate-800 dark:text-slate-100 border border-white/70 dark:border-white/20 shadow-sm'
+                ? 'bg-white/60 dark:bg-white/10 hover:bg-white/90 dark:hover:bg-white/20 text-slate-800 dark:text-slate-100 border border-white dark:border-white/20 shadow-sm'
                 : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-400 dark:text-slate-300'
             }`}
           >
@@ -424,15 +423,15 @@ export default function FormsModal({
         </div>
 
         {/* Tab Selection Navigation (iOS Liquid Glass Style) */}
-        <div className={`p-3 border-b transition-all ${
+        <div className={`p-3.5 border-b transition-all ${
           uiStyle === 'glass'
             ? 'bg-white/20 dark:bg-slate-950/20 backdrop-blur-md border-white/30 dark:border-white/10'
             : 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800/80'
         }`}>
-          <div className={`flex p-1.5 rounded-2xl overflow-x-auto scrollbar-none gap-1 transition-all ${
+          <div className={`flex items-center p-1.5 rounded-2xl overflow-x-auto scrollbar-none gap-2 transition-all ${
             uiStyle === 'glass'
               ? 'bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner'
-              : 'bg-slate-100/80 dark:bg-slate-800/60'
+              : 'bg-slate-100/90 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50'
           }`}>
             {(['pengeluaran', 'pemasukan', 'transfer', 'budgeting', 'tabungan', 'aktivitas', 'wishlist'] as FormType[]).map((tab) => {
               const isActive = activeForm === tab;
@@ -441,14 +440,14 @@ export default function FormsModal({
                   key={tab}
                   type="button"
                   onClick={() => setActiveForm(tab)}
-                  className={`flex-1 min-w-[76px] text-center py-2 px-2 text-[11px] font-bold rounded-xl transition-all duration-200 uppercase tracking-tight focus:outline-none whitespace-nowrap ${
+                  className={`shrink-0 px-4 py-2 text-[11px] sm:text-xs font-extrabold rounded-xl transition-all duration-200 uppercase tracking-wider focus:outline-none whitespace-nowrap select-none ${
                     isActive 
                       ? (uiStyle === 'glass' 
-                          ? 'bg-white/85 dark:bg-white/20 text-indigo-950 dark:text-white font-black shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_1.5px_rgba(255,255,255,0.9)] border border-white dark:border-white/30 backdrop-blur-xl scale-[1.02]' 
-                          : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm font-bold') 
+                          ? 'bg-white/90 dark:bg-white/25 text-indigo-950 dark:text-white font-black shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_1.5px_rgba(255,255,255,0.9)] border border-white dark:border-white/40 backdrop-blur-xl' 
+                          : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-md font-black border border-slate-200/80 dark:border-slate-700') 
                       : (uiStyle === 'glass'
-                          ? 'text-slate-700 dark:text-slate-200 font-bold hover:text-slate-950 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/10'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200')
+                          ? 'text-slate-700 dark:text-slate-200 font-bold hover:text-slate-950 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10 border border-transparent'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-700/50 border border-transparent')
                   }`}
                 >
                   {tab === 'pengeluaran' ? 'Pengeluaran' : tab === 'pemasukan' ? 'Pemasukan' : tab === 'transfer' ? 'Transfer' : tab}

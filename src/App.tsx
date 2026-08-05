@@ -1886,6 +1886,7 @@ export default function App() {
               onToggleRead={(id) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: !n.isRead } : n))}
               onDeleteOne={(id) => setNotifications(prev => prev.filter(n => n.id !== id))}
               accentColor={settings.themeColor}
+              uiStyle={settings.uiStyle}
             />
 
             {/* Profile configuration drop */}
