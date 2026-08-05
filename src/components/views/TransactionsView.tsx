@@ -342,16 +342,25 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             )}
 
             <div className="overflow-x-auto scrollbar-thin">
-              <table className={`${getTableClasses()} min-w-[700px]`}>
+              <table className={`${getTableClasses()} table-fixed min-w-[720px] w-full`}>
+                <colgroup>
+                  <col className="w-[160px]" />
+                  <col className="w-[85px]" />
+                  <col className="w-[135px]" />
+                  <col className="w-[135px]" />
+                  <col className="w-[95px]" />
+                  <col className="w-[130px]" />
+                  <col className="w-[80px]" />
+                </colgroup>
                 <thead className="bg-white dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   <tr>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[22%]`}>Deskripsi</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[11%]`}>Tipe</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[18%]`}>Dompet</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[18%]`}>Kategori/Aliran</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[12%]`}>Tanggal</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[13%]`}>Jumlah</th>
-                    <th className={`${getTableRowPadding()} whitespace-nowrap w-[6%] text-right`}>Aksi</th>
+                    <th className={getTableRowPadding()}>Deskripsi</th>
+                    <th className={getTableRowPadding()}>Tipe</th>
+                    <th className={getTableRowPadding()}>Dompet</th>
+                    <th className={getTableRowPadding()}>Kategori/Aliran</th>
+                    <th className={getTableRowPadding()}>Tanggal</th>
+                    <th className={getTableRowPadding()}>Jumlah</th>
+                    <th className={`${getTableRowPadding()} text-right`}>Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -378,7 +387,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                             : (isTransfer ? null : categories.find(c => c.id === t.categoryId));
                           return (
                             <tr key={t.id} className={getTableRowClasses(idx)}>
-                              <td className={getTableRowPadding() + " font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap"} title={t.description}>{t.description}</td>
+                              <td className={getTableRowPadding() + " font-semibold text-slate-800 dark:text-slate-200 truncate"} title={t.description}>{t.description}</td>
                               <td className={getTableRowPadding() + " whitespace-nowrap"}>
                                 <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                                   isIncome 
@@ -390,34 +399,34 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                                   {t.type}
                                 </span>
                               </td>
-                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap"}>
+                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium truncate"} title={isTransfer ? `${wallet?.name || 'Dompet Terhapus'} → ${toWallet?.name || 'Dompet Terhapus'}` : (wallet?.name || 'Dompet Terhapus')}>
                                 {isTransfer ? (
-                                  <span className="flex items-center gap-1.5 text-[11px] whitespace-nowrap">
-                                    <span>{wallet?.name || 'Dompet Terhapus'}</span>
-                                    <span className="text-slate-300 dark:text-slate-600">→</span>
-                                    <span>{toWallet?.name || 'Dompet Terhapus'}</span>
+                                  <span className="flex items-center gap-1.5 text-[11px] truncate">
+                                    <span className="truncate">{wallet?.name || 'Dompet Terhapus'}</span>
+                                    <span className="text-slate-300 dark:text-slate-600 shrink-0">→</span>
+                                    <span className="truncate">{toWallet?.name || 'Dompet Terhapus'}</span>
                                   </span>
                                 ) : (
-                                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                                  <span className="flex items-center gap-1.5 truncate">
                                     {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3.5 h-3.5 shrink-0" />}
-                                    <span>{wallet?.name || 'Dompet Terhapus'}</span>
+                                    <span className="truncate">{wallet?.name || 'Dompet Terhapus'}</span>
                                   </span>
                                 )}
                               </td>
-                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium whitespace-nowrap"}>
+                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium truncate"} title={isTransfer ? 'Transfer Saldo' : (catName?.name || 'Kustom')}>
                                 {isTransfer ? (
-                                  <div className="flex flex-col">
-                                    <span className="text-slate-400 dark:text-slate-500 italic text-[11px]">Transfer Saldo</span>
+                                  <div className="flex flex-col truncate">
+                                    <span className="text-slate-400 dark:text-slate-500 italic text-[11px] truncate">Transfer Saldo</span>
                                     {t.adminFee && t.adminFee > 0 ? (
-                                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">
+                                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold truncate">
                                         Biaya Admin: {formatIDR(t.adminFee)}
                                       </span>
                                     ) : null}
                                   </div>
                                 ) : (
-                                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                                  <span className="flex items-center gap-1.5 truncate">
                                     {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5 shrink-0" />}
-                                    <span>{catName?.name || 'Kustom'}</span>
+                                    <span className="truncate">{catName?.name || 'Kustom'}</span>
                                   </span>
                                 )}
                               </td>
