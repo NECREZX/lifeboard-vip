@@ -7,9 +7,10 @@ interface BottomNavProps {
   setActiveTab: (tab: string) => void;
   accentColor: string;
   onAddClick: () => void;
+  uiStyle?: string;
 }
 
-export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddClick }: BottomNavProps) {
+export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddClick, uiStyle }: BottomNavProps) {
   const tabs = [
     { id: 'dashboard', label: 'Beranda', icon: DashboardNavIcon },
     { id: 'transaksi', label: 'Transaksi', icon: TransaksiIcon },
@@ -63,7 +64,11 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
   return (
     <div className="fixed bottom-4 left-0 right-0 z-40 px-3 sm:px-4 max-w-2xl mx-auto pointer-events-none no-print">
       <div 
-        className="pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full"
+        className={`pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 ${
+          uiStyle === 'glass'
+            ? 'glass-panel shadow-[0_16px_40px_rgba(0,0,0,0.18)]'
+            : 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-[0_12px_40px_rgba(0,0,0,0.12)]'
+        }`}
         id="bottom-dock-container"
       >
         {tabs.slice(0, 3).map((tab) => {

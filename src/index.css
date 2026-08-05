@@ -57,19 +57,69 @@
   background: rgba(148, 163, 184, 0.3);
 }
 
-/* Glassmorphism utility */
+/* Animated liquid floating mesh keyframes for Glassmorphic mode */
+@keyframes float-liquid-1 {
+  0% { transform: translate(0px, 0px) rotate(0deg) scale(1); }
+  33% { transform: translate(45px, -60px) rotate(120deg) scale(1.12); }
+  66% { transform: translate(-35px, 35px) rotate(240deg) scale(0.92); }
+  100% { transform: translate(0px, 0px) rotate(360deg) scale(1); }
+}
+
+@keyframes float-liquid-2 {
+  0% { transform: translate(0px, 0px) rotate(0deg) scale(1); }
+  33% { transform: translate(-50px, 45px) rotate(-120deg) scale(0.9); }
+  66% { transform: translate(40px, -30px) rotate(-240deg) scale(1.1); }
+  100% { transform: translate(0px, 0px) rotate(-360deg) scale(1); }
+}
+
+@keyframes float-liquid-3 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(30px, 40px) scale(1.15); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+.animate-float-liquid-1 {
+  animation: float-liquid-1 18s ease-in-out infinite;
+}
+
+.animate-float-liquid-2 {
+  animation: float-liquid-2 22s ease-in-out infinite;
+}
+
+.animate-float-liquid-3 {
+  animation: float-liquid-3 15s ease-in-out infinite;
+}
+
+/* Glassmorphism Liquid Glass Utility */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.3) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.3) 100%) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.75) !important;
+  box-shadow: 0 10px 32px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.03) !important;
 }
 
 .dark .glass-panel {
-  background: rgba(15, 23, 42, 0.4) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.65) 0%, rgba(15, 23, 42, 0.4) 100%) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 10px 32px 0 rgba(0, 0, 0, 0.45), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Liquid Glass Input / Selects */
+.glass-input {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark .glass-input {
+  background: rgba(15, 23, 42, 0.5) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Print layout for high-quality export to PDF */

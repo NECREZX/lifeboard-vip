@@ -1637,10 +1637,10 @@ export default function App() {
 
   const getThemeBackground = () => {
     if (settings.isDarkMode) {
-      if (settings.uiStyle === 'glass') return 'bg-slate-950/95 ';
+      if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-slate-950 via-slate-900/90 to-slate-950 text-slate-100 ';
       return 'bg-slate-950 ';
     }
-    if (settings.uiStyle === 'glass') return 'bg-slate-50/95 ';
+    if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-indigo-50/50 via-slate-50/70 to-purple-50/50 text-slate-900 ';
     return 'bg-slate-50 ';
   };
 
@@ -1649,7 +1649,7 @@ export default function App() {
     
     // 1. Apply UI Style baseline background & structural styles
     if (settings.uiStyle === 'glass') {
-      cls += "glass-panel shadow-sm backdrop-blur-md border border-white/20 dark:border-slate-800/40 ";
+      cls += "glass-panel hover:bg-white/75 dark:hover:bg-slate-900/70 ";
     } else if (settings.uiStyle === 'minimal') {
       cls += "bg-transparent dark:bg-transparent border-0 border-b border-slate-200 dark:border-slate-800 shadow-none ";
     } else {
@@ -1664,8 +1664,8 @@ export default function App() {
       else if (settings.cardRadius === 'extra') cls += "rounded-3xl ";
     }
 
-    // 3. Apply Card Borders & Shadows (if not minimal style, which forces borderless plain)
-    if (settings.uiStyle !== 'minimal') {
+    // 3. Apply Card Borders & Shadows for non-glass styles
+    if (settings.uiStyle !== 'minimal' && settings.uiStyle !== 'glass') {
       if (settings.cardStyle === 'flat') {
         cls += "border border-slate-200 dark:border-slate-800/60 shadow-none ";
       } else if (settings.cardStyle === 'bordered') {
@@ -1840,18 +1840,30 @@ export default function App() {
   return (
     <div className={`min-h-screen pb-24 ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 transition-colors duration-300 relative`}>
       
-      {/* AMBIENT BACKGROUND BLOBS FOR GLASS UI */}
+      {/* AMBIENT BACKGROUND BLOBS FOR LIQUID GLASS UI */}
       {settings.uiStyle === 'glass' && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/30 dark:bg-indigo-600/20 blur-[100px] mix-blend-multiply dark:mix-blend-screen animate-pulse-slow"></div>
-          <div className="absolute top-[20%] right-[-10%] w-[30%] h-[50%] rounded-full bg-emerald-500/20 dark:bg-emerald-600/10 blur-[100px] mix-blend-multiply dark:mix-blend-screen animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[40%] rounded-full bg-pink-500/20 dark:bg-pink-600/10 blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+          {/* Fluid Violet/Indigo Orb */}
+          <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-indigo-500/35 via-purple-500/30 to-violet-600/25 dark:from-indigo-600/30 dark:via-purple-700/25 dark:to-violet-900/20 blur-[100px] animate-float-liquid-1" />
+          
+          {/* Fluid Cyan/Teal Orb */}
+          <div className="absolute top-[25%] right-[-15%] w-[60vw] h-[60vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-br from-cyan-400/30 via-sky-500/25 to-blue-600/20 dark:from-cyan-600/25 dark:via-sky-800/20 dark:to-blue-900/15 blur-[100px] animate-float-liquid-2" />
+          
+          {/* Fluid Pink/Rose Orb */}
+          <div className="absolute bottom-[-10%] left-[10%] w-[70vw] h-[70vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-pink-400/30 via-fuchsia-500/25 to-rose-500/20 dark:from-pink-600/20 dark:via-fuchsia-800/20 dark:to-rose-900/15 blur-[110px] animate-float-liquid-1" />
+          
+          {/* Fluid Emerald Orb */}
+          <div className="absolute top-[60%] right-[15%] w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full bg-gradient-to-br from-emerald-400/25 via-teal-500/20 to-green-600/15 dark:from-emerald-600/20 dark:via-teal-800/15 dark:to-green-950/10 blur-[90px] animate-float-liquid-3" />
         </div>
       )}
 
       {/* 1. STICKY TOP BAR */}
       <header 
-        className="sticky top-0 z-40 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60 no-print"
+        className={`sticky top-0 z-40 w-full transition-colors duration-300 no-print ${
+          settings.uiStyle === 'glass' 
+            ? 'bg-white/50 dark:bg-slate-950/50 backdrop-blur-2xl border-b border-white/60 dark:border-white/10 shadow-sm' 
+            : 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60'
+        }`}
         style={{ paddingTop: 'max(env(safe-area-inset-top), 12px)' }}
       >
         <div className="max-w-2xl mx-auto pb-3 px-4 sm:px-6 flex items-center justify-between">
@@ -2148,6 +2160,7 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
+        uiStyle={settings.uiStyle}
         onAddClick={() => {
           if (activeTab === 'aktivitas') {
             if (activeActivitiesSubTab === 'agenda') openAddModal('aktivitas');
@@ -2450,21 +2463,26 @@ export default function App() {
                   {[
                     { id: 'modern', label: 'Modern Slate', desc: 'Sederhana & Elegan' },
                     { id: 'minimal', label: 'Minimalist', desc: 'Tanpa Pembatas' },
-                    { id: 'glass', label: 'Glassmorphic', desc: 'Efek Transparansi' }
+                    { id: 'glass', label: 'Glassmorphic', desc: 'Liquid Frosted Glass' }
                   ].map((s) => {
                     const isActive = settings.uiStyle === s.id;
                     return (
                       <button
                         key={s.id}
                         onClick={() => setSettings({ ...settings, uiStyle: s.id as UIStyle })}
-                        className={`p-3 rounded-xl border text-left transition select-none focus:outline-none ${
+                        className={`p-3 rounded-xl border text-left transition select-none focus:outline-none relative overflow-hidden ${
                           isActive 
-                            ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-sm' 
+                            ? (s.id === 'glass' 
+                                ? 'glass-panel border-indigo-500/80 font-bold shadow-md' 
+                                : 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-sm')
                             : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
                         }`}
                       >
-                        <span className="font-bold text-xs text-slate-900 dark:text-white block">{s.label}</span>
-                        <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium mt-0.5 block">{s.desc}</span>
+                        {s.id === 'glass' && (
+                          <div className="absolute -right-2 -bottom-2 w-10 h-10 bg-gradient-to-br from-indigo-500/40 via-pink-400/30 to-cyan-400/40 rounded-full blur-md pointer-events-none" />
+                        )}
+                        <span className="font-bold text-xs text-slate-900 dark:text-white block relative z-10">{s.label}</span>
+                        <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium mt-0.5 block relative z-10">{s.desc}</span>
                       </button>
                     );
                   })}
