@@ -342,14 +342,14 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             )}
 
             <div className="overflow-x-auto scrollbar-thin">
-              <table className={`${getTableClasses()} table-fixed min-w-[720px] w-full`}>
+              <table className={`${getTableClasses()} table-fixed min-w-[920px] w-full`}>
                 <colgroup>
                   <col className="w-[160px]" />
-                  <col className="w-[85px]" />
-                  <col className="w-[135px]" />
-                  <col className="w-[135px]" />
-                  <col className="w-[95px]" />
                   <col className="w-[130px]" />
+                  <col className="w-[150px]" />
+                  <col className="w-[150px]" />
+                  <col className="w-[110px]" />
+                  <col className="w-[140px]" />
                   <col className="w-[80px]" />
                 </colgroup>
                 <thead className="bg-white dark:bg-slate-900/90 border-b border-slate-100 dark:border-slate-800 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
