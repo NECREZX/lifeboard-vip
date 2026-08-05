@@ -88,7 +88,7 @@ export default function NotificationPanel({
         <div 
           className={`fixed sm:absolute left-1/2 sm:left-auto sm:right-0 sm:translate-x-0 -translate-x-1/2 top-20 sm:top-full mt-2 w-[calc(100vw-32px)] sm:w-96 rounded-3xl z-50 overflow-hidden transition-all ${
             uiStyle === 'glass' 
-              ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.18)]' 
+              ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)]' 
               : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)]'
           }`}
           id="notification-dropdown-panel"
@@ -96,7 +96,7 @@ export default function NotificationPanel({
           {/* Header */}
           <div className={`p-4 border-b flex items-center justify-between transition-all ${
             uiStyle === 'glass'
-              ? 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-white/50 dark:border-white/10'
+              ? 'bg-white/20 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
               : 'bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'
           }`}>
             <div className="flex items-center gap-2">
@@ -134,10 +134,10 @@ export default function NotificationPanel({
 
           {/* List content */}
           <div className={`max-h-[340px] overflow-y-auto divide-y ${
-            uiStyle === 'glass' ? 'divide-white/40 dark:divide-white/10' : 'divide-slate-100 dark:divide-slate-800'
+            uiStyle === 'glass' ? 'divide-white/30 dark:divide-white/10' : 'divide-slate-100 dark:divide-slate-800'
           }`}>
             {notifications.length === 0 ? (
-              <div className="p-8 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center justify-center gap-2">
+              <div className="p-8 text-center text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center gap-2">
                 <CustomNotificationIcon className="w-10 h-10 opacity-50" />
                 <p className="text-xs font-semibold">Tidak ada notifikasi baru</p>
               </div>
@@ -166,8 +166,8 @@ export default function NotificationPanel({
                     key={n.id}
                     className={`p-3.5 flex items-start gap-3 transition-colors duration-200 relative ${
                       n.isRead 
-                        ? 'bg-transparent' 
-                        : (uiStyle === 'glass' ? 'bg-white/60 dark:bg-white/10' : 'bg-slate-50/70 dark:bg-slate-800/20')
+                        ? 'bg-transparent hover:bg-white/30 dark:hover:bg-white/5' 
+                        : (uiStyle === 'glass' ? 'bg-white/40 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/15' : 'bg-slate-50/70 dark:bg-slate-800/20')
                     }`}
                   >
                     {/* Unread blue dot */}
@@ -219,7 +219,7 @@ export default function NotificationPanel({
           {/* Footer view */}
           <div className={`p-2.5 border-t text-center transition-all ${
             uiStyle === 'glass'
-              ? 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-white/50 dark:border-white/10'
+              ? 'bg-white/20 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
               : 'bg-slate-50/30 dark:bg-slate-900/30 border-slate-100 dark:border-slate-800'
           }`}>
             <button 
