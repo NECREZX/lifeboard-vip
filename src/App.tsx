@@ -309,11 +309,11 @@ export default function App() {
     switch (settings.fontStyle) {
       case 'jakarta': fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
       case 'grotesk': fontFamilyStr = "'Space Grotesk', sans-serif"; break;
-      case 'ios': fontFamilyStr = "'Playfair Display', serif"; break;
+      case 'ios': fontFamilyStr = "'Roboto Slab', serif"; break;
       case 'neobrutalism': fontFamilyStr = "'Edu VIC WA NT Hand', cursive"; break;
       case 'iceberg': case 'pixel': fontFamilyStr = "'Iceberg', sans-serif"; break;
       case 'mono': fontFamilyStr = "'JetBrains Mono', monospace"; break;
-      case 'serif': fontFamilyStr = "'Playfair Display', serif"; break;
+      case 'serif': fontFamilyStr = "'Roboto Slab', serif"; break;
       case 'sans': default: fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
     }
     document.body.style.fontFamily = fontFamilyStr;
@@ -2451,7 +2451,7 @@ export default function App() {
                   >
                     <option value="jakarta">Jakarta Sans (Modern & Clean)</option>
                     <option value="grotesk">Space Grotesk (Tech & Edgy)</option>
-                    <option value="ios">Playfair Display (Klasik Serif)</option>
+                    <option value="ios">Roboto Slab (Klasik Serif)</option>
                     <option value="neobrutalism">Edu VIC WA NT Hand (Tulisan Tangan / Cursive)</option>
                     <option value="iceberg">Iceberg (Display & Modern)</option>
                   </select>
