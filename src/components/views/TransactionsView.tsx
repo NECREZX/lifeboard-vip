@@ -566,43 +566,43 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
         });
 
         return (
-          <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto no-print">
-            <div className={`w-full max-w-[330px] sm:max-w-[370px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl my-4 transition-all animate-in fade-in zoom-in-95 duration-200 ${
+          <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto no-print">
+            <div className={`w-full max-w-[380px] sm:max-w-[430px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl my-6 transition-all animate-in fade-in zoom-in-95 duration-200 ${
               uiStyle === 'glass'
                 ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.18)]'
                 : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80'
             }`}>
               {/* Modal Header */}
-              <div className={`p-3 sm:p-3.5 border-b flex items-center justify-between transition-all ${
+              <div className={`p-4 sm:p-4.5 border-b flex items-center justify-between transition-all ${
                 uiStyle === 'glass'
                   ? 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-white/50 dark:border-white/10'
                   : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'
               }`}>
-                <div className="flex items-center gap-2">
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                <div className="flex items-center gap-2.5">
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
                     isIncome 
                       ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
                       : isTransfer 
                         ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20'
                         : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20'
                   }`}>
-                    {isIncome ? <TrendingUp className="w-3.5 h-3.5" /> : isTransfer ? <ArrowLeftRight className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                    {isIncome ? <TrendingUp className="w-4 h-4" /> : isTransfer ? <ArrowLeftRight className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-slate-950 dark:text-white tracking-tight leading-tight">
+                    <h3 className="font-bold text-base text-slate-950 dark:text-white tracking-tight leading-tight">
                       Detail Transaksi
                     </h3>
-                    <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-                      Rincian catatan transaksi
+                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                      Rincian lengkap catatan transaksi
                     </p>
                   </div>
                 </div>
               </div>
 
               {/* Modal Body */}
-              <div className="p-3 sm:p-4 flex flex-col gap-2.5">
+              <div className="p-4 sm:p-5 flex flex-col gap-3.5">
                 {/* Highlight Amount Card */}
-                <div className={`py-2.5 px-3 rounded-xl text-center flex flex-col items-center justify-center gap-0.5 transition-all ${
+                <div className={`py-3.5 px-4 rounded-2xl text-center flex flex-col items-center justify-center gap-1 transition-all ${
                   uiStyle === 'glass'
                     ? (isIncome 
                         ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 dark:text-emerald-100'
@@ -615,7 +615,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                           ? 'bg-blue-50/80 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30'
                           : 'bg-rose-50/80 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30')
                 }`}>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
                     isIncome 
                       ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' 
                       : isTransfer 
@@ -624,7 +624,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                   }`}>
                     {selectedTxDetail.type}
                   </span>
-                  <div className={`text-xl sm:text-2xl font-black font-mono tracking-tight my-0.5 ${
+                  <div className={`text-2xl sm:text-3xl font-black font-mono tracking-tight my-0.5 ${
                     isIncome 
                       ? 'text-emerald-600 dark:text-emerald-400' 
                       : isTransfer 
@@ -635,7 +635,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                   </div>
                   
                   {isTransfer && selectedTxDetail.adminFee && selectedTxDetail.adminFee > 0 ? (
-                    <div className="flex items-center gap-2 pt-1 border-t border-blue-200/50 dark:border-blue-800/30 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                    <div className="flex items-center gap-2 pt-1.5 border-t border-blue-200/50 dark:border-blue-800/30 text-[11px] font-medium text-slate-600 dark:text-slate-300">
                       <span>Admin: <strong className="text-amber-600 dark:text-amber-400">{formatIDR(selectedTxDetail.adminFee)}</strong></span>
                       <span>•</span>
                       <span>Total: <strong className="text-rose-600 dark:text-rose-400">{formatIDR(selectedTxDetail.amount + selectedTxDetail.adminFee)}</strong></span>
@@ -644,53 +644,53 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                 </div>
 
                 {/* Detail Information Grid */}
-                <div className={`flex flex-col gap-2 p-2.5 sm:p-3 rounded-xl text-xs ${
+                <div className={`flex flex-col gap-2.5 p-3.5 sm:p-4 rounded-2xl ${
                   uiStyle === 'glass' 
                     ? 'bg-white/40 dark:bg-slate-800/30 border border-white/50 dark:border-white/10'
                     : 'bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800'
                 }`}>
                   {/* Deskripsi */}
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Deskripsi / Keterangan</span>
-                    <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug break-words">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Deskripsi / Keterangan</span>
+                    <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 leading-snug break-words">
                       {selectedTxDetail.description}
                     </p>
                   </div>
 
                   {/* Tanggal */}
-                  <div className="flex flex-col gap-0.5 pt-1.5 border-t border-slate-200/60 dark:border-slate-700/50">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Tanggal Transaksi</span>
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
-                      <Calendar className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  <div className="flex flex-col gap-0.5 pt-2 border-t border-slate-200/60 dark:border-slate-700/50">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Tanggal Transaksi</span>
+                    <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
+                      <Calendar className="w-4 h-4 text-indigo-500 shrink-0" />
                       <span>{formattedFullDate}</span>
                     </div>
                   </div>
 
                   {/* Dompet */}
-                  <div className="grid grid-cols-2 gap-2 pt-1.5 border-t border-slate-200/60 dark:border-slate-700/50">
+                  <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200/60 dark:border-slate-700/50">
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                         {isTransfer ? 'Dompet Asal' : 'Dompet'}
                       </span>
-                      <div className="flex items-center gap-1 text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
-                        {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3.5 h-3.5 shrink-0" />}
+                      <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">
+                        {wallet?.icon && <IconRenderer name={wallet.icon} className="w-4 h-4 shrink-0" />}
                         <span className="truncate">{wallet?.name || 'Dompet Terhapus'}</span>
                       </div>
                     </div>
 
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                         {isTransfer ? 'Dompet Tujuan' : (isIncome ? 'Sumber' : 'Kategori')}
                       </span>
-                      <div className="flex items-center gap-1 text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                      <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">
                         {isTransfer ? (
                           <>
-                            {toWallet?.icon && <IconRenderer name={toWallet.icon} className="w-3.5 h-3.5 shrink-0" />}
+                            {toWallet?.icon && <IconRenderer name={toWallet.icon} className="w-4 h-4 shrink-0" />}
                             <span className="truncate">{toWallet?.name || 'Dompet Terhapus'}</span>
                           </>
                         ) : (
                           <>
-                            {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5 shrink-0" />}
+                            {catName?.icon && <IconRenderer name={catName.icon} className="w-4 h-4 shrink-0" />}
                             <span className="truncate">{catName?.name || 'Kustom'}</span>
                           </>
                         )}
@@ -701,7 +701,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
               </div>
 
               {/* Modal Footer Actions */}
-              <div className={`p-2.5 sm:p-3 border-t flex items-center justify-end transition-all ${
+              <div className={`p-3 sm:p-4 border-t flex items-center justify-end transition-all ${
                 uiStyle === 'glass'
                   ? 'bg-white/30 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
                   : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'
@@ -709,7 +709,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setSelectedTxDetail(null)}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                  className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
                     uiStyle === 'glass'
                       ? 'bg-white/80 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-white dark:border-slate-700 shadow-sm'
                       : 'bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200'
