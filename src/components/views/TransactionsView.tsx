@@ -3,8 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { Search, Filter, Trash2, Edit2, PlusCircle, X, Calendar, Wallet as WalletIcon, Tag, RotateCcw, SlidersHorizontal, ChevronUp, ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { 
+  Search, Filter, Trash2, Edit2, Eye, PlusCircle, X, Calendar, 
+  Wallet as WalletIcon, Tag, RotateCcw, SlidersHorizontal, ChevronUp, 
+  ChevronDown, ArrowRight, TrendingUp, TrendingDown, ArrowLeftRight,
+  Clock, Hash, FileText, CheckCircle2
+} from 'lucide-react';
 import { Transaction, Wallet, Category, IncomeSource } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
@@ -38,6 +43,7 @@ interface TransactionsViewProps {
   getTableRowPadding: () => string;
   getTableRowClasses: (index: number) => string;
   handleDeleteTransaction: (id: string) => void;
+  onAdd?: (type?: any) => void;
   onEdit: (tx: Transaction) => void;
 }
 
@@ -73,6 +79,8 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
   onAdd,
   onEdit
 }) => {
+  const [selectedTxDetail, setSelectedTxDetail] = useState<Transaction | null>(null);
+
   const displayedTransactions = showAllTransactions 
     ? filteredTransactions 
     : filteredTransactions.slice(0, 5);
@@ -400,7 +408,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                   <col className="w-[150px]" />
                   <col className="w-[110px]" />
                   <col className="w-[140px]" />
-                  <col className="w-[80px]" />
+                  <col className="w-[115px]" />
                 </colgroup>
                 <thead className={`border-b text-[10px] font-bold uppercase tracking-wider transition-all ${
                   uiStyle === 'glass'
@@ -414,7 +422,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                     <th className={getTableRowPadding()}>Kategori/Aliran</th>
                     <th className={getTableRowPadding()}>Tanggal</th>
                     <th className={getTableRowPadding()}>Jumlah</th>
-                    <th className={`${getTableRowPadding()} text-right`}>Aksi</th>
+                    <th className={`${getTableRowPadding()} text-center`}>Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -501,12 +509,27 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                                   ) : null}
                                 </div>
                               </td>
-                              <td className={getTableRowPadding() + " text-right whitespace-nowrap"}>
-                                <div className="flex items-center justify-end gap-1">
-                                  <button onClick={() => onEdit(t)} className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition inline-flex items-center">
+                              <td className={getTableRowPadding() + " text-center whitespace-nowrap"}>
+                                <div className="flex items-center justify-center gap-1">
+                                  <button 
+                                    onClick={() => setSelectedTxDetail(t)} 
+                                    title="Lihat Detail Transaksi"
+                                    className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-950/30 transition inline-flex items-center"
+                                  >
+                                    <Eye className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button 
+                                    onClick={() => onEdit(t)} 
+                                    title="Edit Transaksi"
+                                    className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition inline-flex items-center"
+                                  >
                                     <Edit2 className="w-3.5 h-3.5" />
                                   </button>
-                                  <button onClick={() => handleDeleteTransaction(t.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition inline-flex items-center">
+                                  <button 
+                                    onClick={() => handleDeleteTransaction(t.id)} 
+                                    title="Hapus Transaksi"
+                                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition inline-flex items-center"
+                                  >
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>
                                 </div>
@@ -523,6 +546,182 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
           </>
         )}
       </div>
+
+      {/* Transaction Detail Pop-up Modal */}
+      {selectedTxDetail && (() => {
+        const wallet = wallets.find((w) => w.id === selectedTxDetail.walletId);
+        const toWallet = selectedTxDetail.toWalletId ? wallets.find((w) => w.id === selectedTxDetail.toWalletId) : null;
+        const isIncome = selectedTxDetail.type === 'pemasukan';
+        const isTransfer = selectedTxDetail.type === 'transfer';
+        const isExpense = selectedTxDetail.type === 'pengeluaran';
+        const catName = isIncome 
+          ? sources.find(s => s.id === selectedTxDetail.sourceId)
+          : (isTransfer ? null : categories.find(c => c.id === selectedTxDetail.categoryId));
+
+        const formattedFullDate = new Date(selectedTxDetail.date).toLocaleDateString('id-ID', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+
+        return (
+          <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto no-print">
+            <div className={`w-full max-w-[330px] sm:max-w-[370px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl my-4 transition-all animate-in fade-in zoom-in-95 duration-200 ${
+              uiStyle === 'glass'
+                ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.18)]'
+                : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80'
+            }`}>
+              {/* Modal Header */}
+              <div className={`p-3 sm:p-3.5 border-b flex items-center justify-between transition-all ${
+                uiStyle === 'glass'
+                  ? 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-white/50 dark:border-white/10'
+                  : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'
+              }`}>
+                <div className="flex items-center gap-2">
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                    isIncome 
+                      ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
+                      : isTransfer 
+                        ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20'
+                        : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20'
+                  }`}>
+                    {isIncome ? <TrendingUp className="w-3.5 h-3.5" /> : isTransfer ? <ArrowLeftRight className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm text-slate-950 dark:text-white tracking-tight leading-tight">
+                      Detail Transaksi
+                    </h3>
+                    <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                      Rincian catatan transaksi
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-3 sm:p-4 flex flex-col gap-2.5">
+                {/* Highlight Amount Card */}
+                <div className={`py-2.5 px-3 rounded-xl text-center flex flex-col items-center justify-center gap-0.5 transition-all ${
+                  uiStyle === 'glass'
+                    ? (isIncome 
+                        ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 dark:text-emerald-100'
+                        : isTransfer 
+                          ? 'bg-blue-500/10 border border-blue-500/20 text-blue-950 dark:text-blue-100'
+                          : 'bg-rose-500/10 border border-rose-500/20 text-rose-950 dark:text-rose-100')
+                    : (isIncome 
+                        ? 'bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30'
+                        : isTransfer
+                          ? 'bg-blue-50/80 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30'
+                          : 'bg-rose-50/80 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30')
+                }`}>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider ${
+                    isIncome 
+                      ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' 
+                      : isTransfer 
+                        ? 'bg-blue-500/20 text-blue-700 dark:text-blue-300' 
+                        : 'bg-rose-500/20 text-rose-700 dark:text-rose-300'
+                  }`}>
+                    {selectedTxDetail.type}
+                  </span>
+                  <div className={`text-xl sm:text-2xl font-black font-mono tracking-tight my-0.5 ${
+                    isIncome 
+                      ? 'text-emerald-600 dark:text-emerald-400' 
+                      : isTransfer 
+                        ? 'text-blue-600 dark:text-blue-400' 
+                        : 'text-rose-600 dark:text-rose-400'
+                  }`}>
+                    {isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(selectedTxDetail.amount)}
+                  </div>
+                  
+                  {isTransfer && selectedTxDetail.adminFee && selectedTxDetail.adminFee > 0 ? (
+                    <div className="flex items-center gap-2 pt-1 border-t border-blue-200/50 dark:border-blue-800/30 text-[10px] font-medium text-slate-600 dark:text-slate-300">
+                      <span>Admin: <strong className="text-amber-600 dark:text-amber-400">{formatIDR(selectedTxDetail.adminFee)}</strong></span>
+                      <span>•</span>
+                      <span>Total: <strong className="text-rose-600 dark:text-rose-400">{formatIDR(selectedTxDetail.amount + selectedTxDetail.adminFee)}</strong></span>
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Detail Information Grid */}
+                <div className={`flex flex-col gap-2 p-2.5 sm:p-3 rounded-xl text-xs ${
+                  uiStyle === 'glass' 
+                    ? 'bg-white/40 dark:bg-slate-800/30 border border-white/50 dark:border-white/10'
+                    : 'bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800'
+                }`}>
+                  {/* Deskripsi */}
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Deskripsi / Keterangan</span>
+                    <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug break-words">
+                      {selectedTxDetail.description}
+                    </p>
+                  </div>
+
+                  {/* Tanggal */}
+                  <div className="flex flex-col gap-0.5 pt-1.5 border-t border-slate-200/60 dark:border-slate-700/50">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Tanggal Transaksi</span>
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                      <Calendar className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                      <span>{formattedFullDate}</span>
+                    </div>
+                  </div>
+
+                  {/* Dompet */}
+                  <div className="grid grid-cols-2 gap-2 pt-1.5 border-t border-slate-200/60 dark:border-slate-700/50">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        {isTransfer ? 'Dompet Asal' : 'Dompet'}
+                      </span>
+                      <div className="flex items-center gap-1 text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                        {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3.5 h-3.5 shrink-0" />}
+                        <span className="truncate">{wallet?.name || 'Dompet Terhapus'}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                        {isTransfer ? 'Dompet Tujuan' : (isIncome ? 'Sumber' : 'Kategori')}
+                      </span>
+                      <div className="flex items-center gap-1 text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                        {isTransfer ? (
+                          <>
+                            {toWallet?.icon && <IconRenderer name={toWallet.icon} className="w-3.5 h-3.5 shrink-0" />}
+                            <span className="truncate">{toWallet?.name || 'Dompet Terhapus'}</span>
+                          </>
+                        ) : (
+                          <>
+                            {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5 shrink-0" />}
+                            <span className="truncate">{catName?.name || 'Kustom'}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer Actions */}
+              <div className={`p-2.5 sm:p-3 border-t flex items-center justify-end transition-all ${
+                uiStyle === 'glass'
+                  ? 'bg-white/30 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
+                  : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'
+              }`}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedTxDetail(null)}
+                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                    uiStyle === 'glass'
+                      ? 'bg-white/80 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-white dark:border-slate-700 shadow-sm'
+                      : 'bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200'
+                  }`}
+                >
+                  Tutup
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
