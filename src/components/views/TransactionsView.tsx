@@ -592,9 +592,6 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                     <h3 className="font-bold text-base text-slate-950 dark:text-white tracking-tight leading-tight">
                       Detail Transaksi
                     </h3>
-                    <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                      Rincian lengkap catatan transaksi
-                    </p>
                   </div>
                 </div>
               </div>
