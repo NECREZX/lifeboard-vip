@@ -130,20 +130,24 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
               return (
                 <div 
-                  className={`w-full relative overflow-hidden ${cardRadiusClass} p-5 sm:p-6 bg-gradient-to-r from-cyan-500 via-teal-600 to-rose-500 text-white shadow-[0_16px_36px_rgba(20,184,166,0.25)] border border-white/40 ring-1 ring-white/20 flex flex-col justify-between h-[185px] sm:h-[195px] select-none group transition-all duration-300 hover:shadow-[0_20px_42px_rgba(20,184,166,0.35)]`}
+                  className={`w-full relative ${cardRadiusClass} p-5 sm:p-6 text-white shadow-[0_16px_36px_rgba(0,0,0,0.12),0_8px_24px_rgba(20,184,166,0.22)] border border-white/50 ring-1 ring-white/30 flex flex-col justify-between h-[185px] sm:h-[195px] select-none group transition-all duration-300 hover:shadow-[0_20px_42px_rgba(0,0,0,0.18),0_10px_28px_rgba(20,184,166,0.3)]`}
                 >
-                  {/* Subtle Decorative Wave & Glow Overlay matching Top Bar / Bottom Bar */}
-                  <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
-                    <svg className="w-full h-full" viewBox="0 0 100 25" preserveAspectRatio="none">
-                      <path d="M0,12 Q25,3 50,15 T100,8" fill="none" stroke="currentColor" strokeWidth="0.6" className="text-white" />
-                      <path d="M0,18 Q30,8 65,22 T100,16" fill="none" stroke="currentColor" strokeWidth="0.4" className="text-white" />
-                    </svg>
-                    <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10 pointer-events-none" />
-                    <div className="absolute left-1/4 -bottom-10 w-36 h-20 rounded-full bg-teal-300/20 blur-xl pointer-events-none" />
-                  </div>
+                  {/* Background gradient & decorative motifs confined inside rounded layer */}
+                  <div className={`absolute inset-0 ${cardRadiusClass} overflow-hidden pointer-events-none bg-gradient-to-r from-cyan-500 via-teal-600 to-rose-500 -z-10`}>
+                    {/* Subtle Decorative Wave & Glow Overlay matching Top Bar / Bottom Bar */}
+                    <div className="absolute inset-0 opacity-20">
+                      <svg className="w-full h-full" viewBox="0 0 100 25" preserveAspectRatio="none">
+                        <path d="M0,12 Q25,3 50,15 T100,8" fill="none" stroke="currentColor" strokeWidth="0.6" className="text-white" />
+                        <path d="M0,18 Q30,8 65,22 T100,16" fill="none" stroke="currentColor" strokeWidth="0.4" className="text-white" />
+                      </svg>
+                      <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10" />
+                      <div className="absolute left-1/4 -bottom-10 w-36 h-20 rounded-full bg-teal-300/20 blur-xl" />
+                    </div>
 
-                  {/* Diagonal Holographic Sheen */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-white/20 pointer-events-none" />
+                    {/* Symmetrical Edge Sheen to ensure both left & right borders are vibrant & crisp */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/15 via-transparent to-white/20" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-black/10" />
+                  </div>
 
                   {/* Card Header: Icon on left, "TOTAL SALDO AWAL" directly to the right */}
                   <div className="flex items-center gap-3 relative z-10">
