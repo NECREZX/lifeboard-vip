@@ -484,7 +484,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                                   <div className="flex flex-col truncate">
                                     <span className="text-slate-400 dark:text-slate-500 italic text-[11px] truncate">Transfer Saldo</span>
                                     {t.adminFee && t.adminFee > 0 ? (
-                                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold truncate">
+                                      <span className="text-[10px] text-sky-600 dark:text-sky-400 font-semibold truncate">
                                         Biaya Admin: {formatIDR(t.adminFee)}
                                       </span>
                                     ) : null}
@@ -633,7 +633,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                   
                   {isTransfer && selectedTxDetail.adminFee && selectedTxDetail.adminFee > 0 ? (
                     <div className="flex items-center gap-2 pt-1.5 border-t border-blue-200/50 dark:border-blue-800/30 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-                      <span>Admin: <strong className="text-amber-600 dark:text-amber-400">{formatIDR(selectedTxDetail.adminFee)}</strong></span>
+                      <span>Admin: <strong className="text-sky-600 dark:text-sky-400">{formatIDR(selectedTxDetail.adminFee)}</strong></span>
                       <span>•</span>
                       <span>Total: <strong className="text-rose-600 dark:text-rose-400">{formatIDR(selectedTxDetail.amount + selectedTxDetail.adminFee)}</strong></span>
                     </div>

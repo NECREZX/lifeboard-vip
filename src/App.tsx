@@ -1640,7 +1640,7 @@ export default function App() {
       if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-slate-950 via-slate-900/90 to-slate-950 text-slate-100 ';
       return 'bg-slate-950 ';
     }
-    if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-indigo-50/50 via-slate-50/70 to-purple-50/50 text-slate-900 ';
+    if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-teal-50/25 via-slate-50/70 to-sky-50/25 text-slate-900 ';
     return 'bg-slate-50 ';
   };
 
@@ -1649,7 +1649,7 @@ export default function App() {
     
     // 1. Apply UI Style baseline background & structural styles
     if (settings.uiStyle === 'glass') {
-      cls += "glass-panel hover:bg-white/75 dark:hover:bg-slate-900/70 ";
+      cls += "glass-panel hover:bg-white/85 dark:hover:bg-slate-900/80 ";
     } else if (settings.uiStyle === 'minimal') {
       cls += "bg-transparent dark:bg-transparent border-0 border-b border-slate-200 dark:border-slate-800 shadow-none ";
     } else {
@@ -1844,17 +1844,17 @@ export default function App() {
       {/* AMBIENT BACKGROUND BLOBS FOR LIQUID GLASS UI */}
       {settings.uiStyle === 'glass' && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
-          {/* Fluid Violet/Indigo Orb */}
-          <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-indigo-500/35 via-purple-500/30 to-violet-600/25 dark:from-indigo-600/30 dark:via-purple-700/25 dark:to-violet-900/20 blur-[100px] animate-float-liquid-1" />
+          {/* Fluid Cyan & Sky Blue Orb */}
+          <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-cyan-400/25 via-sky-400/20 to-blue-500/15 dark:from-cyan-700/20 dark:via-sky-800/15 dark:to-blue-900/10 blur-[100px] animate-float-liquid-1" />
           
-          {/* Fluid Cyan/Teal Orb */}
-          <div className="absolute top-[25%] right-[-15%] w-[60vw] h-[60vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-br from-cyan-400/30 via-sky-500/25 to-blue-600/20 dark:from-cyan-600/25 dark:via-sky-800/20 dark:to-blue-900/15 blur-[100px] animate-float-liquid-2" />
+          {/* Fluid Ocean Blue & Cyan Orb */}
+          <div className="absolute top-[25%] right-[-15%] w-[60vw] h-[60vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-br from-cyan-400/20 via-sky-500/15 to-blue-600/15 dark:from-cyan-900/15 dark:via-sky-950/10 dark:to-blue-950/10 blur-[100px] animate-float-liquid-2" />
           
-          {/* Fluid Pink/Rose Orb */}
-          <div className="absolute bottom-[-10%] left-[10%] w-[70vw] h-[70vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-pink-400/30 via-fuchsia-500/25 to-rose-500/20 dark:from-pink-600/20 dark:via-fuchsia-800/20 dark:to-rose-900/15 blur-[110px] animate-float-liquid-1" />
+          {/* Fluid Mint & Teal Orb */}
+          <div className="absolute bottom-[-10%] left-[10%] w-[70vw] h-[70vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-teal-300/25 via-emerald-400/20 to-cyan-300/15 dark:from-teal-700/20 dark:via-emerald-800/15 dark:to-cyan-900/10 blur-[110px] animate-float-liquid-1" />
           
-          {/* Fluid Emerald Orb */}
-          <div className="absolute top-[60%] right-[15%] w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full bg-gradient-to-br from-emerald-400/25 via-teal-500/20 to-green-600/15 dark:from-emerald-600/20 dark:via-teal-800/15 dark:to-green-950/10 blur-[90px] animate-float-liquid-3" />
+          {/* Fluid Soft Azure Blue Orb */}
+          <div className="absolute top-[60%] right-[15%] w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full bg-gradient-to-br from-blue-400/20 via-sky-300/15 to-indigo-400/10 dark:from-blue-800/15 dark:via-sky-900/10 dark:to-indigo-950/10 blur-[90px] animate-float-liquid-3" />
         </div>
       )}
 
@@ -1862,7 +1862,7 @@ export default function App() {
       <header 
         className={`sticky top-0 z-40 w-full transition-all duration-300 no-print ${
           settings.uiStyle === 'glass' 
-            ? 'glass-panel !border-x-0 !border-t-0 !rounded-none shadow-sm' 
+            ? 'bg-white/20 dark:bg-slate-950/30 backdrop-blur-xl border-b border-white/20 dark:border-slate-900/20 shadow-sm' 
             : 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60'
         }`}
         style={{ paddingTop: 'max(env(safe-area-inset-top), 12px)' }}

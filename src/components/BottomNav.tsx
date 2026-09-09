@@ -66,7 +66,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
       <div 
         className={`pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 ${
           uiStyle === 'glass'
-            ? 'glass-panel shadow-[0_16px_40px_rgba(0,0,0,0.18)]'
+            ? 'bg-white/20 dark:bg-slate-900/30 backdrop-blur-xl border border-white/25 dark:border-slate-800/20 shadow-[0_16px_40px_rgba(0,0,0,0.18)]'
             : 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-[0_12px_40px_rgba(0,0,0,0.12)]'
         }`}
         id="bottom-dock-container"

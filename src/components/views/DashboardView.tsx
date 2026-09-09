@@ -296,7 +296,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {/* Card 3: Biaya Admin Transfer */}
           <div className={getCardClasses() + " p-5 sm:p-6 min-h-[110px] relative overflow-hidden flex items-center justify-center group"}>
             {/* Bottom-left circle bubble */}
-            <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-amber-100/60 dark:bg-amber-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
+            <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-sky-100/60 dark:bg-sky-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
 
             <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-6">
               <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
@@ -308,8 +308,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             {/* Top-right circle bubble with icon */}
-            <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-amber-100/80 dark:bg-amber-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
-              <div className="-translate-x-2 translate-y-2 text-amber-600 dark:text-amber-400">
+            <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-sky-100/80 dark:bg-sky-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
+              <div className="-translate-x-2 translate-y-2 text-sky-600 dark:text-sky-400">
                 <Receipt className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
             </div>
@@ -366,7 +366,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                {activities.slice(0, 3).map(a => (
                  <tr key={a.id} className="border-b border-slate-100 dark:border-slate-800">
                    <td className="py-2 truncate max-w-[100px] text-slate-700 dark:text-slate-200">{a.title}</td>
-                   <td className={`py-2 text-right font-bold ${a.status === 'completed' ? 'text-emerald-500' : 'text-amber-500'}`}>{a.status === 'completed' ? 'Selesai' : 'Pending'}</td>
+                   <td className={`py-2 text-right font-bold ${a.status === 'completed' ? 'text-emerald-500' : 'text-sky-500'}`}>{a.status === 'completed' ? 'Selesai' : 'Pending'}</td>
                  </tr>
                ))}
              </tbody>

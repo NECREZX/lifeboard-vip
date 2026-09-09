@@ -109,6 +109,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   resetSourceForm,
   settings
 }) => {
+  const getInputClass = (extra = "px-4") => {
+    if (settings?.uiStyle === 'glass') {
+      return `w-full py-2.5 text-xs rounded-xl glass-input text-slate-800 dark:text-slate-100 focus:outline-none ${extra}`;
+    }
+    return `w-full py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none ${extra}`;
+  };
+
   return (
     <div className="flex flex-col gap-6" id="view-manage">
       <div className="flex items-center justify-between mb-2">
@@ -124,9 +131,9 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           <div className={getCardClasses() + " p-5 h-fit"}>
             <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">{walletEditId ? 'Edit Dompet' : 'Tambah Dompet Baru'}</h3>
             <form onSubmit={handleSaveWallet} className="flex flex-col gap-4">
-              <input type="text" placeholder="Nama Dompet (cth: BCA, Jago)" value={walletFormName} onChange={e => setWalletFormName(e.target.value)} required className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none" />
+              <input type="text" placeholder="Nama Dompet (cth: BCA, Jago)" value={walletFormName} onChange={e => setWalletFormName(e.target.value)} required className={getInputClass("px-4")} />
               <div className="relative">
-                <input type="number" placeholder="Saldo Awal (Rp)" value={walletFormBalance} onChange={e => setWalletFormBalance(e.target.value)} required className="w-full pl-4 pr-16 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none" />
+                <input type="number" placeholder="Saldo Awal (Rp)" value={walletFormBalance} onChange={e => setWalletFormBalance(e.target.value)} required className={getInputClass("pl-4 pr-16")} />
                 <button
                   type="button"
                   onClick={() => setWalletFormBalance(prev => prev ? prev + '000' : '1000')}
@@ -219,7 +226,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 value={categoryFormName} 
                 onChange={e => setCategoryFormName(e.target.value)} 
                 required 
-                className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none" 
+                className={getInputClass("px-4")} 
               />
               
               <div className="flex flex-col gap-2">
@@ -333,7 +340,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 value={sourceFormName} 
                 onChange={e => setSourceFormName(e.target.value)} 
                 required 
-                className="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none" 
+                className={getInputClass("px-4")} 
               />
               
               <div className="flex flex-col gap-2">
