@@ -40,26 +40,36 @@
   font-style: normal;
 }
 
-/* Scrollbar styling */
+/* Hide scrollbars completely across all elements, themes & browsers while keeping scrolling 100% functional */
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+}
+
+*::-webkit-scrollbar,
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 0px !important;
+  height: 0px !important;
+  display: none !important;
+  background: transparent !important;
 }
+
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: transparent !important;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.2);
-  border-radius: 9999px;
+  background: transparent !important;
 }
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.15);
+
+.scrollbar-none {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.4);
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.3);
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
 }
 
 /* Animated liquid floating mesh keyframes for Glassmorphic mode */
