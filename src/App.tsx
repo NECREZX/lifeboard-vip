@@ -1928,6 +1928,7 @@ export default function App() {
             isInstallable={isInstallable}
             triggerPWAInstall={triggerPWAInstall}
             setActiveTab={setActiveTab}
+            settings={settings}
           />
         )}
 

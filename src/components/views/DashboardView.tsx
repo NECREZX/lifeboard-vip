@@ -56,6 +56,7 @@ interface DashboardViewProps {
   isInstallable: boolean;
   triggerPWAInstall: () => void;
   setActiveTab: (tab: string) => void;
+  settings?: any;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -77,7 +78,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   getAccentBg,
   isInstallable,
   triggerPWAInstall,
-  setActiveTab
+  setActiveTab,
+  settings
 }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -90,6 +92,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     return localStorage.getItem('lifeboard_hide_balance') === 'true';
   });
   const [includeAdminFee, setIncludeAdminFee] = useState<boolean>(true);
+  const [selectedWalletForModal, setSelectedWalletForModal] = useState<Wallet | null>(null);
+  const [expandedWalletId, setExpandedWalletId] = useState<string | null>(null);
+
+  const activeThemeColor = settings?.themeColor === 'custom'
+    ? (settings?.customAccentColor || '#8b5cf6')
+    : (settings?.themeColor === 'emerald'
+        ? '#10b981'
+        : settings?.themeColor === 'amber'
+          ? '#f59e0b'
+          : settings?.themeColor === 'rose'
+            ? '#f43f5e'
+            : settings?.themeColor === 'classic'
+              ? '#0f172a'
+              : '#6366f1');
 
   const toggleHideBalance = () => {
     setShowHideBalance(prev => {
@@ -185,63 +201,108 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* Row 1: Primary Metrics */}
       <div className="flex flex-col gap-4">
-        {/* Main Balance Banner Card */}
-        <div className="p-6 rounded-2xl text-white bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 shadow-xl flex flex-col justify-between min-h-[160px] relative overflow-hidden group transition-all duration-300 border-0">
-          <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-white/20 rounded-full blur-2xl group-hover:bg-white/30 transition duration-500" />
-          <div className="absolute -left-6 -top-6 w-24 h-24 bg-cyan-300/30 rounded-full blur-xl" />
+        {/* Main Balance Banner Card - Redesigned to a High-Tech Platinum Smart Card */}
+        <div className={`p-6 rounded-3xl ${
+          settings?.uiStyle === 'glass'
+            ? 'glass-panel bg-white/75 dark:bg-slate-900/60'
+            : 'bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-950 text-white'
+        } border border-white/60 dark:border-slate-800/80 shadow-xl flex flex-col justify-between min-h-[195px] relative overflow-hidden group hover:shadow-[0_20px_50px_-15px_rgba(99,102,241,0.2)] hover:-translate-y-0.5 transition-all duration-500`}>
           
-          {/* Header Row */}
-          <div className="flex items-center justify-between relative z-10 gap-2">
-            <div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-white drop-shadow-md block">TOTAL SALDO UTAMA</span>
+          {/* Wave Lines Background Mesh */}
+          <svg className="absolute inset-0 w-full h-full opacity-[0.06] dark:opacity-[0.12] pointer-events-none scale-105 group-hover:scale-110 transition-transform duration-700" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path d="M0,50 Q25,30 50,50 T100,50" fill="none" stroke="currentColor" strokeWidth="0.5" className={settings?.uiStyle === 'glass' ? 'text-indigo-500 dark:text-indigo-400' : 'text-cyan-400'} />
+            <path d="M0,65 Q25,45 50,65 T100,65" fill="none" stroke="currentColor" strokeWidth="0.5" className={settings?.uiStyle === 'glass' ? 'text-indigo-500 dark:text-indigo-400' : 'text-cyan-400'} />
+            <path d="M0,35 Q25,15 50,35 T100,35" fill="none" stroke="currentColor" strokeWidth="0.5" className={settings?.uiStyle === 'glass' ? 'text-indigo-500 dark:text-indigo-400' : 'text-cyan-400'} />
+          </svg>
+
+          {/* Top-right blur highlights */}
+          <div className="absolute -right-12 -bottom-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -left-8 -top-8 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl pointer-events-none" />
+
+          {/* Header Row: Chip only */}
+          <div className="flex items-start justify-between relative z-10 gap-2">
+            <div className="flex items-center gap-3">
+              {/* Gold Smart Card Chip */}
+              <div className="w-10 h-7 rounded-md bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-600 p-[1.2px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_1.5px_3px_rgba(0,0,0,0.12)] relative overflow-hidden shrink-0">
+                <div className="w-full h-full border border-black/10 rounded-sm grid grid-cols-3 grid-rows-3 opacity-80">
+                  <div className="border-r border-b border-black/15"></div>
+                  <div className="border-r border-b border-black/15"></div>
+                  <div className="border-b border-black/15"></div>
+                  <div className="border-r border-b border-black/15"></div>
+                  <div className="border-r border-b border-black/15"></div>
+                  <div className="border-b border-black/15"></div>
+                  <div className="border-r border-black/15"></div>
+                  <div className="border-r border-black/15"></div>
+                  <div></div>
+                </div>
+                <div className="absolute inset-x-2.5 top-0 bottom-0 border-l border-r border-black/10 pointer-events-none"></div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
+
+            <div className="text-right">
+              {/* Removed brand watermark as requested */}
+            </div>
+          </div>
+
+          {/* Middle Row: Balance Display with custom actions */}
+          <div className="my-3.5 relative z-10 flex flex-col gap-1">
+            <span className={`text-[8px] font-black tracking-[0.15em] ${settings?.uiStyle === 'glass' ? 'text-slate-400 dark:text-slate-500' : 'text-white/60'} uppercase block`}>TOTAL SALDO UTAMA</span>
+            <div className="flex items-center justify-between gap-4">
+              <h2 className={`text-2xl sm:text-3xl font-black tracking-wider font-mono ${settings?.uiStyle === 'glass' ? 'text-slate-800 dark:text-slate-100' : 'text-white'} drop-shadow-sm`}>
+                {showHideBalance ? '••••••••' : formatIDR(activeDisplaySaldo)}
+              </h2>
+
+              {/* Security Button */}
               <button
                 type="button"
                 onClick={toggleHideBalance}
                 title={showHideBalance ? "Tampilkan Saldo Utama" : "Sembunyikan Saldo Utama"}
-                className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 transition flex items-center justify-center text-white focus:outline-none shadow-sm cursor-pointer"
+                className={`p-1.5 rounded-xl transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 ${
+                  settings?.uiStyle === 'glass'
+                    ? 'bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/50'
+                    : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
+                }`}
               >
                 {showHideBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
-              <div className="p-1.5 rounded-lg bg-white/20 backdrop-blur-md border border-white/40 text-white">
-                <LayoutDashboard className="w-4 h-4" />
-              </div>
             </div>
           </div>
 
-          {/* Amount Display */}
-          <div className="my-2 relative z-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono text-white drop-shadow-md">
-              {showHideBalance ? '••••••••' : formatIDR(activeDisplaySaldo)}
-            </h2>
-          </div>
+          {/* Bottom Row: Switch only */}
+          <div className={`pt-3.5 border-t ${
+            settings?.uiStyle === 'glass' ? 'border-slate-150 dark:border-slate-800/80' : 'border-white/15'
+          } relative z-10 flex items-center justify-end gap-3`}>
+            {/* Left side empty for minimalistic look */}
+            <div className="mr-auto"></div>
 
-          {/* Bottom Row: Option Toggle Switch */}
-          <div className="pt-2 border-t border-white/20 relative z-10 flex items-center justify-between gap-2">
+            {/* Smart Toggle Switch inside Card */}
             <button
               type="button"
               onClick={() => setIncludeAdminFee(prev => !prev)}
-              className="group flex items-center justify-between gap-3 px-3.5 py-1.5 rounded-full bg-black/25 hover:bg-black/35 backdrop-blur-md border border-white/30 transition-all cursor-pointer select-none"
+              className={`group flex items-center gap-2 px-2.5 py-1 rounded-full border transition-all cursor-pointer select-none active:scale-95 ${
+                settings?.uiStyle === 'glass'
+                  ? 'bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700/90 border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300'
+                  : 'bg-black/20 hover:bg-black/30 border-white/15 text-white'
+              }`}
               title={includeAdminFee ? "Termasuk Biaya Admin (Klik untuk ubah)" : "Tanpa Biaya Admin (Klik untuk ubah)"}
             >
-              <span className="text-[10.5px] font-bold text-white transition-colors text-left min-w-[125px] sm:min-w-[130px]">
-                {includeAdminFee ? 'Termasuk Biaya Admin' : 'Tanpa Biaya Admin'}
+              <span className={`text-[9px] font-bold uppercase tracking-wide min-w-[95px] sm:min-w-[105px] text-left shrink-0 ${
+                settings?.uiStyle === 'glass' ? 'text-slate-600 dark:text-slate-400' : 'text-white'
+              }`}>
+                {includeAdminFee ? 'Termasuk Admin' : 'Tanpa Admin'}
               </span>
-              
-              {/* Glossy 3D Toggle Switch with consistent track styling */}
-              <div
-                className={`relative w-9 h-5 rounded-full p-0.5 transition-all duration-300 ease-in-out shadow-inner border border-white/30 ${
+
+              {/* Glossy Toggle Track */}
+              <div className={`relative w-8 h-4 rounded-full p-0.5 transition-all duration-300 ease-in-out border ${
+                includeAdminFee
+                  ? (settings?.uiStyle === 'glass' ? 'bg-indigo-500/25 border-indigo-500/35' : 'bg-cyan-500/25 border-cyan-500/35')
+                  : 'bg-slate-300/35 border-transparent'
+              }`}>
+                <div className={`w-3 h-3 rounded-full transform transition-transform duration-300 ease-in-out shadow-sm ${
                   includeAdminFee
-                    ? 'bg-white/30'
-                    : 'bg-white/15'
-                }`}
-              >
-                <div
-                  className={`w-4 h-4 rounded-full bg-gradient-to-b from-white via-slate-50 to-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.35)] transform transition-transform duration-300 ease-in-out ${
-                    includeAdminFee ? 'translate-x-4' : 'translate-x-0'
-                  }`}
-                />
+                    ? `translate-x-3.5 ${settings?.uiStyle === 'glass' ? 'bg-indigo-600 dark:bg-indigo-400' : 'bg-cyan-400'}`
+                    : 'bg-slate-400 dark:bg-slate-500'
+                }`} />
               </div>
             </button>
           </div>
@@ -317,34 +378,178 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </div>
 
-      {/* Row 2: Individual Wallets (Dompet Saya) */}
-      <div className="flex flex-col gap-3">
+      {/* Row 2: Premium Bento Grid Batik White ATM Cards with Direct Balances */}
+      <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">Saldo Dompet</h3>
-          <button onClick={() => setActiveTab('kelola')} className="text-[10px] font-bold text-indigo-500 hover:underline">Kelola Dompet</button>
+          <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">Saldo Rekening</h3>
+          <button onClick={() => setActiveTab('kelola')} className="text-[10px] font-black uppercase tracking-wider text-indigo-500 hover:underline">Kelola Dompet</button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {wallets.map((w: any) => (
-            <div key={w.id} className={getCardClasses() + " p-4 min-h-[90px] relative overflow-hidden flex items-center justify-between group"}>
-              {/* Left-side vertical color indicator line */}
-              <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: w.color || '#10b981' }} />
-              
-              <div className="z-10 pl-2.5 w-full flex flex-col justify-center">
-                <div className="flex items-center gap-2">
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 grid-flow-row-dense gap-4">
+          {wallets.map((w: any, idx: number) => {
+            const isExpanded = w.id === expandedWalletId;
+            const balanceVal = w.currentBalance ?? w.initialBalance;
+            const patternIndex = idx % 4;
+            
+            let patternId = `batik-pattern-${w.id}`;
+            let patternMarkup = null;
+
+            if (patternIndex === 0) {
+              // Batik Parang (Wavy S-Curves)
+              patternMarkup = (
+                <pattern id={patternId} width="40" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+                  <path d="M 0,0 C 10,10 30,10 40,20 C 40,30 20,30 10,40 C 0,50 20,50 30,60 C 30,70 10,70 0,80" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                  <path d="M 40,0 C 30,10 10,10 0,20 C 0,30 20,30 30,40 C 40,50 20,50 10,60 C 10,70 30,70 40,80" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+                  <polygon points="20,15 25,20 20,25 15,20" fill="currentColor" />
+                  <polygon points="20,55 25,60 20,65 15,60" fill="currentColor" />
+                  <circle cx="20" cy="30" r="1.5" fill="currentColor" />
+                  <circle cx="20" cy="70" r="1.5" fill="currentColor" />
+                </pattern>
+              );
+            } else if (patternIndex === 1) {
+              // Batik Kawung (Concentric Circle Petals)
+              patternMarkup = (
+                <pattern id={patternId} width="50" height="50" patternUnits="userSpaceOnUse">
+                  <circle cx="25" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <circle cx="0" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <circle cx="50" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <circle cx="25" cy="0" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <circle cx="25" cy="50" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <path d="M 25,12.5 A 12.5,12.5 0 0,1 25,37.5 A 12.5,12.5 0 0,1 25,12.5" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                  <path d="M 12.5,25 A 12.5,12.5 0 0,1 37.5,25 A 12.5,12.5 0 0,1 12.5,25" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                  <circle cx="25" cy="25" r="1.5" fill="currentColor" />
+                </pattern>
+              );
+            } else if (patternIndex === 2) {
+              // Batik Megamendung (Cloud Waves)
+              patternMarkup = (
+                <pattern id={patternId} width="60" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 0,20 Q 15,5 30,20 T 60,20" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                  <path d="M 0,25 Q 15,12 30,25 T 60,25" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.7" />
+                  <path d="M 0,30 Q 15,19 30,30 T 60,30" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.4" />
+                  <circle cx="30" cy="20" r="1.5" fill="currentColor" />
+                </pattern>
+              );
+            } else {
+              // Batik Sekar Jagad (Geometric Network Mesh)
+              patternMarkup = (
+                <pattern id={patternId} width="45" height="45" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+                  <path d="M 0,0 C 11.25,11.25 11.25,33.75 0,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <path d="M 45,0 C 33.75,11.25 33.75,33.75 45,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <path d="M 0,0 C 11.25,11.25 33.75,11.25 45,0" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <path d="M 0,45 C 11.25,33.75 33.75,33.75 45,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  <circle cx="22.5" cy="22.5" r="2" fill="currentColor" />
+                  <circle cx="11.25" cy="11.25" r="1" fill="currentColor" />
+                  <circle cx="33.75" cy="11.25" r="1" fill="currentColor" />
+                </pattern>
+              );
+            }
+
+            const cardColor = w.color || '#3b82f6';
+            
+            // Get Card Style & Border Radius dynamically
+            let cardBgClass = "bg-white dark:bg-slate-900 ";
+            let cardBorderClass = "border border-slate-100 dark:border-slate-800/40 ";
+            let cardShadowClass = "shadow-sm hover:shadow-md ";
+
+            if (settings?.uiStyle === 'glass') {
+              cardBgClass = "bg-white/45 dark:bg-slate-900/45 backdrop-blur-md ";
+              cardBorderClass = "border border-white/30 dark:border-slate-800/50 ";
+              cardShadowClass = "shadow-[0_8px_32px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15)] ";
+            } else if (settings?.uiStyle === 'minimal') {
+              cardBgClass = "bg-slate-50/50 dark:bg-slate-950/20 ";
+              cardBorderClass = "border border-slate-150 dark:border-slate-800/60 ";
+              cardShadowClass = "shadow-none ";
+            }
+
+            let cardRadiusClass = "rounded-[24px] ";
+            if (settings?.cardRadius === 'sharp') {
+              cardRadiusClass = "rounded-none ";
+            } else if (settings?.cardRadius === 'extra') {
+              cardRadiusClass = "rounded-[32px] ";
+            }
+
+             return (
+              <div 
+                key={w.id} 
+                onClick={() => setExpandedWalletId(prev => prev === w.id ? null : w.id)}
+                className={`${cardBgClass} ${cardBorderClass} ${cardShadowClass} ${cardRadiusClass} p-5 text-slate-800 dark:text-white relative overflow-hidden hover:scale-[1.01] active:scale-[0.99] transition-all duration-500 ease-in-out flex flex-col justify-between h-[210px] sm:h-[230px] select-none cursor-pointer ${isExpanded ? 'col-span-2' : 'col-span-1'}`}
+              >
+                {/* SVG Batik Pattern overlay styled with the wallet's specific custom color */}
+                <div 
+                  className="absolute inset-0 opacity-[0.08] dark:opacity-[0.14] pointer-events-none mix-blend-multiply dark:mix-blend-overlay"
+                  style={{ color: cardColor }}
+                >
+                  <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      {patternMarkup}
+                    </defs>
+                    <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+                  </svg>
+                </div>
+
+                {/* Subtle radial sheen overlay for premium matte finish */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-slate-100/10 to-white/20 pointer-events-none" />
+
+                {/* Card Top: Small Active Dot & Wallet Icon */}
+                <div className="flex justify-between items-start relative z-10">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.15)] animate-pulse" style={{ backgroundColor: cardColor }} />
+                    <span className="text-[7px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                      {isExpanded ? 'Rekening Utama' : 'Aktif'}
+                    </span>
+                  </div>
+
+                  {/* Colored Circle with Wallet Icon using original wallet color */}
                   <div 
-                    className="w-5 h-5 rounded-md flex items-center justify-center text-xs shrink-0"
-                    style={{ backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
+                    className="w-7 h-7 rounded-full flex items-center justify-center border shadow-3xs"
+                    style={{ 
+                      backgroundColor: `${cardColor}12`,
+                      borderColor: `${cardColor}30`,
+                      color: cardColor
+                    }}
                   >
                     <IconRenderer name={w.icon} className="w-3.5 h-3.5" />
                   </div>
-                  <h4 className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">{w.name}</h4>
                 </div>
-                <p className="text-xs sm:text-sm font-black font-mono text-slate-900 dark:text-slate-100 mt-1.5">
-                  {showHideBalance ? '••••••••' : formatIDR(w.currentBalance)}
-                </p>
+
+                {/* Card Middle: Wallet Name & Direct Balance */}
+                <div className="my-auto relative z-10 py-1">
+                  <span className="text-[9px] font-black tracking-[0.12em] text-slate-400 dark:text-slate-500 uppercase block mb-1">
+                    {w.name}
+                  </span>
+                  <span className={`font-mono font-black tracking-tight text-slate-800 dark:text-white select-all block break-all leading-tight transition-all duration-300 ${
+                    isExpanded ? 'text-xl sm:text-2xl' : 'text-sm sm:text-base'
+                  }`}>
+                    {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
+                  </span>
+                </div>
+
+                {/* Card Bottom: Wi-Fi Waves & Overlapping Spheres Logo in original wallet color */}
+                <div className="flex justify-between items-end relative z-10">
+                  <div className="flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rotate-90" style={{ color: `${cardColor}aa` }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    {isExpanded && (
+                      <span className="text-[7px] font-black text-slate-400 dark:text-slate-500 tracking-wider uppercase animate-fade-in">
+                        PAYMENT SYSTEM
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Dual overlapping spheres themed with the original wallet color */}
+                  <div className="flex -space-x-1.5 shrink-0">
+                    <div 
+                      className="w-4.5 h-4.5 rounded-full opacity-65 shadow-3xs" 
+                      style={{ backgroundColor: cardColor }}
+                    />
+                    <div className="w-4.5 h-4.5 rounded-full bg-slate-200 dark:bg-slate-700 opacity-40 shadow-3xs" />
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -493,6 +698,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
       </div>
+
     </div>
   );
 };
