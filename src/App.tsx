@@ -1885,8 +1885,8 @@ export default function App() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Notification drop */}
+          <div className="flex items-center">
+            {/* Notification toggle button at the far right */}
             <NotificationPanel
               notifications={notifications}
               isOpen={isNotifOpen}
@@ -1897,18 +1897,6 @@ export default function App() {
               onDeleteOne={(id) => setNotifications(prev => prev.filter(n => n.id !== id))}
               accentColor={settings.themeColor}
               uiStyle={settings.uiStyle}
-            />
-
-            {/* Profile configuration drop */}
-            <ProfileDropdown
-              profile={profile}
-              setProfile={setProfile}
-              settings={settings}
-              setSettings={setSettings}
-              onExportExcel={handleExportCSV}
-              onExportPDF={handleExportPDF}
-              onDeleteAllData={handleDeleteAllData}
-              onOpenSettings={() => setShowSettingsModal(true)}
             />
           </div>
         </div>
@@ -2075,6 +2063,14 @@ export default function App() {
             handleSaveSource={handleSaveSource}
             resetSourceForm={resetSourceForm}
             settings={settings}
+            setSettings={setSettings}
+            profile={profile}
+            setProfile={setProfile}
+            onExportExcel={handleExportCSV}
+            onExportPDF={handleExportPDF}
+            onDeleteAllData={handleDeleteAllData}
+            onOpenSettings={() => setShowSettingsModal(true)}
+            triggerNotification={triggerNotification}
           />
         )}
 

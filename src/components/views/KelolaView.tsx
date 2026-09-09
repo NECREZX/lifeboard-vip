@@ -3,9 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { Plus, Edit2, Trash2, Check, WalletCards } from 'lucide-react';
-import { Wallet, Category, IncomeSource } from '../../types';
+import React, { useState } from 'react';
+import { 
+  Plus, 
+  Edit2, 
+  Trash2, 
+  Check, 
+  WalletCards, 
+  Sun, 
+  Moon, 
+  Settings, 
+  FileSpreadsheet, 
+  FileText
+} from 'lucide-react';
+import { Wallet, Category, IncomeSource, UserSettings } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
 
@@ -63,7 +74,15 @@ interface KelolaViewProps {
   setSourceFormColor: (val: string) => void;
   handleSaveSource: (e: React.FormEvent) => void;
   resetSourceForm: () => void;
-  settings: any;
+  settings: UserSettings;
+  setSettings?: (settings: UserSettings) => void;
+  profile?: any;
+  setProfile?: (profile: any) => void;
+  onExportExcel?: () => void;
+  onExportPDF?: (startDate: string, endDate: string) => void;
+  onDeleteAllData?: () => void;
+  onOpenSettings?: () => void;
+  triggerNotification?: (title: string, message: string, type: 'info' | 'success' | 'warning' | 'alert') => void;
 }
 
 export const KelolaView: React.FC<KelolaViewProps> = ({
@@ -107,8 +126,27 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   setSourceFormColor,
   handleSaveSource,
   resetSourceForm,
-  settings
+  settings,
+  setSettings,
+  onExportExcel,
+  onExportPDF,
+  onDeleteAllData,
+  onOpenSettings
 }) => {
+  // Local state for Report Date Filter
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+
+  const toggleDarkMode = () => {
+    if (!setSettings || !settings) return;
+    const updated = !settings.isDarkMode;
+    setSettings({ ...settings, isDarkMode: updated });
+    if (updated) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
   const getInputClass = (extra = "px-4") => {
     if (settings?.uiStyle === 'glass') {
       return `w-full py-2.5 text-xs rounded-xl glass-input text-slate-800 dark:text-slate-100 focus:outline-none ${extra}`;
@@ -502,6 +540,123 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* PENGATURAN SISTEM (Di Bawah Form Sumber Pendapatan) */}
+          <div className="flex flex-col gap-4 mt-2" id="kelola-pengaturan-section">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+              <h2 className="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-tight">
+                Pengaturan
+              </h2>
+            </div>
+
+            <div className={getCardClasses() + " p-5 h-fit flex flex-col gap-3"}>
+              {/* Dark Mode Toggle */}
+              <button
+                type="button"
+                onClick={toggleDarkMode}
+                className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className={`p-1.5 rounded-lg ${settings?.isDarkMode ? 'bg-amber-500/10 text-amber-500' : 'bg-indigo-500/10 text-indigo-500'}`}>
+                    {settings?.isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  </div>
+                  <span>{settings?.isDarkMode ? 'Mode Terang (Light Mode)' : 'Mode Gelap (Dark Mode)'}</span>
+                </div>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                  settings?.isDarkMode 
+                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300/40' 
+                    : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+                }`}>
+                  {settings?.isDarkMode ? 'GELAP AKTIF' : 'TERANG AKTIF'}
+                </span>
+              </button>
+
+              {/* UI & Style Settings Modal Trigger */}
+              {onOpenSettings && (
+                <button
+                  type="button"
+                  onClick={onOpenSettings}
+                  className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                      <Settings className="w-4 h-4" />
+                    </div>
+                    <span>Pengaturan UI, Tema &amp; Font</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400 hover:underline">Buka</span>
+                </button>
+              )}
+
+              {/* PDF Report Export with Date Filter */}
+              {onExportPDF && (
+                <div className="p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/60 flex flex-col gap-2.5">
+                  <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <span>Rentang Tanggal Laporan (PDF)</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="w-1/2 flex flex-col gap-1">
+                      <span className="text-[9px] text-slate-400 font-medium">Dari:</span>
+                      <input 
+                        type="date" 
+                        value={startDate} 
+                        onChange={e => setStartDate(e.target.value)} 
+                        className="w-full text-xs p-2 rounded-lg border bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 font-medium cursor-pointer shadow-2xs" 
+                      />
+                    </div>
+                    <div className="w-1/2 flex flex-col gap-1">
+                      <span className="text-[9px] text-slate-400 font-medium">Sampai:</span>
+                      <input 
+                        type="date" 
+                        value={endDate} 
+                        onChange={e => setEndDate(e.target.value)} 
+                        className="w-full text-xs p-2 rounded-lg border bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 font-medium cursor-pointer shadow-2xs" 
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onExportPDF(startDate, endDate)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-white bg-rose-500 hover:bg-rose-600 transition shadow-sm cursor-pointer active:scale-98"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>Cetak / Simpan Laporan (PDF)</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Excel (CSV) Export */}
+              {onExportExcel && (
+                <button
+                  type="button"
+                  onClick={onExportExcel}
+                  className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <FileSpreadsheet className="w-4 h-4" />
+                    </div>
+                    <span>Ekspor Data Excel (CSV)</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">Unduh</span>
+                </button>
+              )}
+
+              {/* Danger Zone: Delete All Data */}
+              {onDeleteAllData && (
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={onDeleteAllData}
+                    className="w-full flex items-center justify-center gap-2 p-3 rounded-xl border border-rose-200 dark:border-rose-900/60 text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-50/60 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 transition cursor-pointer"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>Hapus Semua Data Aplikasi</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </section>
       </div>
