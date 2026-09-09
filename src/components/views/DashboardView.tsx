@@ -311,18 +311,35 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </div>
                 </div>
 
-                {/* Saldo Display with Eye Icon on the right */}
+                {/* Saldo Display with Eye Icon on the right - Fixed anchor width so toggle button stays in identical position without elongating */}
                 <div className="mt-4 sm:mt-5 flex items-center gap-3">
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
-                    {showHideBalance ? '••••••••••••' : formatIDR(activeDisplaySaldo)}
-                  </h2>
+                  <div className="relative inline-flex items-center">
+                    {/* Nominal text always dictates natural container width so eye toggle never moves */}
+                    <h2 
+                      className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-opacity duration-150 ${
+                        showHideBalance ? 'opacity-0 select-none pointer-events-none' : 'opacity-100'
+                      }`}
+                      aria-hidden={showHideBalance}
+                    >
+                      {formatIDR(activeDisplaySaldo)}
+                    </h2>
 
-                  {/* Eye Button at the right of nominal balance number */}
+                    {/* Masked bullet overlay inside exact bounding box */}
+                    {showHideBalance && (
+                      <div className="absolute inset-0 flex items-center overflow-hidden">
+                        <span className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider text-white font-mono drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] select-none">
+                          ••••••••
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Eye Button at the right of nominal balance number - its position stays 100% constant */}
                   <button
                     type="button"
                     onClick={toggleHideBalance}
                     title={showHideBalance ? "Tampilkan Saldo Utama" : "Sembunyikan Saldo Utama"}
-                    className="p-1.5 sm:p-2 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm"
+                    className="p-1.5 sm:p-2 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm shrink-0"
                   >
                     {showHideBalance ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
                   </button>
@@ -350,43 +367,78 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
               </div>
 
-              {/* 2. Secondary Metrics: Rectangular Wrapper Card with Semicircular Polkadot Motifs & Perfectly Centered Cards */}
+              {/* 2. Secondary Metrics: Rectangular Wrapper Card with 2 Curved Lines Motif & Centered Cards */}
               <div className="mt-8 sm:mt-10">
                 <div 
                   ref={metricsWrapperCardRef}
                   className={`w-full ${wrapperRadiusClass} ${wrapperBgClass} p-3.5 sm:p-5 py-5 sm:py-6 transition-all duration-300 relative z-20 overflow-hidden flex flex-col justify-center items-center`}
                 >
-                  {/* Half-Circle / Quarter-Circle Corner Accent - Sudut Kiri Atas (Sesuai Gambar Referensi, Warna Cyan - Teal) */}
-                  <svg 
-                    className="absolute top-0 left-0 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0" 
-                    viewBox="0 0 100 100" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <defs>
-                      <linearGradient id="corner-shape-tl" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.25" />
-                        <stop offset="100%" stopColor="#0d9488" stopOpacity="0.20" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 0,0 L 100,0 A 100,100 0 0,1 0,100 Z" fill="url(#corner-shape-tl)" />
-                  </svg>
+                  {/* Motif Batik di Pinggir-Pinggir Card - Sudut Kiri Atas (Warna Cyan - Teal) */}
+                  <div className="absolute top-0 left-0 w-28 h-28 sm:w-36 sm:h-36 pointer-events-none z-0 select-none opacity-45 dark:opacity-40">
+                    <svg className="w-full h-full" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id="batik-edge-tl" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#06b6d4" />
+                          <stop offset="100%" stopColor="#0d9488" />
+                        </linearGradient>
+                      </defs>
+                      {/* Batik Kawung & Ceplok Corner Grid */}
+                      {/* Lingkaran & Kurva Kawung Sudut */}
+                      <circle cx="0" cy="0" r="32" stroke="url(#batik-edge-tl)" strokeWidth="1.5" fill="none" />
+                      <circle cx="0" cy="0" r="48" stroke="url(#batik-edge-tl)" strokeWidth="1" strokeDasharray="2 2" fill="none" />
+                      <circle cx="48" cy="0" r="24" stroke="url(#batik-edge-tl)" strokeWidth="1.2" fill="none" />
+                      <circle cx="0" cy="48" r="24" stroke="url(#batik-edge-tl)" strokeWidth="1.2" fill="none" />
+                      <circle cx="36" cy="36" r="18" stroke="url(#batik-edge-tl)" strokeWidth="1.2" fill="none" />
+                      {/* Daun / Kelopak Kawung Interlocking */}
+                      <path d="M 0,24 C 14,24 24,14 24,0 C 14,0 0,14 0,24 Z" fill="url(#batik-edge-tl)" opacity="0.35" />
+                      <path d="M 24,0 C 24,14 38,24 48,24 C 48,14 38,0 24,0 Z" fill="url(#batik-edge-tl)" opacity="0.25" />
+                      <path d="M 0,24 C 0,38 14,48 24,48 C 24,34 14,24 0,24 Z" fill="url(#batik-edge-tl)" opacity="0.25" />
+                      <path d="M 24,48 C 34,48 48,34 48,24 C 34,24 24,34 24,48 Z" fill="url(#batik-edge-tl)" opacity="0.4" />
+                      {/* Isen-isen Batik (Titik & Garis Parang Lembut) */}
+                      <circle cx="24" cy="24" r="2.5" fill="url(#batik-edge-tl)" />
+                      <circle cx="12" cy="12" r="1.5" fill="url(#batik-edge-tl)" />
+                      <circle cx="36" cy="12" r="1.5" fill="url(#batik-edge-tl)" />
+                      <circle cx="12" cy="36" r="1.5" fill="url(#batik-edge-tl)" />
+                      <circle cx="68" cy="14" r="1.75" fill="url(#batik-edge-tl)" />
+                      <circle cx="14" cy="68" r="1.75" fill="url(#batik-edge-tl)" />
+                      {/* Border Garis Pinggir Bertingkat */}
+                      <path d="M 0,80 L 12,68 L 30,68 L 40,58 L 58,58 L 68,40 L 68,30 L 80,12 L 80,0" stroke="url(#batik-edge-tl)" strokeWidth="1" strokeDasharray="3 3" />
+                      <path d="M 0,96 C 45,96 96,45 96,0" stroke="url(#batik-edge-tl)" strokeWidth="0.75" strokeDasharray="2 4" />
+                    </svg>
+                  </div>
 
-                  {/* Half-Circle / Quarter-Circle Corner Accent - Sudut Bawah Kanan (Sesuai Gambar Referensi, Warna Teal - Rose) */}
-                  <svg 
-                    className="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0" 
-                    viewBox="0 0 100 100" 
-                    fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <defs>
-                      <linearGradient id="corner-shape-br" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#0d9488" stopOpacity="0.20" />
-                        <stop offset="100%" stopColor="#f43f5e" stopOpacity="0.25" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 100,100 L 0,100 A 100,100 0 0,1 100,0 Z" fill="url(#corner-shape-br)" />
-                  </svg>
+                  {/* Motif Batik di Pinggir-Pinggir Card - Sudut Bawah Kanan (Warna Teal - Rose) */}
+                  <div className="absolute bottom-0 right-0 w-28 h-28 sm:w-36 sm:h-36 pointer-events-none z-0 select-none opacity-45 dark:opacity-40">
+                    <svg className="w-full h-full" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id="batik-edge-br" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#0d9488" />
+                          <stop offset="100%" stopColor="#f43f5e" />
+                        </linearGradient>
+                      </defs>
+                      {/* Batik Kawung & Ceplok Corner Grid */}
+                      <circle cx="120" cy="120" r="32" stroke="url(#batik-edge-br)" strokeWidth="1.5" fill="none" />
+                      <circle cx="120" cy="120" r="48" stroke="url(#batik-edge-br)" strokeWidth="1" strokeDasharray="2 2" fill="none" />
+                      <circle cx="72" cy="120" r="24" stroke="url(#batik-edge-br)" strokeWidth="1.2" fill="none" />
+                      <circle cx="120" cy="72" r="24" stroke="url(#batik-edge-br)" strokeWidth="1.2" fill="none" />
+                      <circle cx="84" cy="84" r="18" stroke="url(#batik-edge-br)" strokeWidth="1.2" fill="none" />
+                      {/* Daun / Kelopak Kawung Interlocking */}
+                      <path d="M 120,96 C 106,96 96,106 96,120 C 106,120 120,106 120,96 Z" fill="url(#batik-edge-br)" opacity="0.35" />
+                      <path d="M 96,120 C 96,106 82,96 72,96 C 72,106 82,120 96,120 Z" fill="url(#batik-edge-br)" opacity="0.25" />
+                      <path d="M 120,96 C 120,82 106,72 96,72 C 96,86 106,96 120,96 Z" fill="url(#batik-edge-br)" opacity="0.25" />
+                      <path d="M 96,72 C 86,72 72,86 72,96 C 86,96 96,86 96,72 Z" fill="url(#batik-edge-br)" opacity="0.4" />
+                      {/* Isen-isen Batik */}
+                      <circle cx="96" cy="96" r="2.5" fill="url(#batik-edge-br)" />
+                      <circle cx="108" cy="108" r="1.5" fill="url(#batik-edge-br)" />
+                      <circle cx="84" cy="108" r="1.5" fill="url(#batik-edge-br)" />
+                      <circle cx="108" cy="84" r="1.5" fill="url(#batik-edge-br)" />
+                      <circle cx="52" cy="106" r="1.75" fill="url(#batik-edge-br)" />
+                      <circle cx="106" cy="52" r="1.75" fill="url(#batik-edge-br)" />
+                      {/* Border Garis Pinggir Bertingkat */}
+                      <path d="M 120,40 L 108,52 L 90,52 L 80,62 L 62,62 L 52,80 L 52,90 L 40,108 L 40,120" stroke="url(#batik-edge-br)" strokeWidth="1" strokeDasharray="3 3" />
+                      <path d="M 120,24 C 75,24 24,75 24,120" stroke="url(#batik-edge-br)" strokeWidth="0.75" strokeDasharray="2 4" />
+                    </svg>
+                  </div>
 
                   {/* 3 Square Cards arranged horizontally side-by-side (sejajar ke kanan) & perfectly centered */}
                   <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
@@ -453,11 +505,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setActiveTab('kelola')}
-                    className="text-[11px] font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline flex items-center gap-1 transition-colors cursor-pointer group"
+                    className="text-[11px] font-bold text-black dark:text-white hover:text-slate-700 dark:hover:text-slate-200 hover:underline flex items-center gap-1 transition-colors cursor-pointer group"
                     title="Buka Menu Kelola Dompet"
                   >
-                    <span>Kelola Dompet</span>
-                    <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                    <span className="text-black dark:text-white font-bold">Kelola Dompet</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-black dark:text-white transition-transform group-hover:translate-x-0.5" />
                   </button>
                 </div>
 
