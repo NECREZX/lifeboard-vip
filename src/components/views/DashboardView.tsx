@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -11,11 +11,14 @@ import {
   CheckSquare, 
   ShoppingBag, 
   Target, 
-  PieChart,
-  Receipt,
-  Eye,
-  EyeOff,
-  Wallet as WalletIcon 
+  PieChart, 
+  Receipt, 
+  Eye, 
+  EyeOff, 
+  Wallet as WalletIcon,
+  ShieldCheck,
+  Sparkles,
+  ArrowUpRight
 } from 'lucide-react';
 import { IconRenderer } from '../IconRenderer';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
@@ -94,6 +97,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [includeAdminFee, setIncludeAdminFee] = useState<boolean>(true);
   const [selectedWalletForModal, setSelectedWalletForModal] = useState<Wallet | null>(null);
   const [expandedWalletId, setExpandedWalletId] = useState<string | null>(null);
+
+  // Dynamic Banner Measurement to end precisely halfway down the last wallet cards
+  const bannerContainerRef = useRef<HTMLDivElement>(null);
+  const lastWalletCardRef = useRef<HTMLDivElement>(null);
+  const [bannerHeight, setBannerHeight] = useState<number | null>(null);
+
+  useEffect(() => {
+    const updateBannerHeight = () => {
+      if (bannerContainerRef.current && lastWalletCardRef.current) {
+        const containerRect = bannerContainerRef.current.getBoundingClientRect();
+        const cardRect = lastWalletCardRef.current.getBoundingClientRect();
+        const calculated = (cardRect.top - containerRect.top) + (cardRect.height / 2);
+        if (calculated > 100) {
+          setBannerHeight(Math.round(calculated));
+        }
+      }
+    };
+
+    updateBannerHeight();
+    const timer = setTimeout(updateBannerHeight, 100);
+    window.addEventListener('resize', updateBannerHeight);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateBannerHeight);
+    };
+  }, [wallets.length, settings?.cardRadius, settings?.uiStyle]);
 
   const activeThemeColor = settings?.themeColor === 'custom'
     ? (settings?.customAccentColor || '#8b5cf6')
@@ -194,364 +223,327 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      <div className="flex flex-col gap-0.5 mb-6">
-        <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Hai, {profileName}</h1>
-        <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Selamat Datang di Lifeboard</p>
-      </div>
 
-      {/* Row 1: Primary Metrics */}
-      <div className="flex flex-col gap-4">
-        {/* Main Balance Banner Card - Redesigned to a High-Tech Platinum Smart Card */}
-        <div className={`p-6 rounded-3xl ${
-          settings?.uiStyle === 'glass'
-            ? 'glass-panel bg-white/75 dark:bg-slate-900/60'
-            : 'bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-950 text-white'
-        } border border-white/60 dark:border-slate-800/80 shadow-xl flex flex-col justify-between min-h-[195px] relative overflow-hidden group hover:shadow-[0_20px_50px_-15px_rgba(99,102,241,0.2)] hover:-translate-y-0.5 transition-all duration-500`}>
-          
-          {/* Wave Lines Background Mesh */}
-          <svg className="absolute inset-0 w-full h-full opacity-[0.06] dark:opacity-[0.12] pointer-events-none scale-105 group-hover:scale-110 transition-transform duration-700" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M0,50 Q25,30 50,50 T100,50" fill="none" stroke="currentColor" strokeWidth="0.5" className={settings?.uiStyle === 'glass' ? 'text-indigo-500 dark:text-indigo-400' : 'text-cyan-400'} />
-            <path d="M0,65 Q25,45 50,65 T100,65" fill="none" stroke="currentColor" strokeWidth="0.5" className={settings?.uiStyle === 'glass' ? 'text-indigo-500 dark:text-indigo-400' : 'text-cyan-400'} />
-            <path d="M0,35 Q25,15 50,35 T100,35" fill="none" stroke="currentColor" strokeWidth="0.5" className={settings?.uiStyle === 'glass' ? 'text-indigo-500 dark:text-indigo-400' : 'text-cyan-400'} />
-          </svg>
+      {/* Hero Banner with Bottom Radius adapted to user's setting (Kotak, Rounded, Sangat Rounded) */}
+      {(() => {
+        let bannerRadiusClass = "rounded-b-3xl sm:rounded-b-[36px]";
+        if (settings?.cardRadius === 'sharp') {
+          bannerRadiusClass = "rounded-b-none";
+        } else if (settings?.cardRadius === 'extra') {
+          bannerRadiusClass = "rounded-b-[44px] sm:rounded-b-[54px]";
+        }
 
-          {/* Top-right blur highlights */}
-          <div className="absolute -right-12 -bottom-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -left-8 -top-8 w-24 h-24 bg-cyan-500/10 rounded-full blur-xl pointer-events-none" />
-
-          {/* Header Row: Chip only */}
-          <div className="flex items-start justify-between relative z-10 gap-2">
-            <div className="flex items-center gap-3">
-              {/* Gold Smart Card Chip */}
-              <div className="w-10 h-7 rounded-md bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-600 p-[1.2px] shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_1.5px_3px_rgba(0,0,0,0.12)] relative overflow-hidden shrink-0">
-                <div className="w-full h-full border border-black/10 rounded-sm grid grid-cols-3 grid-rows-3 opacity-80">
-                  <div className="border-r border-b border-black/15"></div>
-                  <div className="border-r border-b border-black/15"></div>
-                  <div className="border-b border-black/15"></div>
-                  <div className="border-r border-b border-black/15"></div>
-                  <div className="border-r border-b border-black/15"></div>
-                  <div className="border-b border-black/15"></div>
-                  <div className="border-r border-black/15"></div>
-                  <div className="border-r border-black/15"></div>
-                  <div></div>
-                </div>
-                <div className="absolute inset-x-2.5 top-0 bottom-0 border-l border-r border-black/10 pointer-events-none"></div>
-              </div>
-            </div>
-
-            <div className="text-right">
-              {/* Removed brand watermark as requested */}
-            </div>
-          </div>
-
-          {/* Middle Row: Balance Display with custom actions */}
-          <div className="my-3.5 relative z-10 flex flex-col gap-1">
-            <span className={`text-[8px] font-black tracking-[0.15em] ${settings?.uiStyle === 'glass' ? 'text-slate-400 dark:text-slate-500' : 'text-white/60'} uppercase block`}>TOTAL SALDO UTAMA</span>
-            <div className="flex items-center justify-between gap-4">
-              <h2 className={`text-2xl sm:text-3xl font-black tracking-wider font-mono ${settings?.uiStyle === 'glass' ? 'text-slate-800 dark:text-slate-100' : 'text-white'} drop-shadow-sm`}>
-                {showHideBalance ? '••••••••' : formatIDR(activeDisplaySaldo)}
-              </h2>
-
-              {/* Security Button */}
-              <button
-                type="button"
-                onClick={toggleHideBalance}
-                title={showHideBalance ? "Tampilkan Saldo Utama" : "Sembunyikan Saldo Utama"}
-                className={`p-1.5 rounded-xl transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 ${
-                  settings?.uiStyle === 'glass'
-                    ? 'bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/50'
-                    : 'bg-white/10 hover:bg-white/20 text-white border border-white/20'
-                }`}
-              >
-                {showHideBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Bottom Row: Switch only */}
-          <div className={`pt-3.5 border-t ${
-            settings?.uiStyle === 'glass' ? 'border-slate-150 dark:border-slate-800/80' : 'border-white/15'
-          } relative z-10 flex items-center justify-end gap-3`}>
-            {/* Left side empty for minimalistic look */}
-            <div className="mr-auto"></div>
-
-            {/* Smart Toggle Switch inside Card */}
-            <button
-              type="button"
-              onClick={() => setIncludeAdminFee(prev => !prev)}
-              className={`group flex items-center gap-2 px-2.5 py-1 rounded-full border transition-all cursor-pointer select-none active:scale-95 ${
-                settings?.uiStyle === 'glass'
-                  ? 'bg-slate-100 dark:bg-slate-800/90 hover:bg-slate-200 dark:hover:bg-slate-700/90 border-slate-200 dark:border-slate-700/50 text-slate-700 dark:text-slate-300'
-                  : 'bg-black/20 hover:bg-black/30 border-white/15 text-white'
-              }`}
-              title={includeAdminFee ? "Termasuk Biaya Admin (Klik untuk ubah)" : "Tanpa Biaya Admin (Klik untuk ubah)"}
+        return (
+          <div ref={bannerContainerRef} className="relative -mx-4 sm:-mx-6 -mt-6 z-0 mb-8 sm:mb-10">
+            {/* The Banner Body background: dynamically terminates at halfway of the last wallet cards row */}
+            <div 
+              className={`absolute inset-x-0 top-0 overflow-hidden bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 text-white ${bannerRadiusClass} shadow-[0_20px_40px_rgba(20,184,166,0.28)] border-b border-white/20 pointer-events-none transition-all duration-200`}
+              style={bannerHeight ? { height: `${bannerHeight}px` } : { bottom: '100px' }}
             >
-              <span className={`text-[9px] font-bold uppercase tracking-wide min-w-[95px] sm:min-w-[105px] text-left shrink-0 ${
-                settings?.uiStyle === 'glass' ? 'text-slate-600 dark:text-slate-400' : 'text-white'
-              }`}>
-                {includeAdminFee ? 'Termasuk Admin' : 'Tanpa Admin'}
-              </span>
+              {/* Artistic Geometric Vector Lattice Overlay */}
+              <svg className="absolute inset-0 w-full h-full opacity-15 pointer-events-none mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="banner-geometric-motif" width="60" height="60" patternUnits="userSpaceOnUse">
+                    {/* Interlocking geometric stars & octagons */}
+                    <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                    <circle cx="30" cy="30" r="14" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                    <circle cx="0" cy="0" r="12" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                    <circle cx="60" cy="0" r="12" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                    <circle cx="0" cy="60" r="12" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                    <circle cx="60" cy="60" r="12" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                    <path d="M30 16 L34 26 L44 30 L34 34 L30 44 L26 34 L16 30 L26 26 Z" fill="currentColor" fillOpacity="0.3" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#banner-geometric-motif)" />
+              </svg>
 
-              {/* Glossy Toggle Track */}
-              <div className={`relative w-8 h-4 rounded-full p-0.5 transition-all duration-300 ease-in-out border ${
-                includeAdminFee
-                  ? (settings?.uiStyle === 'glass' ? 'bg-indigo-500/25 border-indigo-500/35' : 'bg-cyan-500/25 border-cyan-500/35')
-                  : 'bg-slate-300/35 border-transparent'
-              }`}>
-                <div className={`w-3 h-3 rounded-full transform transition-transform duration-300 ease-in-out shadow-sm ${
-                  includeAdminFee
-                    ? `translate-x-3.5 ${settings?.uiStyle === 'glass' ? 'bg-indigo-600 dark:bg-indigo-400' : 'bg-cyan-400'}`
-                    : 'bg-slate-400 dark:bg-slate-500'
-                }`} />
-              </div>
-            </button>
-          </div>
-        </div>
+              {/* Luminous Glowing Orbs matching Login Form Palette */}
+              <div className="absolute -left-16 -top-16 w-72 h-72 bg-cyan-200/35 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute left-1/3 top-1/4 w-80 h-80 bg-teal-200/25 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -right-16 bottom-0 w-80 h-80 bg-rose-300/35 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Secondary Metrics: 3 Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Card 1: Total Pendapatan */}
-          <div className={getCardClasses() + " p-5 sm:p-6 min-h-[110px] relative overflow-hidden flex items-center justify-center group"}>
-            {/* Bottom-left circle bubble */}
-            <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-emerald-100/60 dark:bg-emerald-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
-            
-            <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-6">
-              <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
-                {showHideBalance ? '••••••••' : formatIDR(totalIncome)}
-              </h3>
-              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
-                Total Pendapatan
-              </p>
+              {/* Elegant Translucent Decorative Rings (Iconic Login Form Signature) */}
+              <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full border border-white/20 bg-white/5 pointer-events-none" />
+              <div className="absolute -right-4 -top-4 w-60 h-60 rounded-full border border-white/10 pointer-events-none" />
+              <div className="absolute -left-12 bottom-4 w-36 h-36 rounded-full border border-white/15 bg-white/5 pointer-events-none" />
             </div>
 
-            {/* Top-right circle bubble with icon */}
-            <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-emerald-100/80 dark:bg-emerald-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
-              <div className="-translate-x-2 translate-y-2 text-emerald-600 dark:text-emerald-400">
-                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Total Pengeluaran */}
-          <div className={getCardClasses() + " p-5 sm:p-6 min-h-[110px] relative overflow-hidden flex items-center justify-center group"}>
-            {/* Bottom-left circle bubble */}
-            <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-rose-100/60 dark:bg-rose-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
-
-            <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-6">
-              <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
-                {showHideBalance ? '••••••••' : formatIDR(totalExpense)}
-              </h3>
-              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
-                Total Pengeluaran
-              </p>
-            </div>
-
-            {/* Top-right circle bubble with icon */}
-            <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-rose-100/80 dark:bg-rose-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
-              <div className="-translate-x-2 translate-y-2 text-rose-600 dark:text-rose-400">
-                <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6" />
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Biaya Admin Transfer */}
-          <div className={getCardClasses() + " p-5 sm:p-6 min-h-[110px] relative overflow-hidden flex items-center justify-center group"}>
-            {/* Bottom-left circle bubble */}
-            <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-sky-100/60 dark:bg-sky-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
-
-            <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-6">
-              <h3 className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
-                {showHideBalance ? '••••••••' : formatIDR(totalTransferAdminFees)}
-              </h3>
-              <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
-                Biaya Admin Transfer
-              </p>
-            </div>
-
-            {/* Top-right circle bubble with icon */}
-            <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-sky-100/80 dark:bg-sky-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
-              <div className="-translate-x-2 translate-y-2 text-sky-600 dark:text-sky-400">
-                <Receipt className="w-5 h-5 sm:w-6 sm:h-6" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Row 2: Premium Bento Grid Batik White ATM Cards with Direct Balances */}
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em]">Saldo Rekening</h3>
-          <button onClick={() => setActiveTab('kelola')} className="text-[10px] font-black uppercase tracking-wider text-indigo-500 hover:underline">Kelola Dompet</button>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 grid-flow-row-dense gap-4">
-          {wallets.map((w: any, idx: number) => {
-            const isExpanded = w.id === expandedWalletId;
-            const balanceVal = w.currentBalance ?? w.initialBalance;
-            const patternIndex = idx % 4;
-            
-            let patternId = `batik-pattern-${w.id}`;
-            let patternMarkup = null;
-
-            if (patternIndex === 0) {
-              // Batik Parang (Wavy S-Curves)
-              patternMarkup = (
-                <pattern id={patternId} width="40" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-                  <path d="M 0,0 C 10,10 30,10 40,20 C 40,30 20,30 10,40 C 0,50 20,50 30,60 C 30,70 10,70 0,80" fill="none" stroke="currentColor" strokeWidth="1.8" />
-                  <path d="M 40,0 C 30,10 10,10 0,20 C 0,30 20,30 30,40 C 40,50 20,50 10,60 C 10,70 30,70 40,80" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
-                  <polygon points="20,15 25,20 20,25 15,20" fill="currentColor" />
-                  <polygon points="20,55 25,60 20,65 15,60" fill="currentColor" />
-                  <circle cx="20" cy="30" r="1.5" fill="currentColor" />
-                  <circle cx="20" cy="70" r="1.5" fill="currentColor" />
-                </pattern>
-              );
-            } else if (patternIndex === 1) {
-              // Batik Kawung (Concentric Circle Petals)
-              patternMarkup = (
-                <pattern id={patternId} width="50" height="50" patternUnits="userSpaceOnUse">
-                  <circle cx="25" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <circle cx="0" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <circle cx="50" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <circle cx="25" cy="0" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <circle cx="25" cy="50" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <path d="M 25,12.5 A 12.5,12.5 0 0,1 25,37.5 A 12.5,12.5 0 0,1 25,12.5" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                  <path d="M 12.5,25 A 12.5,12.5 0 0,1 37.5,25 A 12.5,12.5 0 0,1 12.5,25" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                  <circle cx="25" cy="25" r="1.5" fill="currentColor" />
-                </pattern>
-              );
-            } else if (patternIndex === 2) {
-              // Batik Megamendung (Cloud Waves)
-              patternMarkup = (
-                <pattern id={patternId} width="60" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 0,20 Q 15,5 30,20 T 60,20" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                  <path d="M 0,25 Q 15,12 30,25 T 60,25" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.7" />
-                  <path d="M 0,30 Q 15,19 30,30 T 60,30" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.4" />
-                  <circle cx="30" cy="20" r="1.5" fill="currentColor" />
-                </pattern>
-              );
-            } else {
-              // Batik Sekar Jagad (Geometric Network Mesh)
-              patternMarkup = (
-                <pattern id={patternId} width="45" height="45" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
-                  <path d="M 0,0 C 11.25,11.25 11.25,33.75 0,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <path d="M 45,0 C 33.75,11.25 33.75,33.75 45,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <path d="M 0,0 C 11.25,11.25 33.75,11.25 45,0" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <path d="M 0,45 C 11.25,33.75 33.75,33.75 45,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <circle cx="22.5" cy="22.5" r="2" fill="currentColor" />
-                  <circle cx="11.25" cy="11.25" r="1" fill="currentColor" />
-                  <circle cx="33.75" cy="11.25" r="1" fill="currentColor" />
-                </pattern>
-              );
-            }
-
-            const cardColor = w.color || '#3b82f6';
-            
-            // Get Card Style & Border Radius dynamically
-            let cardBgClass = "bg-white dark:bg-slate-900 ";
-            let cardBorderClass = "border border-slate-100 dark:border-slate-800/40 ";
-            let cardShadowClass = "shadow-sm hover:shadow-md ";
-
-            if (settings?.uiStyle === 'glass') {
-              cardBgClass = "bg-white/45 dark:bg-slate-900/45 backdrop-blur-md ";
-              cardBorderClass = "border border-white/30 dark:border-slate-800/50 ";
-              cardShadowClass = "shadow-[0_8px_32px_rgba(0,0,0,0.03)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.15)] ";
-            } else if (settings?.uiStyle === 'minimal') {
-              cardBgClass = "bg-slate-50/50 dark:bg-slate-950/20 ";
-              cardBorderClass = "border border-slate-150 dark:border-slate-800/60 ";
-              cardShadowClass = "shadow-none ";
-            }
-
-            let cardRadiusClass = "rounded-[24px] ";
-            if (settings?.cardRadius === 'sharp') {
-              cardRadiusClass = "rounded-none ";
-            } else if (settings?.cardRadius === 'extra') {
-              cardRadiusClass = "rounded-[32px] ";
-            }
-
-             return (
-              <div 
-                key={w.id} 
-                onClick={() => setExpandedWalletId(prev => prev === w.id ? null : w.id)}
-                className={`${cardBgClass} ${cardBorderClass} ${cardShadowClass} ${cardRadiusClass} p-5 text-slate-800 dark:text-white relative overflow-hidden hover:scale-[1.01] active:scale-[0.99] transition-all duration-500 ease-in-out flex flex-col justify-between h-[210px] sm:h-[230px] select-none cursor-pointer ${isExpanded ? 'col-span-2' : 'col-span-1'}`}
-              >
-                {/* SVG Batik Pattern overlay styled with the wallet's specific custom color */}
-                <div 
-                  className="absolute inset-0 opacity-[0.08] dark:opacity-[0.14] pointer-events-none mix-blend-multiply dark:mix-blend-overlay"
-                  style={{ color: cardColor }}
-                >
-                  <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      {patternMarkup}
-                    </defs>
-                    <rect width="100%" height="100%" fill={`url(#${patternId})`} />
-                  </svg>
-                </div>
-
-                {/* Subtle radial sheen overlay for premium matte finish */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-slate-100/10 to-white/20 pointer-events-none" />
-
-                {/* Card Top: Small Active Dot & Wallet Icon */}
-                <div className="flex justify-between items-start relative z-10">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.15)] animate-pulse" style={{ backgroundColor: cardColor }} />
-                    <span className="text-[7px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                      {isExpanded ? 'Rekening Utama' : 'Aktif'}
+            {/* Foreground Content Container with Top Padding */}
+            <div className="relative z-10 pt-6 px-4 sm:px-6">
+              {/* 1. Total Saldo Utama Section */}
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs">
+                    <ShieldCheck className="w-3.5 h-3.5 text-cyan-100" />
+                    <span className="text-[10px] sm:text-xs font-black tracking-[0.16em] uppercase">
+                      TOTAL SALDO UTAMA
                     </span>
                   </div>
+                  <div className="hidden xs:flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/20 border border-white/15 backdrop-blur-md text-[10px] font-mono text-cyan-100 font-bold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
+                    <span>IDR</span>
+                  </div>
+                </div>
 
-                  {/* Colored Circle with Wallet Icon using original wallet color */}
-                  <div 
-                    className="w-7 h-7 rounded-full flex items-center justify-center border shadow-3xs"
-                    style={{ 
-                      backgroundColor: `${cardColor}12`,
-                      borderColor: `${cardColor}30`,
-                      color: cardColor
-                    }}
+                {/* Saldo Display with Eye Icon on the right */}
+                <div className="mt-4 sm:mt-5 flex items-center gap-3">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)]">
+                    {showHideBalance ? '••••••••••••' : formatIDR(activeDisplaySaldo)}
+                  </h2>
+
+                  {/* Eye Button at the right of nominal balance number */}
+                  <button
+                    type="button"
+                    onClick={toggleHideBalance}
+                    title={showHideBalance ? "Tampilkan Saldo Utama" : "Sembunyikan Saldo Utama"}
+                    className="p-1.5 sm:p-2 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm"
                   >
-                    <IconRenderer name={w.icon} className="w-3.5 h-3.5" />
+                    {showHideBalance ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
+                  </button>
+                </div>
+
+                {/* Toggle switch Termasuk Admin / Tanpa Admin below nominal number */}
+                <div className="mt-3 flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => setIncludeAdminFee(prev => !prev)}
+                    className="group flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/30 bg-white/15 hover:bg-white/25 text-white transition-all cursor-pointer select-none active:scale-95 shadow-sm backdrop-blur-sm"
+                    title={includeAdminFee ? "Termasuk Biaya Admin (Klik untuk ubah)" : "Tanpa Biaya Admin (Klik untuk ubah)"}
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-white/95 drop-shadow-3xs">
+                      {includeAdminFee ? 'Termasuk Admin' : 'Tanpa Admin'}
+                    </span>
+                    <div className={`relative w-7 h-3.5 sm:w-8 sm:h-4 rounded-full p-0.5 transition-all duration-300 ease-in-out border ${
+                      includeAdminFee ? 'bg-white/40 border-white/60' : 'bg-black/20 border-white/20'
+                    }`}>
+                      <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transform transition-transform duration-300 ease-in-out shadow-sm ${
+                        includeAdminFee ? 'translate-x-3 sm:translate-x-3.5 bg-white' : 'bg-white/60'
+                      }`} />
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* 2. Secondary Metrics: 3 Cards Grid with GENEROUS, SPACIOUS distance from Total Saldo Utama */}
+              <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Card 1: Total Pendapatan */}
+                <div className="bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 min-h-[105px] relative overflow-hidden flex items-center justify-center group shadow-lg border border-white/20 dark:border-slate-800/80 transition-all">
+                  <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-emerald-100/70 dark:bg-emerald-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
+                  <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-4">
+                    <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
+                      {showHideBalance ? '••••••••' : formatIDR(totalIncome)}
+                    </h3>
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
+                      Total Pendapatan
+                    </p>
+                  </div>
+                  <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-emerald-100/90 dark:bg-emerald-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
+                    <div className="-translate-x-2 translate-y-2 text-emerald-600 dark:text-emerald-400">
+                      <TrendingUp className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+                    </div>
                   </div>
                 </div>
 
-                {/* Card Middle: Wallet Name & Direct Balance */}
-                <div className="my-auto relative z-10 py-1">
-                  <span className="text-[9px] font-black tracking-[0.12em] text-slate-400 dark:text-slate-500 uppercase block mb-1">
-                    {w.name}
-                  </span>
-                  <span className={`font-mono font-black tracking-tight text-slate-800 dark:text-white select-all block break-all leading-tight transition-all duration-300 ${
-                    isExpanded ? 'text-xl sm:text-2xl' : 'text-sm sm:text-base'
-                  }`}>
-                    {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
-                  </span>
+                {/* Card 2: Total Pengeluaran */}
+                <div className="bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 min-h-[105px] relative overflow-hidden flex items-center justify-center group shadow-lg border border-white/20 dark:border-slate-800/80 transition-all">
+                  <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-rose-100/70 dark:bg-rose-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
+                  <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-4">
+                    <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
+                      {showHideBalance ? '••••••••' : formatIDR(totalExpense)}
+                    </h3>
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
+                      Total Pengeluaran
+                    </p>
+                  </div>
+                  <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-rose-100/90 dark:bg-rose-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
+                    <div className="-translate-x-2 translate-y-2 text-rose-600 dark:text-rose-400">
+                      <TrendingDown className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+                    </div>
+                  </div>
                 </div>
 
-                {/* Card Bottom: Wi-Fi Waves & Overlapping Spheres Logo in original wallet color */}
-                <div className="flex justify-between items-end relative z-10">
-                  <div className="flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rotate-90" style={{ color: `${cardColor}aa` }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    {isExpanded && (
-                      <span className="text-[7px] font-black text-slate-400 dark:text-slate-500 tracking-wider uppercase animate-fade-in">
-                        PAYMENT SYSTEM
-                      </span>
-                    )}
+                {/* Card 3: Biaya Admin Transfer */}
+                <div className="bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 min-h-[105px] relative overflow-hidden flex items-center justify-center group shadow-lg border border-white/20 dark:border-slate-800/80 transition-all">
+                  <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-sky-100/70 dark:bg-sky-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
+                  <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-4">
+                    <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
+                      {showHideBalance ? '••••••••' : formatIDR(totalTransferAdminFees)}
+                    </h3>
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
+                      Biaya Admin Transfer
+                    </p>
                   </div>
-
-                  {/* Dual overlapping spheres themed with the original wallet color */}
-                  <div className="flex -space-x-1.5 shrink-0">
-                    <div 
-                      className="w-4.5 h-4.5 rounded-full opacity-65 shadow-3xs" 
-                      style={{ backgroundColor: cardColor }}
-                    />
-                    <div className="w-4.5 h-4.5 rounded-full bg-slate-200 dark:bg-slate-700 opacity-40 shadow-3xs" />
+                  <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-sky-100/90 dark:bg-sky-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
+                    <div className="-translate-x-2 translate-y-2 text-sky-600 dark:text-sky-400">
+                      <Receipt className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+                    </div>
                   </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </div>
+
+              {/* 3. Card Saldo Dompet - Sits halfway across the bottom of the banner */}
+              <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {wallets.map((w: any, idx: number) => {
+                    const balanceVal = w.currentBalance ?? w.initialBalance;
+                    const patternIndex = idx % 4;
+                    
+                    let patternId = `batik-pattern-${w.id}`;
+                    let patternMarkup = null;
+
+                    if (patternIndex === 0) {
+                      // Batik Parang (Wavy S-Curves)
+                      patternMarkup = (
+                        <pattern id={patternId} width="40" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+                          <path d="M 0,0 C 10,10 30,10 40,20 C 40,30 20,30 10,40 C 0,50 20,50 30,60 C 30,70 10,70 0,80" fill="none" stroke="currentColor" strokeWidth="1.8" />
+                          <path d="M 40,0 C 30,10 10,10 0,20 C 0,30 20,30 30,40 C 40,50 20,50 10,60 C 10,70 30,70 40,80" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+                          <polygon points="20,15 25,20 20,25 15,20" fill="currentColor" />
+                          <polygon points="20,55 25,60 20,65 15,60" fill="currentColor" />
+                          <circle cx="20" cy="30" r="1.5" fill="currentColor" />
+                          <circle cx="20" cy="70" r="1.5" fill="currentColor" />
+                        </pattern>
+                      );
+                    } else if (patternIndex === 1) {
+                      // Batik Kawung (Concentric Circle Petals)
+                      patternMarkup = (
+                        <pattern id={patternId} width="50" height="50" patternUnits="userSpaceOnUse">
+                          <circle cx="25" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <circle cx="0" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <circle cx="50" cy="25" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <circle cx="25" cy="0" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <circle cx="25" cy="50" r="12.5" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <path d="M 25,12.5 A 12.5,12.5 0 0,1 25,37.5 A 12.5,12.5 0 0,1 25,12.5" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                          <path d="M 12.5,25 A 12.5,12.5 0 0,1 37.5,25 A 12.5,12.5 0 0,1 12.5,25" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                          <circle cx="25" cy="25" r="1.5" fill="currentColor" />
+                        </pattern>
+                      );
+                    } else if (patternIndex === 2) {
+                      // Batik Megamendung (Cloud Waves)
+                      patternMarkup = (
+                        <pattern id={patternId} width="60" height="40" patternUnits="userSpaceOnUse">
+                          <path d="M 0,20 Q 15,5 30,20 T 60,20" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                          <path d="M 0,25 Q 15,12 30,25 T 60,25" fill="none" stroke="currentColor" strokeWidth="0.8" opacity="0.7" />
+                          <path d="M 0,30 Q 15,19 30,30 T 60,30" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.4" />
+                          <circle cx="30" cy="20" r="1.5" fill="currentColor" />
+                        </pattern>
+                      );
+                    } else {
+                      // Batik Sekar Jagad (Geometric Network Mesh)
+                      patternMarkup = (
+                        <pattern id={patternId} width="45" height="45" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+                          <path d="M 0,0 C 11.25,11.25 11.25,33.75 0,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <path d="M 45,0 C 33.75,11.25 33.75,33.75 45,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <path d="M 0,0 C 11.25,11.25 33.75,11.25 45,0" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <path d="M 0,45 C 11.25,33.75 33.75,33.75 45,45" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                          <circle cx="22.5" cy="22.5" r="2" fill="currentColor" />
+                          <circle cx="11.25" cy="11.25" r="1" fill="currentColor" />
+                          <circle cx="33.75" cy="11.25" r="1" fill="currentColor" />
+                        </pattern>
+                      );
+                    }
+
+                    const cardColor = w.color || '#3b82f6';
+                    
+                    // Solid, crisp elevated card inside navy banner
+                    let cardBgClass = "bg-white dark:bg-slate-900 ";
+                    let cardBorderClass = "border border-white/30 dark:border-slate-800 ";
+                    let cardShadowClass = "shadow-lg hover:shadow-xl ";
+
+                    if (settings?.uiStyle === 'glass') {
+                      cardBgClass = "bg-white/95 dark:bg-slate-900/90 backdrop-blur-md ";
+                      cardBorderClass = "border border-white/60 dark:border-slate-800/80 ";
+                      cardShadowClass = "shadow-[0_12px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.3)] ";
+                    } else if (settings?.uiStyle === 'minimal') {
+                      cardBgClass = "bg-white dark:bg-slate-900 ";
+                      cardBorderClass = "border border-slate-200 dark:border-slate-800 ";
+                      cardShadowClass = "shadow-md ";
+                    }
+
+                    let cardRadiusClass = "rounded-[22px] ";
+                    if (settings?.cardRadius === 'sharp') {
+                      cardRadiusClass = "rounded-none ";
+                    } else if (settings?.cardRadius === 'extra') {
+                      cardRadiusClass = "rounded-[28px] ";
+                    }
+
+                    return (
+                      <div 
+                        key={w.id} 
+                        ref={idx === wallets.length - 1 ? lastWalletCardRef : undefined}
+                        className={`${cardBgClass} ${cardBorderClass} ${cardShadowClass} ${cardRadiusClass} p-4 sm:p-5 text-slate-800 dark:text-white relative overflow-hidden hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex flex-col justify-between h-[195px] sm:h-[210px] select-none col-span-1`}
+                      >
+                        {/* SVG Batik Pattern overlay styled with the wallet's specific custom color */}
+                        <div 
+                          className="absolute inset-0 opacity-[0.08] dark:opacity-[0.14] pointer-events-none mix-blend-multiply dark:mix-blend-overlay"
+                          style={{ color: cardColor }}
+                        >
+                          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                              {patternMarkup}
+                            </defs>
+                            <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+                          </svg>
+                        </div>
+
+                        {/* Subtle radial sheen overlay for premium matte finish */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-slate-100/10 to-white/20 pointer-events-none" />
+
+                        {/* Card Top: Small Active Dot & Wallet Icon */}
+                        <div className="flex justify-between items-start relative z-10">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.15)] animate-pulse" style={{ backgroundColor: cardColor }} />
+                            <span className="text-[7px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                              Aktif
+                            </span>
+                          </div>
+
+                          {/* Colored Circle with Wallet Icon using original wallet color */}
+                          <div 
+                            className="w-7 h-7 rounded-full flex items-center justify-center border shadow-3xs"
+                            style={{ 
+                              backgroundColor: `${cardColor}12`,
+                              borderColor: `${cardColor}30`,
+                              color: cardColor
+                            }}
+                          >
+                            <IconRenderer name={w.icon} className="w-3.5 h-3.5" />
+                          </div>
+                        </div>
+
+                        {/* Card Middle: Wallet Name & Direct Balance */}
+                        <div className="my-auto relative z-10 py-1">
+                          <span className="text-[9px] font-black tracking-[0.12em] text-slate-400 dark:text-slate-500 uppercase block mb-1">
+                            {w.name}
+                          </span>
+                          <span className="font-mono font-black tracking-tight text-slate-800 dark:text-white select-all block break-all leading-tight text-sm sm:text-base">
+                            {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
+                          </span>
+                        </div>
+
+                        {/* Card Bottom: Wi-Fi Waves & Overlapping Spheres Logo in original wallet color */}
+                        <div className="flex justify-between items-end relative z-10">
+                          <div className="flex items-center gap-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rotate-90" style={{ color: `${cardColor}aa` }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                          </div>
+
+                          {/* Dual overlapping spheres themed with the original wallet color */}
+                          <div className="flex -space-x-1.5 shrink-0">
+                            <div 
+                              className="w-4.5 h-4.5 rounded-full opacity-65 shadow-3xs" 
+                              style={{ backgroundColor: cardColor }}
+                            />
+                            <div className="w-4.5 h-4.5 rounded-full bg-slate-200 dark:bg-slate-700 opacity-40 shadow-3xs" />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
       {/* Row 3: Secondary Insights Tables */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700 dark:text-slate-300">

@@ -84,11 +84,8 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
 
   return (
     <div className="flex flex-col gap-6" id="view-budgeting">
-      {/* Header & Month Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-        <div>
-          <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Budgeting</h1>
-        </div>
+      {/* Filter Selectors */}
+      <div className="flex sm:justify-end gap-2.5 mb-2">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Wallet Selector Dropdown */}
           <div className={`flex items-center justify-between sm:justify-start gap-1.5 px-3 py-1.5 rounded-xl transition-all ${

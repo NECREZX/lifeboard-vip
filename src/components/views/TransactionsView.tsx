@@ -117,9 +117,8 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
 
   return (
     <div className="flex flex-col gap-5" id="view-transactions">
-      <div className="flex items-center justify-between mb-1">
-        <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Transaksi Keuangan</h1>
-        {activeFilterCount > 0 && (
+      {activeFilterCount > 0 && (
+        <div className="flex justify-end mb-1">
           <button
             onClick={handleResetAllFilters}
             className="flex items-center gap-1.5 text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 px-3 py-1.5 rounded-xl border border-rose-200/60 dark:border-rose-900/50 transition-all hover:scale-[1.02]"
@@ -127,8 +126,8 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset {activeFilterCount} Filter</span>
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Filter Panel */}
       <div className={`${getCardClasses()} p-4 md:p-5 flex flex-col gap-4`}>

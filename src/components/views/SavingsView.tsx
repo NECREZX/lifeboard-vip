@@ -30,10 +30,6 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-6" id="view-savings">
-      <div className="mb-2">
-        <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight leading-tight">Tabungan</h1>
-      </div>
-
       <div className="flex items-center gap-2 bg-slate-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 w-fit backdrop-blur-sm">
         <button
           onClick={() => setSavingFilter('semua')}

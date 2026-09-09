@@ -72,10 +72,10 @@ export default function NotificationPanel({
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition relative focus:outline-none"
+        className="p-2 rounded-xl text-white hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 transition relative focus:outline-none shadow-sm cursor-pointer"
         id="notification-toggle-btn"
       >
-        <CustomNotificationIcon className="w-5.5 h-5.5" />
+        <CustomNotificationIcon className="w-5.5 h-5.5 text-white" />
         {unreadCount > 0 && (
           <span className={`absolute top-1.5 right-1.5 w-4 h-4 text-[9px] font-bold text-white rounded-full flex items-center justify-center animate-pulse ${getAccentBg()}`}>
             {unreadCount}
@@ -86,7 +86,7 @@ export default function NotificationPanel({
       {/* Dropdown Card */}
       {isOpen && (
         <div 
-          className={`fixed sm:absolute left-1/2 sm:left-auto sm:right-0 sm:translate-x-0 -translate-x-1/2 top-20 sm:top-full mt-2 w-[calc(100vw-32px)] sm:w-96 rounded-3xl z-50 overflow-hidden transition-all ${
+          className={`fixed sm:absolute left-1/2 sm:left-auto sm:right-0 sm:translate-x-0 -translate-x-1/2 top-20 sm:top-full mt-2 w-[calc(100vw-32px)] sm:w-96 rounded-3xl z-[100] overflow-hidden transition-all ${
             uiStyle === 'glass' 
               ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)]' 
               : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)]'

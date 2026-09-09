@@ -1858,21 +1858,31 @@ export default function App() {
         </div>
       )}
 
-      {/* 1. STICKY TOP BAR */}
+      {/* 1. STICKY TOP BAR - Matched with Login Form Theme (Cyan - Teal - Rose) + Refined Motifs */}
       <header 
-        className={`sticky top-0 z-40 w-full transition-all duration-300 no-print ${
-          settings.uiStyle === 'glass' 
-            ? 'bg-white/20 dark:bg-slate-950/30 backdrop-blur-xl border-b border-white/20 dark:border-slate-900/20 shadow-sm' 
-            : 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-800/60'
-        }`}
+        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-gradient-to-r from-cyan-500 via-teal-600 to-rose-500 text-white border-b border-white/20 shadow-md relative"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 12px)' }}
       >
-        <div className="max-w-2xl mx-auto pb-3 px-4 sm:px-6 flex items-center justify-between">
+        {/* Subtle Decorative Wave & Glow Overlay (confined to header background) */}
+        <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
+          <svg className="w-full h-full" viewBox="0 0 100 25" preserveAspectRatio="none">
+            <path d="M0,12 Q25,3 50,15 T100,8" fill="none" stroke="currentColor" strokeWidth="0.6" className="text-white" />
+            <path d="M0,18 Q30,8 65,22 T100,16" fill="none" stroke="currentColor" strokeWidth="0.4" className="text-white" />
+          </svg>
+          <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10 pointer-events-none" />
+          <div className="absolute left-1/4 -bottom-10 w-36 h-20 rounded-full bg-teal-300/20 blur-xl pointer-events-none" />
+        </div>
+
+        <div className="max-w-2xl mx-auto pb-3 px-4 sm:px-6 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            {/* Elegant Geometric Fintech Logomark */}
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-[1.2rem] overflow-hidden shadow-sm flex items-center justify-center shrink-0 border border-slate-200/50 dark:border-slate-700/50 bg-transparent">
-              <img src="/icon.svg" className="w-full h-full object-cover scale-[1.15]" alt="Logo" referrerPolicy="no-referrer" />
-            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-sm">
+              {activeTab === 'dashboard' && 'Dashboard'}
+              {activeTab === 'transaksi' && 'Transaksi'}
+              {activeTab === 'tabungan' && 'Tabungan'}
+              {activeTab === 'anggaran' && 'Budgeting'}
+              {activeTab === 'aktivitas' && 'Aktivitas'}
+              {activeTab === 'kelola' && 'Kelola'}
+            </h1>
           </div>
 
           <div className="flex items-center gap-2">

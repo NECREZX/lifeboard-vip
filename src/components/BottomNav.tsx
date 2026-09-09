@@ -22,55 +22,46 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
 
   const isHex = accentColor.startsWith('#');
 
-  // Map theme colors to CSS active highlight colors
+  // Map theme colors to CSS active highlight colors - pure white for high contrast
   const getActiveStyles = (isActive: boolean) => {
-    if (!isActive) return 'text-slate-400 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
-    if (isHex) return '';
-    
-    switch (accentColor) {
-      case 'emerald': return 'text-emerald-500 dark:text-emerald-400';
-      case 'amber': return 'text-amber-500 dark:text-amber-400';
-      case 'rose': return 'text-rose-500 dark:text-rose-400';
-      case 'indigo': return 'text-indigo-500 dark:text-indigo-400';
-      case 'classic': return 'text-slate-900 dark:text-white';
-      default: return 'text-indigo-500 dark:text-indigo-400';
-    }
+    if (!isActive) return 'text-white/70 hover:text-white';
+    return 'text-white font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]';
   };
 
   const getAccentGradient = () => {
     if (isHex) return '';
     switch (accentColor) {
-      case 'emerald': return 'from-emerald-400 to-emerald-500';
-      case 'amber': return 'from-amber-400 to-amber-500';
-      case 'rose': return 'from-rose-400 to-rose-500';
-      case 'indigo': return 'from-indigo-500 to-indigo-600';
-      case 'classic': return 'from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800';
-      default: return 'from-indigo-500 to-indigo-600';
+      case 'emerald': return 'from-emerald-400 to-emerald-600';
+      case 'amber': return 'from-amber-400 to-amber-600';
+      case 'rose': return 'from-rose-400 to-rose-600';
+      case 'indigo': return 'from-cyan-400 to-rose-500';
+      case 'classic': return 'from-slate-700 to-slate-900';
+      default: return 'from-cyan-400 to-rose-500';
     }
   };
 
   const getAccentLine = () => {
-    if (isHex) return '';
-    switch (accentColor) {
-      case 'emerald': return 'bg-emerald-500';
-      case 'amber': return 'bg-amber-500';
-      case 'rose': return 'bg-rose-500';
-      case 'indigo': return 'bg-indigo-500';
-      case 'classic': return 'bg-slate-900 dark:bg-white';
-      default: return 'bg-indigo-500';
-    }
+    return 'bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)]';
   };
 
   return (
     <div className="fixed bottom-4 left-0 right-0 z-40 px-3 sm:px-4 max-w-2xl mx-auto pointer-events-none no-print">
       <div 
-        className={`pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 ${
-          uiStyle === 'glass'
-            ? 'bg-white/20 dark:bg-slate-900/30 backdrop-blur-xl border border-white/25 dark:border-slate-800/20 shadow-[0_16px_40px_rgba(0,0,0,0.18)]'
-            : 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-[0_12px_40px_rgba(0,0,0,0.12)]'
-        }`}
+        className="pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 text-white backdrop-blur-2xl border border-white/40 ring-1 ring-white/20 shadow-[0_16px_45px_rgba(20,184,166,0.35)]"
         id="bottom-dock-container"
       >
+        {/* Background gradient and decorative shapes confined inside rounded container */}
+        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none bg-gradient-to-r from-cyan-500 via-teal-600 to-rose-500 -z-10">
+          {/* Subtle Decorative Wave & Glow Overlay */}
+          <div className="absolute inset-0 opacity-20">
+            <svg className="w-full h-full" viewBox="0 0 100 25" preserveAspectRatio="none">
+              <path d="M0,8 Q35,20 70,5 T100,12" fill="none" stroke="currentColor" strokeWidth="0.6" className="text-white" />
+              <path d="M0,16 Q25,4 60,18 T100,10" fill="none" stroke="currentColor" strokeWidth="0.4" className="text-white" />
+            </svg>
+          </div>
+          <div className="absolute -left-6 -bottom-6 w-20 h-20 rounded-full bg-white/10" />
+          <div className="absolute -right-6 -top-6 w-20 h-20 rounded-full bg-white/10" />
+        </div>
         {tabs.slice(0, 3).map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
@@ -97,7 +88,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
 
               {isActive && (
                 <span 
-                  className={`absolute -bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
+                  className={`absolute bottom-0 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
                   style={isHex ? { backgroundColor: accentColor } : undefined}
                 />
               )}
@@ -109,7 +100,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
         <div className="w-full flex justify-center items-center -mt-6 sm:-mt-7 z-10">
           <button
             onClick={onAddClick}
-            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-4 border-slate-50 dark:border-slate-950 shrink-0`}
+            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-3 border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.25)] shrink-0`}
             style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none', boxShadow: `0 8px 25px ${accentColor}66` } : undefined}
             title="Catat Baru (Pemasukan, Pengeluaran, Anggaran, Tabungan, dll)"
           >
@@ -143,7 +134,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
 
               {isActive && (
                 <span 
-                  className={`absolute -bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
+                  className={`absolute bottom-0 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
                   style={isHex ? { backgroundColor: accentColor } : undefined}
                 />
               )}
