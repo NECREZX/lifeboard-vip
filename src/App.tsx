@@ -298,10 +298,12 @@ export default function App() {
     const metaThemeColor = document.querySelector("meta[name=theme-color]");
     if (settings.isDarkMode) {
       document.documentElement.classList.add('dark');
-      if (metaThemeColor) metaThemeColor.setAttribute("content", "#020617");
+      if (metaThemeColor) metaThemeColor.setAttribute("content", "#06b6d4");
+      document.body.style.backgroundColor = "#020617";
     } else {
       document.documentElement.classList.remove('dark');
-      if (metaThemeColor) metaThemeColor.setAttribute("content", "#f8fafc");
+      if (metaThemeColor) metaThemeColor.setAttribute("content", "#06b6d4");
+      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc";
     }
 
     // Apply font
@@ -1839,7 +1841,7 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-screen pb-24 ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 transition-colors duration-300 relative`}>
+    <div className={`min-h-[100dvh] pb-24 ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 transition-colors duration-300 relative`}>
       
       {/* AMBIENT BACKGROUND BLOBS FOR LIQUID GLASS UI */}
       {settings.uiStyle === 'glass' && (

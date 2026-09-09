@@ -45,7 +45,10 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
   };
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 z-40 px-3 sm:px-4 max-w-2xl mx-auto pointer-events-none no-print">
+    <div 
+      className="fixed left-0 right-0 z-40 px-3 sm:px-4 max-w-2xl mx-auto pointer-events-none no-print"
+      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}
+    >
       <div 
         className="pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 text-white backdrop-blur-2xl border border-white/40 ring-1 ring-white/20 shadow-[0_16px_45px_rgba(20,184,166,0.35)]"
         id="bottom-dock-container"
