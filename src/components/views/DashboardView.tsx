@@ -15,10 +15,10 @@ import {
   Receipt, 
   Eye, 
   EyeOff, 
-  Wallet as WalletIcon,
   ShieldCheck,
   Sparkles,
-  ArrowUpRight
+  ArrowUpRight,
+  ChevronRight
 } from 'lucide-react';
 import { IconRenderer } from '../IconRenderer';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
@@ -98,31 +98,44 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [selectedWalletForModal, setSelectedWalletForModal] = useState<Wallet | null>(null);
   const [expandedWalletId, setExpandedWalletId] = useState<string | null>(null);
 
-  // Dynamic Banner Measurement to end precisely halfway down the last wallet cards
+  // Dynamic Banner Measurement to end precisely halfway down the metrics wrapper card
   const bannerContainerRef = useRef<HTMLDivElement>(null);
-  const lastWalletCardRef = useRef<HTMLDivElement>(null);
+  const metricsWrapperCardRef = useRef<HTMLDivElement>(null);
   const [bannerHeight, setBannerHeight] = useState<number | null>(null);
 
   useEffect(() => {
     const updateBannerHeight = () => {
-      if (bannerContainerRef.current && lastWalletCardRef.current) {
+      if (bannerContainerRef.current && metricsWrapperCardRef.current) {
         const containerRect = bannerContainerRef.current.getBoundingClientRect();
-        const cardRect = lastWalletCardRef.current.getBoundingClientRect();
+        const cardRect = metricsWrapperCardRef.current.getBoundingClientRect();
         const calculated = (cardRect.top - containerRect.top) + (cardRect.height / 2);
-        if (calculated > 100) {
+        if (calculated > 80) {
           setBannerHeight(Math.round(calculated));
         }
       }
     };
 
     updateBannerHeight();
-    const timer = setTimeout(updateBannerHeight, 100);
+    const timer = setTimeout(updateBannerHeight, 80);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && metricsWrapperCardRef.current) {
+      resizeObserver = new ResizeObserver(() => {
+        updateBannerHeight();
+      });
+      resizeObserver.observe(metricsWrapperCardRef.current);
+      if (bannerContainerRef.current) {
+        resizeObserver.observe(bannerContainerRef.current);
+      }
+    }
+
     window.addEventListener('resize', updateBannerHeight);
     return () => {
       clearTimeout(timer);
+      if (resizeObserver) resizeObserver.disconnect();
       window.removeEventListener('resize', updateBannerHeight);
     };
-  }, [wallets.length, settings?.cardRadius, settings?.uiStyle]);
+  }, [wallets.length, settings?.cardRadius, settings?.uiStyle, includeAdminFee, showHideBalance]);
 
   const activeThemeColor = settings?.themeColor === 'custom'
     ? (settings?.customAccentColor || '#8b5cf6')
@@ -226,19 +239,33 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* Hero Banner with Bottom Radius adapted to user's setting (Kotak, Rounded, Sangat Rounded) */}
       {(() => {
-        let bannerRadiusClass = "rounded-b-3xl sm:rounded-b-[36px]";
+        let bannerRadiusClass = "rounded-b-[28px] sm:rounded-b-[36px]";
+        let wrapperRadiusClass = "rounded-2xl sm:rounded-3xl";
+        let innerSquareRadiusClass = "rounded-xl sm:rounded-2xl";
+
         if (settings?.cardRadius === 'sharp') {
           bannerRadiusClass = "rounded-b-none";
+          wrapperRadiusClass = "rounded-none";
+          innerSquareRadiusClass = "rounded-none";
         } else if (settings?.cardRadius === 'extra') {
-          bannerRadiusClass = "rounded-b-[44px] sm:rounded-b-[54px]";
+          bannerRadiusClass = "rounded-b-[40px] sm:rounded-b-[50px]";
+          wrapperRadiusClass = "rounded-3xl sm:rounded-[36px]";
+          innerSquareRadiusClass = "rounded-2xl sm:rounded-[24px]";
+        }
+
+        let wrapperBgClass = "bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_16px_40px_rgba(0,0,0,0.12)]";
+        if (settings?.uiStyle === 'glass') {
+          wrapperBgClass = "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-white/60 dark:border-slate-800/80 shadow-[0_16px_40px_rgba(0,0,0,0.15)]";
+        } else if (settings?.uiStyle === 'minimal') {
+          wrapperBgClass = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md";
         }
 
         return (
           <div ref={bannerContainerRef} className="relative -mx-4 sm:-mx-6 -mt-6 z-0 mb-8 sm:mb-10">
-            {/* The Banner Body background: dynamically terminates at halfway of the last wallet cards row */}
+            {/* The Banner Body background: dynamically terminates at halfway down the metrics wrapper card */}
             <div 
-              className={`absolute inset-x-0 top-0 overflow-hidden bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 text-white ${bannerRadiusClass} shadow-[0_20px_40px_rgba(20,184,166,0.28)] border-b border-white/20 pointer-events-none transition-all duration-200`}
-              style={bannerHeight ? { height: `${bannerHeight}px` } : { bottom: '100px' }}
+              className={`absolute inset-x-0 top-0 overflow-hidden bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 text-white ${bannerRadiusClass} shadow-[0_16px_36px_rgba(0,0,0,0.16)] border-b border-white/20 pointer-events-none transition-all duration-200`}
+              style={bannerHeight ? { height: `${bannerHeight}px` } : { height: '260px' }}
             >
               {/* Artistic Geometric Vector Lattice Overlay */}
               <svg className="absolute inset-0 w-full h-full opacity-15 pointer-events-none mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
@@ -260,12 +287,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {/* Luminous Glowing Orbs matching Login Form Palette */}
               <div className="absolute -left-16 -top-16 w-72 h-72 bg-cyan-200/35 rounded-full blur-3xl pointer-events-none" />
               <div className="absolute left-1/3 top-1/4 w-80 h-80 bg-teal-200/25 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -right-16 bottom-0 w-80 h-80 bg-rose-300/35 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -right-16 -top-10 w-80 h-80 bg-rose-300/35 rounded-full blur-3xl pointer-events-none" />
 
-              {/* Elegant Translucent Decorative Rings (Iconic Login Form Signature) */}
+              {/* Elegant Translucent Decorative Rings in upper areas (cleanly clear of bottom corners for pristine symmetry) */}
               <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full border border-white/20 bg-white/5 pointer-events-none" />
               <div className="absolute -right-4 -top-4 w-60 h-60 rounded-full border border-white/10 pointer-events-none" />
-              <div className="absolute -left-12 bottom-4 w-36 h-36 rounded-full border border-white/15 bg-white/5 pointer-events-none" />
             </div>
 
             {/* Foreground Content Container with Top Padding */}
@@ -324,65 +350,118 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
               </div>
 
-              {/* 2. Secondary Metrics: 3 Cards Grid with GENEROUS, SPACIOUS distance from Total Saldo Utama */}
-              <div className="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Card 1: Total Pendapatan */}
-                <div className="bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 min-h-[105px] relative overflow-hidden flex items-center justify-center group shadow-lg border border-white/20 dark:border-slate-800/80 transition-all">
-                  <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-emerald-100/70 dark:bg-emerald-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
-                  <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-4">
-                    <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
-                      {showHideBalance ? '••••••••' : formatIDR(totalIncome)}
-                    </h3>
-                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
-                      Total Pendapatan
-                    </p>
-                  </div>
-                  <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-emerald-100/90 dark:bg-emerald-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
-                    <div className="-translate-x-2 translate-y-2 text-emerald-600 dark:text-emerald-400">
-                      <TrendingUp className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
-                    </div>
-                  </div>
-                </div>
+              {/* 2. Secondary Metrics: Rectangular Wrapper Card with Semicircular Polkadot Motifs & Perfectly Centered Cards */}
+              <div className="mt-8 sm:mt-10">
+                <div 
+                  ref={metricsWrapperCardRef}
+                  className={`w-full ${wrapperRadiusClass} ${wrapperBgClass} p-3.5 sm:p-5 py-5 sm:py-6 transition-all duration-300 relative z-20 overflow-hidden flex flex-col justify-center items-center`}
+                >
+                  {/* Half-Circle / Quarter-Circle Corner Accent - Sudut Kiri Atas (Sesuai Gambar Referensi, Warna Cyan - Teal) */}
+                  <svg 
+                    className="absolute top-0 left-0 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0" 
+                    viewBox="0 0 100 100" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <linearGradient id="corner-shape-tl" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="#0d9488" stopOpacity="0.20" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 0,0 L 100,0 A 100,100 0 0,1 0,100 Z" fill="url(#corner-shape-tl)" />
+                  </svg>
 
-                {/* Card 2: Total Pengeluaran */}
-                <div className="bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 min-h-[105px] relative overflow-hidden flex items-center justify-center group shadow-lg border border-white/20 dark:border-slate-800/80 transition-all">
-                  <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-rose-100/70 dark:bg-rose-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
-                  <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-4">
-                    <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
-                      {showHideBalance ? '••••••••' : formatIDR(totalExpense)}
-                    </h3>
-                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
-                      Total Pengeluaran
-                    </p>
-                  </div>
-                  <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-rose-100/90 dark:bg-rose-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
-                    <div className="-translate-x-2 translate-y-2 text-rose-600 dark:text-rose-400">
-                      <TrendingDown className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
-                    </div>
-                  </div>
-                </div>
+                  {/* Half-Circle / Quarter-Circle Corner Accent - Sudut Bawah Kanan (Sesuai Gambar Referensi, Warna Teal - Rose) */}
+                  <svg 
+                    className="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 pointer-events-none z-0" 
+                    viewBox="0 0 100 100" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <defs>
+                      <linearGradient id="corner-shape-br" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#0d9488" stopOpacity="0.20" />
+                        <stop offset="100%" stopColor="#f43f5e" stopOpacity="0.25" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 100,100 L 0,100 A 100,100 0 0,1 100,0 Z" fill="url(#corner-shape-br)" />
+                  </svg>
 
-                {/* Card 3: Biaya Admin Transfer */}
-                <div className="bg-white/95 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-4 sm:p-5 min-h-[105px] relative overflow-hidden flex items-center justify-center group shadow-lg border border-white/20 dark:border-slate-800/80 transition-all">
-                  <div className="absolute -left-7 -bottom-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-sky-100/70 dark:bg-sky-950/40 pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0" />
-                  <div className="z-10 relative w-full text-center flex flex-col items-center justify-center px-4">
-                    <h3 className="text-lg sm:text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight font-mono">
-                      {showHideBalance ? '••••••••' : formatIDR(totalTransferAdminFees)}
-                    </h3>
-                    <p className="text-[10px] font-bold text-slate-400 dark:text-slate-400 mt-1 uppercase tracking-wider">
-                      Biaya Admin Transfer
-                    </p>
-                  </div>
-                  <div className="absolute -right-7 -top-7 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-sky-100/90 dark:bg-sky-950/50 flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300 z-0">
-                    <div className="-translate-x-2 translate-y-2 text-sky-600 dark:text-sky-400">
-                      <Receipt className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+                  {/* 3 Square Cards arranged horizontally side-by-side (sejajar ke kanan) & perfectly centered */}
+                  <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
+                    {/* Card 1: Total Pendapatan */}
+                    <div 
+                      className={`aspect-square ${innerSquareRadiusClass} bg-slate-50/90 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
+                    >
+                      <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-100/90 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                        <TrendingUp className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
+                      </div>
+                      <div className="w-full my-auto px-0.5">
+                        <span className="block font-mono font-black text-[11px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                          {showHideBalance ? '••••••' : formatIDR(totalIncome)}
+                        </span>
+                      </div>
+                      <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                        Pendapatan
+                      </span>
+                    </div>
+
+                    {/* Card 2: Total Pengeluaran */}
+                    <div 
+                      className={`aspect-square ${innerSquareRadiusClass} bg-slate-50/90 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
+                    >
+                      <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-rose-100/90 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                        <TrendingDown className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
+                      </div>
+                      <div className="w-full my-auto px-0.5">
+                        <span className="block font-mono font-black text-[11px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                          {showHideBalance ? '••••••' : formatIDR(totalExpense)}
+                        </span>
+                      </div>
+                      <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                        Pengeluaran
+                      </span>
+                    </div>
+
+                    {/* Card 3: Biaya Admin Transfer */}
+                    <div 
+                      className={`aspect-square ${innerSquareRadiusClass} bg-slate-50/90 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative`}
+                    >
+                      <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                        <Receipt className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
+                      </div>
+                      <div className="w-full my-auto px-0.5">
+                        <span className="block font-mono font-black text-[11px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                          {showHideBalance ? '••••••' : formatIDR(totalTransferAdminFees)}
+                        </span>
+                      </div>
+                      <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                        Admin Transfer
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* 3. Card Saldo Dompet - Sits halfway across the bottom of the banner */}
-              <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {/* 3. Card Saldo Dompet - Sitting cleanly outside the banner */}
+              <div className="mt-8 sm:mt-10">
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <h3 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
+                    Saldo Dompet
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('kelola')}
+                    className="text-[11px] font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline flex items-center gap-1 transition-colors cursor-pointer group"
+                    title="Buka Menu Kelola Dompet"
+                  >
+                    <span>Kelola Dompet</span>
+                    <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {wallets.map((w: any, idx: number) => {
                     const balanceVal = w.currentBalance ?? w.initialBalance;
                     const patternIndex = idx % 4;
@@ -468,7 +547,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     return (
                       <div 
                         key={w.id} 
-                        ref={idx === wallets.length - 1 ? lastWalletCardRef : undefined}
                         className={`${cardBgClass} ${cardBorderClass} ${cardShadowClass} ${cardRadiusClass} p-4 sm:p-5 text-slate-800 dark:text-white relative overflow-hidden hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 flex flex-col justify-between h-[195px] sm:h-[210px] select-none col-span-1`}
                       >
                         {/* SVG Batik Pattern overlay styled with the wallet's specific custom color */}
@@ -542,8 +620,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
               </div>
             </div>
-          );
-        })()}
+          </div>
+        );
+      })()}
 
       {/* Row 3: Secondary Insights Tables */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700 dark:text-slate-300">
@@ -563,7 +642,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                {activities.slice(0, 3).map(a => (
                  <tr key={a.id} className="border-b border-slate-100 dark:border-slate-800">
                    <td className="py-2 truncate max-w-[100px] text-slate-700 dark:text-slate-200">{a.title}</td>
-                   <td className={`py-2 text-right font-bold ${a.status === 'completed' ? 'text-emerald-500' : 'text-sky-500'}`}>{a.status === 'completed' ? 'Selesai' : 'Pending'}</td>
+                   <td className={`py-2 text-right font-bold ${a.status === 'completed' ? 'text-emerald-500' : 'text-amber-500 dark:text-amber-400'}`}>{a.status === 'completed' ? 'Selesai' : 'Pending'}</td>
                  </tr>
                ))}
              </tbody>
