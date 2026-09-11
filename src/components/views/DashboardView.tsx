@@ -189,54 +189,36 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {/* PWA Install prompt */}
-      {isInstallable && (
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 border border-indigo-100/50 dark:border-slate-700/50 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center text-xl shrink-0 shadow-sm">
-              📲
-            </div>
-            <div>
-              <h3 className="font-bold text-xs text-slate-800 dark:text-slate-100">Pasang Aplikasi Ke HP / Desktop</h3>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Akses cepat, hemat kuota, dan berfungsi penuh secara offline.</p>
-            </div>
-          </div>
-          <button
-            onClick={triggerPWAInstall}
-            className={`px-4 py-1.5 rounded-xl text-[10px] font-bold text-white uppercase tracking-wider shadow-sm transition shrink-0 ${getAccentBg()}`}
-          >
-            Pasang Sekarang
-          </button>
+      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #06b6d4) */}
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#06b6d4] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
+        {/* Artistic Geometric Vector Motif with Top-Fade Mask (Starts transparent at top so it seamlessly joins Top Bar) */}
+        <div 
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{
+            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
+          }}
+        >
+          <svg className="w-full h-full opacity-20 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="banner-geometric-motif" width="56" height="56" patternUnits="userSpaceOnUse">
+                <path d="M28 0 L56 28 L28 56 L0 28 Z" fill="none" stroke="currentColor" strokeWidth="0.9" />
+                <circle cx="28" cy="28" r="12" fill="none" stroke="currentColor" strokeWidth="0.9" />
+                <circle cx="0" cy="0" r="10" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                <circle cx="56" cy="0" r="10" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                <circle cx="0" cy="56" r="10" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                <circle cx="56" cy="56" r="10" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                <path d="M28 16 L31 25 L40 28 L31 31 L28 40 L25 31 L16 28 L25 25 Z" fill="currentColor" fillOpacity="0.35" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#banner-geometric-motif)" />
+          </svg>
+          
+          {/* Subtle luminous water-ring glow accents on mid/bottom right */}
+          <div className="absolute -right-8 bottom-0 w-52 h-52 rounded-full border border-white/20 bg-white/5 pointer-events-none" />
+          <div className="absolute -right-2 bottom-6 w-68 h-68 rounded-full border border-white/10 pointer-events-none" />
+          <div className="absolute left-1/4 bottom-0 w-64 h-32 bg-teal-300/20 rounded-full blur-2xl pointer-events-none" />
         </div>
-      )}
-
-
-      {/* 1. Hero Banner: Total Saldo Utama (Flat at bottom, extended for halfway overlap) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-6 z-0 overflow-hidden bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 text-white rounded-b-none pt-6 sm:pt-8 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32 transition-all duration-200">
-        {/* Artistic Geometric Vector Lattice Overlay */}
-        <svg className="absolute inset-0 w-full h-full opacity-15 pointer-events-none mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="banner-geometric-motif" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              <circle cx="30" cy="30" r="14" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              <circle cx="0" cy="0" r="12" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              <circle cx="60" cy="0" r="12" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              <circle cx="0" cy="60" r="12" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              <circle cx="60" cy="60" r="12" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M30 16 L34 26 L44 30 L34 34 L30 44 L26 34 L16 30 L26 26 Z" fill="currentColor" fillOpacity="0.3" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#banner-geometric-motif)" />
-        </svg>
-
-        {/* Luminous Glowing Orbs matching Login Form Palette */}
-        <div className="absolute -left-16 -top-16 w-72 h-72 bg-cyan-200/35 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute left-1/3 top-1/4 w-80 h-80 bg-teal-200/25 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -right-16 -top-10 w-80 h-80 bg-rose-300/35 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Translucent Decorative Rings in upper areas */}
-        <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full border border-white/20 bg-white/5 pointer-events-none" />
-        <div className="absolute -right-4 -top-4 w-60 h-60 rounded-full border border-white/10 pointer-events-none" />
 
         {/* Foreground Content: Total Saldo Utama */}
         <div className="relative z-10">

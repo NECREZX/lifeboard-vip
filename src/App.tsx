@@ -1922,7 +1922,7 @@ export default function App() {
       </header>
 
       {/* 2. MAIN CONTAINER CONTENT */}
-      <main className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' ? 'pt-6 pb-0' : activeTab === 'laporan' ? 'pt-7 sm:pt-9 pb-28' : 'pt-6 pb-28'} no-print relative z-10`}>
+      <main className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' ? 'pt-0 pb-0' : activeTab === 'laporan' ? 'pt-7 sm:pt-9 pb-28' : 'pt-6 pb-28'} no-print relative z-10`}>
         
         {activeTab === 'dashboard' && (
           <DashboardView 
