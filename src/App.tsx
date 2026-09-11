@@ -297,8 +297,8 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
-    // Match mobile status bar & gesture bar with system top bar color (#06b6d4)
-    const topBarColor = "#06b6d4";
+    // Match mobile status bar & gesture bar with system top bar color (#ea580c)
+    const topBarColor = "#ea580c";
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {
       const meta = document.createElement("meta");
@@ -1902,9 +1902,9 @@ export default function App() {
         </div>
       )}
 
-      {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#06b6d4 / Cyan 500) */}
+      {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#ea580c / Orange 600) */}
       <header 
-        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#06b6d4] text-white border-none shadow-none relative"
+        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#ea580c] text-white border-none shadow-none relative"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
       >
         <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">

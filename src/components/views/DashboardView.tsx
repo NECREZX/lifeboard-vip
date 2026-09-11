@@ -189,9 +189,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #06b6d4) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#06b6d4] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
-        {/* Artistic Geometric Vector Motif with Top-Fade Mask (Starts transparent at top so it seamlessly joins Top Bar) */}
+      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #ea580c) */}
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#ea580c] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
+        {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
           style={{
@@ -201,23 +201,40 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         >
           <svg className="w-full h-full opacity-20 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern id="banner-geometric-motif" width="56" height="56" patternUnits="userSpaceOnUse">
-                <path d="M28 0 L56 28 L28 56 L0 28 Z" fill="none" stroke="currentColor" strokeWidth="0.9" />
-                <circle cx="28" cy="28" r="12" fill="none" stroke="currentColor" strokeWidth="0.9" />
-                <circle cx="0" cy="0" r="10" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                <circle cx="56" cy="0" r="10" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                <circle cx="0" cy="56" r="10" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                <circle cx="56" cy="56" r="10" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                <path d="M28 16 L31 25 L40 28 L31 31 L28 40 L25 31 L16 28 L25 25 Z" fill="currentColor" fillOpacity="0.35" />
+              {/* Tradisional Songket Motif: Belah Ketupat / Bunga Melati / Tapak Catur Weave */}
+              <pattern id="banner-songket-motif" width="48" height="48" patternUnits="userSpaceOnUse">
+                {/* Outer Diamond Weave */}
+                <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1" />
+                {/* Secondary Inset Diamond */}
+                <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="0.75" />
+                {/* Tertiary Inset Diamond */}
+                <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                
+                {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
+                <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.45" />
+                <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.45" />
+                <rect x="23" y="23" width="2" height="2" fill="white" />
+                
+                {/* Corner Songket Cross Weaves connecting the grid */}
+                <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="0.8" />
+                <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.3" />
+                <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.3" />
+                <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.3" />
+                <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.3" />
+                
+                {/* Fine Songket Horizontal & Vertical Weave Ticks */}
+                <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1,1" />
+                <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1,1" />
+                <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1,1" />
+                <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1,1" />
               </pattern>
             </defs>
-            <rect width="100%" height="100%" fill="url(#banner-geometric-motif)" />
+            <rect width="100%" height="100%" fill="url(#banner-songket-motif)" />
           </svg>
           
-          {/* Subtle luminous water-ring glow accents on mid/bottom right */}
-          <div className="absolute -right-8 bottom-0 w-52 h-52 rounded-full border border-white/20 bg-white/5 pointer-events-none" />
-          <div className="absolute -right-2 bottom-6 w-68 h-68 rounded-full border border-white/10 pointer-events-none" />
-          <div className="absolute left-1/4 bottom-0 w-64 h-32 bg-teal-300/20 rounded-full blur-2xl pointer-events-none" />
+          {/* Subtle warm amber radiant atmospheric glow in the lower corners (pure soft blur, no rings) */}
+          <div className="absolute right-0 bottom-0 w-72 h-40 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute left-10 bottom-0 w-64 h-32 bg-orange-300/15 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         {/* Foreground Content: Total Saldo Utama */}
@@ -228,7 +245,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="min-w-0 flex-1">
               {/* Badge TOTAL SALDO UTAMA */}
               <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs w-fit">
-                <ShieldCheck className="w-3.5 h-3.5 text-cyan-100 shrink-0" />
+                <ShieldCheck className="w-3.5 h-3.5 text-orange-100 shrink-0" />
                 <span className="text-[10px] sm:text-xs font-black tracking-[0.12em] sm:tracking-[0.16em] uppercase whitespace-nowrap">
                   TOTAL SALDO UTAMA
                 </span>

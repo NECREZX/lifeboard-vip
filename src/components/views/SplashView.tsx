@@ -20,7 +20,7 @@ export const SplashView = ({ onFinish }: { onFinish: () => void }) => {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.05 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 flex flex-col items-center justify-center z-50 text-white"
+          className="fixed inset-0 bg-gradient-to-br from-amber-400 via-orange-500 to-amber-500 flex flex-col items-center justify-center z-50 text-white"
         >
           <motion.div
             initial={{ y: 30, opacity: 0, scale: 0.95 }}

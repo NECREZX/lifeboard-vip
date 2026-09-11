@@ -31,7 +31,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
         icon: 'error',
         title: 'Input Tidak Lengkap',
         text: 'Harap isi Username dan Password terlebih dahulu.',
-        confirmButtonColor: '#14b8a6'
+        confirmButtonColor: '#ea580c'
       });
       return;
     }
@@ -62,12 +62,25 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 50, opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-sm bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 rounded-3xl shadow-2xl overflow-hidden border border-white/20 text-white"
+            className="w-full max-w-sm bg-gradient-to-br from-amber-400 via-orange-500 to-amber-500 rounded-3xl shadow-2xl overflow-hidden border border-white/20 text-white relative"
           >
+            {/* Semi-circle Polkadot (Setengah Lingkaran) Motif Pattern Overlay */}
+            <div className="absolute inset-0 pointer-events-none opacity-15">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="auth-semicircle-polkadot" width="28" height="28" patternUnits="userSpaceOnUse">
+                    {/* Semi-circles facing up and down forming scalloped polkadot fan texture */}
+                    <path d="M 0 14 A 7 7 0 0 1 14 14 Z" fill="white" />
+                    <path d="M 14 14 A 7 7 0 0 0 28 14 Z" fill="white" />
+                    <path d="M 7 0 A 7 7 0 0 1 21 0 Z" fill="white" />
+                    <path d="M 7 28 A 7 7 0 0 0 21 28 Z" fill="white" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#auth-semicircle-polkadot)" />
+              </svg>
+            </div>
+
             <div className="p-8 pb-4 flex flex-col items-center justify-center relative overflow-hidden">
-              {/* Decorative background circle */}
-              <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10"></div>
-              
               <div className="w-16 h-16 rounded-3xl overflow-hidden shadow-lg relative z-10 mb-4 border border-white/20 bg-transparent">
                 <img src="/icon.svg" className="w-full h-full object-cover scale-[1.15]" alt="Lifeboard Logo" referrerPolicy="no-referrer" />
               </div>
@@ -75,7 +88,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
               <p className="text-white/90 text-xs font-medium tracking-wide uppercase mt-2 relative z-10 text-center">Masuk atau Daftar Sekali</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-8 pt-4">
+            <form onSubmit={handleSubmit} className="p-8 pt-4 relative z-10">
               <div className="space-y-4">
                 <div>
                   <label className="text-xs font-bold text-white/80 uppercase tracking-wider block mb-1">Username</label>
@@ -112,7 +125,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
 
               <button
                 type="submit"
-                className="w-full mt-8 bg-white text-teal-600 hover:bg-slate-50 active:bg-slate-100 font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2"
+                className="w-full mt-8 bg-white text-orange-600 hover:bg-orange-50 active:bg-orange-100 font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2"
               >
                 <LogIn size={18} />
                 Masuk

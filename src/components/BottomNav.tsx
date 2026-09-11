@@ -32,11 +32,11 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
     if (isHex) return '';
     switch (accentColor) {
       case 'emerald': return 'from-emerald-400 to-emerald-600';
-      case 'amber': return 'from-amber-400 to-amber-600';
+      case 'amber': return 'from-amber-400 to-amber-500';
       case 'rose': return 'from-rose-400 to-rose-600';
-      case 'indigo': return 'from-cyan-400 to-rose-500';
       case 'classic': return 'from-slate-700 to-slate-900';
-      default: return 'from-cyan-400 to-rose-500';
+      case 'indigo':
+      default: return 'from-amber-400 via-orange-500 to-amber-500';
     }
   };
 
@@ -50,11 +50,11 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
       style={{ bottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}
     >
       <div 
-        className="pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 text-white backdrop-blur-2xl border border-white/40 ring-1 ring-white/20 shadow-[0_16px_45px_rgba(20,184,166,0.35)]"
+        className="pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 text-white backdrop-blur-2xl border border-white/40 ring-1 ring-white/20 shadow-[0_16px_45px_rgba(245,158,11,0.35)]"
         id="bottom-dock-container"
       >
         {/* Background gradient and decorative shapes confined inside rounded container */}
-        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none bg-gradient-to-r from-cyan-500 via-teal-600 to-rose-500 -z-10">
+        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 -z-10">
           {/* Subtle Decorative Wave & Glow Overlay */}
           <div className="absolute inset-0 opacity-20">
             <svg className="w-full h-full" viewBox="0 0 100 25" preserveAspectRatio="none">
