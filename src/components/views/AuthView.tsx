@@ -62,7 +62,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 50, opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-sm bg-gradient-to-br from-rose-700 via-rose-900 to-rose-950 rounded-3xl shadow-2xl overflow-hidden border border-white/20 text-white relative"
+            className="w-full max-w-sm bg-gradient-to-br from-[#FF9999] via-[#FF7777] to-[#E56666] rounded-3xl shadow-2xl overflow-hidden border border-white/20 text-white relative"
           >
             {/* Semi-circle Polkadot (Setengah Lingkaran) Motif Pattern Overlay */}
             <div className="absolute inset-0 pointer-events-none opacity-15">
@@ -125,7 +125,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
 
               <button
                 type="submit"
-                className="w-full mt-8 bg-white text-rose-950 hover:bg-rose-50 active:bg-rose-100 font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2"
+                className="w-full mt-8 bg-white text-[#E56666] hover:bg-rose-50 active:bg-rose-100 font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2"
               >
                 <LogIn size={18} />
                 Masuk

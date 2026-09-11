@@ -161,7 +161,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const years = Array.from({ length: 50 }, (_, i) => 2020 + i);
 
   return (
-    <div className="flex flex-col gap-6" id="view-dashboard">
+    <div className="flex flex-col" id="view-dashboard">
       {isFilterModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 w-full max-w-sm flex flex-col gap-6">
@@ -189,8 +189,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #881337) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#881337] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
+      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #FF7777) */}
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -393,7 +393,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-44 min-h-[calc(100vh-120px)] space-y-8 sm:space-y-10 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-44 sm:pb-48 min-h-[calc(100vh-120px)] space-y-8 sm:space-y-10 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan, Pengeluaran, Admin Transfer) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan */}
@@ -721,6 +721,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         );
       })()}
 
+      {/* Seamless bottom filler block ensuring zero gap behind bottom bar on all viewport heights */}
+      <div className="w-full h-24 sm:h-28 -mt-2 bg-white dark:bg-slate-900 pointer-events-none" aria-hidden="true" />
     </div>
   );
 };

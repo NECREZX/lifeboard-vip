@@ -1,16 +1,18 @@
 import React from 'react';
 import { PieChart, SlidersHorizontal } from 'lucide-react';
 import { DashboardNavIcon, TransaksiIcon, TabunganIcon, AktivitasIcon } from './CustomIcons';
+import { UIStyle } from '../types';
 
 interface BottomNavProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   accentColor: string;
   onAddClick: () => void;
-  uiStyle?: string;
+  uiStyle?: UIStyle;
+  isDarkMode?: boolean;
 }
 
-export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddClick, uiStyle }: BottomNavProps) {
+export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddClick, uiStyle, isDarkMode }: BottomNavProps) {
   const tabs = [
     { id: 'dashboard', label: 'Beranda', icon: DashboardNavIcon },
     { id: 'transaksi', label: 'Transaksi', icon: TransaksiIcon },
@@ -22,10 +24,14 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
 
   const isHex = accentColor.startsWith('#');
 
-  // Map theme colors to CSS active highlight colors - pure white for high contrast
-  const getActiveStyles = (isActive: boolean) => {
-    if (!isActive) return 'text-white/70 hover:text-white';
-    return 'text-white font-black drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]';
+  // Active / inactive text & icon colors depending on theme & dark mode
+  const getNavTextColor = (isActive: boolean) => {
+    if (isActive) {
+      if (isDarkMode) return 'text-white font-black drop-shadow-sm';
+      return 'text-slate-900 font-black';
+    }
+    if (isDarkMode) return 'text-slate-400 hover:text-slate-200';
+    return 'text-slate-500 hover:text-slate-800';
   };
 
   const getAccentGradient = () => {
@@ -33,132 +39,129 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
     switch (accentColor) {
       case 'emerald': return 'from-emerald-400 to-emerald-600';
       case 'amber': return 'from-amber-400 to-amber-500';
-      case 'rose': return 'from-rose-400 to-rose-600';
+      case 'rose': return 'from-rose-500 to-rose-700';
       case 'classic': return 'from-slate-700 to-slate-900';
       case 'indigo':
-      default: return 'from-rose-600 via-rose-800 to-rose-600';
+      default: return 'from-[#FF9999] via-[#FF7777] to-[#FF5555]';
     }
   };
 
-  const getAccentLine = () => {
-    return 'bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)]';
+  const getAccentLineColor = () => {
+    if (isHex) return accentColor;
+    switch (accentColor) {
+      case 'emerald': return '#10b981';
+      case 'amber': return '#f59e0b';
+      case 'rose': return '#f43f5e';
+      case 'classic': return isDarkMode ? '#f8fafc' : '#0f172a';
+      case 'indigo':
+      default: return '#FF7777'; // default color
+    }
+  };
+
+  // Background and seamless blending styling according to uiStyle (modern, minimal, glass) & isDarkMode
+  const getNavBackgroundStyle = () => {
+    // For dashboard tab, we want a completely seamless, solid, borderless blend
+    if (activeTab === 'dashboard') {
+      return isDarkMode
+        ? 'bg-slate-900 text-white'
+        : 'bg-white text-slate-900';
+    }
+
+    if (uiStyle === 'glass') {
+      return isDarkMode
+        ? 'bg-slate-950/80 backdrop-blur-2xl text-white'
+        : 'bg-white/80 backdrop-blur-2xl text-slate-800';
+    }
+    if (uiStyle === 'minimal') {
+      return isDarkMode
+        ? 'bg-slate-950 text-white'
+        : 'bg-white text-slate-900';
+    }
+    // Modern Slate (default)
+    if (isDarkMode) {
+      return 'bg-slate-950 text-white';
+    }
+    return 'bg-slate-50 text-slate-900';
   };
 
   return (
-    <div 
-      className="fixed left-0 right-0 z-40 px-3 sm:px-4 max-w-2xl mx-auto pointer-events-none no-print"
-      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}
+    <nav 
+      className={`fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none transition-colors duration-300 border-none shadow-none ${getNavBackgroundStyle()}`}
+      id="bottom-dock-nav"
+      style={{
+        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)'
+      }}
     >
-      <div 
-        className="pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 text-white backdrop-blur-2xl border border-white/40 ring-1 ring-white/20 shadow-[0_16px_45px_rgba(136,19,55,0.4)]"
-        id="bottom-dock-container"
-      >
-        {/* Background gradient and Songket motif pattern confined inside rounded container */}
-        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none bg-gradient-to-r from-rose-800 via-rose-950 to-rose-800 -z-10">
-          {/* Authentic Songket Weave Pattern Overlay */}
-          <div className="absolute inset-0 opacity-20 mix-blend-overlay">
-            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="bottomnav-songket-motif" width="36" height="36" patternUnits="userSpaceOnUse">
-                  {/* Outer Diamond Weave */}
-                  <path d="M 18 0 L 36 18 L 18 36 L 0 18 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  {/* Secondary Inset Diamond */}
-                  <path d="M 18 5 L 31 18 L 18 31 L 5 18 Z" fill="none" stroke="currentColor" strokeWidth="0.6" />
-                  {/* Tertiary Inset Diamond */}
-                  <path d="M 18 10 L 26 18 L 18 26 L 10 18 Z" fill="none" stroke="currentColor" strokeWidth="0.4" />
-                  
-                  {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
-                  <polygon points="18,13 21,18 18,23 15,18" fill="currentColor" fillOpacity="0.45" />
-                  <polygon points="13,18 18,15 23,18 18,21" fill="currentColor" fillOpacity="0.45" />
-                  <rect x="17" y="17" width="2" height="2" fill="white" />
-                  
-                  {/* Corner Songket Cross Weaves connecting the grid */}
-                  <path d="M 0 0 L 5 5 M 36 0 L 31 5 M 0 36 L 5 31 M 36 36 L 31 31" stroke="currentColor" strokeWidth="0.6" />
-                  <polygon points="0,0 3,0 0,3" fill="currentColor" fillOpacity="0.3" />
-                  <polygon points="36,0 33,0 36,3" fill="currentColor" fillOpacity="0.3" />
-                  <polygon points="0,36 3,36 0,33" fill="currentColor" fillOpacity="0.3" />
-                  <polygon points="36,36 33,36 36,33" fill="currentColor" fillOpacity="0.3" />
-                  
-                  {/* Fine Songket Ticks */}
-                  <line x1="18" y1="0" x2="18" y2="5" stroke="currentColor" strokeWidth="0.6" strokeDasharray="1,1" />
-                  <line x1="18" y1="31" x2="18" y2="36" stroke="currentColor" strokeWidth="0.6" strokeDasharray="1,1" />
-                  <line x1="0" y1="18" x2="5" y2="18" stroke="currentColor" strokeWidth="0.6" strokeDasharray="1,1" />
-                  <line x1="31" y1="18" x2="36" y2="18" stroke="currentColor" strokeWidth="0.6" strokeDasharray="1,1" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#bottomnav-songket-motif)" />
-            </svg>
+      <div className="max-w-2xl mx-auto px-2 sm:px-4">
+        <div className="grid grid-cols-7 items-center justify-items-center relative w-full h-16">
+          {/* Left Tabs (1 to 3) */}
+          {tabs.slice(0, 3).map((tab) => {
+            const isActive = activeTab === tab.id;
+            const Icon = tab.icon;
+            
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                aria-label={tab.label}
+                title={tab.label}
+                className={`group w-full h-full flex flex-col items-center justify-center rounded-xl transition-all duration-200 focus:outline-none touch-manipulation relative ${getNavTextColor(isActive)}`}
+                style={isActive && isHex ? { color: accentColor } : (isActive && accentColor === 'indigo' ? { color: '#FF7777' } : undefined)}
+                id={`nav-tab-${tab.id}`}
+              >
+                <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-6 h-6 stroke-[2.4] scale-110' : 'w-5 h-5 stroke-[1.8] opacity-75 group-hover:opacity-100 group-hover:scale-105'}`} />
+
+                {isActive && (
+                  <span 
+                    className="absolute bottom-1 w-4 h-1 rounded-full animate-in fade-in duration-300 shadow-xs" 
+                    style={{ backgroundColor: getAccentLineColor() }}
+                  />
+                )}
+              </button>
+            );
+          })}
+
+          {/* Center Elevated Action Button (Like DANA / FinTech style) */}
+          <div className="w-full flex justify-center items-center -mt-6 z-10">
+            <button
+              onClick={onAddClick}
+              className={`w-12 h-12 sm:w-13 sm:h-13 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none ring-4 ${isDarkMode ? 'ring-slate-900' : 'ring-white'} shadow-md shrink-0 cursor-pointer`}
+              style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none' } : undefined}
+              title="Catat Baru (Pemasukan, Pengeluaran, Anggaran, Tabungan, dll)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            </button>
           </div>
-          
-          {/* Subtle warm rose atmospheric glow */}
-          <div className="absolute -left-4 -bottom-4 w-28 h-16 bg-rose-500/20 rounded-full blur-xl pointer-events-none" />
-          <div className="absolute -right-4 -top-4 w-28 h-16 bg-pink-500/20 rounded-full blur-xl pointer-events-none" />
+
+          {/* Right Tabs (4 to 6) */}
+          {tabs.slice(3, 6).map((tab) => {
+            const isActive = activeTab === tab.id;
+            const Icon = tab.icon;
+            
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                aria-label={tab.label}
+                title={tab.label}
+                className={`group w-full h-full flex flex-col items-center justify-center rounded-xl transition-all duration-200 focus:outline-none touch-manipulation relative ${getNavTextColor(isActive)}`}
+                style={isActive && isHex ? { color: accentColor } : (isActive && accentColor === 'indigo' ? { color: '#FF7777' } : undefined)}
+                id={`nav-tab-${tab.id}`}
+              >
+                <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-6 h-6 stroke-[2.4] scale-110' : 'w-5 h-5 stroke-[1.8] opacity-75 group-hover:opacity-100 group-hover:scale-105'}`} />
+
+                {isActive && (
+                  <span 
+                    className="absolute bottom-1 w-4 h-1 rounded-full animate-in fade-in duration-300 shadow-xs" 
+                    style={{ backgroundColor: getAccentLineColor() }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
-        {tabs.slice(0, 3).map((tab) => {
-          const isActive = activeTab === tab.id;
-          const Icon = tab.icon;
-          
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              aria-label={tab.label}
-              title={tab.label}
-              className={`group w-full flex flex-col items-center justify-center py-2.5 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
-              style={isActive && isHex ? { color: accentColor } : undefined}
-              id={`nav-tab-${tab.id}`}
-            >
-              <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-110' : 'w-5 h-5 stroke-[2] opacity-75 group-hover:opacity-100 group-hover:scale-110'}`} />
-
-              {isActive && (
-                <span 
-                  className={`absolute bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
-                  style={isHex ? { backgroundColor: accentColor } : undefined}
-                />
-              )}
-            </button>
-          );
-        })}
-
-        {/* Center Add Button */}
-        <div className="w-full flex justify-center items-center -mt-6 sm:-mt-7 z-10">
-          <button
-            onClick={onAddClick}
-            className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none border-3 border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.25)] shrink-0`}
-            style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none', boxShadow: `0 8px 25px ${accentColor}66` } : undefined}
-            title="Catat Baru (Pemasukan, Pengeluaran, Anggaran, Tabungan, dll)"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-          </button>
-        </div>
-
-        {tabs.slice(3, 6).map((tab) => {
-          const isActive = activeTab === tab.id;
-          const Icon = tab.icon;
-          
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              aria-label={tab.label}
-              title={tab.label}
-              className={`group w-full flex flex-col items-center justify-center py-2.5 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
-              style={isActive && isHex ? { color: accentColor } : undefined}
-              id={`nav-tab-${tab.id}`}
-            >
-              <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-110' : 'w-5 h-5 stroke-[2] opacity-75 group-hover:opacity-100 group-hover:scale-110'}`} />
-
-              {isActive && (
-                <span 
-                  className={`absolute bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
-                  style={isHex ? { backgroundColor: accentColor } : undefined}
-                />
-              )}
-            </button>
-          );
-        })}
       </div>
-    </div>
+    </nav>
   );
 }
 

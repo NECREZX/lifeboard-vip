@@ -21,7 +21,7 @@
 
 @layer base {
   html {
-    background-color: #06b6d4;
+    background-color: #FF7777;
   }
   
   body {
@@ -29,14 +29,14 @@
     padding: 0;
     min-height: 100%;
     min-height: 100dvh;
-    background-color: #f8fafc;
+    background-color: #ffffff;
     -webkit-tap-highlight-color: transparent;
     font-family: "Plus Jakarta Sans", sans-serif;
     letter-spacing: -0.02em;
   }
   
   html.dark body, body.dark {
-    background-color: #020617; /* slate-955 approximate */
+    background-color: #020617; /* slate-950 */
     color: #f8fafc; /* slate-50 */
   }
 

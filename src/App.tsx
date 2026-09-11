@@ -297,8 +297,8 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
-    // Match mobile status bar & gesture bar with system top bar color (#881337)
-    const topBarColor = "#881337";
+    // Match mobile status bar & gesture bar with system top bar color (#FF7777)
+    const topBarColor = "#FF7777";
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {
       const meta = document.createElement("meta");
@@ -1656,12 +1656,15 @@ export default function App() {
   };
 
   const getThemeBackground = () => {
+    if (activeTab === 'dashboard') {
+      if (settings.isDarkMode) {
+        return 'bg-slate-900 text-slate-100 ';
+      }
+      return 'bg-white text-slate-900 ';
+    }
     if (settings.isDarkMode) {
       if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-slate-950 via-slate-900/90 to-slate-950 text-slate-100 ';
       return 'bg-slate-950 ';
-    }
-    if (activeTab === 'dashboard') {
-      return 'bg-white dark:bg-slate-900 text-slate-900 ';
     }
     if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-teal-50/25 via-slate-50/70 to-sky-50/25 text-slate-900 ';
     return 'bg-slate-50 ';
@@ -1902,9 +1905,9 @@ export default function App() {
         </div>
       )}
 
-      {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#881337 / Burgundy Wine) */}
+      {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#FF7777) */}
       <header 
-        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#881337] text-white border-none shadow-none relative"
+        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#FF7777] text-white border-none shadow-none relative"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
       >
         <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
@@ -2228,13 +2231,14 @@ export default function App() {
       />
 
       {/* =======================================================
-          6. STICKY BOTTOM TAB NAVIGATION
+          6. STICKY BOTTOM TAB NAVIGATION (SEAMLESS FLUID INTEGRATION)
          ======================================================= */}
       <BottomNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
         uiStyle={settings.uiStyle}
+        isDarkMode={settings.isDarkMode}
         onAddClick={() => {
           if (activeTab === 'aktivitas') {
             if (activeActivitiesSubTab === 'agenda') openAddModal('aktivitas');
@@ -2245,13 +2249,6 @@ export default function App() {
           else if (activeTab === 'transaksi') openAddModal('pengeluaran');
           else openAddModal('pengeluaran');
         }}
-      />
-
-      {/* 6.1 SEAMLESS GESTURE BAR AREA FILLER - Dynamic Theme & Mode */}
-      <div 
-        className={`fixed bottom-0 left-0 right-0 z-50 pointer-events-none no-print transition-colors duration-300 ${getGestureBarClass()}`}
-        style={{ height: 'env(safe-area-inset-bottom, 0px)' }}
-        aria-hidden="true"
       />
 
       {/* =======================================================
