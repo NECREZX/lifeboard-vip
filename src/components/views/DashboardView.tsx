@@ -393,7 +393,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-8 sm:pb-10 space-y-8 sm:space-y-10 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-32 sm:pb-36 space-y-8 sm:space-y-10 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan, Pengeluaran, Admin Transfer) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan */}

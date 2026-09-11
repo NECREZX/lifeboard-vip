@@ -21,7 +21,11 @@
 
 @layer base {
   html {
-    background-color: #FF7777;
+    background-color: #f8fafc; /* Matches slate-50 background for light mode */
+  }
+  
+  html.dark {
+    background-color: #020617; /* Matches slate-950 background for dark mode */
   }
   
   body {

@@ -63,12 +63,12 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
     if (uiStyle === 'glass') {
       return isDarkMode
         ? 'bg-slate-950/80 backdrop-blur-2xl text-white'
-        : 'bg-white/80 backdrop-blur-2xl text-slate-800';
+        : 'bg-slate-50/80 backdrop-blur-2xl text-slate-800';
     }
     if (uiStyle === 'minimal') {
       return isDarkMode
         ? 'bg-slate-950 text-white'
-        : 'bg-white text-slate-900';
+        : 'bg-slate-50 text-slate-900';
     }
     // Modern Slate (default)
     if (isDarkMode) {
@@ -118,7 +118,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
           <div className="w-full flex justify-center items-center -mt-6 z-10">
             <button
               onClick={onAddClick}
-              className={`w-12 h-12 sm:w-13 sm:h-13 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none ring-4 ${isDarkMode ? 'ring-slate-900' : 'ring-white'} shadow-md shrink-0 cursor-pointer`}
+              className={`w-12 h-12 sm:w-13 sm:h-13 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none ring-4 ${isDarkMode ? 'ring-slate-950' : 'ring-slate-50'} shadow-md shrink-0 cursor-pointer`}
               style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none' } : undefined}
               title="Catat Baru (Pemasukan, Pengeluaran, Anggaran, Tabungan, dll)"
             >

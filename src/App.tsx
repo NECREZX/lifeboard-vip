@@ -1774,7 +1774,7 @@ export default function App() {
     }
 
     if (settings.uiStyle === 'minimal') {
-      return isDark ? 'bg-slate-950' : 'bg-white';
+      return isDark ? 'bg-slate-950' : 'bg-slate-50';
     }
 
     // Modern Slate (default)
