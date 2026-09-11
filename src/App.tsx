@@ -1904,10 +1904,10 @@ export default function App() {
 
       {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#06b6d4 / Cyan 500) */}
       <header 
-        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#06b6d4] text-white border-none shadow-xs relative"
-        style={{ paddingTop: 'max(env(safe-area-inset-top), 10px)' }}
+        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#06b6d4] text-white border-none shadow-none relative"
+        style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
       >
-        <div className="max-w-2xl mx-auto pb-3 px-4 sm:px-6 flex items-center justify-between relative z-10">
+        <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs">
               {activeTab === 'dashboard' && 'Dashboard'}

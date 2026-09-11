@@ -4,8 +4,7 @@
  */
 
 import React, { useRef, useEffect } from 'react';
-import { AlertTriangle, CheckCircle, Info, ChevronRight } from 'lucide-react';
-import { NotificationIcon as CustomNotificationIcon } from './CustomIcons';
+import { AlertTriangle, CheckCircle, Info, ChevronRight, Bell } from 'lucide-react';
 import { NotificationItem } from '../types';
 
 interface NotificationPanelProps {
@@ -76,14 +75,12 @@ export default function NotificationPanel({
       {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-xl text-white hover:text-white bg-white/15 hover:bg-white/25 border border-white/30 transition relative focus:outline-none shadow-sm cursor-pointer"
+        className="w-10 h-10 rounded-xl text-white hover:text-white bg-white/20 hover:bg-white/30 transition flex items-center justify-center relative focus:outline-none cursor-pointer"
         id="notification-toggle-btn"
       >
-        <CustomNotificationIcon className="w-5.5 h-5.5 text-white" />
+        <Bell className="w-5 h-5 text-white stroke-[2.2]" />
         {unreadCount > 0 && (
-          <span className={`absolute top-1.5 right-1.5 w-4 h-4 text-[9px] font-bold text-white rounded-full flex items-center justify-center animate-pulse ${getAccentBg()}`}>
-            {unreadCount}
-          </span>
+          <span className={`absolute top-2 right-2 w-2.5 h-2.5 rounded-full ring-2 ring-[#06b6d4] ${getAccentBg()}`} />
         )}
       </button>
 
@@ -123,7 +120,7 @@ export default function NotificationPanel({
           }`}>
             {notifications.length === 0 ? (
               <div className="p-8 text-center text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center gap-2">
-                <CustomNotificationIcon className="w-10 h-10 opacity-50" />
+                <Bell className="w-10 h-10 opacity-40 stroke-[1.5]" />
                 <p className="text-xs font-semibold">Tidak ada notifikasi baru</p>
               </div>
             ) : (
