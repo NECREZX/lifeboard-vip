@@ -294,17 +294,25 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
-    // Apply styling properties dynamically
-    const metaThemeColor = document.querySelector("meta[name=theme-color]");
+    // Apply styling properties dynamically to match system theme for status bar & gesture bar
+    const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
+    const themeBg = settings.isDarkMode ? "#020617" : (settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc");
+
     if (settings.isDarkMode) {
       document.documentElement.classList.add('dark');
-      if (metaThemeColor) metaThemeColor.setAttribute("content", "#06b6d4");
+      document.documentElement.style.colorScheme = 'dark';
+      document.documentElement.style.backgroundColor = "#020617";
       document.body.style.backgroundColor = "#020617";
     } else {
       document.documentElement.classList.remove('dark');
-      if (metaThemeColor) metaThemeColor.setAttribute("content", "#06b6d4");
-      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc";
+      document.documentElement.style.colorScheme = 'light';
+      document.documentElement.style.backgroundColor = themeBg;
+      document.body.style.backgroundColor = themeBg;
     }
+
+    metaThemeColors.forEach((meta) => {
+      meta.setAttribute("content", themeBg);
+    });
 
     // Apply font
     let fontFamilyStr = "'Plus Jakarta Sans', sans-serif";
@@ -1642,6 +1650,9 @@ export default function App() {
       if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-slate-950 via-slate-900/90 to-slate-950 text-slate-100 ';
       return 'bg-slate-950 ';
     }
+    if (activeTab === 'dashboard') {
+      return 'bg-white dark:bg-slate-900 text-slate-900 ';
+    }
     if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-teal-50/25 via-slate-50/70 to-sky-50/25 text-slate-900 ';
     return 'bg-slate-50 ';
   };
@@ -1841,10 +1852,10 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-[100dvh] pb-24 ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 transition-colors duration-300 relative`}>
+    <div className={`min-h-[100dvh] ${activeTab === 'dashboard' ? 'pb-0' : 'pb-24'} ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 transition-colors duration-300 relative`}>
       
       {/* AMBIENT BACKGROUND BLOBS FOR LIQUID GLASS UI */}
-      {settings.uiStyle === 'glass' && (
+      {settings.uiStyle === 'glass' && activeTab !== 'dashboard' && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
           {/* Fluid Cyan & Sky Blue Orb */}
           <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-cyan-400/25 via-sky-400/20 to-blue-500/15 dark:from-cyan-700/20 dark:via-sky-800/15 dark:to-blue-900/10 blur-[100px] animate-float-liquid-1" />
@@ -1905,7 +1916,7 @@ export default function App() {
       </header>
 
       {/* 2. MAIN CONTAINER CONTENT */}
-      <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-6 pb-28 no-print relative z-10">
+      <main className={`max-w-2xl mx-auto px-4 sm:px-6 pt-6 ${activeTab === 'dashboard' ? 'pb-0' : 'pb-28'} no-print relative z-10`}>
         
         {activeTab === 'dashboard' && (
           <DashboardView 
