@@ -469,7 +469,7 @@ export function LaporanView({
                   onClick={() => setShowAllMonthTx(prev => !prev)}
                   className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer select-none"
                 >
-                  <span>{showAllMonthTx ? 'Ringkaskan' : `Lihat Semua (${detailedTransactions.length})`}</span>
+                  <span>{showAllMonthTx ? 'Ringkaskan' : 'Lihat Semua'}</span>
                   {showAllMonthTx ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
               )}
