@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Trash2, Check, Edit2, PlusCircle } from 'lucide-react';
+import { Trash2, Check, Edit2 } from 'lucide-react';
 import { Saving } from '../../types';
 import { formatIDR } from '../../lib/formatters';
 
@@ -27,12 +27,27 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
   handleSavingAddAmount,
   onEdit
 }) => {
+  // 1. Overall Metrics
   const totalTargetAmount = savings.reduce((sum, s) => sum + s.targetAmount, 0);
   const totalCurrentAmount = savings.reduce((sum, s) => sum + s.currentAmount, 0);
   const totalRemainingAmount = Math.max(0, totalTargetAmount - totalCurrentAmount);
   const overallPercentage = totalTargetAmount > 0 ? Math.min(100, (totalCurrentAmount / totalTargetAmount) * 100) : 0;
-  const runningCount = savings.filter((s) => s.currentAmount < s.targetAmount).length;
-  const completedCount = savings.filter((s) => s.currentAmount >= s.targetAmount).length;
+
+  // 2. Filtered Subsets (Berjalan vs Tercapai)
+  const runningSavings = savings.filter((s) => s.currentAmount < s.targetAmount);
+  const completedSavings = savings.filter((s) => s.currentAmount >= s.targetAmount);
+
+  const runningCount = runningSavings.length;
+  const completedCount = completedSavings.length;
+
+  // 3. Running / Active Targets (Tanpa target yang sudah tercapai)
+  const runningTargetAmount = runningSavings.reduce((sum, s) => sum + s.targetAmount, 0);
+  const runningCurrentAmount = runningSavings.reduce((sum, s) => sum + s.currentAmount, 0);
+  const runningRemainingAmount = Math.max(0, runningTargetAmount - runningCurrentAmount);
+  const runningPercentage = runningTargetAmount > 0 ? Math.min(100, (runningCurrentAmount / runningTargetAmount) * 100) : 0;
+
+  // 4. Completed Targets (Target yang sudah 100% tuntas)
+  const completedCurrentAmount = completedSavings.reduce((sum, s) => sum + s.currentAmount, 0);
 
   return (
     <div className="flex flex-col gap-6" id="view-savings">
@@ -94,7 +109,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
       {/* 2. Overall Savings Summary Cards */}
       {savings.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Card 1: Total Target Tabungan Dibuat */}
+          {/* Card 1: Total Target Tabungan Dibuat & Status Count */}
           <div className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
             <div>
               <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
@@ -110,21 +125,34 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-4 pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80 text-xs">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-                <span className="text-slate-600 dark:text-slate-400 font-medium">Berjalan:</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{runningCount}</span>
+            <div className="flex flex-col gap-2 pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">Berjalan:</span>
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{runningCount} Target</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span className="text-slate-600 dark:text-slate-400 font-medium">Tercapai:</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">{completedCount} Target</span>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span className="text-slate-600 dark:text-slate-400 font-medium">Tercapai:</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{completedCount}</span>
-              </div>
+
+              {completedCount > 0 && (
+                <div className="p-2 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-800/40 flex items-center justify-between text-[11px] mt-1">
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+                    Uang Target Tercapai:
+                  </span>
+                  <span className="font-mono font-black text-emerald-700 dark:text-emerald-300">
+                    {formatIDR(completedCurrentAmount)}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Card 2: Total Nominal Target Tabungan & Dibawahnya Dibagi 2 (Total Terkumpul & Sisa) */}
+          {/* Card 2: Total Nominal Target Tabungan & Detail Target Berjalan (Tanpa Target Tercapai) */}
           <div className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
             <div>
               <div className="flex items-center justify-between">
@@ -152,29 +180,50 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
               </div>
             </div>
 
-            {/* Bagian Bawah Dibagi 2: Total Uang Terkumpul & Sisa */}
-            <div className="grid grid-cols-2 gap-3 pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80">
+            {/* Bagian Total Terkumpul & Sisa Keseluruhan */}
+            <div className="grid grid-cols-2 gap-3 pt-2.5 mt-2.5 border-t border-slate-100 dark:border-slate-800/80">
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate">
-                  Total Uang Terkumpul
+                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate" title="Total semua uang tabungan yang terkumpul">
+                  Total Semua Terkumpul
                 </span>
                 <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 font-mono mt-0.5 truncate">
                   {formatIDR(totalCurrentAmount)}
                 </span>
               </div>
               <div className="flex flex-col border-l border-slate-100 dark:border-slate-800/60 pl-3 min-w-0">
-                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
-                  Sisa
+                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate" title="Sisa uang yang masih perlu dikumpulkan">
+                  Sisa Total Dibutuhkan
                 </span>
                 <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 font-mono mt-0.5 truncate">
                   {formatIDR(totalRemainingAmount)}
                 </span>
               </div>
             </div>
+
+            {/* Breakdown Spesifik: Target Berjalan (Tanpa Target Tercapai) */}
+            {completedCount > 0 && (
+              <div className="mt-2.5 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex flex-col gap-1.5">
+                <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/70 flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between text-[10.5px]">
+                    <span className="font-bold text-slate-600 dark:text-slate-300">
+                      Target Berjalan (Aktif):
+                    </span>
+                    <span className="font-mono font-extrabold text-indigo-600 dark:text-indigo-400">
+                      {formatIDR(runningTargetAmount)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                    <span>Terkumpul: <strong className="font-mono text-slate-700 dark:text-slate-200">{formatIDR(runningCurrentAmount)}</strong></span>
+                    <span>Sisa: <strong className="font-mono text-rose-500 dark:text-rose-400">{formatIDR(runningRemainingAmount)}</strong></span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
+      {/* 3. Savings List */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {savings
           .filter((s) => {

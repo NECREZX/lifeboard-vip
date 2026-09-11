@@ -4,7 +4,7 @@
  */
 
 import React, { useRef, useEffect } from 'react';
-import { Check, Trash2, X, AlertTriangle, CheckCircle, Info } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Info, ChevronRight } from 'lucide-react';
 import { NotificationIcon as CustomNotificationIcon } from './CustomIcons';
 import { NotificationItem } from '../types';
 
@@ -12,10 +12,11 @@ interface NotificationPanelProps {
   notifications: NotificationItem[];
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  onMarkAllRead: () => void;
-  onClearAll: () => void;
-  onToggleRead: (id: string) => void;
-  onDeleteOne: (id: string) => void;
+  onMarkAllRead?: () => void;
+  onClearAll?: () => void;
+  onToggleRead?: (id: string) => void;
+  onDeleteOne?: (id: string) => void;
+  onViewAll: () => void;
   accentColor: string;
   uiStyle?: 'modern' | 'glass';
 }
@@ -24,15 +25,13 @@ export default function NotificationPanel({
   notifications,
   isOpen,
   setIsOpen,
-  onMarkAllRead,
-  onClearAll,
-  onToggleRead,
-  onDeleteOne,
+  onViewAll,
   accentColor,
   uiStyle = 'glass'
 }: NotificationPanelProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter(n => !n.isRead).length;
+  const displayNotifications = notifications.slice(0, 3);
 
   // Close when clicking outside
   useEffect(() => {
@@ -67,6 +66,11 @@ export default function NotificationPanel({
     }
   };
 
+  const handleViewAllClick = () => {
+    setIsOpen(false);
+    onViewAll();
+  };
+
   return (
     <div className="relative no-print" ref={dropdownRef}>
       {/* Toggle Button */}
@@ -94,7 +98,7 @@ export default function NotificationPanel({
           id="notification-dropdown-panel"
         >
           {/* Header */}
-          <div className={`p-4 border-b flex items-center justify-between transition-all ${
+          <div className={`p-3.5 px-4 border-b flex items-center justify-between transition-all ${
             uiStyle === 'glass'
               ? 'bg-white/20 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
               : 'bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'
@@ -111,29 +115,10 @@ export default function NotificationPanel({
                 </span>
               )}
             </div>
-            
-            {notifications.length > 0 && (
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={onMarkAllRead}
-                  className={`text-xs font-bold flex items-center gap-0.5 hover:opacity-80 transition ${getAccentText()}`}
-                  title="Tandai semua telah dibaca"
-                >
-                  <Check className="w-3.5 h-3.5" /> Baca Semua
-                </button>
-                <button
-                  onClick={onClearAll}
-                  className="text-xs font-bold text-rose-500 hover:text-rose-600 flex items-center gap-0.5 transition"
-                  title="Hapus semua notifikasi"
-                >
-                  <Trash2 className="w-3.5 h-3.5" /> Hapus Semua
-                </button>
-              </div>
-            )}
           </div>
 
-          {/* List content */}
-          <div className={`max-h-[340px] overflow-y-auto divide-y ${
+          {/* List content (max 5 items) */}
+          <div className={`max-h-[350px] overflow-y-auto divide-y ${
             uiStyle === 'glass' ? 'divide-white/30 dark:divide-white/10' : 'divide-slate-100 dark:divide-slate-800'
           }`}>
             {notifications.length === 0 ? (
@@ -142,7 +127,7 @@ export default function NotificationPanel({
                 <p className="text-xs font-semibold">Tidak ada notifikasi baru</p>
               </div>
             ) : (
-              notifications.map((n) => {
+              displayNotifications.map((n) => {
                 // Determine icon based on type
                 let NotificationIcon = Info;
                 let iconColor = uiStyle === 'glass' 
@@ -164,7 +149,8 @@ export default function NotificationPanel({
                 return (
                   <div
                     key={n.id}
-                    className={`p-3.5 flex items-start gap-3 transition-colors duration-200 relative ${
+                    onClick={handleViewAllClick}
+                    className={`p-3.5 flex items-start gap-3 transition-colors duration-200 relative cursor-pointer ${
                       n.isRead 
                         ? 'bg-transparent hover:bg-white/30 dark:hover:bg-white/5' 
                         : (uiStyle === 'glass' ? 'bg-white/40 dark:bg-white/10 hover:bg-white/60 dark:hover:bg-white/15' : 'bg-slate-50/70 dark:bg-slate-800/20')
@@ -181,34 +167,16 @@ export default function NotificationPanel({
                     </div>
 
                     {/* Middle Text */}
-                    <div className="flex-1 min-w-0 pr-2">
+                    <div className="flex-1 min-w-0">
                       <h4 className={`text-xs text-slate-950 dark:text-white leading-snug ${n.isRead ? 'font-semibold' : 'font-extrabold'}`}>
                         {n.title}
                       </h4>
-                      <p className="text-[11px] text-slate-700 dark:text-slate-300 mt-0.5 leading-relaxed font-sans break-words font-medium">
+                      <p className="text-[11px] text-slate-700 dark:text-slate-300 mt-0.5 leading-relaxed font-sans break-words font-medium line-clamp-2">
                         {n.message}
                       </p>
                       <span className="text-[9.5px] text-slate-500 dark:text-slate-400 font-semibold block mt-1">
                         {n.date}
                       </span>
-                    </div>
-
-                    {/* Right Actions */}
-                    <div className="flex flex-col gap-1 shrink-0 justify-center h-full">
-                      <button
-                        onClick={() => onToggleRead(n.id)}
-                        className={`p-1 rounded-lg text-slate-500 hover:bg-white/80 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition ${n.isRead ? 'opacity-40' : 'opacity-100'}`}
-                        title={n.isRead ? "Tandai belum dibaca" : "Tandai sudah dibaca"}
-                      >
-                        <Check className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => onDeleteOne(n.id)}
-                        className="p-1 rounded-lg text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:text-rose-500 transition"
-                        title="Hapus"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
                     </div>
                   </div>
                 );
@@ -216,21 +184,23 @@ export default function NotificationPanel({
             )}
           </div>
 
-          {/* Footer view */}
-          <div className={`p-2.5 border-t text-center transition-all ${
+          {/* Footer with "Lihat Semua" Redirect */}
+          <div className={`p-3 border-t flex flex-col gap-2 transition-all ${
             uiStyle === 'glass'
               ? 'bg-white/20 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
-              : 'bg-slate-50/30 dark:bg-slate-900/30 border-slate-100 dark:border-slate-800'
+              : 'bg-slate-50/80 dark:bg-slate-900/80 border-slate-100 dark:border-slate-800'
           }`}>
-            <button 
-              onClick={() => setIsOpen(false)}
-              className={`text-[10px] font-black tracking-wider uppercase hover:opacity-85 transition px-4 py-1.5 rounded-xl ${
+            <button
+              onClick={handleViewAllClick}
+              className={`w-full py-2 px-3.5 rounded-xl text-xs font-bold text-center flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer ${
                 uiStyle === 'glass'
-                  ? 'text-slate-800 dark:text-slate-200 hover:bg-white/40 dark:hover:bg-white/10'
-                  : 'text-slate-500 dark:text-slate-400'
+                  ? 'bg-white/80 dark:bg-slate-800/90 text-slate-900 dark:text-white hover:bg-white dark:hover:bg-slate-700 border border-white/60 dark:border-white/10'
+                  : 'bg-slate-900 text-white dark:bg-indigo-600 hover:bg-slate-800 dark:hover:bg-indigo-700'
               }`}
+              id="notif-dropdown-view-all-btn"
             >
-              Tutup Panel Notifikasi
+              <span>Lihat Semua Notifikasi</span>
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>

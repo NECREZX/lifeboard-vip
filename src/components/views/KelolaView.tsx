@@ -14,7 +14,8 @@ import {
   Moon, 
   Settings, 
   FileSpreadsheet, 
-  FileText
+  FileText,
+  Bell
 } from 'lucide-react';
 import { Wallet, Category, IncomeSource, UserSettings } from '../../types';
 import { IconRenderer } from '../IconRenderer';
@@ -82,6 +83,7 @@ interface KelolaViewProps {
   onExportPDF?: (startDate: string, endDate: string) => void;
   onDeleteAllData?: () => void;
   onOpenSettings?: () => void;
+  onOpenNotifications?: () => void;
   triggerNotification?: (title: string, message: string, type: 'info' | 'success' | 'warning' | 'alert') => void;
 }
 
@@ -131,7 +133,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   onExportExcel,
   onExportPDF,
   onDeleteAllData,
-  onOpenSettings
+  onOpenSettings,
+  onOpenNotifications
 }) => {
   // Local state for Report Date Filter
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
@@ -586,6 +589,23 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                     <span>Pengaturan UI, Tema &amp; Font</span>
                   </div>
                   <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400 hover:underline">Buka</span>
+                </button>
+              )}
+
+              {/* Notifications Center View Trigger */}
+              {onOpenNotifications && (
+                <button
+                  type="button"
+                  onClick={onOpenNotifications}
+                  className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/70 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                      <Bell className="w-4 h-4" />
+                    </div>
+                    <span>Pusat Notifikasi</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Buka</span>
                 </button>
               )}
 

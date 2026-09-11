@@ -88,6 +88,7 @@ import { BudgetsView } from './components/views/BudgetsView';
 import { ActivitiesView } from './components/views/ActivitiesView';
 import { KelolaView } from './components/views/KelolaView';
 import { LaporanView } from './components/views/LaporanView';
+import { NotificationsView } from './components/views/NotificationsView';
 
 import { SplashView } from './components/views/SplashView';
 import { AuthView } from './components/views/AuthView';
@@ -1918,6 +1919,15 @@ export default function App() {
 
         <div className="max-w-2xl mx-auto pb-3 px-4 sm:px-6 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
+            {activeTab === 'laporan' && (
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className="p-1.5 -ml-1.5 rounded-xl text-white/90 hover:text-white hover:bg-white/20 transition cursor-pointer"
+                title="Kembali ke Dashboard"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-sm">
               {activeTab === 'dashboard' && 'Dashboard'}
               {activeTab === 'transaksi' && 'Transaksi'}
@@ -1926,6 +1936,7 @@ export default function App() {
               {activeTab === 'aktivitas' && 'Aktivitas'}
               {activeTab === 'kelola' && 'Kelola'}
               {activeTab === 'laporan' && 'Laporan Bulanan'}
+              {activeTab === 'notifikasi' && 'Notifikasi'}
             </h1>
           </div>
 
@@ -1936,9 +1947,17 @@ export default function App() {
               isOpen={isNotifOpen}
               setIsOpen={setIsNotifOpen}
               onMarkAllRead={() => setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))}
-              onClearAll={() => setNotifications([])}
+              onClearAll={() => {
+                showConfirm('Hapus Semua Notifikasi', 'Yakin ingin menghapus seluruh riwayat notifikasi?', () => {
+                  setNotifications([]);
+                }, 'danger');
+              }}
               onToggleRead={(id) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: !n.isRead } : n))}
               onDeleteOne={(id) => setNotifications(prev => prev.filter(n => n.id !== id))}
+              onViewAll={() => {
+                setIsNotifOpen(false);
+                setActiveTab('notifikasi');
+              }}
               accentColor={settings.themeColor}
               uiStyle={settings.uiStyle}
             />
@@ -2114,6 +2133,7 @@ export default function App() {
             onExportPDF={handleExportPDF}
             onDeleteAllData={handleDeleteAllData}
             onOpenSettings={() => setShowSettingsModal(true)}
+            onOpenNotifications={() => setActiveTab('notifikasi')}
             triggerNotification={triggerNotification}
           />
         )}
@@ -2133,6 +2153,30 @@ export default function App() {
             }}
             getCardClasses={getCardClasses}
             getAccentBg={getAccentBg}
+          />
+        )}
+
+        {activeTab === 'notifikasi' && (
+          <NotificationsView
+            notifications={notifications}
+            onMarkAllRead={() => {
+              setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+            }}
+            onClearAll={() => {
+              showConfirm('Hapus Semua Notifikasi', 'Yakin ingin menghapus seluruh riwayat notifikasi?', () => {
+                setNotifications([]);
+              }, 'danger');
+            }}
+            onToggleRead={(id) => {
+              setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: !n.isRead } : n));
+            }}
+            onDeleteOne={(id) => {
+              setNotifications(prev => prev.filter(n => n.id !== id));
+            }}
+            onBack={() => setActiveTab('dashboard')}
+            getCardClasses={getCardClasses}
+            getAccentBg={getAccentBg}
+            settings={settings}
           />
         )}
 
