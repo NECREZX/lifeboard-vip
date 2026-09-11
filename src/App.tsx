@@ -37,6 +37,7 @@ import {
   ArrowUp,
   ArrowLeft
 } from 'lucide-react';
+import { ICON_192, ICON_512 } from './iconBase64';
 
 import {
   Wallet,
@@ -2721,6 +2722,29 @@ export default function App() {
                       </button>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* Download Native APK Icons Section */}
+              <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
+                <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2.5 uppercase tracking-widest">7. File Ikon APK Resmi (Splash Screen)</span>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <a
+                    href={ICON_192}
+                    download="icon-192.png"
+                    className="flex items-center justify-center gap-2 p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:border-pink-500 transition text-center"
+                  >
+                    <img src={ICON_192} alt="192" className="w-6 h-6 rounded-lg shrink-0 shadow-sm" />
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200">icon-192.png ⬇️</span>
+                  </a>
+                  <a
+                    href={ICON_512}
+                    download="icon-512.png"
+                    className="flex items-center justify-center gap-2 p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:border-pink-500 transition text-center"
+                  >
+                    <img src={ICON_512} alt="512" className="w-6 h-6 rounded-lg shrink-0 shadow-sm" />
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200">icon-512.png ⬇️</span>
+                  </a>
                 </div>
               </div>
 
