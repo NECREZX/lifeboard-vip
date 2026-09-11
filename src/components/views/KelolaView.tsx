@@ -698,6 +698,19 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 </div>
               </div>
 
+              {/* Download Icon for APK Builder */}
+              <a
+                href="/app-icon.png"
+                download="lifeboard-app-icon.png"
+                className="w-full flex items-center justify-between p-3 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/60 dark:bg-rose-950/20 hover:bg-rose-100/60 dark:hover:bg-rose-900/30 transition text-xs font-semibold text-rose-700 dark:text-rose-300 cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <img src="/app-icon.png" alt="Lifeboard Icon" className="w-6 h-6 rounded-lg object-cover shadow-xs border border-rose-300 dark:border-rose-700" />
+                  <span className="font-bold text-slate-800 dark:text-slate-100">Unduh Logo</span>
+                </div>
+                <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400 bg-white dark:bg-slate-850 px-2.5 py-1 rounded-lg border border-rose-200 dark:border-rose-800 shadow-2xs">Unduh</span>
+              </a>
+
               {/* Excel (CSV) Export */}
               {onExportExcel && (
                 <button
