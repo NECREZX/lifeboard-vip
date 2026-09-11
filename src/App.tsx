@@ -1902,24 +1902,14 @@ export default function App() {
         </div>
       )}
 
-      {/* 1. STICKY TOP BAR - Matched with Login Form Theme (Cyan - Teal - Rose) + Refined Motifs */}
+      {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#06b6d4 / Cyan 500) */}
       <header 
-        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-gradient-to-r from-cyan-500 via-teal-600 to-rose-500 text-white border-b border-white/20 shadow-md relative"
-        style={{ paddingTop: 'max(env(safe-area-inset-top), 12px)' }}
+        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#06b6d4] text-white border-none shadow-xs relative"
+        style={{ paddingTop: 'max(env(safe-area-inset-top), 10px)' }}
       >
-        {/* Subtle Decorative Wave & Glow Overlay (confined to header background) */}
-        <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
-          <svg className="w-full h-full" viewBox="0 0 100 25" preserveAspectRatio="none">
-            <path d="M0,12 Q25,3 50,15 T100,8" fill="none" stroke="currentColor" strokeWidth="0.6" className="text-white" />
-            <path d="M0,18 Q30,8 65,22 T100,16" fill="none" stroke="currentColor" strokeWidth="0.4" className="text-white" />
-          </svg>
-          <div className="absolute -right-8 -top-8 w-28 h-28 rounded-full bg-white/10 pointer-events-none" />
-          <div className="absolute left-1/4 -bottom-10 w-36 h-20 rounded-full bg-teal-300/20 blur-xl pointer-events-none" />
-        </div>
-
         <div className="max-w-2xl mx-auto pb-3 px-4 sm:px-6 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-sm">
+            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs">
               {activeTab === 'dashboard' && 'Dashboard'}
               {activeTab === 'transaksi' && 'Transaksi'}
               {activeTab === 'tabungan' && 'Tabungan'}
