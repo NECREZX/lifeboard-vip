@@ -102,25 +102,17 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`group w-full flex flex-col items-center justify-center py-1 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
+              aria-label={tab.label}
+              title={tab.label}
+              className={`group w-full flex flex-col items-center justify-center py-2.5 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
               style={isActive && isHex ? { color: accentColor } : undefined}
               id={`nav-tab-${tab.id}`}
             >
-              <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-105' : 'w-5 h-5 stroke-[2] group-hover:scale-110'}`} />
-              
-              <span 
-                className={`text-[9px] sm:text-[10px] font-bold tracking-tight transition-all duration-200 text-center leading-tight truncate max-w-full ${
-                  isActive 
-                    ? 'opacity-100 max-h-4 mt-0.5 block' 
-                    : 'opacity-0 group-hover:opacity-100 max-h-0 group-hover:max-h-4 group-hover:mt-0.5 overflow-hidden'
-                }`}
-              >
-                {tab.label}
-              </span>
+              <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-110' : 'w-5 h-5 stroke-[2] opacity-75 group-hover:opacity-100 group-hover:scale-110'}`} />
 
               {isActive && (
                 <span 
-                  className={`absolute bottom-0 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
+                  className={`absolute bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
                   style={isHex ? { backgroundColor: accentColor } : undefined}
                 />
               )}
@@ -148,25 +140,17 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`group w-full flex flex-col items-center justify-center py-1 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
+              aria-label={tab.label}
+              title={tab.label}
+              className={`group w-full flex flex-col items-center justify-center py-2.5 px-0.5 rounded-xl transition-all duration-200 select-none focus:outline-none touch-manipulation relative ${getActiveStyles(isActive)}`}
               style={isActive && isHex ? { color: accentColor } : undefined}
               id={`nav-tab-${tab.id}`}
             >
-              <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-105' : 'w-5 h-5 stroke-[2] group-hover:scale-110'}`} />
-              
-              <span 
-                className={`text-[9px] sm:text-[10px] font-bold tracking-tight transition-all duration-200 text-center leading-tight truncate max-w-full ${
-                  isActive 
-                    ? 'opacity-100 max-h-4 mt-0.5 block' 
-                    : 'opacity-0 group-hover:opacity-100 max-h-0 group-hover:max-h-4 group-hover:mt-0.5 overflow-hidden'
-                }`}
-              >
-                {tab.label}
-              </span>
+              <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-5 h-5 stroke-[2.5] scale-110' : 'w-5 h-5 stroke-[2] opacity-75 group-hover:opacity-100 group-hover:scale-110'}`} />
 
               {isActive && (
                 <span 
-                  className={`absolute bottom-0 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
+                  className={`absolute bottom-1 w-4 h-0.5 rounded-full ${getAccentLine()} animate-in fade-in duration-300`} 
                   style={isHex ? { backgroundColor: accentColor } : undefined}
                 />
               )}
