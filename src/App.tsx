@@ -667,7 +667,7 @@ export default function App() {
   }, excludeTxId?: string, customTxList?: Transaction[]) => {
     if (txData.type === 'pengeluaran' && txData.categoryId) {
       const txMonth = txData.date.slice(0, 7); // e.g. "2026-06"
-      const budget = budgets.find((b) => b.categoryId === txData.categoryId && b.month === txMonth && (!b.walletId || b.walletId === txData.walletId));
+      const budget = budgets.find((b) => b.categoryId === txData.categoryId && b.month === txMonth && (!b.walletId || b.walletId === 'all' || b.walletId === txData.walletId));
       if (budget) {
         const budgetLimit = budget.limitAmount;
         const txList = customTxList || transactions;
@@ -678,15 +678,16 @@ export default function App() {
             const isExpense = t.type === 'pengeluaran';
             const isSameCategory = t.categoryId === txData.categoryId;
             const isSameMonth = t.date.slice(0, 7) === txMonth;
-            const isSameWallet = !budget.walletId || t.walletId === budget.walletId;
+            const isSameWallet = !budget.walletId || budget.walletId === 'all' || t.walletId === budget.walletId;
             return !isSameTx && isExpense && isSameCategory && isSameMonth && isSameWallet;
           })
           .reduce((sum, t) => sum + t.amount, 0) + txData.amount;
         
         const catName = categories.find(c => c.id === txData.categoryId)?.name || '';
-        const walletName = wallets.find(w => w.id === (budget.walletId || txData.walletId))?.name || '';
-        const walletText = budget.walletId ? ` di dompet [ ${walletName} ]` : '';
-        const walletTextNotif = budget.walletId ? ` [Dompet: ${walletName}]` : '';
+        const isSpecificWallet = budget.walletId && budget.walletId !== 'all';
+        const walletName = isSpecificWallet ? wallets.find(w => w.id === budget.walletId)?.name || '' : '';
+        const walletText = isSpecificWallet ? ` di dompet [ ${walletName} ]` : '';
+        const walletTextNotif = isSpecificWallet ? ` [Dompet: ${walletName}]` : '';
 
         if (catExpenses > budgetLimit) {
           triggerNotification(
@@ -783,7 +784,7 @@ export default function App() {
       ...data
     };
     setBudgets(prev => [newBudget, ...prev]);
-    triggerNotification('🎯 Anggaran Baru Diatur', 'Batas anggaran bulanan untuk kategori berhasil disimpan.', 'info');
+    triggerNotification('Anggaran Baru Diatur', 'Batas anggaran bulanan untuk kategori berhasil disimpan.', 'info');
   };
 
   const handleAddSaving = (data: { name: string; targetAmount: number; currentAmount: number; deadline: string; color: string }) => {
@@ -792,7 +793,7 @@ export default function App() {
       ...data
     };
     setSavings(prev => [newSaving, ...prev]);
-    triggerNotification('🎯 Target Tabungan Baru', `Menabung untuk "${data.name}" berhasil dibuat.`, 'success');
+    triggerNotification('Target Tabungan Baru', `Menabung untuk "${data.name}" berhasil dibuat.`, 'success');
   };
 
   const handleAddActivity = (data: { title: string; description: string; deadline: string }) => {
@@ -907,7 +908,7 @@ export default function App() {
       if (s.id === id) {
         const newAmt = s.currentAmount + val;
         if (newAmt >= s.targetAmount) {
-          triggerNotification('🎯 Target Tabungan Selesai!', `Selamat! Tabungan "${s.name}" telah mencapai target Rp ${s.targetAmount.toLocaleString('id-ID')}!`, 'success');
+          triggerNotification('Target Tabungan Selesai!', `Selamat! Tabungan "${s.name}" telah mencapai target Rp ${s.targetAmount.toLocaleString('id-ID')}!`, 'success');
         }
         return { ...s, currentAmount: newAmt };
       }

@@ -703,7 +703,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         .filter(b => b.month === `${selectedYear}-${String(selectedMonth).padStart(2, '0')}`)
                         .slice(0, 3).map(b => {
                           const spent = transactions
-                            .filter(t => t.type === 'pengeluaran' && t.categoryId === b.categoryId && t.date.startsWith(`${selectedYear}-${String(selectedMonth).padStart(2, '0')}`))
+                            .filter(t => t.type === 'pengeluaran' && t.categoryId === b.categoryId && t.date.startsWith(`${selectedYear}-${String(selectedMonth).padStart(2, '0')}`) && (!b.walletId || b.walletId === 'all' || t.walletId === b.walletId))
                             .reduce((sum, t) => sum + t.amount, 0);
                           const categoryName = categories.find(c => c.id === b.categoryId)?.name || 'Kategori';
                           return (

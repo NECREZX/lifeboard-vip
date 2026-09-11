@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Trash2, AlertTriangle, Edit2, PlusCircle } from 'lucide-react';
+import { Trash2, AlertTriangle, Edit2, PlusCircle, ChevronDown } from 'lucide-react';
 import { Budget, Category, Transaction, Wallet } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
@@ -49,38 +49,48 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
     return `${months[monthIndex] || ''} ${year}`;
   };
 
+  const isTransactionInMonth = (txDate: string, targetMonth: string) => {
+    if (!txDate || !targetMonth) return false;
+    if (txDate.startsWith(targetMonth)) return true;
+    try {
+      const d = new Date(txDate);
+      if (!isNaN(d.getTime())) {
+        return d.toISOString().slice(0, 7) === targetMonth;
+      }
+    } catch {
+      // ignore
+    }
+    return false;
+  };
+
   const filteredBudgets = budgets.filter((b) => {
     const matchesMonth = b.month === selectedMonth;
-    const matchesWallet = selectedWalletId === 'all' || b.walletId === selectedWalletId;
+    const matchesWallet =
+      selectedWalletId === 'all' ||
+      !b.walletId ||
+      b.walletId === 'all' ||
+      b.walletId === selectedWalletId;
     return matchesMonth && matchesWallet;
   });
 
-  const totalBudgeted = filteredBudgets.reduce((sum, b) => sum + b.limitAmount, 0);
-  const totalSpend = filteredBudgets.reduce((sum, b) => {
-    const categorySpend = transactions
+  const getBudgetSpend = (b: Budget) => {
+    return transactions
       .filter((t) => {
         const isExpense = t.type === 'pengeluaran';
         const isSameCategory = t.categoryId === b.categoryId;
-        const isSameMonth = t.date.startsWith(b.month);
-        const isSameWallet = !b.walletId || t.walletId === b.walletId;
+        const isSameMonth = isTransactionInMonth(t.date, b.month);
+        const isSameWallet =
+          (!b.walletId || b.walletId === 'all')
+            ? (selectedWalletId === 'all' || t.walletId === selectedWalletId)
+            : (t.walletId === b.walletId);
         return isExpense && isSameCategory && isSameMonth && isSameWallet;
       })
-      .reduce((s, t) => s + t.amount, 0);
-    return sum + categorySpend;
-  }, 0);
+      .reduce((sum, t) => sum + t.amount, 0);
+  };
 
-  const overBudgetCount = filteredBudgets.filter((b) => {
-    const categorySpend = transactions
-      .filter((t) => {
-        const isExpense = t.type === 'pengeluaran';
-        const isSameCategory = t.categoryId === b.categoryId;
-        const isSameMonth = t.date.startsWith(b.month);
-        const isSameWallet = !b.walletId || t.walletId === b.walletId;
-        return isExpense && isSameCategory && isSameMonth && isSameWallet;
-      })
-      .reduce((s, t) => s + t.amount, 0);
-    return categorySpend > b.limitAmount;
-  }).length;
+  const totalBudgeted = filteredBudgets.reduce((sum, b) => sum + b.limitAmount, 0);
+  const totalSpend = filteredBudgets.reduce((sum, b) => sum + getBudgetSpend(b), 0);
+  const overBudgetCount = filteredBudgets.filter((b) => getBudgetSpend(b) > b.limitAmount).length;
 
   return (
     <div className="flex flex-col gap-6" id="view-budgeting">
@@ -88,36 +98,46 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
       <div className="flex sm:justify-end gap-2.5 mb-2">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Wallet Selector Dropdown */}
-          <div className={`flex items-center justify-between sm:justify-start gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden ${
             uiStyle === 'glass'
               ? 'glass-input'
               : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-sm'
           }`}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">Dompet:</span>
-            <select
-              value={selectedWalletId}
-              onChange={(e) => setSelectedWalletId(e.target.value)}
-              className="text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer p-0 w-full truncate text-right sm:text-left"
-            >
-              <option value="all">Semua</option>
-              {wallets.map((w) => (
-                <option key={w.id} value={w.id}>{w.name}</option>
-              ))}
-            </select>
+            <div className="relative flex items-center min-w-0 flex-1 justify-end">
+              <select
+                value={selectedWalletId}
+                onChange={(e) => setSelectedWalletId(e.target.value)}
+                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+              >
+                <option value="all">Semua</option>
+                {wallets.map((w) => (
+                  <option key={w.id} value={w.id}>{w.name}</option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-0 shrink-0" />
+            </div>
           </div>
 
-          <div className={`flex items-center justify-between sm:justify-start gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+          {/* Period Selector */}
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden ${
             uiStyle === 'glass'
               ? 'glass-input'
               : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-sm'
           }`}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">Periode:</span>
-            <input
-              type="month"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-              className="text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer p-0 w-full text-right sm:text-left"
-            />
+            <div className="relative flex items-center min-w-0 flex-1 justify-end">
+              <span className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 truncate text-right pr-4 block">
+                {getIndonesianMonthName(selectedMonth)}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-0 shrink-0" />
+              <input
+                type="month"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -151,19 +171,14 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
         ) : (
           filteredBudgets.map((b) => {
             const cat = categories.find((c) => c.id === b.categoryId);
-            const currentSpend = transactions
-              .filter((t) => {
-                const isExpense = t.type === 'pengeluaran';
-                const isSameCategory = t.categoryId === b.categoryId;
-                const isSameMonth = t.date.startsWith(b.month);
-                const isSameWallet = !b.walletId || t.walletId === b.walletId;
-                return isExpense && isSameCategory && isSameMonth && isSameWallet;
-              })
-              .reduce((sum, t) => sum + t.amount, 0);
+            const currentSpend = getBudgetSpend(b);
 
             const pct = Math.min((currentSpend / b.limitAmount) * 100, 100);
             const isOver = currentSpend > b.limitAmount;
             const remaining = b.limitAmount - currentSpend;
+            const walletName = b.walletId && b.walletId !== 'all'
+              ? wallets.find((w) => w.id === b.walletId)?.name
+              : 'Semua Dompet';
 
             return (
               <div key={b.id} className={getCardClasses() + " p-5 flex flex-col justify-between min-h-[160px] relative"}>
@@ -179,14 +194,10 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                       <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{cat?.name || 'Kategori Terhapus'}</h4>
                       <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                         <span className="text-[10px] text-slate-400 font-semibold">Bulan: {getIndonesianMonthName(b.month)}</span>
-                        {b.walletId && (
-                          <>
-                            <span className="text-[10px] text-slate-300 dark:text-slate-700">•</span>
-                            <span className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-wide">
-                              {wallets.find((w) => w.id === b.walletId)?.name || 'Dompet'}
-                            </span>
-                          </>
-                        )}
+                        <span className="text-[10px] text-slate-300 dark:text-slate-700">•</span>
+                        <span className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-wide">
+                          {walletName}
+                        </span>
                       </div>
                     </div>
                   </div>

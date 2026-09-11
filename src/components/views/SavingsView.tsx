@@ -25,11 +25,18 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
   getCardClasses,
   handleDeleteSaving,
   handleSavingAddAmount,
-  onAdd,
   onEdit
 }) => {
+  const totalTargetAmount = savings.reduce((sum, s) => sum + s.targetAmount, 0);
+  const totalCurrentAmount = savings.reduce((sum, s) => sum + s.currentAmount, 0);
+  const totalRemainingAmount = Math.max(0, totalTargetAmount - totalCurrentAmount);
+  const overallPercentage = totalTargetAmount > 0 ? Math.min(100, (totalCurrentAmount / totalTargetAmount) * 100) : 0;
+  const runningCount = savings.filter((s) => s.currentAmount < s.targetAmount).length;
+  const completedCount = savings.filter((s) => s.currentAmount >= s.targetAmount).length;
+
   return (
     <div className="flex flex-col gap-6" id="view-savings">
+      {/* 1. Filter Status Tabs (Top) */}
       <div className="flex items-center gap-2 bg-slate-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 w-fit backdrop-blur-sm">
         <button
           onClick={() => setSavingFilter('semua')}
@@ -62,7 +69,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
               ? 'bg-white/20 text-white'
               : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
           }`}>
-            {savings.filter((s) => s.currentAmount < s.targetAmount).length}
+            {runningCount}
           </span>
         </button>
         <button
@@ -79,10 +86,94 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
               ? 'bg-white/20 text-white'
               : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
           }`}>
-            {savings.filter((s) => s.currentAmount >= s.targetAmount).length}
+            {completedCount}
           </span>
         </button>
       </div>
+
+      {/* 2. Overall Savings Summary Cards */}
+      {savings.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Card 1: Total Target Tabungan Dibuat */}
+          <div className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
+            <div>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                Total Target Tabungan
+              </span>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100 font-mono">
+                  {savings.length}
+                </span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  Target Dibuat
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">Berjalan:</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{runningCount}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span className="text-slate-600 dark:text-slate-400 font-medium">Tercapai:</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{completedCount}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Total Nominal Target Tabungan & Dibawahnya Dibagi 2 (Total Terkumpul & Sisa) */}
+          <div className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                  Total Nominal Target Tabungan
+                </span>
+                <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 font-mono">
+                  {overallPercentage.toFixed(0)}% Terkumpul
+                </span>
+              </div>
+              <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 font-mono block mt-1">
+                {formatIDR(totalTargetAmount)}
+              </span>
+
+              {/* Overall Progress Bar */}
+              <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-2">
+                <div 
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    overallPercentage >= 100 
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500' 
+                      : 'bg-indigo-600'
+                  }`}
+                  style={{ width: `${overallPercentage}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Bagian Bawah Dibagi 2: Total Uang Terkumpul & Sisa */}
+            <div className="grid grid-cols-2 gap-3 pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80">
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate">
+                  Total Uang Terkumpul
+                </span>
+                <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 font-mono mt-0.5 truncate">
+                  {formatIDR(totalCurrentAmount)}
+                </span>
+              </div>
+              <div className="flex flex-col border-l border-slate-100 dark:border-slate-800/60 pl-3 min-w-0">
+                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider truncate">
+                  Sisa
+                </span>
+                <span className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 font-mono mt-0.5 truncate">
+                  {formatIDR(totalRemainingAmount)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {savings
@@ -100,9 +191,11 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h4 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200">{s.name}</h4>
-                    <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mt-0.5">
-                      Tenggat: {new Date(s.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                    </span>
+                    {s.deadline && (
+                      <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mt-0.5">
+                        Tenggat: {new Date(s.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                    )}
                   </div>
                   <div className="flex gap-1 shrink-0">
                     <button onClick={() => onEdit(s)} className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition">

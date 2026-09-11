@@ -101,7 +101,7 @@ export default function FormsModal({
   const [budgetLimit, setBudgetLimit] = useState('');
   const [budgetCategoryId, setBudgetCategoryId] = useState(categories[0]?.id || '');
   const [budgetMonth, setBudgetMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
-  const [budgetWalletId, setBudgetWalletId] = useState(wallets[0]?.id || '');
+  const [budgetWalletId, setBudgetWalletId] = useState('all');
 
   // Saving states
   const [savingName, setSavingName] = useState('');
@@ -143,7 +143,7 @@ export default function FormsModal({
           setBudgetLimit(editData.limitAmount.toString());
           setBudgetCategoryId(editData.categoryId);
           setBudgetMonth(editData.month);
-          setBudgetWalletId(editData.walletId || wallets[0]?.id || '');
+          setBudgetWalletId(editData.walletId || 'all');
         } else if (targetForm === 'tabungan') {
           setSavingName(editData.name);
           setSavingTarget(editData.targetAmount.toString());
@@ -167,7 +167,7 @@ export default function FormsModal({
           setSelectedWalletId(wallets[0].id);
           const remaining = wallets.filter(w => w.id !== wallets[0].id);
           setSelectedToWalletId(remaining[0]?.id || '');
-          setBudgetWalletId(wallets[0].id);
+          setBudgetWalletId('all');
         }
         if (categories.length > 0) {
           setSelectedCategoryId(categories[0].id);
@@ -218,7 +218,7 @@ export default function FormsModal({
       setSelectedToWalletId(remaining[0]?.id || '');
     }
     setBudgetLimit('');
-    setBudgetWalletId(wallets[0]?.id || '');
+    setBudgetWalletId('all');
     setSavingName('');
     setSavingTarget('');
     setSavingCurrent('0');
@@ -314,13 +314,12 @@ export default function FormsModal({
       const parsedLimit = parseFloat(budgetLimit);
       if (isNaN(parsedLimit) || parsedLimit <= 0) return showError('Anggaran limit harus valid!');
       if (!budgetCategoryId) return showError('Silakan tentukan kategori anggaran!');
-      if (!budgetWalletId) return showError('Silakan tentukan dompet anggaran!');
 
       const data = {
         categoryId: budgetCategoryId,
         limitAmount: parsedLimit,
         month: budgetMonth,
-        walletId: budgetWalletId
+        walletId: budgetWalletId || 'all'
       };
 
       if (isEdit && onUpdateBudget) {
@@ -689,7 +688,7 @@ export default function FormsModal({
                   className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 >
-                  <option value="" disabled className="bg-white dark:bg-slate-900 text-slate-500 font-semibold">-- Pilih Dompet --</option>
+                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">Semua Dompet (Global)</option>
                   {wallets.map((w) => (
                     <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{w.name}</option>
                   ))}
@@ -797,33 +796,6 @@ export default function FormsModal({
                     >
                       +000
                     </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Deadline Target</label>
-                  <input
-                    type="date"
-                    value={savingDeadline}
-                    onChange={(e) => setSavingDeadline(e.target.value)}
-                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
-                    required
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Pilih Warna Tag</label>
-                  <div className="flex gap-2 items-center h-full pt-1">
-                    {['#10b981', '#3b82f6', '#a855f7', '#f59e0b', '#ef4444'].map((color) => (
-                      <button
-                        key={color}
-                        type="button"
-                        onClick={() => setSavingColor(color)}
-                        className={`w-5 h-5 rounded-full border-2 transition ${savingColor === color ? 'border-slate-900 dark:border-white scale-110' : 'border-transparent'}`}
-                        style={{ backgroundColor: color }}
-                      />
-                    ))}
                   </div>
                 </div>
               </div>
