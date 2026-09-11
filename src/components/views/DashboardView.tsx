@@ -122,6 +122,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const saldoWithoutAdmin = totalSaldoUtama + totalTransferAdminFees; // Raw total before admin fee deduction
   const activeDisplaySaldo = includeAdminFee ? saldoWithAdmin : saldoWithoutAdmin;
 
+  // Current month's report calculations (GoPay style)
+  const currentMonthDate = new Date();
+  const currentMonthKey = `${currentMonthDate.getFullYear()}-${String(currentMonthDate.getMonth() + 1).padStart(2, '0')}`;
+  const currentMonthName = currentMonthDate.toLocaleDateString('id-ID', { month: 'long' });
+
+  const currentMonthExpenses = transactions
+    .filter(t => t.type === 'pengeluaran' && t.date && t.date.startsWith(currentMonthKey))
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const currentMonthIncomes = transactions
+    .filter(t => t.type === 'pemasukan' && t.date && t.date.startsWith(currentMonthKey))
+    .reduce((sum, t) => sum + t.amount, 0);
+
   const handleApplyFilter = () => {
     setSelectedMonth(tempMonth);
     setSelectedYear(tempYear);
@@ -199,7 +212,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
 
       {/* 1. Hero Banner: Total Saldo Utama (Flat at bottom, extended for halfway overlap) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-6 z-0 overflow-hidden bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 text-white rounded-b-none pt-6 sm:pt-8 px-4 sm:px-6 pb-36 sm:pb-44 transition-all duration-200">
+      <div className="relative -mx-4 sm:-mx-6 -mt-6 z-0 overflow-hidden bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 text-white rounded-b-none pt-6 sm:pt-8 px-4 sm:px-6 pb-20 sm:pb-24 lg:pb-28 transition-all duration-200">
         {/* Artistic Geometric Vector Lattice Overlay */}
         <svg className="absolute inset-0 w-full h-full opacity-15 pointer-events-none mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -227,67 +240,119 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Foreground Content: Total Saldo Utama */}
         <div className="relative z-10">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs">
-              <ShieldCheck className="w-3.5 h-3.5 text-cyan-100" />
-              <span className="text-[10px] sm:text-xs font-black tracking-[0.16em] uppercase">
-                TOTAL SALDO UTAMA
-              </span>
-            </div>
-            <div className="hidden xs:flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/20 border border-white/15 backdrop-blur-md text-[10px] font-mono text-cyan-100 font-bold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-pulse" />
-              <span>IDR</span>
-            </div>
-          </div>
+          {/* Main Hero Row: Left (Badge, Saldo) | Right (Simple Admin Toggle Card) */}
+          <div className="flex items-center justify-between gap-3">
+            {/* Left Column */}
+            <div className="min-w-0 flex-1">
+              {/* Badge TOTAL SALDO UTAMA */}
+              <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs w-fit">
+                <ShieldCheck className="w-3.5 h-3.5 text-cyan-100 shrink-0" />
+                <span className="text-[10px] sm:text-xs font-black tracking-[0.12em] sm:tracking-[0.16em] uppercase whitespace-nowrap">
+                  TOTAL SALDO UTAMA
+                </span>
+              </div>
 
-          {/* Saldo Display with Eye Icon on the right */}
-          <div className="mt-4 sm:mt-5 flex items-center gap-3">
-            <div className="relative inline-flex items-center">
-              <h2 
-                className={`text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-opacity duration-150 ${
-                  showHideBalance ? 'opacity-0 select-none pointer-events-none' : 'opacity-100'
-                }`}
-                aria-hidden={showHideBalance}
-              >
-                {formatIDR(activeDisplaySaldo)}
-              </h2>
+              {/* Saldo Display with Eye Icon */}
+              <div className="mt-2.5 sm:mt-3 flex items-center gap-2.5">
+                <div className="relative inline-flex items-center">
+                  <h2 
+                    className={`text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-opacity duration-150 ${
+                      showHideBalance ? 'opacity-0 select-none pointer-events-none' : 'opacity-100'
+                    }`}
+                    aria-hidden={showHideBalance}
+                  >
+                    {formatIDR(activeDisplaySaldo)}
+                  </h2>
 
-              {showHideBalance && (
-                <div className="absolute inset-0 flex items-center overflow-hidden">
-                  <span className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider text-white font-mono drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] select-none">
-                    ••••••••
-                  </span>
+                  {showHideBalance && (
+                    <div className="absolute inset-0 flex items-center overflow-hidden">
+                      <span className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider text-white font-mono drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] select-none">
+                        ••••••••
+                      </span>
+                    </div>
+                  )}
                 </div>
-              )}
+
+                <button
+                  type="button"
+                  onClick={toggleHideBalance}
+                  title={showHideBalance ? "Tampilkan Saldo Utama" : "Sembunyikan Saldo Utama"}
+                  className="p-1 sm:p-1.5 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm shrink-0"
+                >
+                  {showHideBalance ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                </button>
+              </div>
             </div>
 
-            <button
-              type="button"
-              onClick={toggleHideBalance}
-              title={showHideBalance ? "Tampilkan Saldo Utama" : "Sembunyikan Saldo Utama"}
-              className="p-1.5 sm:p-2 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm shrink-0"
-            >
-              {showHideBalance ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
-            </button>
-          </div>
-
-          {/* Toggle switch Termasuk Admin / Tanpa Admin */}
-          <div className="mt-3 flex items-center">
+            {/* Right Column: Clean Simple Card with direct Toggle Switch + 'Admin' text below */}
             <button
               type="button"
               onClick={() => setIncludeAdminFee(prev => !prev)}
-              className="group flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/30 bg-white/15 hover:bg-white/25 text-white transition-all cursor-pointer select-none active:scale-95 shadow-sm backdrop-blur-sm"
-              title={includeAdminFee ? "Termasuk Biaya Admin (Klik untuk ubah)" : "Tanpa Biaya Admin (Klik untuk ubah)"}
+              title={includeAdminFee ? "Biaya Admin: Termasuk (Aktif) • Klik untuk ubah" : "Biaya Admin: Tanpa Admin (Nonaktif) • Klik untuk ubah"}
+              aria-label={includeAdminFee ? "Termasuk Biaya Admin (Aktif)" : "Tanpa Biaya Admin (Nonaktif)"}
+              className="flex flex-col items-center justify-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 transition-all cursor-pointer active:scale-95 select-none shrink-0 shadow-xs"
             >
-              <span className="text-[10px] font-bold uppercase tracking-wide text-white/95 drop-shadow-3xs">
-                {includeAdminFee ? 'Termasuk Admin' : 'Tanpa Admin'}
-              </span>
-              <div className={`relative w-7 h-3.5 sm:w-8 sm:h-4 rounded-full p-0.5 transition-all duration-300 ease-in-out border ${
-                includeAdminFee ? 'bg-white/40 border-white/60' : 'bg-black/20 border-white/20'
+              {/* Direct Toggle Switch without any icon */}
+              <div className={`relative w-8 h-4.5 sm:w-9 sm:h-5 rounded-full p-0.5 transition-colors duration-200 border ${
+                includeAdminFee ? 'bg-emerald-400 border-emerald-300' : 'bg-black/40 border-white/30'
               }`}>
-                <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transform transition-transform duration-300 ease-in-out shadow-sm ${
-                  includeAdminFee ? 'translate-x-3 sm:translate-x-3.5 bg-white' : 'bg-white/60'
+                <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-white transition-transform duration-200 shadow-xs ${
+                  includeAdminFee ? 'translate-x-3.5 sm:translate-x-4' : 'translate-x-0'
                 }`} />
+              </div>
+              <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide leading-none">
+                Admin
+              </span>
+            </button>
+          </div>
+
+          {/* GoPay-Style Monthly Expense & Income Report Bar */}
+          <div className="mt-3 pt-2.5 border-t border-white/20">
+            <button
+              type="button"
+              onClick={() => setActiveTab('laporan')}
+              className="group w-full flex items-center justify-between gap-3 p-1.5 -mx-1.5 rounded-xl hover:bg-white/15 active:scale-[0.99] transition-all cursor-pointer select-none text-white text-left"
+              title="Klik untuk lihat Laporan Bulanan Lengkap"
+            >
+              <div className="flex items-center gap-2.5 min-w-0">
+                {/* 3 mini vertical bars icon matching GoPay */}
+                <div className="flex items-end gap-0.5 h-4 w-3.5 pb-0.5 shrink-0 text-white drop-shadow-3xs">
+                  <div className="w-1 h-2 bg-white rounded-xs" />
+                  <div className="w-1 h-4 bg-white rounded-xs" />
+                  <div className="w-1 h-2.5 bg-white rounded-xs" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm leading-snug">
+                    <span className="font-bold text-white tracking-tight drop-shadow-3xs font-mono">
+                      {showHideBalance ? '••••••' : formatIDR(currentMonthExpenses)}
+                    </span>
+                    <span className="text-white/90 font-normal drop-shadow-3xs text-[11px] sm:text-xs truncate">
+                      udah terpakai di {currentMonthName}
+                    </span>
+                  </div>
+
+                  {currentMonthIncomes > 0 && (
+                    <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-white/85 mt-0.5">
+                      <span>Total Pendapatan:</span>
+                      <span className="font-bold text-emerald-200 font-mono drop-shadow-3xs">
+                        {showHideBalance ? '••••••' : `+${formatIDR(currentMonthIncomes)}`}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Custom ChevronsRight SVG pointer icon */}
+              <div className="flex items-center text-white/80 group-hover:text-white shrink-0 pr-1">
+                <svg 
+                  className="w-4 h-4 text-white/90 group-hover:text-white group-hover:scale-110 transition-transform shrink-0" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 -960 960 960" 
+                  fill="currentColor"
+                >
+                  <path d="M383-480 200-664l56-56 240 240-240 240-56-56 183-184Zm264 0L464-664l56-56 240 240-240 240-56-56 183-184Z"/>
+                </svg>
               </div>
             </button>
           </div>
@@ -312,9 +377,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           metricCardRadiusClass = "rounded-3xl sm:rounded-[32px]";
         }
 
-        let enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-14px_35px_rgba(0,0,0,0.06)] dark:shadow-[0_-14px_35px_rgba(0,0,0,0.35)]";
+        let enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_-16px_36px_rgba(0,0,0,0.45)]";
         if (settings?.uiStyle === 'glass') {
-          enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t border-b-0 border-slate-200/60 dark:border-slate-800/80 shadow-[0_-14px_35px_rgba(0,0,0,0.08)]";
+          enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t border-b-0 border-slate-200/60 dark:border-slate-800/80 shadow-[0_-16px_36px_rgba(0,0,0,0.15)]";
         } else if (settings?.uiStyle === 'minimal') {
           enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t border-b-0 border-slate-200 dark:border-slate-800 shadow-none";
         }
@@ -327,7 +392,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-28 sm:-mt-36 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-44 min-h-[calc(100vh-120px)] space-y-8 sm:space-y-10 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-14 sm:-mt-16 lg:-mt-18 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-44 min-h-[calc(100vh-120px)] space-y-8 sm:space-y-10 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan, Pengeluaran, Admin Transfer) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan */}

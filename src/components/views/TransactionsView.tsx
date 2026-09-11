@@ -8,7 +8,7 @@ import {
   Search, Filter, Trash2, Edit2, Eye, PlusCircle, X, Calendar, 
   Wallet as WalletIcon, Tag, RotateCcw, SlidersHorizontal, ChevronUp, 
   ChevronDown, ArrowRight, TrendingUp, TrendingDown, ArrowLeftRight,
-  Clock, Hash, FileText, CheckCircle2
+  Clock, Hash, FileText, CheckCircle2, ChevronLeft, ChevronRight, CalendarDays
 } from 'lucide-react';
 import { Transaction, Wallet, Category, IncomeSource } from '../../types';
 import { IconRenderer } from '../IconRenderer';
@@ -80,6 +80,23 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
   onEdit
 }) => {
   const [selectedTxDetail, setSelectedTxDetail] = useState<Transaction | null>(null);
+  const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
+
+  const now = new Date();
+  const currentRealYear = now.getFullYear();
+  const currentRealMonth = String(now.getMonth() + 1).padStart(2, '0');
+  const [pickerYear, setPickerYear] = useState<number>(() => {
+    return txYearFilter ? parseInt(txYearFilter, 10) : currentRealYear;
+  });
+
+  const MONTH_NAMES = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+  const MONTH_SHORT = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+    'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'
+  ];
 
   const displayedTransactions = showAllTransactions 
     ? filteredTransactions 
@@ -130,7 +147,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
       )}
 
       {/* Filter Panel */}
-      <div className={`${getCardClasses()} p-4 md:p-5 flex flex-col gap-4`}>
+      <div className={`${getCardClasses().replace('overflow-hidden', '')} !overflow-visible relative z-30 p-4 md:p-5 flex flex-col gap-4`}>
         {/* Top Controls Header */}
         <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
           {/* Search bar */}
@@ -298,57 +315,192 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             )}
           </div>
 
-          {/* Month / Year Combo */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all ${
-            uiStyle === 'glass' 
-              ? 'glass-input' 
-              : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
-          }`}>
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Bulan/Thn:</span>
-            <select
-              value={txMonthFilter}
-              onChange={(e) => {
-                setTxMonthFilter(e.target.value);
-                if (e.target.value) {
-                  setTxDateFilter('');
-                }
-              }}
-              disabled={!!txDateFilter}
-              className="w-full text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer disabled:opacity-40 truncate"
-            >
-              <option value="">Semua Bulan</option>
-              <option value="01">Januari</option>
-              <option value="02">Februari</option>
-              <option value="03">Maret</option>
-              <option value="04">April</option>
-              <option value="05">Mei</option>
-              <option value="06">Juni</option>
-              <option value="07">Juli</option>
-              <option value="08">Agustus</option>
-              <option value="09">September</option>
-              <option value="10">Oktober</option>
-              <option value="11">November</option>
-              <option value="12">Desember</option>
-            </select>
-            <select
-              value={txYearFilter}
-              onChange={(e) => {
-                setTxYearFilter(e.target.value);
-                if (e.target.value) {
-                  setTxDateFilter('');
-                }
-              }}
-              disabled={!!txDateFilter}
-              className="text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer disabled:opacity-40"
-            >
-              <option value="">Semua Tahun</option>
-              {Array.from(new Set([
-                '2024', '2025', '2026', '2027',
-                ...transactions.map(t => t.date.split('-')[0]).filter(Boolean)
-              ])).sort().map(year => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
+          {/* Calendar Month & Year Picker */}
+          <div className="relative">
+            <div className={`flex items-center justify-between gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+              uiStyle === 'glass' 
+                ? 'glass-input' 
+                : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+            } ${txDateFilter ? 'opacity-40 pointer-events-none' : ''}`}>
+              <div 
+                onClick={() => {
+                  if (!txDateFilter) {
+                    if (txYearFilter) setPickerYear(parseInt(txYearFilter, 10));
+                    setIsMonthPickerOpen(prev => !prev);
+                  }
+                }}
+                className="flex items-center gap-1.5 min-w-0 flex-1 cursor-pointer select-none"
+                title="Pilih Kalender Bulan & Tahun"
+              >
+                <CalendarDays className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Bulan/Thn:</span>
+                <span className={`text-xs font-bold truncate ${
+                  (txMonthFilter || txYearFilter) ? 'text-slate-900 dark:text-white font-black' : 'text-slate-700 dark:text-slate-300'
+                }`}>
+                  {txMonthFilter && txYearFilter 
+                    ? `${MONTH_SHORT[parseInt(txMonthFilter, 10) - 1]} ${txYearFilter}`
+                    : txMonthFilter 
+                      ? MONTH_NAMES[parseInt(txMonthFilter, 10) - 1]
+                      : txYearFilter 
+                        ? `Tahun ${txYearFilter}` 
+                        : 'Semua'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-0.5 shrink-0">
+                {(txMonthFilter || txYearFilter) && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setTxMonthFilter('');
+                      setTxYearFilter('');
+                    }}
+                    className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                    title="Hapus Filter Bulan & Tahun"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!txDateFilter) {
+                      if (txYearFilter) setPickerYear(parseInt(txYearFilter, 10));
+                      setIsMonthPickerOpen(prev => !prev);
+                    }
+                  }}
+                  className="p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                >
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMonthPickerOpen ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+            </div>
+
+            {/* Calendar Popover */}
+            {isMonthPickerOpen && (
+              <>
+                {/* Backdrop to close on outside click */}
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setIsMonthPickerOpen(false)}
+                />
+
+                <div className="absolute right-0 sm:right-auto sm:left-0 top-full mt-2 z-50 w-72 xs:w-80 max-w-[calc(100vw-2.5rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-3.5 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
+                  {/* Calendar Year Header with Prev/Next Controls */}
+                  <div className="flex items-center justify-between px-1">
+                    <button
+                      type="button"
+                      onClick={() => setPickerYear(prev => prev - 1)}
+                      className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer active:scale-95"
+                      title="Tahun Sebelumnya"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    <div className="flex items-center gap-1.5 font-bold text-sm text-slate-900 dark:text-white">
+                      <Calendar className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+                      <span>{pickerYear}</span>
+                      {pickerYear === currentRealYear && (
+                        <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                          Tahun Ini
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setPickerYear(prev => prev + 1)}
+                      className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer active:scale-95"
+                      title="Tahun Berikutnya"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* 12 Months Grid */}
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {MONTH_SHORT.map((monthName, idx) => {
+                      const monthNum = String(idx + 1).padStart(2, '0');
+                      const isSelected = txMonthFilter === monthNum && txYearFilter === pickerYear.toString();
+                      const isCurrentMonth = pickerYear === currentRealYear && monthNum === currentRealMonth;
+
+                      return (
+                        <button
+                          key={monthNum}
+                          type="button"
+                          onClick={() => {
+                            setTxMonthFilter(monthNum);
+                            setTxYearFilter(pickerYear.toString());
+                            setTxDateFilter('');
+                            setIsMonthPickerOpen(false);
+                          }}
+                          className={`py-2 px-1 rounded-xl text-xs font-bold transition-all text-center relative cursor-pointer active:scale-95 ${
+                            isSelected
+                              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm font-black'
+                              : isCurrentMonth
+                                ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700'
+                                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          }`}
+                        >
+                          <span>{monthName}</span>
+                          {isCurrentMonth && !isSelected && (
+                            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-900 dark:bg-slate-100" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Quick Action Footer Buttons */}
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPickerYear(currentRealYear);
+                        setTxMonthFilter(currentRealMonth);
+                        setTxYearFilter(currentRealYear.toString());
+                        setTxDateFilter('');
+                        setIsMonthPickerOpen(false);
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    >
+                      Bulan Ini
+                    </button>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTxYearFilter(pickerYear.toString());
+                          setTxMonthFilter('');
+                          setTxDateFilter('');
+                          setIsMonthPickerOpen(false);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                        title={`Filter seluruh transaksi di tahun ${pickerYear}`}
+                      >
+                        Semua {pickerYear}
+                      </button>
+
+                      {(txMonthFilter || txYearFilter) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTxMonthFilter('');
+                            setTxYearFilter('');
+                            setIsMonthPickerOpen(false);
+                          }}
+                          className="px-2 py-1.5 rounded-lg text-[11px] font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                        >
+                          Reset
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -34,7 +34,8 @@ import {
   Info,
   Palette,
   ChevronUp,
-  ArrowUp
+  ArrowUp,
+  ArrowLeft
 } from 'lucide-react';
 
 import {
@@ -86,6 +87,7 @@ import { SavingsView } from './components/views/SavingsView';
 import { BudgetsView } from './components/views/BudgetsView';
 import { ActivitiesView } from './components/views/ActivitiesView';
 import { KelolaView } from './components/views/KelolaView';
+import { LaporanView } from './components/views/LaporanView';
 
 import { SplashView } from './components/views/SplashView';
 import { AuthView } from './components/views/AuthView';
@@ -1901,6 +1903,7 @@ export default function App() {
               {activeTab === 'anggaran' && 'Budgeting'}
               {activeTab === 'aktivitas' && 'Aktivitas'}
               {activeTab === 'kelola' && 'Kelola'}
+              {activeTab === 'laporan' && 'Laporan Bulanan'}
             </h1>
           </div>
 
@@ -1922,7 +1925,7 @@ export default function App() {
       </header>
 
       {/* 2. MAIN CONTAINER CONTENT */}
-      <main className={`max-w-2xl mx-auto px-4 sm:px-6 pt-6 ${activeTab === 'dashboard' ? 'pb-0' : 'pb-28'} no-print relative z-10`}>
+      <main className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' ? 'pt-6 pb-0' : activeTab === 'laporan' ? 'pt-7 sm:pt-9 pb-28' : 'pt-6 pb-28'} no-print relative z-10`}>
         
         {activeTab === 'dashboard' && (
           <DashboardView 
@@ -2090,6 +2093,24 @@ export default function App() {
             onDeleteAllData={handleDeleteAllData}
             onOpenSettings={() => setShowSettingsModal(true)}
             triggerNotification={triggerNotification}
+          />
+        )}
+
+        {activeTab === 'laporan' && (
+          <LaporanView
+            transactions={transactions}
+            categories={categories}
+            sources={sources}
+            wallets={walletsWithCurrentBalance}
+            settings={settings}
+            setActiveTab={setActiveTab}
+            onAddTransaction={(type) => {
+              setModalFormTab(type);
+              setModalEditData(null);
+              setIsAddModalOpen(true);
+            }}
+            getCardClasses={getCardClasses}
+            getAccentBg={getAccentBg}
           />
         )}
 
