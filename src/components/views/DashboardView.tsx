@@ -498,8 +498,48 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 )}
               </div>
 
-              {/* 3. Secondary Insights Tables: Aktivitas, Wishlist, Tabungan, Anggaran */}
-              <div className="-mt-4 sm:-mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700 dark:text-slate-300">
+              {/* 3. Charts Section: Seluruh visualisasi chart di menu dashboard */}
+              <div className="-mt-4 sm:-mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className={getCardClasses() + " p-5 lg:p-6"}>
+                  <TrendChart transactions={transactions} themeColor="indigo" />
+                </div>
+                <div className={getCardClasses() + " p-5 lg:p-6"}>
+                  <div className="flex items-center justify-between mb-6">
+                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Alokasi Pengeluaran (Keseluruhan)</h4>
+                  </div>
+                  <CategoryPieChart transactions={transactions} categories={categories} />
+                </div>
+                <div className={getCardClasses() + " p-5 lg:p-6"}>
+                  <div className="flex items-center justify-between mb-6">
+                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Sumber Pendapatan (Keseluruhan)</h4>
+                  </div>
+                  <SourcePieChart transactions={transactions} sources={sources} />
+                </div>
+                <div className={getCardClasses() + " p-5 lg:p-6"}>
+                  <div className="flex items-center justify-between mb-6">
+                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Statistik Bulanan</h4>
+                    <button 
+                      onClick={() => setIsFilterModalOpen(true)}
+                      className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                    >
+                      {months.find(m => m.value === selectedMonth)?.label} {selectedYear}
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div>
+                        <h4 className="text-xs font-semibold mb-2 text-slate-600 dark:text-slate-400">Alokasi Pengeluaran</h4>
+                        <CategoryBarChart transactions={transactions} categories={categories} month={selectedMonth} year={selectedYear} />
+                     </div>
+                     <div>
+                        <h4 className="text-xs font-semibold mb-2 text-slate-600 dark:text-slate-400">Sumber Pendapatan</h4>
+                        <SourceBarChart transactions={transactions} sources={sources} month={selectedMonth} year={selectedYear} />
+                     </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Secondary Insights Tables: Aktivitas, Wishlist, Tabungan, Anggaran */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700 dark:text-slate-300">
                 <div className={getCardClasses() + " p-4"}>
                    <div className="flex justify-between items-center mb-2">
                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Aktivitas</h4>
@@ -600,46 +640,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         })}
                      </tbody>
                    </table>
-                </div>
-              </div>
-
-              {/* 4. Charts Section: Seluruh visualisasi chart di menu dashboard */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className={getCardClasses() + " p-5 lg:p-6"}>
-                  <TrendChart transactions={transactions} themeColor="indigo" />
-                </div>
-                <div className={getCardClasses() + " p-5 lg:p-6"}>
-                  <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Alokasi Pengeluaran (Keseluruhan)</h4>
-                  </div>
-                  <CategoryPieChart transactions={transactions} categories={categories} />
-                </div>
-                <div className={getCardClasses() + " p-5 lg:p-6"}>
-                  <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Sumber Pendapatan (Keseluruhan)</h4>
-                  </div>
-                  <SourcePieChart transactions={transactions} sources={sources} />
-                </div>
-                <div className={getCardClasses() + " p-5 lg:p-6"}>
-                  <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Statistik Bulanan</h4>
-                    <button 
-                      onClick={() => setIsFilterModalOpen(true)}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition"
-                    >
-                      {months.find(m => m.value === selectedMonth)?.label} {selectedYear}
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div>
-                        <h4 className="text-xs font-semibold mb-2 text-slate-600 dark:text-slate-400">Alokasi Pengeluaran</h4>
-                        <CategoryBarChart transactions={transactions} categories={categories} month={selectedMonth} year={selectedYear} />
-                     </div>
-                     <div>
-                        <h4 className="text-xs font-semibold mb-2 text-slate-600 dark:text-slate-400">Sumber Pendapatan</h4>
-                        <SourceBarChart transactions={transactions} sources={sources} month={selectedMonth} year={selectedYear} />
-                     </div>
-                  </div>
                 </div>
               </div>
 

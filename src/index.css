@@ -20,7 +20,11 @@
 }
 
 @layer base {
-  html, body {
+  html {
+    background-color: #06b6d4;
+  }
+  
+  body {
     margin: 0;
     padding: 0;
     min-height: 100%;
@@ -31,7 +35,7 @@
     letter-spacing: -0.02em;
   }
   
-  html.dark, html.dark body, body.dark {
+  html.dark body, body.dark {
     background-color: #020617; /* slate-955 approximate */
     color: #f8fafc; /* slate-50 */
   }

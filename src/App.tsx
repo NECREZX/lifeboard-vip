@@ -294,25 +294,31 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
-    // Apply styling properties dynamically to match system theme for status bar & gesture bar
+    // Match mobile status bar & gesture bar with system top bar color (#06b6d4)
+    const topBarColor = "#06b6d4";
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
-    const themeBg = settings.isDarkMode ? "#020617" : (settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc");
+    if (metaThemeColors.length === 0) {
+      const meta = document.createElement("meta");
+      meta.name = "theme-color";
+      meta.content = topBarColor;
+      document.head.appendChild(meta);
+    } else {
+      metaThemeColors.forEach((meta) => {
+        meta.setAttribute("content", topBarColor);
+      });
+    }
 
     if (settings.isDarkMode) {
       document.documentElement.classList.add('dark');
       document.documentElement.style.colorScheme = 'dark';
-      document.documentElement.style.backgroundColor = "#020617";
+      document.documentElement.style.backgroundColor = topBarColor;
       document.body.style.backgroundColor = "#020617";
     } else {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.colorScheme = 'light';
-      document.documentElement.style.backgroundColor = themeBg;
-      document.body.style.backgroundColor = themeBg;
+      document.documentElement.style.backgroundColor = topBarColor;
+      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc";
     }
-
-    metaThemeColors.forEach((meta) => {
-      meta.setAttribute("content", themeBg);
-    });
 
     // Apply font
     let fontFamilyStr = "'Plus Jakarta Sans', sans-serif";
@@ -2196,6 +2202,13 @@ export default function App() {
           else if (activeTab === 'transaksi') openAddModal('pengeluaran');
           else openAddModal('pengeluaran');
         }}
+      />
+
+      {/* 6.1 SEAMLESS GESTURE BAR AREA FILLER - Matched with System Top Bar */}
+      <div 
+        className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none no-print bg-gradient-to-r from-cyan-500 via-teal-600 to-rose-500"
+        style={{ height: 'env(safe-area-inset-bottom, 0px)' }}
+        aria-hidden="true"
       />
 
       {/* =======================================================
