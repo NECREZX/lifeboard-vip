@@ -468,19 +468,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         );
                       })}
 
-                      {/* Physical Wallet Pocket Rim (Stitched bottom wave flap sleeve - GoPay style: melengkung ke bawah di tengah) */}
+                      {/* Physical Wallet Pocket Rim (Stitched bottom wave flap sleeve - GoPay style: melengkung ke bawah di tengah, menyatu tanpa garis batas) */}
                       <div 
                         style={{ zIndex: 30 + wallets.length }}
                         className="relative -mt-6 sm:-mt-7 pointer-events-none select-none"
                       >
                         <svg 
-                          className="w-full h-9 sm:h-10 block drop-shadow-[0_-2px_4px_rgba(0,0,0,0.03)] dark:drop-shadow-[0_-2px_4px_rgba(0,0,0,0.2)]" 
+                          className="w-full h-10 sm:h-12 block" 
                           preserveAspectRatio="none" 
-                          viewBox="0 0 1000 45"
+                          viewBox="0 0 1000 60"
                         >
-                          {/* The pocket body that blends 100% seamlessly into the container background below */}
+                          {/* The pocket body that blends 100% seamlessly into the container background below without any border or shadow cutoff */}
                           <path 
-                            d="M 0,6 L 260,6 C 350,6 410,24 500,24 C 590,24 650,6 740,6 L 1000,6 L 1000,45 L 0,45 Z" 
+                            d="M 0,6 L 260,6 C 350,6 410,24 500,24 C 590,24 650,6 740,6 L 1000,6 L 1000,60 L 0,60 Z" 
                             className="fill-white dark:fill-slate-900" 
                           />
                           {/* Top edge rim line with smooth downward curve in the center */}
