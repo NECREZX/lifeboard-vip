@@ -1,6 +1,9 @@
 {
+  "id": "/",
+  "name": "Lifeboard - Finance & Life Planner",
   "short_name": "Lifeboard",
-  "name": "Lifeboard PWA",
+  "description": "Aplikasi manajemen keuangan pribadi, dompet pintar, transaksi, target tabungan, anggaran bulanan, dan agenda aktivitas.",
+  "categories": ["finance", "productivity", "utilities"],
   "icons": [
     {
       "src": "/icon.svg",
@@ -21,5 +24,6 @@
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui", "browser"],
   "orientation": "portrait",
-  "scope": "/"
+  "scope": "/",
+  "lang": "id-ID"
 }
