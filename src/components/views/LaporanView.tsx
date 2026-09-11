@@ -176,10 +176,11 @@ export function LaporanView({
 
   const displayedTransactions = useMemo(() => {
     if (showAllMonthTx) return detailedTransactions;
-    return detailedTransactions.slice(0, 10);
+    return detailedTransactions.slice(0, 5);
   }, [detailedTransactions, showAllMonthTx]);
 
-  const displayedRankings = showAllRankings ? rankedItems : rankedItems.slice(0, 3);
+  // Strictly Top 3 categories/sources
+  const displayedRankings = rankedItems.slice(0, 3);
 
   // Card styling tokens based on settings
   let cardRadiusClass = "rounded-3xl";
@@ -326,23 +327,12 @@ export function LaporanView({
 
       </div>
 
-      {/* 2. Top Categories / Sources Section */}
+      {/* 2. Top 3 Categories / Sources Section */}
       <div className="space-y-3 pt-6 sm:pt-8">
         <div className="flex items-center justify-between px-1">
           <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg tracking-tight">
             {selectedType === 'pengeluaran' ? 'Kategori Pengeluaran Tertinggi' : 'Kategori Pendapatan Tertinggi'}
           </h3>
-
-          {rankedItems.length > 3 && (
-            <button
-              type="button"
-              onClick={() => setShowAllRankings(prev => !prev)}
-              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
-            >
-              <span>{showAllRankings ? 'Tampilkan Top 3' : `Lihat Semua (${rankedItems.length})`}</span>
-              {showAllRankings ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
-          )}
         </div>
 
         {/* Card Table of Top Categories/Sources */}
@@ -402,9 +392,7 @@ export function LaporanView({
                             ? 'bg-amber-400 text-amber-950' 
                             : idx === 1 
                             ? 'bg-slate-300 text-slate-800' 
-                            : idx === 2 
-                            ? 'bg-amber-600 text-white' 
-                            : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
+                            : 'bg-amber-600 text-white'
                         }`}>
                           {idx + 1}
                         </span>
@@ -461,18 +449,31 @@ export function LaporanView({
               Rincian Transaksi {selectedType === 'pengeluaran' ? 'Pengeluaran' : 'Pendapatan'}
             </h3>
 
-            {selectedCategoryFilter && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedCategoryFilter(null);
-                  setShowAllMonthTx(false);
-                }}
-                className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
-              >
-                Hapus Filter
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {selectedCategoryFilter && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedCategoryFilter(null);
+                    setShowAllMonthTx(false);
+                  }}
+                  className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer mr-1"
+                >
+                  Hapus Filter
+                </button>
+              )}
+
+              {detailedTransactions.length > 5 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllMonthTx(prev => !prev)}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer select-none"
+                >
+                  <span>{showAllMonthTx ? 'Ringkaskan' : `Lihat Semua (${detailedTransactions.length})`}</span>
+                  {showAllMonthTx ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                </button>
+              )}
+            </div>
           </div>
 
           <div className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 ${cardRadiusClass} shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
@@ -526,20 +527,6 @@ export function LaporanView({
                 </div>
               );
             })}
-
-            {/* Expand / Collapse Button if more than 10 transactions */}
-            {detailedTransactions.length > 10 && (
-              <div className="p-3 bg-slate-50/70 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 text-center">
-                <button
-                  type="button"
-                  onClick={() => setShowAllMonthTx(prev => !prev)}
-                  className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors cursor-pointer"
-                >
-                  <span>{showAllMonthTx ? 'Ringkaskan' : `Lihat Semua (${detailedTransactions.length})`}</span>
-                  {showAllMonthTx ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-            )}
           </div>
         </div>
       )}

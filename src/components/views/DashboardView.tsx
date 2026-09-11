@@ -212,7 +212,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
 
       {/* 1. Hero Banner: Total Saldo Utama (Flat at bottom, extended for halfway overlap) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-6 z-0 overflow-hidden bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 text-white rounded-b-none pt-6 sm:pt-8 px-4 sm:px-6 pb-20 sm:pb-24 lg:pb-28 transition-all duration-200">
+      <div className="relative -mx-4 sm:-mx-6 -mt-6 z-0 overflow-hidden bg-gradient-to-br from-cyan-400 via-teal-500 to-rose-500 text-white rounded-b-none pt-6 sm:pt-8 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32 transition-all duration-200">
         {/* Artistic Geometric Vector Lattice Overlay */}
         <svg className="absolute inset-0 w-full h-full opacity-15 pointer-events-none mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -343,13 +343,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
               </div>
 
-              {/* Custom ChevronsRight SVG pointer icon */}
-              <div className="flex items-center text-white/80 group-hover:text-white shrink-0 pr-1">
+              {/* Custom ChevronsRight SVG pointer icon (Larger & Bolder) */}
+              <div className="flex items-center text-white shrink-0 pr-0.5">
                 <svg 
-                  className="w-4 h-4 text-white/90 group-hover:text-white group-hover:scale-110 transition-transform shrink-0" 
+                  className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:scale-110 transition-transform shrink-0 drop-shadow-xs" 
                   xmlns="http://www.w3.org/2000/svg" 
                   viewBox="0 -960 960 960" 
                   fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="36"
                 >
                   <path d="M383-480 200-664l56-56 240 240-240 240-56-56 183-184Zm264 0L464-664l56-56 240 240-240 240-56-56 183-184Z"/>
                 </svg>
@@ -392,7 +394,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-14 sm:-mt-16 lg:-mt-18 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-44 min-h-[calc(100vh-120px)] space-y-8 sm:space-y-10 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-44 min-h-[calc(100vh-120px)] space-y-8 sm:space-y-10 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan, Pengeluaran, Admin Transfer) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan */}
