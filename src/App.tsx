@@ -959,6 +959,75 @@ export default function App() {
     );
   };
 
+  const handleExportBackupJSON = () => {
+    const backupPayload = {
+      app: 'Lifeboard',
+      version: '2.0',
+      exportedAt: new Date().toISOString(),
+      profile,
+      wallets,
+      categories,
+      sources,
+      transactions,
+      savings,
+      budgets,
+      activities,
+      wishlists,
+      settings
+    };
+
+    const blob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Lifeboard_Cadangan_Data_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+
+    triggerNotification('Cadangan Berhasil Dibuat', 'Seluruh data keuangan dan catatan berhasil disimpan ke file cadangan.', 'success');
+    showAlert(
+      '💾 Cadangan Berhasil Diunduh!',
+      'File cadangan (.json) telah tersimpan di HP Anda.\n\nFile ini menyimpan 100% data Anda: saldo dompet, transaksi, tabungan, anggaran bulanan, dan catatan. Anda bisa memulihkannya kapan saja dengan tombol "Pulihkan Data".'
+    );
+  };
+
+  const handleRestoreBackupJSON = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const data = JSON.parse(content);
+
+        if (!data || (!data.wallets && !data.transactions)) {
+          showAlert('Format File Tidak Valid', 'File yang Anda pilih bukan file cadangan Lifeboard yang sah.');
+          return;
+        }
+
+        showConfirm(
+          'Pulihkan Cadangan Data?',
+          `Cadangan dibuat pada ${data.exportedAt ? new Date(data.exportedAt).toLocaleDateString('id-ID') : 'sebelumnya'}. Semua data saat ini akan diselaraskan dengan isi file cadangan. Lanjutkan?`,
+          () => {
+            if (Array.isArray(data.wallets)) setWallets(data.wallets);
+            if (Array.isArray(data.categories)) setCategories(data.categories);
+            if (Array.isArray(data.sources)) setSources(data.sources);
+            if (Array.isArray(data.transactions)) setTransactions(data.transactions);
+            if (Array.isArray(data.savings)) setSavings(data.savings);
+            if (Array.isArray(data.budgets)) setBudgets(data.budgets);
+            if (Array.isArray(data.activities)) setActivities(data.activities);
+            if (Array.isArray(data.wishlists)) setWishlists(data.wishlists);
+            if (data.settings) setSettings(data.settings);
+            if (data.profile) setProfile(data.profile);
+
+            triggerNotification('Pemulihan Sukses', 'Semua data telah berhasil dipulihkan 100%!', 'success');
+            showAlert('🎉 Pemulihan Selesai!', 'Seluruh transaksi, dompet, tabungan, dan anggaran telah kembali lengkap.');
+          },
+          'warning'
+        );
+      } catch (err) {
+        showAlert('Gagal Membaca File', 'Terjadi kesalahan saat membaca file JSON cadangan.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const handleExportCSV = () => {
     let csv = '\uFEFF'; // Excel UTF-8 BOM
     csv += '=== LAPORAN TRANSAKSI ===\n';
@@ -2087,6 +2156,8 @@ export default function App() {
             setProfile={setProfile}
             onExportExcel={handleExportCSV}
             onExportPDF={handleExportPDF}
+            onExportBackup={handleExportBackupJSON}
+            onRestoreBackup={handleRestoreBackupJSON}
             onDeleteAllData={handleDeleteAllData}
             onOpenSettings={() => setShowSettingsModal(true)}
             onOpenNotifications={() => setActiveTab('notifikasi')}

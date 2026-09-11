@@ -15,7 +15,11 @@ import {
   Settings, 
   FileSpreadsheet, 
   FileText,
-  Bell
+  Bell,
+  Download,
+  Upload,
+  Database,
+  ShieldCheck
 } from 'lucide-react';
 import { Wallet, Category, IncomeSource, UserSettings } from '../../types';
 import { IconRenderer } from '../IconRenderer';
@@ -81,6 +85,8 @@ interface KelolaViewProps {
   setProfile?: (profile: any) => void;
   onExportExcel?: () => void;
   onExportPDF?: (startDate: string, endDate: string) => void;
+  onExportBackup?: () => void;
+  onRestoreBackup?: (file: File) => void;
   onDeleteAllData?: () => void;
   onOpenSettings?: () => void;
   onOpenNotifications?: () => void;
@@ -132,6 +138,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   setSettings,
   onExportExcel,
   onExportPDF,
+  onExportBackup,
+  onRestoreBackup,
   onDeleteAllData,
   onOpenSettings,
   onOpenNotifications
@@ -645,6 +653,50 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   </button>
                 </div>
               )}
+
+              {/* Backup & Restore Data (Full System JSON) */}
+              <div className="p-3.5 rounded-xl border border-indigo-200 dark:border-indigo-900/60 bg-indigo-50/50 dark:bg-indigo-950/20 flex flex-col gap-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-indigo-700 dark:text-indigo-300 font-bold text-xs">
+                    <Database className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span>Cadangkan &amp; Pulihkan Data</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>100% Aman</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 pt-0.5">
+                  {onExportBackup && (
+                    <button
+                      type="button"
+                      onClick={onExportBackup}
+                      className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-98 transition shadow-xs cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Cadangkan Data</span>
+                    </button>
+                  )}
+                  {onRestoreBackup && (
+                    <label className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold text-indigo-700 dark:text-indigo-200 bg-white dark:bg-slate-850 border border-indigo-300 dark:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-slate-800 active:scale-98 transition shadow-xs cursor-pointer text-center">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Pulihkan Data</span>
+                      <input
+                        type="file"
+                        accept=".json,application/json"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            onRestoreBackup(file);
+                            e.target.value = '';
+                          }
+                        }}
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
 
               {/* Excel (CSV) Export */}
               {onExportExcel && (
