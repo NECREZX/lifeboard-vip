@@ -199,34 +199,34 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
           }}
         >
-          <svg className="w-full h-full opacity-20 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-full h-full opacity-35 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
             <defs>
               {/* Tradisional Songket Motif: Belah Ketupat / Bunga Melati / Tapak Catur Weave */}
               <pattern id="banner-songket-motif" width="48" height="48" patternUnits="userSpaceOnUse">
                 {/* Outer Diamond Weave */}
-                <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1" />
+                <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
                 {/* Secondary Inset Diamond */}
-                <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="0.75" />
+                <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
                 {/* Tertiary Inset Diamond */}
-                <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
                 
                 {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
-                <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.45" />
-                <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.45" />
+                <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.6" />
+                <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.6" />
                 <rect x="23" y="23" width="2" height="2" fill="white" />
                 
                 {/* Corner Songket Cross Weaves connecting the grid */}
-                <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="0.8" />
-                <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.3" />
-                <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.3" />
-                <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.3" />
-                <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.3" />
+                <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="1.2" />
+                <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.4" />
+                <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.4" />
+                <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.4" />
+                <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.4" />
                 
                 {/* Fine Songket Horizontal & Vertical Weave Ticks */}
-                <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1,1" />
-                <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1,1" />
-                <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1,1" />
-                <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="0.8" strokeDasharray="1,1" />
+                <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#banner-songket-motif)" />
@@ -378,22 +378,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           metricCardRadiusClass = "rounded-3xl sm:rounded-[32px]";
         }
 
-        let enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_-16px_36px_rgba(0,0,0,0.45)]";
+        let enclosingCardBgClass = "bg-slate-50 dark:bg-slate-950 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_-16px_36px_rgba(0,0,0,0.45)]";
         if (settings?.uiStyle === 'glass') {
-          enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t border-b-0 border-slate-200/60 dark:border-slate-800/80 shadow-[0_-16px_36px_rgba(0,0,0,0.15)]";
+          enclosingCardBgClass = "bg-slate-50 dark:bg-slate-950 border-t border-b-0 border-slate-200/60 dark:border-slate-800/80 shadow-[0_-16px_36px_rgba(0,0,0,0.15)]";
         } else if (settings?.uiStyle === 'minimal') {
-          enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t border-b-0 border-slate-200 dark:border-slate-800 shadow-none";
+          enclosingCardBgClass = "bg-slate-50 dark:bg-slate-950 border-t border-b-0 border-slate-200 dark:border-slate-800 shadow-none";
         }
 
-        let metricCardBgClass = "bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/80 shadow-xs";
+        let metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/80 shadow-xs";
         if (settings?.uiStyle === 'glass') {
-          metricCardBgClass = "bg-white/80 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200/70 dark:border-slate-700/70 shadow-xs";
+          metricCardBgClass = "bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm border border-slate-200/70 dark:border-slate-800/70 shadow-xs";
         } else if (settings?.uiStyle === 'minimal') {
-          metricCardBgClass = "bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 shadow-none";
+          metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-none";
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-44 sm:pb-48 min-h-[calc(100vh-120px)] space-y-8 sm:space-y-10 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 mb-0 ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-8 sm:pb-10 space-y-8 sm:space-y-10 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan, Pengeluaran, Admin Transfer) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan */}
@@ -547,7 +547,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           {/* The pocket body that blends 100% seamlessly into the container background below without any border or shadow cutoff */}
                           <path 
                             d="M 0,6 L 260,6 C 350,6 410,24 500,24 C 590,24 650,6 740,6 L 1000,6 L 1000,60 L 0,60 Z" 
-                            className="fill-white dark:fill-slate-900" 
+                            className="fill-slate-50 dark:fill-slate-950" 
                           />
                           {/* Top edge rim line with smooth downward curve in the center */}
                           <path 
@@ -720,9 +720,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         );
       })()}
-
-      {/* Seamless bottom filler block ensuring zero gap behind bottom bar on all viewport heights */}
-      <div className="w-full h-24 sm:h-28 -mt-2 bg-white dark:bg-slate-900 pointer-events-none" aria-hidden="true" />
     </div>
   );
 };

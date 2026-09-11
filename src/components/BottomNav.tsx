@@ -60,13 +60,6 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
 
   // Background and seamless blending styling according to uiStyle (modern, minimal, glass) & isDarkMode
   const getNavBackgroundStyle = () => {
-    // For dashboard tab, we want a completely seamless, solid, borderless blend
-    if (activeTab === 'dashboard') {
-      return isDarkMode
-        ? 'bg-slate-900 text-white'
-        : 'bg-white text-slate-900';
-    }
-
     if (uiStyle === 'glass') {
       return isDarkMode
         ? 'bg-slate-950/80 backdrop-blur-2xl text-white'

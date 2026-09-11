@@ -1656,12 +1656,6 @@ export default function App() {
   };
 
   const getThemeBackground = () => {
-    if (activeTab === 'dashboard') {
-      if (settings.isDarkMode) {
-        return 'bg-slate-900 text-slate-100 ';
-      }
-      return 'bg-white text-slate-900 ';
-    }
     if (settings.isDarkMode) {
       if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-slate-950 via-slate-900/90 to-slate-950 text-slate-100 ';
       return 'bg-slate-950 ';
@@ -1785,9 +1779,9 @@ export default function App() {
 
     // Modern Slate (default)
     if (isDark) {
-      return activeTab === 'dashboard' ? 'bg-slate-900' : 'bg-slate-950';
+      return 'bg-slate-950';
     } else {
-      return activeTab === 'dashboard' ? 'bg-white' : 'bg-slate-50';
+      return 'bg-slate-50';
     }
   };
 
@@ -1886,7 +1880,7 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-[100dvh] ${activeTab === 'dashboard' ? 'pb-0' : 'pb-24'} ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 transition-colors duration-300 relative`}>
+    <div className={`min-h-[100dvh] pb-0 ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 transition-colors duration-300 relative`}>
       
       {/* AMBIENT BACKGROUND BLOBS FOR LIQUID GLASS UI */}
       {settings.uiStyle === 'glass' && activeTab !== 'dashboard' && (
@@ -1925,7 +1919,7 @@ export default function App() {
       </header>
 
       {/* 2. MAIN CONTAINER CONTENT */}
-      <main className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' ? 'pt-0 pb-0' : activeTab === 'laporan' ? 'pt-7 sm:pt-9 pb-28' : 'pt-6 pb-28'} no-print relative z-10`}>
+      <main className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' ? 'pt-0 pb-28' : activeTab === 'laporan' ? 'pt-7 sm:pt-9 pb-28' : 'pt-6 pb-28'} no-print relative z-10`}>
         
         {activeTab === 'dashboard' && (
           <DashboardView 
