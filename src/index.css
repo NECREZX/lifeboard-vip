@@ -21,7 +21,7 @@
 
 @layer base {
   html {
-    background-color: #f8fafc; /* Matches slate-50 background for light mode */
+    background-color: #ffffff; /* Pure white to blend seamlessly with Android navigation gesture bar */
   }
   
   html.dark {
