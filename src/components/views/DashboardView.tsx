@@ -416,6 +416,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       {wallets.map((w: any, idx: number) => {
                         const balanceVal = w.currentBalance ?? w.initialBalance;
                         const cardColor = w.color || '#0284c7';
+                        const isLast = idx === wallets.length - 1;
 
                         let stackCardRadius = "rounded-2xl sm:rounded-[24px]";
                         if (settings?.cardRadius === 'sharp') {
@@ -424,12 +425,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           stackCardRadius = "rounded-3xl sm:rounded-[30px]";
                         }
 
+                        // For the bottom-most card entering the pocket sleeve, remove bottom rounding so it plunges straight into the sleeve without gaps
+                        if (isLast && settings?.cardRadius !== 'sharp') {
+                          stackCardRadius = settings?.cardRadius === 'extra' 
+                            ? "rounded-t-3xl sm:rounded-t-[30px] rounded-b-none" 
+                            : "rounded-t-2xl sm:rounded-t-[24px] rounded-b-none";
+                        }
+
                         return (
                           <div 
                             key={w.id}
                             onClick={() => setActiveTab('kelola')}
                             style={{ zIndex: 10 + idx }}
-                            className={`group relative ${idx > 0 ? '-mt-3.5 sm:-mt-4' : ''} ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.25)] px-4 sm:px-5 py-3.5 sm:py-4 pb-6 sm:pb-7 transition-all duration-200 hover:-translate-y-2 hover:shadow-xl hover:z-50 cursor-pointer select-none`}
+                            className={`group relative ${idx > 0 ? '-mt-3.5 sm:-mt-4' : ''} ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 ${isLast ? 'border-b-0 pb-10 sm:pb-12' : 'pb-6 sm:pb-7'} shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.25)] px-4 sm:px-5 py-3.5 sm:py-4 transition-all duration-200 hover:-translate-y-2 hover:shadow-xl hover:z-50 cursor-pointer select-none`}
                             title="Klik untuk kelola dompet ini"
                           >
                             <div className="flex items-center justify-between gap-3 relative z-10">
@@ -460,35 +468,35 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         );
                       })}
 
-                      {/* Physical Wallet Pocket Rim (Stitched bottom flap sleeve) */}
+                      {/* Physical Wallet Pocket Rim (Stitched bottom wave flap sleeve - GoPay style: melengkung ke bawah di tengah) */}
                       <div 
                         style={{ zIndex: 30 + wallets.length }}
-                        className="relative -mt-4 sm:-mt-5 pointer-events-none select-none"
+                        className="relative -mt-6 sm:-mt-7 pointer-events-none select-none"
                       >
                         <svg 
-                          className="w-full h-9 sm:h-10 block drop-shadow-[0_-3px_5px_rgba(0,0,0,0.035)] dark:drop-shadow-[0_-3px_5px_rgba(0,0,0,0.2)]" 
+                          className="w-full h-9 sm:h-10 block drop-shadow-[0_-2px_4px_rgba(0,0,0,0.03)] dark:drop-shadow-[0_-2px_4px_rgba(0,0,0,0.2)]" 
                           preserveAspectRatio="none" 
-                          viewBox="0 0 400 32"
+                          viewBox="0 0 1000 45"
                         >
                           {/* The pocket body that blends 100% seamlessly into the container background below */}
                           <path 
-                            d="M 0,0 C 120,8 280,8 400,0 L 400,32 L 0,32 Z" 
+                            d="M 0,6 L 260,6 C 350,6 410,24 500,24 C 590,24 650,6 740,6 L 1000,6 L 1000,45 L 0,45 Z" 
                             className="fill-white dark:fill-slate-900" 
                           />
-                          {/* Top edge rim line */}
+                          {/* Top edge rim line with smooth downward curve in the center */}
                           <path 
-                            d="M 0,0 C 120,8 280,8 400,0" 
+                            d="M 0,6 L 260,6 C 350,6 410,24 500,24 C 590,24 650,6 740,6 L 1000,6" 
                             fill="none" 
-                            className="stroke-slate-200/80 dark:stroke-slate-700/80" 
-                            strokeWidth="1" 
+                            className="stroke-slate-200/90 dark:stroke-slate-700/90" 
+                            strokeWidth="1.2" 
                           />
-                          {/* Dashed stitched seam parallel to the top curve */}
+                          {/* Dashed stitched seam parallel to the center downward curve */}
                           <path 
-                            d="M 0,6 C 120,14 280,14 400,6" 
+                            d="M 0,14 L 260,14 C 350,14 410,32 500,32 C 590,32 650,14 740,14 L 1000,14" 
                             fill="none" 
                             className="stroke-slate-300 dark:stroke-slate-600" 
                             strokeWidth="1.25" 
-                            strokeDasharray="5,4" 
+                            strokeDasharray="6,4" 
                             strokeLinecap="round" 
                           />
                         </svg>
