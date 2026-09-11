@@ -82,7 +82,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
       className={`fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none transition-colors duration-300 border-none shadow-none ${getNavBackgroundStyle()}`}
       id="bottom-dock-nav"
       style={{
-        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)'
+        paddingBottom: 'calc(max(env(safe-area-inset-bottom, 0px), 10px) + 10px)'
       }}
     >
       <div className="max-w-2xl mx-auto px-2 sm:px-4">

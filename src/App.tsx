@@ -35,7 +35,9 @@ import {
   Palette,
   ChevronUp,
   ArrowUp,
-  ArrowLeft
+  ArrowLeft,
+  Maximize,
+  Minimize
 } from 'lucide-react';
 
 import {
@@ -215,6 +217,43 @@ export default function App() {
   // Scroll to top state
   const [showScrollTop, setShowScrollTop] = useState(false);
 
+  // Fullscreen state & toggle for Edge-to-Edge display on mobile (POCO/HyperOS)
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!(document.fullscreenElement || (document as any).webkitFullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = () => {
+    try {
+      const doc = document as any;
+      const docEl = document.documentElement as any;
+      if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen().catch(() => {});
+        } else if (docEl.webkitRequestFullscreen) {
+          docEl.webkitRequestFullscreen();
+        }
+      } else {
+        if (doc.exitFullscreen) {
+          doc.exitFullscreen().catch(() => {});
+        } else if (doc.webkitExitFullscreen) {
+          doc.webkitExitFullscreen();
+        }
+      }
+    } catch (e) {
+      console.error('Fullscreen toggle error:', e);
+    }
+  };
+
   const showConfirm = (title: string, message: string, onConfirm: () => void, type: 'danger' | 'warning' | 'info' = 'warning') => {
     const isDark = settings.isDarkMode;
     Swal.fire({
@@ -311,16 +350,19 @@ export default function App() {
       });
     }
 
+    const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
     if (settings.isDarkMode) {
       document.documentElement.classList.add('dark');
       document.documentElement.style.colorScheme = 'dark';
       document.documentElement.style.backgroundColor = topBarColor;
       document.body.style.backgroundColor = "#020617";
+      if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.colorScheme = 'light';
       document.documentElement.style.backgroundColor = topBarColor;
       document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc";
+      if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'light');
     }
 
     // Apply font
@@ -1904,8 +1946,9 @@ export default function App() {
         className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#FF7777] text-white border-none shadow-none relative"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
       >
-        <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
-          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs text-center">
+        <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-between relative z-10">
+          <div className="w-9 shrink-0" />
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs text-center flex-1">
             {activeTab === 'dashboard' && 'Dashboard'}
             {activeTab === 'transaksi' && 'Transaksi'}
             {activeTab === 'tabungan' && 'Tabungan'}
@@ -1915,6 +1958,18 @@ export default function App() {
             {activeTab === 'laporan' && 'Laporan Bulanan'}
             {activeTab === 'notifikasi' && 'Notifikasi'}
           </h1>
+          <button
+            onClick={toggleFullscreen}
+            className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 active:scale-95 flex items-center justify-center text-white transition-all duration-200 cursor-pointer shrink-0 shadow-xs"
+            title={isFullscreen ? "Keluar Mode Layar Penuh" : "Mode Layar Penuh (Edge-to-Edge)"}
+            aria-label="Toggle Fullscreen Edge-to-Edge"
+          >
+            {isFullscreen ? (
+              <Minimize className="w-4 h-4 text-white" />
+            ) : (
+              <Maximize className="w-4 h-4 text-white" />
+            )}
+          </button>
         </div>
       </header>
 
