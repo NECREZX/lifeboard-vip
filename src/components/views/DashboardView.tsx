@@ -189,8 +189,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #ea580c) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#ea580c] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
+      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #881337) */}
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#881337] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -232,9 +232,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <rect width="100%" height="100%" fill="url(#banner-songket-motif)" />
           </svg>
           
-          {/* Subtle warm amber radiant atmospheric glow in the lower corners (pure soft blur, no rings) */}
-          <div className="absolute right-0 bottom-0 w-72 h-40 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute left-10 bottom-0 w-64 h-32 bg-orange-300/15 rounded-full blur-3xl pointer-events-none" />
+          {/* Subtle luminous rose-wine atmospheric glow in the lower corners (pure soft blur, no rings) */}
+          <div className="absolute right-0 bottom-0 w-72 h-40 bg-rose-500/25 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute left-10 bottom-0 w-64 h-32 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         {/* Foreground Content: Total Saldo Utama */}
@@ -245,7 +245,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="min-w-0 flex-1">
               {/* Badge TOTAL SALDO UTAMA */}
               <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs w-fit">
-                <ShieldCheck className="w-3.5 h-3.5 text-orange-100 shrink-0" />
+                <ShieldCheck className="w-3.5 h-3.5 text-rose-100 shrink-0" />
                 <span className="text-[10px] sm:text-xs font-black tracking-[0.12em] sm:tracking-[0.16em] uppercase whitespace-nowrap">
                   TOTAL SALDO UTAMA
                 </span>

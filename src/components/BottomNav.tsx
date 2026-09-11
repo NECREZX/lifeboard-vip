@@ -36,7 +36,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
       case 'rose': return 'from-rose-400 to-rose-600';
       case 'classic': return 'from-slate-700 to-slate-900';
       case 'indigo':
-      default: return 'from-amber-400 via-orange-500 to-amber-500';
+      default: return 'from-rose-600 via-rose-800 to-rose-600';
     }
   };
 
@@ -50,20 +50,49 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
       style={{ bottom: 'calc(env(safe-area-inset-bottom) + 12px)' }}
     >
       <div 
-        className="pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 text-white backdrop-blur-2xl border border-white/40 ring-1 ring-white/20 shadow-[0_16px_45px_rgba(245,158,11,0.35)]"
+        className="pointer-events-auto rounded-2xl p-1.5 grid grid-cols-7 items-center justify-items-center relative w-full transition-all duration-300 text-white backdrop-blur-2xl border border-white/40 ring-1 ring-white/20 shadow-[0_16px_45px_rgba(136,19,55,0.4)]"
         id="bottom-dock-container"
       >
-        {/* Background gradient and decorative shapes confined inside rounded container */}
-        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 -z-10">
-          {/* Subtle Decorative Wave & Glow Overlay */}
-          <div className="absolute inset-0 opacity-20">
-            <svg className="w-full h-full" viewBox="0 0 100 25" preserveAspectRatio="none">
-              <path d="M0,8 Q35,20 70,5 T100,12" fill="none" stroke="currentColor" strokeWidth="0.6" className="text-white" />
-              <path d="M0,16 Q25,4 60,18 T100,10" fill="none" stroke="currentColor" strokeWidth="0.4" className="text-white" />
+        {/* Background gradient and Songket motif pattern confined inside rounded container */}
+        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none bg-gradient-to-r from-rose-800 via-rose-950 to-rose-800 -z-10">
+          {/* Authentic Songket Weave Pattern Overlay */}
+          <div className="absolute inset-0 opacity-20 mix-blend-overlay">
+            <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="bottomnav-songket-motif" width="36" height="36" patternUnits="userSpaceOnUse">
+                  {/* Outer Diamond Weave */}
+                  <path d="M 18 0 L 36 18 L 18 36 L 0 18 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  {/* Secondary Inset Diamond */}
+                  <path d="M 18 5 L 31 18 L 18 31 L 5 18 Z" fill="none" stroke="currentColor" strokeWidth="0.6" />
+                  {/* Tertiary Inset Diamond */}
+                  <path d="M 18 10 L 26 18 L 18 26 L 10 18 Z" fill="none" stroke="currentColor" strokeWidth="0.4" />
+                  
+                  {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
+                  <polygon points="18,13 21,18 18,23 15,18" fill="currentColor" fillOpacity="0.45" />
+                  <polygon points="13,18 18,15 23,18 18,21" fill="currentColor" fillOpacity="0.45" />
+                  <rect x="17" y="17" width="2" height="2" fill="white" />
+                  
+                  {/* Corner Songket Cross Weaves connecting the grid */}
+                  <path d="M 0 0 L 5 5 M 36 0 L 31 5 M 0 36 L 5 31 M 36 36 L 31 31" stroke="currentColor" strokeWidth="0.6" />
+                  <polygon points="0,0 3,0 0,3" fill="currentColor" fillOpacity="0.3" />
+                  <polygon points="36,0 33,0 36,3" fill="currentColor" fillOpacity="0.3" />
+                  <polygon points="0,36 3,36 0,33" fill="currentColor" fillOpacity="0.3" />
+                  <polygon points="36,36 33,36 36,33" fill="currentColor" fillOpacity="0.3" />
+                  
+                  {/* Fine Songket Ticks */}
+                  <line x1="18" y1="0" x2="18" y2="5" stroke="currentColor" strokeWidth="0.6" strokeDasharray="1,1" />
+                  <line x1="18" y1="31" x2="18" y2="36" stroke="currentColor" strokeWidth="0.6" strokeDasharray="1,1" />
+                  <line x1="0" y1="18" x2="5" y2="18" stroke="currentColor" strokeWidth="0.6" strokeDasharray="1,1" />
+                  <line x1="31" y1="18" x2="36" y2="18" stroke="currentColor" strokeWidth="0.6" strokeDasharray="1,1" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#bottomnav-songket-motif)" />
             </svg>
           </div>
-          <div className="absolute -left-6 -bottom-6 w-20 h-20 rounded-full bg-white/10" />
-          <div className="absolute -right-6 -top-6 w-20 h-20 rounded-full bg-white/10" />
+          
+          {/* Subtle warm rose atmospheric glow */}
+          <div className="absolute -left-4 -bottom-4 w-28 h-16 bg-rose-500/20 rounded-full blur-xl pointer-events-none" />
+          <div className="absolute -right-4 -top-4 w-28 h-16 bg-pink-500/20 rounded-full blur-xl pointer-events-none" />
         </div>
         {tabs.slice(0, 3).map((tab) => {
           const isActive = activeTab === tab.id;
