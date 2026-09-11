@@ -1919,15 +1919,6 @@ export default function App() {
 
         <div className="max-w-2xl mx-auto pb-3 px-4 sm:px-6 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-3">
-            {activeTab === 'laporan' && (
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className="p-1.5 -ml-1.5 rounded-xl text-white/90 hover:text-white hover:bg-white/20 transition cursor-pointer"
-                title="Kembali ke Dashboard"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-            )}
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-sm">
               {activeTab === 'dashboard' && 'Dashboard'}
               {activeTab === 'transaksi' && 'Transaksi'}

@@ -5,7 +5,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { 
-  ArrowLeft, ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle, 
+  ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle, 
   TrendingDown, TrendingUp, Tag, PlusCircle, ArrowRight, Filter, 
   Calendar, CheckCircle2, ChevronDown, ChevronUp, Sparkles, PieChart
 } from 'lucide-react';

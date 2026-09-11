@@ -159,7 +159,7 @@ export const NotificationsView: React.FC<NotificationsViewProps> = ({
             onClick={() => setStatusFilter('semua')}
             className={`flex-1 text-center py-1.5 px-1 text-[11px] sm:text-xs font-bold rounded-xl transition cursor-pointer whitespace-nowrap ${
               statusFilter === 'semua'
-                ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-xs'
+                ? 'bg-blue-600 text-white dark:bg-blue-600 shadow-xs'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
@@ -171,7 +171,7 @@ export const NotificationsView: React.FC<NotificationsViewProps> = ({
             onClick={() => setStatusFilter('unread')}
             className={`flex-1 text-center py-1.5 px-1 text-[11px] sm:text-xs font-bold rounded-xl transition cursor-pointer whitespace-nowrap ${
               statusFilter === 'unread'
-                ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-xs'
+                ? 'bg-red-600 text-white dark:bg-red-600 shadow-xs'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
@@ -183,7 +183,7 @@ export const NotificationsView: React.FC<NotificationsViewProps> = ({
             onClick={() => setStatusFilter('read')}
             className={`flex-1 text-center py-1.5 px-1 text-[11px] sm:text-xs font-bold rounded-xl transition cursor-pointer whitespace-nowrap ${
               statusFilter === 'read'
-                ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-xs'
+                ? 'bg-emerald-600 text-white dark:bg-emerald-600 shadow-xs'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
