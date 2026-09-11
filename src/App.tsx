@@ -1907,42 +1907,17 @@ export default function App() {
         className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#06b6d4] text-white border-none shadow-none relative"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
       >
-        <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-between relative z-10">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs">
-              {activeTab === 'dashboard' && 'Dashboard'}
-              {activeTab === 'transaksi' && 'Transaksi'}
-              {activeTab === 'tabungan' && 'Tabungan'}
-              {activeTab === 'anggaran' && 'Budgeting'}
-              {activeTab === 'aktivitas' && 'Aktivitas'}
-              {activeTab === 'kelola' && 'Kelola'}
-              {activeTab === 'laporan' && 'Laporan Bulanan'}
-              {activeTab === 'notifikasi' && 'Notifikasi'}
-            </h1>
-          </div>
-
-          <div className="flex items-center">
-            {/* Notification toggle button at the far right */}
-            <NotificationPanel
-              notifications={notifications}
-              isOpen={isNotifOpen}
-              setIsOpen={setIsNotifOpen}
-              onMarkAllRead={() => setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))}
-              onClearAll={() => {
-                showConfirm('Hapus Semua Notifikasi', 'Yakin ingin menghapus seluruh riwayat notifikasi?', () => {
-                  setNotifications([]);
-                }, 'danger');
-              }}
-              onToggleRead={(id) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: !n.isRead } : n))}
-              onDeleteOne={(id) => setNotifications(prev => prev.filter(n => n.id !== id))}
-              onViewAll={() => {
-                setIsNotifOpen(false);
-                setActiveTab('notifikasi');
-              }}
-              accentColor={settings.themeColor}
-              uiStyle={settings.uiStyle}
-            />
-          </div>
+        <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs text-center">
+            {activeTab === 'dashboard' && 'Dashboard'}
+            {activeTab === 'transaksi' && 'Transaksi'}
+            {activeTab === 'tabungan' && 'Tabungan'}
+            {activeTab === 'anggaran' && 'Budgeting'}
+            {activeTab === 'aktivitas' && 'Aktivitas'}
+            {activeTab === 'kelola' && 'Pengaturan'}
+            {activeTab === 'laporan' && 'Laporan Bulanan'}
+            {activeTab === 'notifikasi' && 'Notifikasi'}
+          </h1>
         </div>
       </header>
 
