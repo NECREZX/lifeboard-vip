@@ -1765,6 +1765,27 @@ export default function App() {
     }
   };
 
+  const getGestureBarClass = () => {
+    const isDark = settings.isDarkMode;
+
+    if (settings.uiStyle === 'glass') {
+      return isDark
+        ? 'bg-slate-950/80 backdrop-blur-xl border-t border-slate-800/30'
+        : 'bg-slate-50/80 backdrop-blur-xl border-t border-white/60';
+    }
+
+    if (settings.uiStyle === 'minimal') {
+      return isDark ? 'bg-slate-950' : 'bg-white';
+    }
+
+    // Modern Slate (default)
+    if (isDark) {
+      return activeTab === 'dashboard' ? 'bg-slate-900' : 'bg-slate-950';
+    } else {
+      return activeTab === 'dashboard' ? 'bg-white' : 'bg-slate-50';
+    }
+  };
+
   const getScrollTopClasses = () => {
     let radiusClass = 'rounded-l-full'; // default sticking to the right edge is a semi-capsule
     if (settings.cardRadius === 'sharp') radiusClass = 'rounded-none';
@@ -2225,9 +2246,9 @@ export default function App() {
         }}
       />
 
-      {/* 6.1 SEAMLESS GESTURE BAR AREA FILLER - Matched with System Top Bar */}
+      {/* 6.1 SEAMLESS GESTURE BAR AREA FILLER - Dynamic Theme & Mode */}
       <div 
-        className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none no-print bg-gradient-to-r from-cyan-500 via-teal-600 to-rose-500"
+        className={`fixed bottom-0 left-0 right-0 z-50 pointer-events-none no-print transition-colors duration-300 ${getGestureBarClass()}`}
         style={{ height: 'env(safe-area-inset-bottom, 0px)' }}
         aria-hidden="true"
       />
