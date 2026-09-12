@@ -1,7 +1,8 @@
 import React from 'react';
 import { PieChart, SlidersHorizontal } from 'lucide-react';
 import { DashboardNavIcon, TransaksiIcon, TabunganIcon, AktivitasIcon } from './CustomIcons';
-import { UIStyle } from '../types';
+import { UIStyle, Language } from '../types';
+import { t } from '../lib/i18n';
 
 interface BottomNavProps {
   activeTab: string;
@@ -10,16 +11,17 @@ interface BottomNavProps {
   onAddClick: () => void;
   uiStyle?: UIStyle;
   isDarkMode?: boolean;
+  language?: Language;
 }
 
-export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddClick, uiStyle, isDarkMode }: BottomNavProps) {
+export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddClick, uiStyle, isDarkMode, language = 'id' }: BottomNavProps) {
   const tabs = [
-    { id: 'dashboard', label: 'Beranda', icon: DashboardNavIcon },
-    { id: 'transaksi', label: 'Transaksi', icon: TransaksiIcon },
-    { id: 'tabungan', label: 'Tabungan', icon: TabunganIcon },
-    { id: 'anggaran', label: 'Anggaran', icon: PieChart },
-    { id: 'aktivitas', label: 'Aktivitas', icon: AktivitasIcon },
-    { id: 'kelola', label: 'Kelola', icon: SlidersHorizontal },
+    { id: 'dashboard', label: t('nav_dashboard', language), icon: DashboardNavIcon },
+    { id: 'transaksi', label: t('nav_transactions', language), icon: TransaksiIcon },
+    { id: 'tabungan', label: t('nav_savings', language), icon: TabunganIcon },
+    { id: 'anggaran', label: t('nav_budgeting', language), icon: PieChart },
+    { id: 'aktivitas', label: t('nav_activities', language), icon: AktivitasIcon },
+    { id: 'kelola', label: t('nav_manage', language), icon: SlidersHorizontal },
   ];
 
   const isHex = accentColor.startsWith('#');
@@ -79,7 +81,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
 
   return (
     <nav 
-      className={`fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none transition-colors duration-300 border-none shadow-none ${getNavBackgroundStyle()}`}
+      className={`fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none border-none shadow-none ${getNavBackgroundStyle()}`}
       id="bottom-dock-nav"
       style={{
         paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)'
@@ -98,15 +100,15 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
                 onClick={() => setActiveTab(tab.id)}
                 aria-label={tab.label}
                 title={tab.label}
-                className={`group w-full h-full flex flex-col items-center justify-center rounded-xl transition-all duration-200 focus:outline-none touch-manipulation relative ${getNavTextColor(isActive)}`}
+                className={`group w-full h-full flex flex-col items-center justify-center rounded-xl focus:outline-none touch-manipulation relative ${getNavTextColor(isActive)}`}
                 style={isActive && isHex ? { color: accentColor } : (isActive && accentColor === 'indigo' ? { color: '#FF7777' } : undefined)}
                 id={`nav-tab-${tab.id}`}
               >
-                <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-6 h-6 stroke-[2.4] scale-110' : 'w-5 h-5 stroke-[1.8] opacity-75 group-hover:opacity-100 group-hover:scale-105'}`} />
+                <Icon className={`shrink-0 ${isActive ? 'w-6 h-6 stroke-[2.4]' : 'w-5 h-5 stroke-[1.8] opacity-75 group-hover:opacity-100'}`} />
 
                 {isActive && (
                   <span 
-                    className="absolute bottom-1 w-4 h-1 rounded-full animate-in fade-in duration-300 shadow-xs" 
+                    className="absolute bottom-1 w-4 h-1 rounded-full shadow-xs" 
                     style={{ backgroundColor: getAccentLineColor() }}
                   />
                 )}
@@ -118,7 +120,7 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
           <div className="w-full flex justify-center items-center -mt-6 z-10">
             <button
               onClick={onAddClick}
-              className={`w-12 h-12 sm:w-13 sm:h-13 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none ring-4 ${isDarkMode ? 'ring-slate-950' : 'ring-white'} shadow-md shrink-0 cursor-pointer`}
+              className={`w-12 h-12 sm:w-13 sm:h-13 rounded-full text-white bg-gradient-to-tr ${getAccentGradient()} flex items-center justify-center focus:outline-none ring-4 ${isDarkMode ? 'ring-slate-950' : 'ring-white'} shadow-md shrink-0 cursor-pointer`}
               style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none' } : undefined}
               title="Catat Baru (Pemasukan, Pengeluaran, Anggaran, Tabungan, dll)"
             >
@@ -137,15 +139,15 @@ export default function BottomNav({ activeTab, setActiveTab, accentColor, onAddC
                 onClick={() => setActiveTab(tab.id)}
                 aria-label={tab.label}
                 title={tab.label}
-                className={`group w-full h-full flex flex-col items-center justify-center rounded-xl transition-all duration-200 focus:outline-none touch-manipulation relative ${getNavTextColor(isActive)}`}
+                className={`group w-full h-full flex flex-col items-center justify-center rounded-xl focus:outline-none touch-manipulation relative ${getNavTextColor(isActive)}`}
                 style={isActive && isHex ? { color: accentColor } : (isActive && accentColor === 'indigo' ? { color: '#FF7777' } : undefined)}
                 id={`nav-tab-${tab.id}`}
               >
-                <Icon className={`transition-all duration-200 shrink-0 ${isActive ? 'w-6 h-6 stroke-[2.4] scale-110' : 'w-5 h-5 stroke-[1.8] opacity-75 group-hover:opacity-100 group-hover:scale-105'}`} />
+                <Icon className={`shrink-0 ${isActive ? 'w-6 h-6 stroke-[2.4]' : 'w-5 h-5 stroke-[1.8] opacity-75 group-hover:opacity-100'}`} />
 
                 {isActive && (
                   <span 
-                    className="absolute bottom-1 w-4 h-1 rounded-full animate-in fade-in duration-300 shadow-xs" 
+                    className="absolute bottom-1 w-4 h-1 rounded-full shadow-xs" 
                     style={{ backgroundColor: getAccentLineColor() }}
                   />
                 )}

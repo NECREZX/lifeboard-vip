@@ -48,6 +48,7 @@ interface FormsModalProps {
   onUpdateActivity?: (id: string, data: { title: string; description: string; deadline: string }) => void;
   onAddWishlist: (data: { title: string; month: string; price?: number; notes?: string }) => void;
   onUpdateWishlist?: (id: string, data: { title: string; month: string; price?: number; notes?: string }) => void;
+  language?: string;
 }
 
 type FormType = 'pengeluaran' | 'pemasukan' | 'transfer' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist';

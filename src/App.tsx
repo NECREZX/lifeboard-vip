@@ -81,6 +81,7 @@ import FormsModal from './components/FormsModal';
 import { TrendChart, CategoryPieChart, SourcePieChart } from './components/InteractiveCharts';
 
 import { formatIDR } from './lib/formatters';
+import { t } from './lib/i18n';
 
 import { DashboardView } from './components/views/DashboardView';
 import { TransactionsView } from './components/views/TransactionsView';
@@ -1739,11 +1740,11 @@ export default function App() {
   };
 
   const getCardClasses = () => {
-    let cls = "transition-all duration-300 overflow-hidden ";
+    let cls = "overflow-hidden ";
     
     // 1. Apply UI Style baseline background & structural styles
     if (settings.uiStyle === 'glass') {
-      cls += "glass-panel hover:bg-white/85 dark:hover:bg-slate-900/80 ";
+      cls += "glass-panel ";
     } else if (settings.uiStyle === 'minimal') {
       cls += "bg-transparent dark:bg-transparent border-0 border-b border-slate-200 dark:border-slate-800 shadow-none ";
     } else {
@@ -1765,7 +1766,7 @@ export default function App() {
       } else if (settings.cardStyle === 'bordered') {
         cls += "border-2 border-slate-300 dark:border-slate-700 shadow-none ";
       } else if (settings.cardStyle === 'shadowed') {
-        cls += "border border-slate-100 dark:border-slate-800/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.25)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] ";
+        cls += "border border-slate-100 dark:border-slate-800/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.25)] ";
       }
     }
     
@@ -1777,7 +1778,7 @@ export default function App() {
   };
 
   const getTableRowClasses = (index: number) => {
-    let cls = "transition-all duration-150 hover:bg-slate-50/40 dark:hover:bg-slate-800/10 ";
+    let cls = "hover:bg-slate-50/40 dark:hover:bg-slate-800/10 ";
     
     if (settings.tableStyle === 'striped') {
       if (index % 2 === 1) {
@@ -1954,22 +1955,22 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-[100dvh] pb-0 ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 transition-colors duration-300 relative`}>
+    <div className={`min-h-[100dvh] pb-0 ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 relative`}>
       
       {/* AMBIENT BACKGROUND BLOBS FOR LIQUID GLASS UI */}
       {settings.uiStyle === 'glass' && activeTab !== 'dashboard' && (
         <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
           {/* Fluid Cyan & Sky Blue Orb */}
-          <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-cyan-400/25 via-sky-400/20 to-blue-500/15 dark:from-cyan-700/20 dark:via-sky-800/15 dark:to-blue-900/10 blur-[100px] animate-float-liquid-1" />
+          <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-cyan-400/25 via-sky-400/20 to-blue-500/15 dark:from-cyan-700/20 dark:via-sky-800/15 dark:to-blue-900/10 blur-[100px]" />
           
           {/* Fluid Ocean Blue & Cyan Orb */}
-          <div className="absolute top-[25%] right-[-15%] w-[60vw] h-[60vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-br from-cyan-400/20 via-sky-500/15 to-blue-600/15 dark:from-cyan-900/15 dark:via-sky-950/10 dark:to-blue-950/10 blur-[100px] animate-float-liquid-2" />
+          <div className="absolute top-[25%] right-[-15%] w-[60vw] h-[60vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-br from-cyan-400/20 via-sky-500/15 to-blue-600/15 dark:from-cyan-900/15 dark:via-sky-950/10 dark:to-blue-950/10 blur-[100px]" />
           
           {/* Fluid Mint & Teal Orb */}
-          <div className="absolute bottom-[-10%] left-[10%] w-[70vw] h-[70vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-teal-300/25 via-emerald-400/20 to-cyan-300/15 dark:from-teal-700/20 dark:via-emerald-800/15 dark:to-cyan-900/10 blur-[110px] animate-float-liquid-1" />
+          <div className="absolute bottom-[-10%] left-[10%] w-[70vw] h-[70vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-teal-300/25 via-emerald-400/20 to-cyan-300/15 dark:from-teal-700/20 dark:via-emerald-800/15 dark:to-cyan-900/10 blur-[110px]" />
           
           {/* Fluid Soft Azure Blue Orb */}
-          <div className="absolute top-[60%] right-[15%] w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full bg-gradient-to-br from-blue-400/20 via-sky-300/15 to-indigo-400/10 dark:from-blue-800/15 dark:via-sky-900/10 dark:to-indigo-950/10 blur-[90px] animate-float-liquid-3" />
+          <div className="absolute top-[60%] right-[15%] w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full bg-gradient-to-br from-blue-400/20 via-sky-300/15 to-indigo-400/10 dark:from-blue-800/15 dark:via-sky-900/10 dark:to-indigo-950/10 blur-[90px]" />
         </div>
       )}
 
@@ -1980,24 +1981,24 @@ export default function App() {
       >
         <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
           <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs text-center">
-            {activeTab === 'dashboard' && 'Dashboard'}
-            {activeTab === 'transaksi' && 'Transaksi'}
-            {activeTab === 'tabungan' && 'Tabungan'}
-            {activeTab === 'anggaran' && 'Budgeting'}
-            {activeTab === 'aktivitas' && 'Aktivitas'}
+            {activeTab === 'dashboard' && t('nav_dashboard', settings.language || 'id')}
+            {activeTab === 'transaksi' && t('nav_transactions', settings.language || 'id')}
+            {activeTab === 'tabungan' && t('nav_savings', settings.language || 'id')}
+            {activeTab === 'anggaran' && t('nav_budgeting', settings.language || 'id')}
+            {activeTab === 'aktivitas' && t('nav_activities', settings.language || 'id')}
             {activeTab === 'kelola' && (
-              kelolaSubPage === 'dompet' ? 'Kelola Dompet' :
-              kelolaSubPage === 'kategori' ? 'Kategori Pengeluaran' :
-              kelolaSubPage === 'sumber' ? 'Sumber Pendapatan' :
-              kelolaSubPage === 'tampilan' ? 'Kustomisasi Tampilan' :
-              kelolaSubPage === 'kustomisasi_ui' ? 'Kustomisasi UI' :
-              kelolaSubPage === 'cadangan' ? 'Cadangkan & Pulihkan Data' :
-              kelolaSubPage === 'ekspor' ? 'Ekspor Laporan' :
-              kelolaSubPage === 'bahaya' ? 'Hapus Semua Data Aplikasi' :
-              'Pengaturan'
+              kelolaSubPage === 'dompet' ? t('menu_wallets', settings.language || 'id') :
+              kelolaSubPage === 'kategori' ? t('menu_categories', settings.language || 'id') :
+              kelolaSubPage === 'sumber' ? t('menu_sources', settings.language || 'id') :
+              kelolaSubPage === 'tampilan' ? t('menu_general_customization', settings.language || 'id') :
+              kelolaSubPage === 'kustomisasi_ui' ? t('title_ui_customization', settings.language || 'id') :
+              kelolaSubPage === 'cadangan' ? t('menu_backup', settings.language || 'id') :
+              kelolaSubPage === 'ekspor' ? t('menu_export', settings.language || 'id') :
+              kelolaSubPage === 'bahaya' ? t('menu_danger', settings.language || 'id') :
+              t('title_manage', settings.language || 'id')
             )}
-            {activeTab === 'laporan' && 'Laporan Bulanan'}
-            {activeTab === 'notifikasi' && 'Notifikasi'}
+            {activeTab === 'laporan' && t('rep_title', settings.language || 'id')}
+            {activeTab === 'notifikasi' && t('notif_title', settings.language || 'id')}
           </h1>
         </div>
       </header>
@@ -2068,6 +2069,7 @@ export default function App() {
             handleDeleteTransaction={handleDeleteTransaction}
             onAdd={(type) => openAddModal(type)}
             onEdit={(tx) => openAddModal(tx.type, tx)}
+            settings={settings}
           />
         )}
 
@@ -2080,6 +2082,7 @@ export default function App() {
             handleDeleteSaving={handleDeleteSaving}
             handleSavingAddAmount={handleSavingAddAmount}
             onEdit={(saving) => openAddModal('tabungan', saving)}
+            settings={settings}
           />
         )}
 
@@ -2092,12 +2095,22 @@ export default function App() {
             uiStyle={settings.uiStyle}
             getCardClasses={getCardClasses}
             handleDeleteBudget={(id) => {
-              showConfirm('Hapus Anggaran', 'Hapus batas anggaran ini?', () => {
-                setBudgets(prev => prev.filter(b => b.id !== id));
-                triggerNotification('Anggaran Dihapus', 'Batas anggaran dibersihkan.', 'info');
-              }, 'danger');
+              showConfirm(
+                settings.language === 'en' ? 'Delete Budget' : 'Hapus Anggaran',
+                settings.language === 'en' ? 'Delete this budget limit?' : 'Hapus batas anggaran ini?',
+                () => {
+                  setBudgets(prev => prev.filter(b => b.id !== id));
+                  triggerNotification(
+                    settings.language === 'en' ? 'Budget Deleted' : 'Anggaran Dihapus',
+                    settings.language === 'en' ? 'Budget limit cleared.' : 'Batas anggaran dibersihkan.',
+                    'info'
+                  );
+                },
+                'danger'
+              );
             }}
             onEdit={(budget) => openAddModal('budgeting', budget)}
+            settings={settings}
           />
         )}
 
@@ -2112,16 +2125,26 @@ export default function App() {
             handleDeleteActivity={handleDeleteActivity}
             handleToggleActivity={handleToggleActivity}
             handleDeleteWishlist={(id) => {
-              showConfirm('Hapus Wishlist', 'Hapus item ini dari daftar keinginan?', () => {
-                setWishlists(prev => prev.filter(w => w.id !== id));
-                triggerNotification('Wishlist Dihapus', 'Item dihapus dari daftar.', 'info');
-              }, 'danger');
+              showConfirm(
+                settings.language === 'en' ? 'Delete Wishlist' : 'Hapus Wishlist',
+                settings.language === 'en' ? 'Remove this item from wishlist?' : 'Hapus item ini dari daftar keinginan?',
+                () => {
+                  setWishlists(prev => prev.filter(w => w.id !== id));
+                  triggerNotification(
+                    settings.language === 'en' ? 'Wishlist Deleted' : 'Wishlist Dihapus',
+                    settings.language === 'en' ? 'Item removed from wishlist.' : 'Item dihapus dari daftar.',
+                    'info'
+                  );
+                },
+                'danger'
+              );
             }}
             handleToggleWishlist={(id) => {
               setWishlists(prev => prev.map(w => w.id === id ? { ...w, isPurchased: !w.isPurchased } : w));
             }}
             onEditActivity={(activity) => openAddModal('aktivitas', activity)}
             onEditWishlist={(wishlist) => openAddModal('wishlist', wishlist)}
+            settings={settings}
           />
         )}
 
@@ -2315,6 +2338,7 @@ export default function App() {
         onUpdateActivity={handleUpdateActivity}
         onAddWishlist={handleAddWishlist}
         onUpdateWishlist={handleUpdateWishlist}
+        language={settings.language || 'id'}
       />
 
       {/* =======================================================
@@ -2331,6 +2355,7 @@ export default function App() {
         accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
         uiStyle={settings.uiStyle}
         isDarkMode={settings.isDarkMode}
+        language={settings.language || 'id'}
         onAddClick={() => {
           if (activeTab === 'aktivitas') {
             if (activeActivitiesSubTab === 'agenda') openAddModal('aktivitas');

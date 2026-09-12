@@ -98,6 +98,8 @@ export interface UserProfile {
 
 export type KelolaSubPage = 'menu' | 'dompet' | 'kategori' | 'sumber' | 'tampilan' | 'cadangan' | 'ekspor' | 'bahaya' | 'kustomisasi_ui';
 
+export type Language = 'id' | 'en';
+
 export interface UserSettings {
   uiStyle: UIStyle;
   cardStyle: CardStyle;
@@ -107,4 +109,5 @@ export interface UserSettings {
   themeColor: ThemeColor;
   customAccentColor?: string;
   isDarkMode: boolean;
+  language?: Language;
 }

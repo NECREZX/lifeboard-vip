@@ -24,6 +24,7 @@ import { IconRenderer } from '../IconRenderer';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
 import { TrendChart, CategoryBarChart, SourceBarChart, CategoryPieChart, SourcePieChart } from '../InteractiveCharts';
 import { formatIDR } from '../../lib/formatters';
+import { t } from '../../lib/i18n';
 
 // ... (DashboardView component remains largely the same)
 
@@ -98,6 +99,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const [selectedWalletForModal, setSelectedWalletForModal] = useState<Wallet | null>(null);
   const [expandedWalletId, setExpandedWalletId] = useState<string | null>(null);
 
+  const currentLang = settings?.language || 'id';
+
   const activeThemeColor = settings?.themeColor === 'custom'
     ? (settings?.customAccentColor || '#8b5cf6')
     : (settings?.themeColor === 'emerald'
@@ -125,7 +128,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   // Current month's report calculations (GoPay style)
   const currentMonthDate = new Date();
   const currentMonthKey = `${currentMonthDate.getFullYear()}-${String(currentMonthDate.getMonth() + 1).padStart(2, '0')}`;
-  const currentMonthName = currentMonthDate.toLocaleDateString('id-ID', { month: 'long' });
+  const currentMonthName = currentLang === 'en' 
+    ? currentMonthDate.toLocaleDateString('en-US', { month: 'long' })
+    : currentMonthDate.toLocaleDateString('id-ID', { month: 'long' });
 
   const currentMonthExpenses = transactions
     .filter(t => t.type === 'pengeluaran' && t.date && t.date.startsWith(currentMonthKey))
@@ -147,13 +152,24 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   };
 
   const months = [
-    { value: 1, label: 'Jan' }, { value: 2, label: 'Feb' }, { value: 3, label: 'Mar' },
-    { value: 4, label: 'Apr' }, { value: 5, label: 'Mei' }, { value: 6, label: 'Jun' },
-    { value: 7, label: 'Jul' }, { value: 8, label: 'Agu' }, { value: 9, label: 'Sep' },
-    { value: 10, label: 'Okt' }, { value: 11, label: 'Nov' }, { value: 12, label: 'Des' },
+    { value: 1, label: currentLang === 'en' ? 'Jan' : 'Jan' },
+    { value: 2, label: currentLang === 'en' ? 'Feb' : 'Feb' },
+    { value: 3, label: currentLang === 'en' ? 'Mar' : 'Mar' },
+    { value: 4, label: currentLang === 'en' ? 'Apr' : 'Apr' },
+    { value: 5, label: currentLang === 'en' ? 'May' : 'Mei' },
+    { value: 6, label: currentLang === 'en' ? 'Jun' : 'Jun' },
+    { value: 7, label: currentLang === 'en' ? 'Jul' : 'Jul' },
+    { value: 8, label: currentLang === 'en' ? 'Aug' : 'Agu' },
+    { value: 9, label: currentLang === 'en' ? 'Sep' : 'Sep' },
+    { value: 10, label: currentLang === 'en' ? 'Oct' : 'Okt' },
+    { value: 11, label: currentLang === 'en' ? 'Nov' : 'Nov' },
+    { value: 12, label: currentLang === 'en' ? 'Dec' : 'Des' },
   ];
   
-  const fullMonths = [
+  const fullMonths = currentLang === 'en' ? [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ] : [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
   ];
@@ -165,7 +181,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {isFilterModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 w-full max-w-sm flex flex-col gap-6">
-            <h3 className="text-xl font-bold">Setel bulan</h3>
+            <h3 className="text-xl font-bold">{currentLang === 'en' ? 'Set Month' : 'Setel bulan'}</h3>
             <div className="flex gap-4">
               <div className="flex-1 h-40 overflow-y-auto">
                 {months.map((m, i) => (
@@ -179,10 +195,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
             <div className="flex justify-between">
-              <button onClick={handleResetFilter} className="text-indigo-600 font-bold">Hapus</button>
+              <button onClick={handleResetFilter} className="text-indigo-600 font-bold">{currentLang === 'en' ? 'Reset' : 'Hapus'}</button>
               <div className="flex gap-4">
-                <button onClick={() => setIsFilterModalOpen(false)} className="text-slate-500 font-bold">Batal</button>
-                <button onClick={handleApplyFilter} className="text-indigo-600 font-bold">Setel</button>
+                <button onClick={() => setIsFilterModalOpen(false)} className="text-slate-500 font-bold">{currentLang === 'en' ? 'Cancel' : 'Batal'}</button>
+                <button onClick={handleApplyFilter} className="text-indigo-600 font-bold">{currentLang === 'en' ? 'Apply' : 'Setel'}</button>
               </div>
             </div>
           </div>
@@ -247,7 +263,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs w-fit">
                 <ShieldCheck className="w-3.5 h-3.5 text-rose-100 shrink-0" />
                 <span className="text-[10px] sm:text-xs font-black tracking-[0.12em] sm:tracking-[0.16em] uppercase whitespace-nowrap">
-                  TOTAL SALDO UTAMA
+                  {t('dash_total_balance', currentLang).toUpperCase()}
                 </span>
               </div>
 
@@ -275,7 +291,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <button
                   type="button"
                   onClick={toggleHideBalance}
-                  title={showHideBalance ? "Tampilkan Saldo Utama" : "Sembunyikan Saldo Utama"}
+                  title={showHideBalance ? (currentLang === 'en' ? "Show Main Balance" : "Tampilkan Saldo Utama") : (currentLang === 'en' ? "Hide Main Balance" : "Sembunyikan Saldo Utama")}
                   className="p-1 sm:p-1.5 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm shrink-0"
                 >
                   {showHideBalance ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
@@ -287,7 +303,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <button
               type="button"
               onClick={() => setIncludeAdminFee(prev => !prev)}
-              title={includeAdminFee ? "Biaya Admin: Termasuk (Aktif) • Klik untuk ubah" : "Biaya Admin: Tanpa Admin (Nonaktif) • Klik untuk ubah"}
+              title={includeAdminFee ? (currentLang === 'en' ? "Admin Fee: Included (Active) • Click to toggle" : "Biaya Admin: Termasuk (Aktif) • Klik untuk ubah") : (currentLang === 'en' ? "Admin Fee: Excluded (Inactive) • Click to toggle" : "Biaya Admin: Tanpa Admin (Nonaktif) • Klik untuk ubah")}
               aria-label={includeAdminFee ? "Termasuk Biaya Admin (Aktif)" : "Tanpa Biaya Admin (Nonaktif)"}
               className="flex flex-col items-center justify-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 transition-all cursor-pointer active:scale-95 select-none shrink-0 shadow-xs"
             >
@@ -300,7 +316,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 }`} />
               </div>
               <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide leading-none">
-                Admin
+                {currentLang === 'en' ? 'Admin' : 'Admin'}
               </span>
             </button>
           </div>
@@ -311,7 +327,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               type="button"
               onClick={() => setActiveTab('laporan')}
               className="group w-full flex items-center justify-between gap-3 p-1.5 -mx-1.5 rounded-xl hover:bg-white/15 active:scale-[0.99] transition-all cursor-pointer select-none text-white text-left"
-              title="Klik untuk lihat Laporan Bulanan Lengkap"
+              title={currentLang === 'en' ? "Click to view full Monthly Report" : "Klik untuk lihat Laporan Bulanan Lengkap"}
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 {/* 3 mini vertical bars icon matching GoPay */}
@@ -327,13 +343,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       {showHideBalance ? '••••••' : formatIDR(currentMonthExpenses)}
                     </span>
                     <span className="text-white/90 font-normal drop-shadow-3xs text-[11px] sm:text-xs truncate">
-                      udah terpakai di {currentMonthName}
+                      {currentLang === 'en' ? `spent in ${currentMonthName}` : `udah terpakai di ${currentMonthName}`}
                     </span>
                   </div>
 
                   {currentMonthIncomes > 0 && (
                     <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-white/85 mt-0.5">
-                      <span>Total Pendapatan:</span>
+                      <span>{currentLang === 'en' ? 'Total Income:' : 'Total Pendapatan:'}</span>
                       <span className="font-bold text-emerald-200 font-mono drop-shadow-3xs">
                         {showHideBalance ? '••••••' : `+${formatIDR(currentMonthIncomes)}`}
                       </span>
