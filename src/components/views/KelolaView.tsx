@@ -337,7 +337,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
           {/* List Dompet Saat Ini */}
           <div className="flex flex-col gap-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Dompet Saat Ini ({walletsWithCurrentBalance.length})</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Dompet Saat Ini</span>
             {walletsWithCurrentBalance.map(w => (
               <div key={w.id} className={getCardClasses() + " p-4 flex items-center justify-between group relative overflow-hidden"}>
                 <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: w.color || '#10b981' }} />
@@ -469,7 +469,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           </div>
 
           <div className="flex flex-col gap-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Kategori Saat Ini ({categories.length})</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Kategori Saat Ini</span>
             <div className="grid grid-cols-1 gap-2.5">
               {categories.map(c => (
                 <div key={c.id} className={getCardClasses() + " p-3.5 flex items-center justify-between group relative overflow-hidden"}>
@@ -600,7 +600,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           </div>
 
           <div className="flex flex-col gap-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Sumber Pendapatan ({sources.length})</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Sumber Pendapatan</span>
             <div className="grid grid-cols-1 gap-2.5">
               {sources.map(s => (
                 <div key={s.id} className={getCardClasses() + " p-3.5 flex items-center justify-between group relative overflow-hidden"}>
@@ -1339,7 +1339,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
     <div className="flex flex-col gap-4 max-w-2xl mx-auto w-full pb-6" id="view-manage">
       
       {/* 1. Profil Banner Atas (Banner Songket Centered style like Dashboard Hero) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-14 sm:pb-16 lg:pb-18">
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-22 sm:pb-26 lg:pb-28">
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -1423,7 +1423,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
       {/* 2. Card Total Saldo Awal (Overlapping / Nimpa Banner Profil, NO icon, Minimalist Concept) */}
       <div 
-        className={`relative z-10 -mt-12 sm:-mt-14 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-2`}
+        className={`relative z-10 -mt-20 sm:-mt-24 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-2`}
       >
         <div className="flex items-center justify-between gap-2">
           <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
