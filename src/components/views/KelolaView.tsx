@@ -1339,7 +1339,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
     <div className="flex flex-col gap-4 max-w-2xl mx-auto w-full pb-6" id="view-manage">
       
       {/* 1. Profil Banner Atas (Banner Songket Centered style like Dashboard Hero) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-26 sm:pb-30 lg:pb-32">
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-16 sm:pb-20 lg:pb-22">
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -1421,9 +1421,9 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Card Total Saldo Awal (Overlapping / Nimpa Banner Profil, NO icon, Minimalist Concept) */}
+      {/* 2. Card Total Saldo Awal (Overlapping / Nimpa Banner Profil Pas di Tengah, NO icon, Minimalist Concept) */}
       <div 
-        className={`relative z-10 -mt-25 sm:-mt-28 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-2`}
+        className={`relative z-10 -mt-12 sm:-mt-14 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-2`}
       >
         <div className="flex items-center justify-between gap-2">
           <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
