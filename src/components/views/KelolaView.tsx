@@ -1339,7 +1339,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
     <div className="flex flex-col gap-4 max-w-2xl mx-auto w-full pb-6" id="view-manage">
       
       {/* 1. Profil Banner Atas (Banner Songket Centered style like Dashboard Hero) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-16 sm:pb-20 lg:pb-22">
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-30">
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -1393,11 +1393,11 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
             setShowEditProfileModal(true);
           }}
-          className="relative z-10 flex flex-col items-center justify-center text-center cursor-pointer"
+          className="relative z-10 flex flex-col items-center justify-center text-center cursor-pointer group"
           title="Klik untuk mengubah nama dan avatar profil"
         >
           {/* Centered Avatar with clean ring */}
-          <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-4 border-white/60 bg-white/20 flex items-center justify-center shrink-0 shadow-md">
+          <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-4 border-white/60 bg-white/20 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
             <img 
               src={profile?.avatar || '/male_avatar.jpg'} 
               alt="Avatar Profil" 
@@ -1408,22 +1408,21 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             />
           </div>
 
-          {/* Centered Name (No paragraph!) */}
-          <h3 className="font-black text-lg sm:text-xl text-white tracking-tight mt-2.5 drop-shadow-xs">
-            {profile?.name || t('user_default_name', currentLang)}
-          </h3>
-
-          {/* Centered Edit Badge */}
-          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/30 text-white text-[11px] font-bold shadow-xs hover:bg-white/30">
-            <Edit3 className="w-3.5 h-3.5" />
-            <span>{t('edit_profile', currentLang)}</span>
+          {/* Centered Name with Edit Icon right beside it */}
+          <div className="flex items-center justify-center gap-1.5 mt-2.5">
+            <h3 className="font-black text-lg sm:text-xl text-white tracking-tight drop-shadow-xs">
+              {profile?.name || t('user_default_name', currentLang)}
+            </h3>
+            <div className="p-1 rounded-full bg-white/20 border border-white/30 text-white group-hover:bg-white/35 transition-all shadow-xs shrink-0">
+              <Edit3 className="w-3.5 h-3.5" />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 2. Card Total Saldo Awal (Overlapping / Nimpa Banner Profil Pas di Tengah, NO icon, Minimalist Concept) */}
+      {/* 2. Card Total Saldo Awal (Overlapping / Nimpa Banner Profil, NO icon, Minimalist Concept) */}
       <div 
-        className={`relative z-10 -mt-12 sm:-mt-14 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-2`}
+        className={`relative z-10 -mt-18 sm:-mt-20 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-2`}
       >
         <div className="flex items-center justify-between gap-2">
           <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
