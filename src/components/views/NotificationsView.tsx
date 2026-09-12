@@ -14,9 +14,12 @@ import {
   Search, 
   X, 
   Inbox,
-  ChevronDown
+  ChevronDown,
+  Home,
+  Bell
 } from 'lucide-react';
 import { NotificationItem, UserSettings } from '../../types';
+import { Breadcrumb } from '../Breadcrumb';
 
 interface NotificationsViewProps {
   notifications: NotificationItem[];
@@ -36,6 +39,7 @@ export const NotificationsView: React.FC<NotificationsViewProps> = ({
   onClearAll,
   onToggleRead,
   onDeleteOne,
+  onBack,
   getCardClasses,
   getAccentBg,
   settings
@@ -106,6 +110,13 @@ export const NotificationsView: React.FC<NotificationsViewProps> = ({
 
   return (
     <div className="flex flex-col gap-3.5" id="view-notifications-full">
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', onClick: onBack },
+          { label: 'Pusat Notifikasi' }
+        ]} 
+      />
+
       {/* 1. Ringkasan Kartu (Hanya Teks, Tanpa Icon, Ukuran Ringkas) */}
       <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
         <div className={`${getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-center`}>

@@ -96,6 +96,8 @@ export interface UserProfile {
   avatar: string;
 }
 
+export type KelolaSubPage = 'menu' | 'dompet' | 'kategori' | 'sumber' | 'tampilan' | 'cadangan' | 'ekspor' | 'bahaya' | 'kustomisasi_ui';
+
 export interface UserSettings {
   uiStyle: UIStyle;
   cardStyle: CardStyle;

@@ -37,7 +37,6 @@ import {
   ArrowUp,
   ArrowLeft
 } from 'lucide-react';
-import { ICON_192, ICON_512 } from './iconBase64';
 
 import {
   Wallet,
@@ -56,7 +55,8 @@ import {
   UIStyle,
   CardStyle,
   CardRadius,
-  TableStyle
+  TableStyle,
+  KelolaSubPage
 } from './types';
 
 import { IconRenderer } from './components/IconRenderer';
@@ -184,6 +184,7 @@ export default function App() {
 
   // --- UI/Interaction States ---
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [kelolaSubPage, setKelolaSubPage] = useState<KelolaSubPage>('menu');
   const [activeActivitiesSubTab, setActiveActivitiesSubTab] = useState<'agenda' | 'wishlist'>('agenda');
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -1974,7 +1975,7 @@ export default function App() {
 
       {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#FF7777) */}
       <header 
-        className="sticky top-0 z-50 w-full transition-all duration-300 no-print bg-[#FF7777] text-white border-none shadow-none relative"
+        className="sticky top-0 z-50 w-full no-print bg-[#FF7777] text-white border-none shadow-none relative"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
       >
         <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
@@ -1984,7 +1985,17 @@ export default function App() {
             {activeTab === 'tabungan' && 'Tabungan'}
             {activeTab === 'anggaran' && 'Budgeting'}
             {activeTab === 'aktivitas' && 'Aktivitas'}
-            {activeTab === 'kelola' && 'Pengaturan'}
+            {activeTab === 'kelola' && (
+              kelolaSubPage === 'dompet' ? 'Kelola Dompet' :
+              kelolaSubPage === 'kategori' ? 'Kategori Pengeluaran' :
+              kelolaSubPage === 'sumber' ? 'Sumber Pendapatan' :
+              kelolaSubPage === 'tampilan' ? 'Kustomisasi Tampilan' :
+              kelolaSubPage === 'kustomisasi_ui' ? 'Kustomisasi UI' :
+              kelolaSubPage === 'cadangan' ? 'Cadangkan & Pulihkan Data' :
+              kelolaSubPage === 'ekspor' ? 'Ekspor Laporan' :
+              kelolaSubPage === 'bahaya' ? 'Hapus Semua Data Aplikasi' :
+              'Pengaturan'
+            )}
             {activeTab === 'laporan' && 'Laporan Bulanan'}
             {activeTab === 'notifikasi' && 'Notifikasi'}
           </h1>
@@ -1993,7 +2004,7 @@ export default function App() {
 
       {/* 2. MAIN CONTAINER CONTENT */}
       <main 
-        className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' ? 'pt-0' : activeTab === 'laporan' ? 'pt-7 sm:pt-9' : 'pt-6'} no-print relative z-10`}
+        className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' || (activeTab === 'kelola' && kelolaSubPage === 'menu') ? 'pt-0' : activeTab === 'laporan' ? 'pt-7 sm:pt-9' : 'pt-6'} no-print relative z-10`}
         style={{
           paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 90px)'
         }}
@@ -2168,6 +2179,8 @@ export default function App() {
             onOpenSettings={() => setShowSettingsModal(true)}
             onOpenNotifications={() => setActiveTab('notifikasi')}
             triggerNotification={triggerNotification}
+            activeSubPage={kelolaSubPage}
+            setActiveSubPage={setKelolaSubPage}
           />
         )}
 
@@ -2309,7 +2322,12 @@ export default function App() {
          ======================================================= */}
       <BottomNav
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          if (tab === 'kelola') {
+            setKelolaSubPage('menu');
+          }
+        }}
         accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
         uiStyle={settings.uiStyle}
         isDarkMode={settings.isDarkMode}
@@ -2722,29 +2740,6 @@ export default function App() {
                       </button>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Download Native APK Icons Section */}
-              <div className="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-800">
-                <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2.5 uppercase tracking-widest">7. File Ikon APK Resmi (Splash Screen)</span>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <a
-                    href={ICON_192}
-                    download="icon-192.png"
-                    className="flex items-center justify-center gap-2 p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:border-pink-500 transition text-center"
-                  >
-                    <img src={ICON_192} alt="192" className="w-6 h-6 rounded-lg shrink-0 shadow-sm" />
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200">icon-192.png ⬇️</span>
-                  </a>
-                  <a
-                    href={ICON_512}
-                    download="icon-512.png"
-                    className="flex items-center justify-center gap-2 p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm hover:border-pink-500 transition text-center"
-                  >
-                    <img src={ICON_512} alt="512" className="w-6 h-6 rounded-lg shrink-0 shadow-sm" />
-                    <span className="text-xs font-bold text-slate-700 dark:text-slate-200">icon-512.png ⬇️</span>
-                  </a>
                 </div>
               </div>
 

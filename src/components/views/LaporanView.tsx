@@ -7,11 +7,12 @@ import React, { useState, useMemo } from 'react';
 import { 
   ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle, 
   TrendingDown, TrendingUp, Tag, PlusCircle, ArrowRight, Filter, 
-  Calendar, CheckCircle2, ChevronDown, ChevronUp, Sparkles, PieChart
+  Calendar, CheckCircle2, ChevronDown, ChevronUp, Sparkles, PieChart, Home
 } from 'lucide-react';
 import { Transaction, Category, IncomeSource, Wallet, UserSettings } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
+import { Breadcrumb } from '../Breadcrumb';
 
 interface LaporanViewProps {
   transactions: Transaction[];
@@ -188,7 +189,13 @@ export function LaporanView({
   else if (settings?.cardRadius === 'extra') cardRadiusClass = "rounded-[32px]";
 
   return (
-    <div className="pt-1 sm:pt-2 space-y-6 sm:space-y-7 pb-32 animate-in fade-in duration-200">
+    <div className="pt-1 sm:pt-2 space-y-4 pb-32 animate-in fade-in duration-200">
+      <Breadcrumb 
+        items={[
+          { label: 'Dashboard', onClick: () => setActiveTab('dashboard') },
+          { label: 'Laporan Keuangan' }
+        ]} 
+      />
       
       {/* 1. Top Main Control Card (GoPay style) */}
       {/* Wraps: Month Ruler/Slider, Pengeluaran/Pemasukan Tabs, and Total Summary */}
