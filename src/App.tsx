@@ -672,50 +672,88 @@ export default function App() {
     categoryId?: string;
     sourceId?: string;
   }, excludeTxId?: string, customTxList?: Transaction[]) => {
-    if (txData.type === 'pengeluaran' && txData.categoryId) {
+    if (txData.type === 'pengeluaran') {
       const txMonth = txData.date.slice(0, 7); // e.g. "2026-06"
-      const budget = budgets.find((b) => b.categoryId === txData.categoryId && b.month === txMonth && (!b.walletId || b.walletId === 'all' || b.walletId === txData.walletId));
-      if (budget) {
-        const budgetLimit = budget.limitAmount;
-        const txList = customTxList || transactions;
-        // Calculate other expenses in the same category and same month and same wallet constraint
-        const catExpenses = txList
-          .filter((t) => {
-            const isSameTx = t.id === excludeTxId;
-            const isExpense = t.type === 'pengeluaran';
-            const isSameCategory = t.categoryId === txData.categoryId;
-            const isSameMonth = t.date.slice(0, 7) === txMonth;
-            const isSameWallet = !budget.walletId || budget.walletId === 'all' || t.walletId === budget.walletId;
-            return !isSameTx && isExpense && isSameCategory && isSameMonth && isSameWallet;
-          })
-          .reduce((sum, t) => sum + t.amount, 0) + txData.amount;
-        
-        const catName = categories.find(c => c.id === txData.categoryId)?.name || '';
-        const isSpecificWallet = budget.walletId && budget.walletId !== 'all';
-        const walletName = isSpecificWallet ? wallets.find(w => w.id === budget.walletId)?.name || '' : '';
-        const walletText = isSpecificWallet ? ` di dompet [ ${walletName} ]` : '';
-        const walletTextNotif = isSpecificWallet ? ` [Dompet: ${walletName}]` : '';
+      // Find ALL budgets that apply to this transaction (supports Specific Wallet, All Wallets, Specific Category, and All Categories)
+      const matchingBudgets = budgets.filter((b) => {
+        const matchMonth = b.month === txMonth;
+        const matchWallet = !b.walletId || b.walletId === 'all' || b.walletId === txData.walletId;
+        const matchCategory = !b.categoryId || b.categoryId === 'all' || b.categoryId === txData.categoryId;
+        return matchMonth && matchWallet && matchCategory;
+      });
 
-        if (catExpenses > budgetLimit) {
-          triggerNotification(
-            '🚨 Anggaran Melebihi Batas!',
-            `Peringatan: Pengeluaran bulanan kategori ${catName}${walletTextNotif} telah melebihi batas anggaran Rp ${budgetLimit.toLocaleString('id-ID')}! (Tercatat: Rp ${catExpenses.toLocaleString('id-ID')})`,
-            'warning'
-          );
-          // Highlight with immediate custom alert so user is fully aware
-          setTimeout(() => {
-            showAlert(
-              'NOTIFIKASI PERINGATAN!',
-              `Pengeluaran untuk kategori [ ${catName} ]${walletText} telah MELEBIHI batas anggaran bulan ini!\n\nBatas Anggaran: Rp ${budgetLimit.toLocaleString('id-ID')}\nTotal Pengeluaran: Rp ${catExpenses.toLocaleString('id-ID')}`
+      if (matchingBudgets.length > 0) {
+        const txList = customTxList || transactions;
+
+        matchingBudgets.forEach((budget) => {
+          const budgetLimit = budget.limitAmount;
+          // Calculate all other expenses that match this budget's specific scope
+          const totalExpensesForBudget = txList
+            .filter((t) => {
+              const isSameTx = t.id === excludeTxId;
+              const isExpense = t.type === 'pengeluaran';
+              const isSameMonth = t.date.slice(0, 7) === txMonth;
+              const isSameCategory = !budget.categoryId || budget.categoryId === 'all' || t.categoryId === budget.categoryId;
+              const isSameWallet = !budget.walletId || budget.walletId === 'all' || t.walletId === budget.walletId;
+              return !isSameTx && isExpense && isSameMonth && isSameCategory && isSameWallet;
+            })
+            .reduce((sum, t) => sum + t.amount, 0) + txData.amount;
+
+          const isAllCat = !budget.categoryId || budget.categoryId === 'all';
+          const isAllWal = !budget.walletId || budget.walletId === 'all';
+
+          const catName = isAllCat
+            ? (settings.language === 'en' ? 'All Categories' : 'Semua Kategori')
+            : (categories.find(c => c.id === budget.categoryId)?.name || '');
+          const walletName = !isAllWal
+            ? (wallets.find(w => w.id === budget.walletId)?.name || '')
+            : (settings.language === 'en' ? 'All Wallets' : 'Semua Dompet');
+
+          let budgetLabel = '';
+          if (isAllCat && isAllWal) {
+            budgetLabel = settings.language === 'en'
+              ? 'Grand Total Budget (All Wallets & Categories)'
+              : 'Anggaran Total Bulanan (Semua Dompet & Kategori)';
+          } else if (isAllCat) {
+            budgetLabel = settings.language === 'en'
+              ? `Wallet Ceiling [ ${walletName} ]`
+              : `Batas Total Dompet [ ${walletName} ]`;
+          } else if (isAllWal) {
+            budgetLabel = settings.language === 'en'
+              ? `Category [ ${catName} ] (All Wallets)`
+              : `Kategori [ ${catName} ] (Semua Dompet)`;
+          } else {
+            budgetLabel = settings.language === 'en'
+              ? `Category [ ${catName} ] in Wallet [ ${walletName} ]`
+              : `Kategori [ ${catName} ] di Dompet [ ${walletName} ]`;
+          }
+
+          if (totalExpensesForBudget > budgetLimit) {
+            triggerNotification(
+              settings.language === 'en' ? '🚨 Budget Limit Exceeded!' : '🚨 Anggaran Melebihi Batas!',
+              settings.language === 'en'
+                ? `Warning: Expenses for ${budgetLabel} exceeded limit of Rp ${budgetLimit.toLocaleString('id-ID')}! (Recorded: Rp ${totalExpensesForBudget.toLocaleString('id-ID')})`
+                : `Peringatan: Pengeluaran untuk ${budgetLabel} telah melebihi batas anggaran Rp ${budgetLimit.toLocaleString('id-ID')}! (Tercatat: Rp ${totalExpensesForBudget.toLocaleString('id-ID')})`,
+              'warning'
             );
-          }, 100);
-        } else if (catExpenses > budgetLimit * 0.8) {
-          triggerNotification(
-            'Anggaran Mendekati Limit',
-            `Pengeluaran kategori ${catName}${walletTextNotif} telah mencapai 80% dari batas Rp ${budgetLimit.toLocaleString('id-ID')}`,
-            'warning'
-          );
-        }
+            setTimeout(() => {
+              showAlert(
+                settings.language === 'en' ? 'BUDGET ALERT!' : 'NOTIFIKASI PERINGATAN!',
+                settings.language === 'en'
+                  ? `Expenses for ${budgetLabel} have EXCEEDED this month's budget limit!\n\nLimit: Rp ${budgetLimit.toLocaleString('id-ID')}\nTotal Spent: Rp ${totalExpensesForBudget.toLocaleString('id-ID')}`
+                  : `Pengeluaran untuk ${budgetLabel} telah MELEBIHI batas anggaran bulan ini!\n\nBatas Anggaran: Rp ${budgetLimit.toLocaleString('id-ID')}\nTotal Pengeluaran: Rp ${totalExpensesForBudget.toLocaleString('id-ID')}`
+              );
+            }, 100);
+          } else if (totalExpensesForBudget > budgetLimit * 0.8) {
+            triggerNotification(
+              settings.language === 'en' ? 'Budget Near Limit' : 'Anggaran Mendekati Limit',
+              settings.language === 'en'
+                ? `Expenses for ${budgetLabel} reached 80% of limit Rp ${budgetLimit.toLocaleString('id-ID')}`
+                : `Pengeluaran untuk ${budgetLabel} telah mencapai 80% dari batas Rp ${budgetLimit.toLocaleString('id-ID')}`,
+              'warning'
+            );
+          }
+        });
       }
     }
   };
@@ -770,7 +808,7 @@ export default function App() {
     setTransactions(prev => [newTx, ...prev]);
     
     // Warn budget limits if expense added
-    if (data.type === 'pengeluaran' && data.categoryId) {
+    if (data.type === 'pengeluaran') {
       checkBudgetLimit(data);
     }
 
@@ -1057,10 +1095,13 @@ export default function App() {
     });
 
     csv += '\n=== ANGGARAN BULANAN ===\n';
-    csv += 'Kategori,Batas Belanja,Bulan\n';
+    csv += 'Dompet,Kategori,Batas Belanja,Bulan\n';
     budgets.forEach(b => {
-      const cat = categories.find(c => c.id === b.categoryId)?.name || '';
-      csv += `"${cat}",${b.limitAmount},"${b.month}"\n`;
+      const isAllCat = !b.categoryId || b.categoryId === 'all';
+      const isAllWal = !b.walletId || b.walletId === 'all';
+      const cat = isAllCat ? 'Semua Kategori' : (categories.find(c => c.id === b.categoryId)?.name || '');
+      const wal = isAllWal ? 'Semua Dompet' : (wallets.find(w => w.id === b.walletId)?.name || '');
+      csv += `"${wal}","${cat}",${b.limitAmount},"${b.month}"\n`;
     });
 
     csv += '\n=== AKTIVITAS HARIAN ===\n';
@@ -1169,9 +1210,18 @@ export default function App() {
     // 3. Budgets List Table rows
     let budgetsTableRows = '';
     budgets.forEach((b, index) => {
-      const cat = categories.find(c => c.id === b.categoryId)?.name || 'Kategori Umum';
+      const isAllCat = !b.categoryId || b.categoryId === 'all';
+      const isAllWal = !b.walletId || b.walletId === 'all';
+      const cat = isAllCat ? 'Semua Kategori' : (categories.find(c => c.id === b.categoryId)?.name || 'Kategori Umum');
+      const wal = isAllWal ? 'Semua Dompet' : (wallets.find(w => w.id === b.walletId)?.name || 'Dompet');
       const spent = transactions
-        .filter(t => t.type === 'pengeluaran' && t.categoryId === b.categoryId)
+        .filter(t => {
+          const isExpense = t.type === 'pengeluaran';
+          const matchCat = isAllCat || t.categoryId === b.categoryId;
+          const matchWal = isAllWal || t.walletId === b.walletId;
+          const matchMonth = t.date.startsWith(b.month);
+          return isExpense && matchCat && matchWal && matchMonth;
+        })
         .reduce((sum, t) => sum + t.amount, 0);
       const pct = Math.min((spent / b.limitAmount) * 100, 100);
       const isOver = spent > b.limitAmount;
@@ -1179,7 +1229,7 @@ export default function App() {
       budgetsTableRows += `
         <tr class="${index % 2 === 1 ? 'stripe-row' : ''}">
           <td style="text-align: center; font-weight: bold; color: #64748b;">${index + 1}</td>
-          <td style="font-weight: 700; color: #0f172a;">${cat}</td>
+          <td style="font-weight: 700; color: #0f172a;">${cat} <small style="color: #64748b; font-weight: normal;">(${wal})</small></td>
           <td style="text-align: center; font-weight: bold; color: #64748b;">${b.month}</td>
           <td class="amount font-mono" style="color: ${isOver ? '#dc2626' : '#0f172a'}">${formatIDR(spent)}</td>
           <td class="amount font-mono" style="color: #4f46e5;">${formatIDR(b.limitAmount)}</td>
@@ -2111,6 +2161,8 @@ export default function App() {
             }}
             onEdit={(budget) => openAddModal('budgeting', budget)}
             settings={settings}
+            handleDeleteTransaction={handleDeleteTransaction}
+            onEditTransaction={(tx) => openAddModal(tx.type, tx)}
           />
         )}
 

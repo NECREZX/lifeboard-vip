@@ -7,6 +7,30 @@ import React, { useState } from 'react';
 import { X, Wallet as WalletIcon, FolderPlus, Coins, Plus, Calendar, Bookmark, Landmark, Sparkles } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Wallet, Category, IncomeSource } from '../types';
+import { formatIDR } from '../lib/formatters';
+
+export const parseAmountInput = (val: string | number): number => {
+  if (typeof val === 'number') return Math.round(val);
+  if (!val) return 0;
+  let s = val.trim();
+  // Handle thousand separators: Indonesian "7.500.000" or US "7,500,000"
+  if (s.includes('.')) {
+    const parts = s.split('.');
+    if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
+      s = s.replace(/\./g, '');
+    }
+  }
+  if (s.includes(',')) {
+    const parts = s.split(',');
+    if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
+      s = s.replace(/,/g, '');
+    } else {
+      s = s.replace(',', '.');
+    }
+  }
+  const num = parseFloat(s);
+  return isNaN(num) ? 0 : Math.round(num);
+};
 
 interface FormsModalProps {
   isOpen: boolean;
@@ -72,7 +96,8 @@ export default function FormsModal({
   onAddActivity,
   onUpdateActivity,
   onAddWishlist,
-  onUpdateWishlist
+  onUpdateWishlist,
+  language = 'id'
 }: FormsModalProps) {
   const [activeForm, setActiveForm] = React.useState<FormType>(initialTab || 'pengeluaran');
 
@@ -100,7 +125,7 @@ export default function FormsModal({
   // Transfer extra state
   const [adminFee, setAdminFee] = useState('');
   const [budgetLimit, setBudgetLimit] = useState('');
-  const [budgetCategoryId, setBudgetCategoryId] = useState(categories[0]?.id || '');
+  const [budgetCategoryId, setBudgetCategoryId] = useState('all');
   const [budgetMonth, setBudgetMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
   const [budgetWalletId, setBudgetWalletId] = useState('all');
 
@@ -142,7 +167,7 @@ export default function FormsModal({
           if (editData.sourceId) setSelectedSourceId(editData.sourceId);
         } else if (targetForm === 'budgeting') {
           setBudgetLimit(editData.limitAmount.toString());
-          setBudgetCategoryId(editData.categoryId);
+          setBudgetCategoryId(editData.categoryId || 'all');
           setBudgetMonth(editData.month);
           setBudgetWalletId(editData.walletId || 'all');
         } else if (targetForm === 'tabungan') {
@@ -172,8 +197,8 @@ export default function FormsModal({
         }
         if (categories.length > 0) {
           setSelectedCategoryId(categories[0].id);
-          setBudgetCategoryId(categories[0].id);
         }
+        setBudgetCategoryId('all');
         if (sources.length > 0) setSelectedSourceId(sources[0].id);
       }
     }
@@ -248,7 +273,7 @@ export default function FormsModal({
     const isEdit = !!editData;
 
     if (activeForm === 'pengeluaran') {
-      const parsedAmount = parseFloat(amount);
+      const parsedAmount = parseAmountInput(amount);
       if (isNaN(parsedAmount) || parsedAmount <= 0) return showError('Jumlah harus valid!');
       if (!selectedWalletId) return showError('Silakan pilih atau tambahkan dompet terlebih dahulu!');
       if (!selectedCategoryId) return showError('Silakan pilih atau tambahkan kategori terlebih dahulu!');
@@ -268,7 +293,7 @@ export default function FormsModal({
         onAddTransaction(data);
       }
     } else if (activeForm === 'pemasukan') {
-      const parsedAmount = parseFloat(amount);
+      const parsedAmount = parseAmountInput(amount);
       if (isNaN(parsedAmount) || parsedAmount <= 0) return showError('Jumlah harus valid!');
       if (!selectedWalletId) return showError('Silakan pilih atau tambahkan dompet terlebih dahulu!');
       if (!selectedSourceId) return showError('Silakan pilih atau tambahkan sumber pendapatan terlebih dahulu!');
@@ -288,8 +313,8 @@ export default function FormsModal({
         onAddTransaction(data);
       }
     } else if (activeForm === 'transfer') {
-      const parsedAmount = parseFloat(amount);
-      const parsedAdminFee = adminFee ? parseFloat(adminFee) : 0;
+      const parsedAmount = parseAmountInput(amount);
+      const parsedAdminFee = adminFee ? parseAmountInput(adminFee) : 0;
       if (isNaN(parsedAmount) || parsedAmount <= 0) return showError('Jumlah transfer harus valid!');
       if (isNaN(parsedAdminFee) || parsedAdminFee < 0) return showError('Biaya admin harus angka valid!');
       if (!selectedWalletId) return showError('Silakan pilih dompet asal!');
@@ -312,7 +337,7 @@ export default function FormsModal({
         onAddTransaction(data);
       }
     } else if (activeForm === 'budgeting') {
-      const parsedLimit = parseFloat(budgetLimit);
+      const parsedLimit = parseAmountInput(budgetLimit);
       if (isNaN(parsedLimit) || parsedLimit <= 0) return showError('Anggaran limit harus valid!');
       if (!budgetCategoryId) return showError('Silakan tentukan kategori anggaran!');
 
@@ -329,8 +354,8 @@ export default function FormsModal({
         onAddBudget(data);
       }
     } else if (activeForm === 'tabungan') {
-      const parsedTarget = parseFloat(savingTarget);
-      const parsedCurrent = parseFloat(savingCurrent);
+      const parsedTarget = parseAmountInput(savingTarget);
+      const parsedCurrent = parseAmountInput(savingCurrent);
       if (isNaN(parsedTarget) || parsedTarget <= 0) return showError('Target jumlah harus valid!');
       if (!savingName.trim()) return showError('Nama target tabungan wajib diisi!');
 
@@ -367,7 +392,7 @@ export default function FormsModal({
       const data = {
         title: wishlistTitle.trim(),
         month: wishlistMonth,
-        price: wishlistPrice ? parseFloat(wishlistPrice) : undefined,
+        price: wishlistPrice ? parseAmountInput(wishlistPrice) : undefined,
         notes: wishlistNotes.trim() || undefined
       };
 
@@ -487,22 +512,30 @@ export default function FormsModal({
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => setAmount(e.target.value.replace(/[^0-9.,]/g, ''))}
                     placeholder="0"
-                    min="1"
                     className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-sm rounded-xl font-mono")}
                     required
                   />
                   <button
                     type="button"
-                    onClick={() => setAmount(prev => prev ? prev + '000' : '1000')}
+                    onClick={() => {
+                      const currentVal = parseAmountInput(amount);
+                      setAmount(currentVal > 0 ? (currentVal * 1000).toString() : '100000');
+                    }}
                     className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                   >
                     +000
                   </button>
                 </div>
+                {parseAmountInput(amount) > 0 && (
+                  <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 pl-1">
+                    = {formatIDR(parseAmountInput(amount))}
+                  </span>
+                )}
               </div>
 
               {/* Kategori Pengeluaran (Only for Pengeluaran) */}
@@ -682,14 +715,18 @@ export default function FormsModal({
             <>
               {/* Wallet Dropdown for Budgeting */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Pilih Dompet / Akun</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                  {language === 'en' ? 'Select Wallet / Account' : 'Pilih Dompet / Akun'}
+                </label>
                 <select
                   value={budgetWalletId}
                   onChange={(e) => setBudgetWalletId(e.target.value)}
                   className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 >
-                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">Semua Dompet (Global)</option>
+                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">
+                    {language === 'en' ? 'All Wallets (Global)' : 'Semua Dompet (Global)'}
+                  </option>
                   {wallets.map((w) => (
                     <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{w.name}</option>
                   ))}
@@ -697,43 +734,112 @@ export default function FormsModal({
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Kategori Pengeluaran</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                  {language === 'en' ? 'Expense Category' : 'Kategori Pengeluaran'}
+                </label>
                 <select
                   value={budgetCategoryId}
                   onChange={(e) => setBudgetCategoryId(e.target.value)}
                   className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 >
+                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-bold text-indigo-600 dark:text-indigo-400">
+                    {language === 'en' ? 'All Categories (Total Spending Limit)' : 'Semua Kategori (Batas Belanja Total)'}
+                  </option>
                   {categories.map((c) => (
                     <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{c.name}</option>
                   ))}
                 </select>
               </div>
 
+              {/* Contextual Scope Helper for the 4 Scenarios */}
+              {(() => {
+                const isAllWallet = !budgetWalletId || budgetWalletId === 'all';
+                const isAllCategory = !budgetCategoryId || budgetCategoryId === 'all';
+                const selectedW = wallets.find(w => w.id === budgetWalletId);
+                const selectedC = categories.find(c => c.id === budgetCategoryId);
+
+                let badgeTitle = '';
+                let badgeDesc = '';
+
+                if (isAllWallet && isAllCategory) {
+                  badgeTitle = language === 'en' ? 'Total Monthly Budget (All Wallets & Categories)' : 'Batas Belanja Bulanan (Total Keseluruhan)';
+                  badgeDesc = language === 'en'
+                    ? 'Limits total combined expenses across all wallets and all categories.'
+                    : 'Membatasi total pengeluaran gabungan dari seluruh dompet dan seluruh kategori.';
+                } else if (!isAllWallet && isAllCategory) {
+                  badgeTitle = language === 'en'
+                    ? `Wallet Spending Limit: ${selectedW?.name || 'Selected Wallet'}`
+                    : `Batas Belanja Dompet: ${selectedW?.name || 'Dompet Terpilih'}`;
+                  badgeDesc = language === 'en'
+                    ? `Any expense from ${selectedW?.name || 'this wallet'} (any category) will deduct this budget.`
+                    : `Setiap transaksi keluar dari ${selectedW?.name || 'dompet ini'} (kategori apa saja) akan memotong batas belanja dompet ini.`;
+                } else if (isAllWallet && !isAllCategory) {
+                  badgeTitle = language === 'en'
+                    ? `Global Category: ${selectedC?.name || 'Category'}`
+                    : `Kategori Global: ${selectedC?.name || 'Kategori'}`;
+                  badgeDesc = language === 'en'
+                    ? `Limits spending for ${selectedC?.name || 'this category'} regardless of payment wallet.`
+                    : `Membatasi pengeluaran kategori ${selectedC?.name || 'ini'} di semua dompet secara gabungan.`;
+                } else {
+                  badgeTitle = language === 'en'
+                    ? `Specific: ${selectedW?.name || 'Wallet'} • ${selectedC?.name || 'Category'}`
+                    : `Spesifik: ${selectedW?.name || 'Dompet'} • ${selectedC?.name || 'Kategori'}`;
+                  badgeDesc = language === 'en'
+                    ? `Only applies when spending on ${selectedC?.name || 'this category'} using ${selectedW?.name || 'this wallet'}.`
+                    : `Hanya terpotong ketika belanja ${selectedC?.name || 'kategori ini'} menggunakan dompet ${selectedW?.name || 'ini'}.`;
+                }
+
+                return (
+                  <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 flex flex-col gap-0.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-200">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
+                      <span>{badgeTitle}</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed pl-3">
+                      {badgeDesc}
+                    </p>
+                  </div>
+                );
+              })()}
+
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Batas Belanja Bulanan (Rp)</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                  {language === 'en' ? 'Monthly Spending Limit (Rp)' : 'Batas Belanja Bulanan (Rp)'}
+                </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     value={budgetLimit}
-                    onChange={(e) => setBudgetLimit(e.target.value)}
-                    placeholder="Estimasi limit pengeluaran"
+                    onChange={(e) => setBudgetLimit(e.target.value.replace(/[^0-9.,]/g, ''))}
+                    placeholder={language === 'en' ? 'Estimated spending limit' : 'Estimasi limit pengeluaran'}
                     className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-xs rounded-xl font-mono")}
                     required
                   />
                   <button
                     type="button"
-                    onClick={() => setBudgetLimit(prev => prev ? prev + '000' : '1000')}
+                    onClick={() => {
+                      const currentVal = parseAmountInput(budgetLimit);
+                      setBudgetLimit(currentVal > 0 ? (currentVal * 1000).toString() : '1000000');
+                    }}
                     className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                   >
                     +000
                   </button>
                 </div>
+                {parseAmountInput(budgetLimit) > 0 && (
+                  <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 pl-1">
+                    = {formatIDR(parseAmountInput(budgetLimit))}
+                  </span>
+                )}
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Bulan Anggaran</label>
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                  {language === 'en' ? 'Budget Month' : 'Bulan Anggaran'}
+                </label>
                 <input
                   type="month"
                   value={budgetMonth}
