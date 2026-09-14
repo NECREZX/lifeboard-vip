@@ -50,6 +50,17 @@ export interface Saving {
   color: string;
 }
 
+export interface SavingLog {
+  id: string;
+  savingId: string;
+  type: 'setor' | 'tarik';
+  amount: number;
+  walletId: string;
+  date: string; // YYYY-MM-DD
+  notes?: string;
+  createdAt?: string;
+}
+
 export interface Budget {
   id: string;
   categoryId: string;

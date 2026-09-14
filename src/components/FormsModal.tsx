@@ -259,7 +259,6 @@ export default function FormsModal({
     Swal.fire({
       title: 'Validasi Gagal',
       text: msg,
-      icon: 'error',
       confirmButtonText: 'OK',
       confirmButtonColor: '#ef4444',
       background: document.documentElement.classList.contains('dark') ? '#0f172a' : '#ffffff',

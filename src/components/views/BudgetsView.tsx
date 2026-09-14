@@ -362,23 +362,9 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
 
               {/* Terpakai */}
               <div className="flex flex-col justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 min-w-0">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                    {isEn ? 'Spent' : 'Terpakai'}
-                  </span>
-                  {currTxs.length > 0 ? (
-                    <button
-                      type="button"
-                      onClick={() => openInspectingModal(modalTitle, currTxs)}
-                      className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-0.5"
-                    >
-                      <span>{currTxs.length} trx</span>
-                      <ArrowUpRight className="w-3 h-3" />
-                    </button>
-                  ) : (
-                    <span className="text-xs font-medium text-slate-400">0 trx</span>
-                  )}
-                </div>
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  {isEn ? 'Spent' : 'Terpakai'}
+                </span>
                 <span className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mt-0.5 truncate">
                   {formatIDR(currSpend)}
                 </span>
@@ -403,6 +389,26 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                 }`}
                 style={{ width: `${currStatus.pctValue}%` }}
               />
+            </div>
+
+            {/* Action Row: Rincian Transaksi */}
+            <div className="border-t border-slate-100 dark:border-slate-800/80 pt-2.5 mt-3.5 flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => openInspectingModal(modalTitle, currTxs)}
+                className="flex-1 flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50/80 hover:bg-slate-100/80 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-2">
+                  <span>{isEn ? 'Transaction Details' : 'Rincian Transaksi'}</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-extrabold border border-slate-200/60 dark:border-slate-700">
+                    {currTxs.length}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-[11px] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                  <span>{isEn ? 'View Details' : 'Lihat Rincian'}</span>
+                  <ChevronDown className="w-3.5 h-3.5 -rotate-90 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </button>
             </div>
           </div>
         );
@@ -467,9 +473,9 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
             }
 
             return (
-              <div key={b.id} className={getCardClasses() + " p-4 sm:p-5 flex flex-col justify-between h-[160px] relative"}>
-                {/* Header Row: Fixed 40px height */}
-                <div className="flex items-center justify-between gap-2 h-10">
+              <div key={b.id} className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between gap-3.5 relative overflow-hidden transition-all duration-200`}>
+                {/* Header Row: Category, Wallet & Actions */}
+                <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div 
                       className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
@@ -492,7 +498,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{categoryTitle}</h4>
                         <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full border shrink-0 ${scopeClass}`}>
                           {scopeLabel}
@@ -526,38 +532,18 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                 </div>
 
                 {/* Middle Content: Progress & Numbers */}
-                <div className="mt-auto">
-                  {/* Usage Line: Fixed 24px height */}
-                  <div className="h-6 flex items-center justify-between text-xs mb-1.5 gap-2">
-                    <div className="flex items-center gap-1.5 shrink-0 min-w-0">
-                      <button
-                        type="button"
-                        onClick={() => matchingTxs.length > 0 && openInspectingModal(
-                          `${categoryTitle} (${walletName})`,
-                          matchingTxs
-                        )}
-                        disabled={matchingTxs.length === 0}
-                        className={`text-[10px] font-bold inline-flex items-center gap-1 px-2 py-0.5 rounded-md shrink-0 whitespace-nowrap transition ${
-                          matchingTxs.length > 0 
-                            ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 hover:underline cursor-pointer shadow-2xs' 
-                            : 'text-slate-400 bg-slate-100/80 dark:bg-slate-800/60 cursor-default opacity-60'
-                        }`}
-                        title={matchingTxs.length > 0 ? (isEn ? "View counted transactions" : "Lihat transaksi terhitung") : (isEn ? "No transactions" : "Belum ada transaksi")}
-                      >
-                        <span className="whitespace-nowrap">{matchingTxs.length} trx</span>
-                        <ArrowUpRight className="w-2.5 h-2.5 shrink-0" />
-                      </button>
-                      <span className="font-semibold text-slate-500 text-xs truncate">
-                        {isEn ? 'Usage' : 'Terpakai'}
-                      </span>
-                    </div>
-                    <span className={`font-bold font-mono text-[11px] sm:text-xs whitespace-nowrap shrink-0 ${itemStatus.isOver ? 'text-rose-500' : 'text-slate-800 dark:text-slate-200'}`}>
-                      {formatIDR(currentSpend)} / {formatIDR(b.limitAmount)}
+                <div className="bg-slate-50/80 dark:bg-slate-800/40 p-3 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="font-semibold text-slate-500 dark:text-slate-400 text-[11px]">
+                      {isEn ? 'Counted Expenses:' : 'Terpakai saat ini:'}
+                    </span>
+                    <span className={`font-mono font-bold text-xs sm:text-sm ${itemStatus.isOver ? 'text-rose-500' : 'text-slate-900 dark:text-white'}`}>
+                      {formatIDR(currentSpend)} <span className="text-slate-400 font-normal">/ {formatIDR(b.limitAmount)}</span>
                     </span>
                   </div>
 
-                  {/* Progress Bar: Fixed 8px height */}
-                  <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                  {/* Progress Bar */}
+                  <div className="w-full bg-slate-200/80 dark:bg-slate-700/80 h-2 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-300 ${
                         itemStatus.status === 'red' ? 'bg-rose-500' : itemStatus.status === 'yellow' ? 'bg-amber-500' : 'bg-emerald-500'
@@ -566,15 +552,38 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                     />
                   </div>
 
-                  {/* Remaining & Percentage: Fixed 16px height */}
-                  <div className="h-4 flex items-center justify-between mt-1.5 text-[10px]">
-                    <span className={`font-bold uppercase tracking-wider truncate ${itemStatus.isOver ? 'text-rose-500' : itemStatus.status === 'yellow' ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`}>
-                      {itemStatus.isOver ? (isEn ? 'OVER LIMIT!' : 'MELEBIHI LIMIT!') : `${isEn ? 'Remaining:' : 'Sisa:'} ${formatIDR(itemStatus.remaining)}`}
+                  {/* Remaining & Percentage */}
+                  <div className="flex items-center justify-between mt-1.5 text-[10px] font-bold text-slate-400">
+                    <span className={itemStatus.isOver ? 'text-rose-500' : itemStatus.status === 'yellow' ? 'text-amber-600 dark:text-amber-400' : ''}>
+                      {itemStatus.isOver ? (isEn ? 'OVER LIMIT!' : 'MELEBIHI LIMIT!') : `${isEn ? 'Sisa:' : 'Sisa:'} ${formatIDR(itemStatus.remaining)}`}
                     </span>
-                    <span className={`font-bold shrink-0 ml-2 ${itemStatus.status === 'red' ? 'text-rose-500' : itemStatus.status === 'yellow' ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`}>
+                    <span className={itemStatus.status === 'red' ? 'text-rose-500' : itemStatus.status === 'yellow' ? 'text-amber-600 dark:text-amber-400' : ''}>
                       {itemStatus.pctText}
                     </span>
                   </div>
+                </div>
+
+                {/* Action Row: Rincian Transaksi (Persis Konsep Menu Tabungan) */}
+                <div className="border-t border-slate-100 dark:border-slate-800/80 pt-2.5 flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openInspectingModal(
+                      `${categoryTitle} (${walletName})`,
+                      matchingTxs
+                    )}
+                    className="flex-1 flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50/80 hover:bg-slate-100/80 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{isEn ? 'Transaction Details' : 'Rincian Transaksi'}</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-extrabold border border-slate-200/60 dark:border-slate-700">
+                        {matchingTxs.length}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[11px] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                      <span>{isEn ? 'View Details' : 'Lihat Rincian'}</span>
+                      <ChevronDown className="w-3.5 h-3.5 -rotate-90 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </button>
                 </div>
               </div>
             );
@@ -602,24 +611,19 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
             <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
             {/* Header */}
-            <div className="px-4 sm:px-5 pt-2 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
-                  <Receipt className="w-4 h-4" />
+            <div className="px-4 sm:px-5 pt-3 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-tight">
+                    {isEn ? 'Counted Expenses Detail' : 'Rincian Transaksi Terpakai'}
+                  </h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                    {inspectingModal.transactions.length} trx
+                  </span>
                 </div>
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-tight">
-                      {isEn ? 'Counted Expenses Detail' : 'Rincian Transaksi Terpakai'}
-                    </h3>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
-                      {inspectingModal.transactions.length} trx
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                    {inspectingModal.title} • {getIndonesianMonthName(selectedMonth)}
-                  </p>
-                </div>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                  {inspectingModal.title} • {getIndonesianMonthName(selectedMonth)}
+                </p>
               </div>
             </div>
 

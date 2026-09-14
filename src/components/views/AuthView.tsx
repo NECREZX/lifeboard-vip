@@ -28,7 +28,6 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
     e.preventDefault();
     if (!username || !password) {
       Swal.fire({
-        icon: 'error',
         title: 'Input Tidak Lengkap',
         text: 'Harap isi Username dan Password terlebih dahulu.',
         confirmButtonColor: '#ea580c'

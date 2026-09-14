@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Wallet, Category, IncomeSource, Transaction, Saving, Budget, Activity, Wishlist, NotificationItem } from './types';
+import { Wallet, Category, IncomeSource, Transaction, Saving, SavingLog, Budget, Activity, Wishlist, NotificationItem } from './types';
 
 export const DEFAULT_WALLETS: Wallet[] = [
   { id: 'w-1', name: 'Dompet Utama', initialBalance: 0, icon: 'Wallet', color: '#10b981' }
@@ -28,6 +28,7 @@ export const DEFAULT_TRANSACTIONS: Transaction[] = [];
 export const DEFAULT_BUDGETS: Budget[] = [];
 
 export const DEFAULT_SAVINGS: Saving[] = [];
+export const DEFAULT_SAVING_LOGS: SavingLog[] = [];
 
 export const DEFAULT_ACTIVITIES: Activity[] = [];
 

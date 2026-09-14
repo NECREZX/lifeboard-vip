@@ -44,6 +44,7 @@ import {
   IncomeSource,
   Transaction,
   Saving,
+  SavingLog,
   Budget,
   Activity,
   Wishlist,
@@ -68,6 +69,7 @@ import {
   DEFAULT_TRANSACTIONS,
   DEFAULT_BUDGETS,
   DEFAULT_SAVINGS,
+  DEFAULT_SAVING_LOGS,
   DEFAULT_ACTIVITIES,
   DEFAULT_WISHLISTS,
   DEFAULT_NOTIFICATIONS
@@ -122,6 +124,11 @@ export default function App() {
   const [savings, setSavings] = useState<Saving[]>(() => {
     const saved = localStorage.getItem('fin_savings');
     return saved ? JSON.parse(saved) : DEFAULT_SAVINGS;
+  });
+
+  const [savingLogs, setSavingLogs] = useState<SavingLog[]>(() => {
+    const saved = localStorage.getItem('fin_saving_logs');
+    return saved ? JSON.parse(saved) : DEFAULT_SAVING_LOGS;
   });
 
   const [budgets, setBudgets] = useState<Budget[]>(() => {
@@ -223,7 +230,6 @@ export default function App() {
     Swal.fire({
       title: title,
       text: message,
-      icon: type === 'danger' ? 'error' : type,
       showCancelButton: true,
       confirmButtonText: 'Konfirmasi',
       cancelButtonText: 'Batal',
@@ -246,7 +252,6 @@ export default function App() {
     Swal.fire({
       title: title,
       text: message,
-      icon: 'warning',
       confirmButtonText: 'Selesai',
       confirmButtonColor: '#6366f1',
       background: isDark ? '#1e293b' : '#ffffff',
@@ -277,6 +282,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('fin_savings', JSON.stringify(savings));
   }, [savings]);
+
+  useEffect(() => {
+    localStorage.setItem('fin_saving_logs', JSON.stringify(savingLogs));
+  }, [savingLogs]);
 
   useEffect(() => {
     localStorage.setItem('fin_budgets', JSON.stringify(budgets));
@@ -439,7 +448,7 @@ export default function App() {
     if (walletEditId) {
       // Editing
       setWallets(prev => prev.map(w => w.id === walletEditId ? { ...w, name: walletFormName, initialBalance: balance, icon: walletFormIcon, color: walletFormColor } : w));
-      triggerNotification('✏️ Dompet Diperbarui', `Dompet "${walletFormName}" berhasil disimpan.`, 'info');
+      triggerNotification('Dompet Diperbarui', `Dompet "${walletFormName}" berhasil disimpan.`, 'info');
     } else {
       // Adding
       const newWallet: Wallet = {
@@ -479,7 +488,7 @@ export default function App() {
     e.preventDefault();
     if (categoryEditId) {
       setCategories(prev => prev.map(c => c.id === categoryEditId ? { ...c, name: categoryFormName, icon: categoryFormIcon, color: categoryFormColor } : c));
-      triggerNotification('✏️ Kategori Diperbarui', `Kategori "${categoryFormName}" berhasil disimpan.`, 'info');
+      triggerNotification('Kategori Diperbarui', `Kategori "${categoryFormName}" berhasil disimpan.`, 'info');
     } else {
       const newCategory: Category = {
         id: `c-${Date.now()}`,
@@ -533,7 +542,7 @@ export default function App() {
     e.preventDefault();
     if (sourceEditId) {
       setSources(prev => prev.map(s => s.id === sourceEditId ? { ...s, name: sourceFormName, icon: sourceFormIcon, color: sourceFormColor } : s));
-      triggerNotification('✏️ Sumber Diperbarui', `Sumber "${sourceFormName}" berhasil disimpan.`, 'info');
+      triggerNotification('Sumber Diperbarui', `Sumber "${sourceFormName}" berhasil disimpan.`, 'info');
     } else {
       const newSource: IncomeSource = {
         id: `s-${Date.now()}`,
@@ -589,7 +598,7 @@ export default function App() {
   };
 
   // --- Math/Financial Computations ---
-  // Wallets with calculated current balance based on transactions
+  // Wallets with calculated current balance based on transactions and savings deposits/withdrawals
   const walletsWithCurrentBalance = wallets.map(w => {
     const incomes = transactions
       .filter(t => t.type === 'pemasukan' && t.walletId === w.id)
@@ -603,9 +612,16 @@ export default function App() {
     const outgoingTransfers = transactions
       .filter(t => t.type === 'transfer' && t.walletId === w.id)
       .reduce((sum, t) => sum + t.amount + (t.adminFee || 0), 0);
+    const savingsDeposits = savingLogs
+      .filter(l => l.walletId === w.id && l.type === 'setor')
+      .reduce((sum, l) => sum + l.amount, 0);
+    const savingsWithdrawals = savingLogs
+      .filter(l => l.walletId === w.id && l.type === 'tarik')
+      .reduce((sum, l) => sum + l.amount, 0);
+
     return {
       ...w,
-      currentBalance: w.initialBalance + incomes - expenses + incomingTransfers - outgoingTransfers
+      currentBalance: w.initialBalance + incomes - expenses + incomingTransfers - outgoingTransfers - savingsDeposits + savingsWithdrawals
     };
   });
 
@@ -627,8 +643,16 @@ export default function App() {
     .filter((t) => t.type === 'transfer')
     .reduce((sum, t) => sum + (t.adminFee || 0), 0);
 
-  // Total Main Balance (Total Saldo Utama) = Initial Wallets + Incomes - Expenses - Transfer Admin Fees
-  const totalSaldoUtama = totalWalletBalance + totalIncome - totalExpense - totalTransferAdminFees;
+  // Total Savings Deposits / Withdrawals across all wallets
+  const totalSavingsDeposits = savingLogs
+    .filter((l) => l.type === 'setor')
+    .reduce((sum, l) => sum + l.amount, 0);
+  const totalSavingsWithdrawals = savingLogs
+    .filter((l) => l.type === 'tarik')
+    .reduce((sum, l) => sum + l.amount, 0);
+
+  // Total Main Balance (Total Saldo Utama) = Initial Wallets + Incomes - Expenses - Transfer Admin Fees - Savings Deposits + Savings Withdrawals
+  const totalSaldoUtama = totalWalletBalance + totalIncome - totalExpense - totalTransferAdminFees - totalSavingsDeposits + totalSavingsWithdrawals;
 
   // --- Notification triggers & warnings ---
   const triggerNotification = (title: string, message: string, type: 'info' | 'warning' | 'success') => {
@@ -642,9 +666,8 @@ export default function App() {
     };
     setNotifications(prev => [newNotif, ...prev]);
 
-    // Standard centered SweetAlert
+    // Standard SweetAlert without icon
     Swal.fire({
-      icon: type,
       title: title,
       text: message,
       confirmButtonText: 'OK',
@@ -869,7 +892,7 @@ export default function App() {
     if (!editingWallet) return;
     setWallets(prev => prev.map(w => w.id === editingWallet.id ? editingWallet : w));
     setEditingWallet(null);
-    triggerNotification('✏️ Dompet Diperbarui', 'Detail dompet berhasil disimpan.', 'info');
+    triggerNotification('Dompet Diperbarui', 'Detail dompet berhasil disimpan.', 'info');
   };
 
   const handleDeleteWallet = (id: string) => {
@@ -901,12 +924,191 @@ export default function App() {
   };
 
   const handleDeleteSaving = (id: string) => {
+    const targetSaving = savings.find(s => s.id === id);
+    const logsCount = savingLogs.filter(l => l.savingId === id).length;
     showConfirm(
       'Hapus Target Tabungan',
-      'Hapus target tabungan ini?',
+      targetSaving && targetSaving.currentAmount > 0
+        ? `Target "${targetSaving.name}" memiliki dana terkumpul sebesar ${formatIDR(targetSaving.currentAmount)}. Menghapus target ini juga akan menghapus ${logsCount} riwayat transaksinya. Lanjutkan?`
+        : 'Hapus target tabungan ini?',
       () => {
         setSavings(prev => prev.filter(s => s.id !== id));
-        triggerNotification('Tabungan Dihapus', 'Target tabungan dibersihkan.', 'info');
+        setSavingLogs(prev => prev.filter(l => l.savingId !== id));
+        triggerNotification('Tabungan Dihapus', 'Target tabungan dan riwayat transaksinya dibersihkan.', 'info');
+      },
+      'danger'
+    );
+  };
+
+  // --- Integrated Savings Deposit & Withdraw Handlers ---
+  const handleDepositSaving = (savingId: string, walletId: string, amount: number, dateStr: string, notes?: string) => {
+    if (amount <= 0) return;
+    const targetSaving = savings.find(s => s.id === savingId);
+    const sourceWallet = wallets.find(w => w.id === walletId);
+    if (!targetSaving) return;
+
+    // Jika target tabungan sudah mencapai atau melebihi targetAmount, tidak dapat disetor lagi
+    if (targetSaving.currentAmount >= targetSaving.targetAmount) {
+      showAlert('Target Tabungan Tercapai', `Target tabungan "${targetSaving.name}" sudah tercapai 100%. Anda tidak dapat menyetor saldo lagi ke tabungan ini.`);
+      return;
+    }
+
+    const remainingNeeded = Math.max(0, targetSaving.targetAmount - targetSaving.currentAmount);
+    if (amount > remainingNeeded) {
+      showAlert('Melebihi Sisa Target', `Sisa target yang dibutuhkan untuk "${targetSaving.name}" adalah ${formatIDR(remainingNeeded)}. Anda tidak dapat menyetor lebih dari sisa target.`);
+      return;
+    }
+
+    const newLog: SavingLog = {
+      id: `sl-${Date.now()}`,
+      savingId,
+      type: 'setor',
+      amount,
+      walletId,
+      date: dateStr || new Date().toISOString().split('T')[0],
+      notes: notes || '',
+      createdAt: new Date().toISOString()
+    };
+
+    setSavingLogs(prev => [newLog, ...prev]);
+
+    const newCurrent = targetSaving.currentAmount + amount;
+    setSavings(prev => prev.map(s => s.id === savingId ? { ...s, currentAmount: newCurrent } : s));
+
+    const walletName = sourceWallet?.name || 'Dompet';
+    triggerNotification(
+      'Setor Tabungan Berhasil',
+      `Berhasil menyetor ${formatIDR(amount)} dari ${walletName} ke tabungan "${targetSaving.name}". Saldo ${walletName} telah berkurang.`,
+      'success'
+    );
+
+    if (newCurrent >= targetSaving.targetAmount && targetSaving.currentAmount < targetSaving.targetAmount) {
+      setTimeout(() => {
+        Swal.fire({
+          title: 'Target Tabungan Tercapai!',
+          text: `Selamat! Tabungan "${targetSaving.name}" telah berhasil mencapai target ${formatIDR(targetSaving.targetAmount)}!`,
+          confirmButtonText: 'Luar Biasa!',
+          confirmButtonColor: '#10b981',
+          background: settings.isDarkMode ? '#1e293b' : '#ffffff',
+          color: settings.isDarkMode ? '#f8fafc' : '#1e293b',
+          customClass: {
+            popup: 'rounded-2xl border border-slate-100 dark:border-slate-800 shadow-xl',
+          }
+        });
+      }, 300);
+    }
+  };
+
+  const handleWithdrawSaving = (savingId: string, walletId: string, amount: number, dateStr: string, notes?: string) => {
+    if (amount <= 0) return;
+    const targetSaving = savings.find(s => s.id === savingId);
+    const destWallet = wallets.find(w => w.id === walletId);
+    if (!targetSaving) return;
+
+    if (amount > targetSaving.currentAmount) {
+      showAlert('Saldo Tabungan Tidak Cukup', `Saldo tabungan saat ini adalah ${formatIDR(targetSaving.currentAmount)}. Anda tidak dapat menarik lebih dari saldo tersimpan.`);
+      return;
+    }
+
+    const newLog: SavingLog = {
+      id: `sl-${Date.now()}`,
+      savingId,
+      type: 'tarik',
+      amount,
+      walletId,
+      date: dateStr || new Date().toISOString().split('T')[0],
+      notes: notes || '',
+      createdAt: new Date().toISOString()
+    };
+
+    setSavingLogs(prev => [newLog, ...prev]);
+
+    const newCurrent = Math.max(0, targetSaving.currentAmount - amount);
+    setSavings(prev => prev.map(s => s.id === savingId ? { ...s, currentAmount: newCurrent } : s));
+
+    const walletName = destWallet?.name || 'Dompet';
+    triggerNotification(
+      'Tarik Tabungan Berhasil',
+      `Berhasil menarik ${formatIDR(amount)} dari tabungan "${targetSaving.name}" ke ${walletName}. Saldo ${walletName} telah bertambah.`,
+      'success'
+    );
+  };
+
+  const handleUpdateSavingLog = (
+    logId: string,
+    walletId: string,
+    amount: number,
+    dateStr: string,
+    notes?: string
+  ) => {
+    if (amount <= 0) return;
+    const oldLog = savingLogs.find(l => l.id === logId);
+    if (!oldLog) return;
+    const targetSaving = savings.find(s => s.id === oldLog.savingId);
+    if (!targetSaving) return;
+
+    let newCurrentAmount = targetSaving.currentAmount;
+    if (oldLog.type === 'setor') {
+      const baseWithoutOld = targetSaving.currentAmount - oldLog.amount;
+      const nextAmount = baseWithoutOld + amount;
+      if (nextAmount > targetSaving.targetAmount) {
+        showAlert(
+          'Melebihi Target Tabungan',
+          `Jumlah total tabungan (${formatIDR(nextAmount)}) akan melebihi target (${formatIDR(targetSaving.targetAmount)}). Maksimal nominal yang diizinkan untuk transaksi setoran ini adalah ${formatIDR(targetSaving.targetAmount - baseWithoutOld)}.`
+        );
+        return;
+      }
+      newCurrentAmount = nextAmount;
+    } else {
+      // Tarik
+      const baseWithoutOld = targetSaving.currentAmount + oldLog.amount;
+      if (amount > baseWithoutOld) {
+        showAlert(
+          'Saldo Tabungan Tidak Cukup',
+          `Saldo tabungan yang tersedia untuk ditarik pada transaksi ini adalah maksimal ${formatIDR(baseWithoutOld)}.`
+        );
+        return;
+      }
+      newCurrentAmount = Math.max(0, baseWithoutOld - amount);
+    }
+
+    setSavingLogs(prev => prev.map(l => l.id === logId ? {
+      ...l,
+      walletId,
+      amount,
+      date: dateStr || l.date,
+      notes: notes !== undefined ? notes : l.notes
+    } : l));
+
+    setSavings(prev => prev.map(s => s.id === targetSaving.id ? { ...s, currentAmount: newCurrentAmount } : s));
+
+    triggerNotification(
+      'Riwayat Transaksi Diperbarui',
+      `Transaksi ${oldLog.type === 'setor' ? 'setoran' : 'penarikan'} sebesar ${formatIDR(amount)} berhasil diperbarui.`,
+      'success'
+    );
+  };
+
+  const handleDeleteSavingLog = (logId: string) => {
+    const log = savingLogs.find(l => l.id === logId);
+    if (!log) return;
+    const targetSaving = savings.find(s => s.id === log.savingId);
+    const targetWallet = wallets.find(w => w.id === log.walletId);
+    const actionLabel = log.type === 'setor' ? 'setor' : 'tarik';
+
+    showConfirm(
+      'Batalkan Riwayat Tabungan',
+      `Yakin ingin menghapus riwayat ${actionLabel} sebesar ${formatIDR(log.amount)}? Progres tabungan "${targetSaving?.name || ''}" dan saldo dompet "${targetWallet?.name || ''}" akan diselaraskan kembali secara otomatis.`,
+      () => {
+        setSavingLogs(prev => prev.filter(l => l.id !== logId));
+        if (targetSaving) {
+          if (log.type === 'setor') {
+            setSavings(prev => prev.map(s => s.id === log.savingId ? { ...s, currentAmount: Math.max(0, s.currentAmount - log.amount) } : s));
+          } else {
+            setSavings(prev => prev.map(s => s.id === log.savingId ? { ...s, currentAmount: s.currentAmount + log.amount } : s));
+          }
+        }
+        triggerNotification('Riwayat Dihapus', 'Transaksi tabungan dibatalkan dan saldo telah disesuaikan kembali.', 'info');
       },
       'danger'
     );
@@ -917,7 +1119,7 @@ export default function App() {
       if (a.id === id) {
         const nextStatus = a.status === 'completed' ? 'pending' : 'completed';
         if (nextStatus === 'completed') {
-          triggerNotification('🎉 Aktivitas Selesai!', `Kerja bagus! Aktivitas "${a.title}" telah diselesaikan.`, 'success');
+          triggerNotification('Aktivitas Selesai!', `Kerja bagus! Aktivitas "${a.title}" telah diselesaikan.`, 'success');
         }
         return { ...a, status: nextStatus };
       }
@@ -977,6 +1179,7 @@ export default function App() {
             setSources(DEFAULT_SOURCES);
             setTransactions([]);
             setSavings([]);
+            setSavingLogs([]);
             setBudgets([]);
             setActivities([]);
             setWishlists([]);
@@ -1011,6 +1214,7 @@ export default function App() {
       sources,
       transactions,
       savings,
+      savingLogs,
       budgets,
       activities,
       wishlists,
@@ -1051,6 +1255,7 @@ export default function App() {
             if (Array.isArray(data.sources)) setSources(data.sources);
             if (Array.isArray(data.transactions)) setTransactions(data.transactions);
             if (Array.isArray(data.savings)) setSavings(data.savings);
+            if (Array.isArray(data.savingLogs)) setSavingLogs(data.savingLogs);
             if (Array.isArray(data.budgets)) setBudgets(data.budgets);
             if (Array.isArray(data.activities)) setActivities(data.activities);
             if (Array.isArray(data.wishlists)) setWishlists(data.wishlists);
@@ -1093,6 +1298,16 @@ export default function App() {
     savings.forEach(s => {
       csv += `"${s.name.replace(/"/g, '""')}",${s.targetAmount},${s.currentAmount},"${s.deadline}"\n`;
     });
+
+    if (savingLogs.length > 0) {
+      csv += '\n=== RIWAYAT SETOR & TARIK TABUNGAN ===\n';
+      csv += 'Target Tabungan,Tipe,Nominal,Dompet Terkait,Tanggal,Catatan\n';
+      savingLogs.forEach(l => {
+        const sName = savings.find(s => s.id === l.savingId)?.name || '';
+        const wName = wallets.find(w => w.id === l.walletId)?.name || '';
+        csv += `"${sName.replace(/"/g, '""')}","${l.type.toUpperCase()}",${l.amount},"${wName.replace(/"/g, '""')}","${l.date}","${(l.notes || '').replace(/"/g, '""')}"\n`;
+      });
+    }
 
     csv += '\n=== ANGGARAN BULANAN ===\n';
     csv += 'Dompet,Kategori,Batas Belanja,Bulan\n';
@@ -2126,11 +2341,16 @@ export default function App() {
         {activeTab === 'tabungan' && (
           <SavingsView 
             savings={savings}
+            savingLogs={savingLogs}
+            wallets={walletsWithCurrentBalance}
             savingFilter={savingFilter}
             setSavingFilter={setSavingFilter}
             getCardClasses={getCardClasses}
             handleDeleteSaving={handleDeleteSaving}
-            handleSavingAddAmount={handleSavingAddAmount}
+            onDepositSaving={handleDepositSaving}
+            onWithdrawSaving={handleWithdrawSaving}
+            onUpdateSavingLog={handleUpdateSavingLog}
+            onDeleteSavingLog={handleDeleteSavingLog}
             onEdit={(saving) => openAddModal('tabungan', saving)}
             settings={settings}
           />
