@@ -365,7 +365,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                 <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                   {isEn ? 'Spent' : 'Terpakai'}
                 </span>
-                <span className="text-sm sm:text-base font-bold font-mono text-slate-800 dark:text-slate-100 mt-0.5 truncate">
+                <span className="text-sm sm:text-base font-bold font-mono text-blue-600 dark:text-blue-400 mt-0.5 truncate">
                   {formatIDR(currSpend)}
                 </span>
               </div>
@@ -537,8 +537,11 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                     <span className="font-semibold text-slate-500 dark:text-slate-400 text-[11px]">
                       {isEn ? 'Counted Expenses:' : 'Terpakai saat ini:'}
                     </span>
-                    <span className={`font-mono font-bold text-xs sm:text-sm ${itemStatus.isOver ? 'text-rose-500' : 'text-slate-900 dark:text-white'}`}>
-                      {formatIDR(currentSpend)} <span className="text-slate-400 font-mono font-normal">/ {formatIDR(b.limitAmount)}</span>
+                    <span className="font-mono font-bold text-xs sm:text-sm">
+                      <span className={itemStatus.isOver ? 'text-rose-500' : 'text-blue-600 dark:text-blue-400'}>
+                        {formatIDR(currentSpend)}
+                      </span>{' '}
+                      <span className="text-slate-400 font-mono font-normal">/ {formatIDR(b.limitAmount)}</span>
                     </span>
                   </div>
 
@@ -760,7 +763,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                 <span className="text-[10px] text-slate-400 dark:text-slate-500 block">
                   {isEn ? 'Total Counted Spent' : 'Total Terpakai'}
                 </span>
-                <span className="font-mono font-bold text-sm text-rose-600 dark:text-rose-400">
+                <span className="font-mono font-bold text-sm text-blue-600 dark:text-blue-400">
                   {formatIDR(inspectingModal.transactions.reduce((s, t) => s + (Number(t.amount) || 0), 0))}
                 </span>
               </div>
