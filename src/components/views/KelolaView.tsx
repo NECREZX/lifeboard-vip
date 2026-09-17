@@ -937,15 +937,15 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </span>
             <div className="relative">
               <select 
-                value={settings.fontStyle === 'sans' ? 'jakarta' : settings.fontStyle}
+                value={settings.fontStyle === 'sans' ? 'jakarta' : (settings.fontStyle === 'iceberg' || settings.fontStyle === 'pixel') ? 'slabo' : (settings.fontStyle === 'badscript' || settings.fontStyle === 'neobrutalism') ? 'architect' : settings.fontStyle}
                 onChange={(e) => setSettings && setSettings({ ...settings, fontStyle: e.target.value as FontStyle })}
                 className="w-full p-3 pr-10 appearance-none rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
               >
                 <option value="jakarta">Jakarta Sans (Modern & Clean)</option>
                 <option value="grotesk">Space Grotesk (Tech & Edgy)</option>
                 <option value="ios">Roboto Slab (Klasik Serif)</option>
-                <option value="neobrutalism">Edu VIC WA NT Hand (Tulisan Tangan / Cursive)</option>
-                <option value="iceberg">Iceberg (Display & Modern)</option>
+                <option value="architect">Architects Daughter (Tulisan Tangan / Cursive)</option>
+                <option value="slabo">Slabo (Serif & Elegan)</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>

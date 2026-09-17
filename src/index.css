@@ -50,8 +50,14 @@
   }
 }
 
-.iceberg-regular {
-  font-family: "Iceberg", sans-serif;
+.slabo-13px-regular {
+  font-family: "Slabo 13px", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.architects-daughter-regular {
+  font-family: "Architects Daughter", cursive;
   font-weight: 400;
   font-style: normal;
 }
