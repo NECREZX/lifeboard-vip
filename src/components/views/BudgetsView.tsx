@@ -355,7 +355,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                 <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 block">
                   {isEn ? 'Total Limit' : 'Batas Total'}
                 </span>
-                <div className="text-xl sm:text-2xl font-bold font-heading text-slate-900 dark:text-white mt-0.5 truncate">
+                <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white mt-0.5 truncate tracking-tight">
                   {formatIDR(currLimit)}
                 </div>
               </div>
@@ -365,7 +365,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                 <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                   {isEn ? 'Spent' : 'Terpakai'}
                 </span>
-                <span className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 mt-0.5 truncate">
+                <span className="text-sm sm:text-base font-bold font-mono text-slate-800 dark:text-slate-100 mt-0.5 truncate">
                   {formatIDR(currSpend)}
                 </span>
               </div>
@@ -375,7 +375,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                 <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                   {currStatus.isOver ? (isEn ? 'Overspent' : 'Kelebihan') : (isEn ? 'Remaining' : 'Sisa')}
                 </span>
-                <span className={`text-sm sm:text-base font-bold mt-0.5 truncate ${currStatus.isOver ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                <span className={`text-sm sm:text-base font-bold font-mono mt-0.5 truncate ${currStatus.isOver ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                   {currStatus.isOver ? `-${formatIDR(Math.abs(currStatus.remaining))}` : formatIDR(currStatus.remaining)}
                 </span>
               </div>
@@ -538,7 +538,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                       {isEn ? 'Counted Expenses:' : 'Terpakai saat ini:'}
                     </span>
                     <span className={`font-mono font-bold text-xs sm:text-sm ${itemStatus.isOver ? 'text-rose-500' : 'text-slate-900 dark:text-white'}`}>
-                      {formatIDR(currentSpend)} <span className="text-slate-400 font-normal">/ {formatIDR(b.limitAmount)}</span>
+                      {formatIDR(currentSpend)} <span className="text-slate-400 font-mono font-normal">/ {formatIDR(b.limitAmount)}</span>
                     </span>
                   </div>
 
@@ -554,10 +554,10 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
 
                   {/* Remaining & Percentage */}
                   <div className="flex items-center justify-between mt-1.5 text-[10px] font-bold text-slate-400">
-                    <span className={itemStatus.isOver ? 'text-rose-500' : itemStatus.status === 'yellow' ? 'text-amber-600 dark:text-amber-400' : ''}>
+                    <span className={`font-mono ${itemStatus.isOver ? 'text-rose-500' : itemStatus.status === 'yellow' ? 'text-amber-600 dark:text-amber-400' : ''}`}>
                       {itemStatus.isOver ? (isEn ? 'OVER LIMIT!' : 'MELEBIHI LIMIT!') : `${isEn ? 'Sisa:' : 'Sisa:'} ${formatIDR(itemStatus.remaining)}`}
                     </span>
-                    <span className={itemStatus.status === 'red' ? 'text-rose-500' : itemStatus.status === 'yellow' ? 'text-amber-600 dark:text-amber-400' : ''}>
+                    <span className={`font-mono ${itemStatus.status === 'red' ? 'text-rose-500' : itemStatus.status === 'yellow' ? 'text-amber-600 dark:text-amber-400' : ''}`}>
                       {itemStatus.pctText}
                     </span>
                   </div>

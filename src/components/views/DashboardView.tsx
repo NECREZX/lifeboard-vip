@@ -728,7 +728,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           return (
                             <tr key={b.id} className="border-b border-slate-100 dark:border-slate-800">
                               <td className="py-2 truncate max-w-[80px] text-slate-700 dark:text-slate-200">{categoryName}</td>
-                              <td className="py-2 text-right font-bold text-slate-800 dark:text-slate-100">{formatIDR(Math.max(0, b.limitAmount - spent))}</td>
+                              <td className="py-2 text-right font-mono font-bold text-slate-800 dark:text-slate-100">{formatIDR(Math.max(0, b.limitAmount - spent))}</td>
                             </tr>
                           );
                         })}
