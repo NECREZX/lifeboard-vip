@@ -950,7 +950,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                     return (
                       <div
                         key={log.id}
-                        className="h-[60px] px-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 flex items-center justify-between gap-3 transition shrink-0 shadow-2xs"
+                        className="min-h-[64px] py-2.5 px-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 flex items-center justify-between gap-3 transition shrink-0 shadow-2xs"
                       >
                         {/* Left: Type Icon + Info */}
                         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -963,8 +963,8 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                           >
                             {isSetor ? <ArrowDownLeft className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
                           </div>
-                          <div className="min-w-0 flex-1 flex flex-col justify-center">
-                            <div className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate leading-snug">
+                          <div className="min-w-0 flex-1 flex flex-col justify-center gap-0.5">
+                            <div className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate leading-normal">
                               {isSetor ? 'Setor dari ' : 'Tarik ke '}
                               <span 
                                 className="text-[10px] font-extrabold px-1.5 py-0.2 rounded-md text-white inline-block ml-1"
@@ -973,7 +973,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                                 {walletName}
                               </span>
                             </div>
-                            <div className="text-[10px] text-slate-400 dark:text-slate-500 truncate flex items-center gap-1.5 mt-0.5 leading-none">
+                            <div className="text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 truncate flex items-center gap-1.5 leading-normal">
                               <span className="shrink-0">{new Date(log.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                               {log.notes && (
                                 <>

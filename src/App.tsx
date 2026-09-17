@@ -339,13 +339,19 @@ export default function App() {
     }
 
     // Apply font
+    const effectiveFontStyle = (settings.fontStyle === 'iceberg' || settings.fontStyle === 'pixel' || settings.fontStyle === 'slabo' || settings.fontStyle === 'rye' || settings.fontStyle === 'pompiere' || settings.fontStyle === 'flamenco' || settings.fontStyle === 'playwrite')
+      ? 'playwrite'
+      : (settings.fontStyle === 'badscript' || settings.fontStyle === 'neobrutalism' || settings.fontStyle === 'architect' || settings.fontStyle === 'petit')
+      ? 'petit'
+      : settings.fontStyle;
+
     let fontFamilyStr = "'Plus Jakarta Sans', sans-serif";
-    switch (settings.fontStyle) {
+    switch (effectiveFontStyle) {
       case 'jakarta': fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
       case 'grotesk': fontFamilyStr = "'Space Grotesk', sans-serif"; break;
       case 'ios': fontFamilyStr = "'Roboto Slab', serif"; break;
-      case 'petit': case 'architect': case 'badscript': case 'neobrutalism': fontFamilyStr = "'Petit Formal Script', cursive"; break;
-      case 'playwrite': case 'flamenco': case 'pompiere': case 'rye': case 'slabo': case 'iceberg': case 'pixel': fontFamilyStr = "'Playwrite DE Grund', cursive"; break;
+      case 'petit': fontFamilyStr = "'Petit Formal Script', cursive"; break;
+      case 'playwrite': fontFamilyStr = "'Playwrite DE Grund', cursive"; break;
       case 'mono': fontFamilyStr = "'JetBrains Mono', monospace"; break;
       case 'serif': fontFamilyStr = "'Roboto Slab', serif"; break;
       case 'sans': default: fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
@@ -353,9 +359,9 @@ export default function App() {
     document.body.style.fontFamily = fontFamilyStr;
     document.documentElement.style.setProperty('--font-sans', fontFamilyStr);
     document.documentElement.style.setProperty('--font-display', fontFamilyStr);
-    document.documentElement.setAttribute('data-font-style', settings.fontStyle);
-    document.body.setAttribute('data-font-style', settings.fontStyle);
-    if (settings.fontStyle === 'playwrite') {
+    document.documentElement.setAttribute('data-font-style', effectiveFontStyle);
+    document.body.setAttribute('data-font-style', effectiveFontStyle);
+    if (effectiveFontStyle === 'playwrite') {
       document.body.style.fontWeight = '300';
     } else {
       document.body.style.fontWeight = '';

@@ -6,7 +6,8 @@
 @theme {
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-mono: "Plus Jakarta Sans", ui-monospace, monospace;
+  --font-mono: "Urbanist", "Plus Jakarta Sans", ui-monospace, sans-serif;
+  --font-numeric: "Urbanist", "Plus Jakarta Sans", sans-serif;
   
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -58,33 +59,59 @@
   font-style: normal;
 }
 
-/* Penyesuaian proporsional Playwrite DE Grund agar tidak terlalu besar dan tetap ramping di seluruh elemen UI */
-[data-font-style="playwrite"] {
-  font-size: 13.5px;
+/* Penyesuaian proporsional Playwrite DE Grund agar seimbang, proporsional, dan nyaman dibaca */
+html[data-font-style="playwrite"] {
+  font-size: 93%; /* Penyesuaian proporsional halus ~7% agar seimbang dengan font standar */
 }
 
 [data-font-style="playwrite"] body {
-  font-size: 13.5px;
-  line-height: 1.45;
+  font-size: 0.9375rem; /* ~15px, pas dan nyaman dibaca */
+  line-height: 1.6;
 }
 
 [data-font-style="playwrite"] * {
-  font-weight: 300 !important;
-  letter-spacing: -0.015em;
+  font-weight: 300;
+  letter-spacing: -0.005em;
 }
 
 [data-font-style="playwrite"] h1,
 [data-font-style="playwrite"] h2,
 [data-font-style="playwrite"] h3,
+[data-font-style="playwrite"] h4,
+[data-font-style="playwrite"] h5,
+[data-font-style="playwrite"] h6 {
+  line-height: 1.5 !important;
+  margin-bottom: 0.25rem !important;
+  padding-bottom: 0.1rem;
+}
+
 [data-font-style="playwrite"] .font-black,
 [data-font-style="playwrite"] .font-extrabold,
 [data-font-style="playwrite"] .font-bold {
   font-weight: 400 !important;
 }
 
-[data-font-style="playwrite"] .font-mono {
-  font-family: 'JetBrains Mono', monospace !important;
-  font-weight: 500 !important;
+/* Font Khusus Nominal Angka & Keuangan (Urbanist: Berkarakter, Elegan, Ramping, & Tabular) */
+.font-mono,
+.font-numeric {
+  font-family: 'Urbanist', 'Sora', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: -0.01em;
+}
+
+/* Hindari ketebalan ekstrem yang kaku/chunky */
+.font-mono.font-black,
+.font-numeric.font-black {
+  font-weight: 750 !important;
+}
+
+[data-font-style="playwrite"] .font-mono,
+[data-font-style="petit"] .font-mono {
+  font-family: 'Urbanist', 'Sora', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  font-weight: 600 !important;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.01em;
 }
 
 .petit-formal-script-regular {

@@ -348,10 +348,10 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
               )}
             </div>
 
-            {/* Content: Limit + Terpakai + Sisa */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80 items-center">
+            {/* Content: Limit + Terpakai & Sisa (Kanan Kiri) */}
+            <div className="space-y-3 mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
               {/* Total Limit */}
-              <div className="min-w-0">
+              <div>
                 <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 block">
                   {isEn ? 'Total Limit' : 'Batas Total'}
                 </span>
@@ -360,24 +360,27 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                 </div>
               </div>
 
-              {/* Terpakai */}
-              <div className="flex flex-col justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 min-w-0">
-                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                  {isEn ? 'Spent' : 'Terpakai'}
-                </span>
-                <span className="text-sm sm:text-base font-bold font-mono text-blue-600 dark:text-blue-400 mt-0.5 truncate">
-                  {formatIDR(currSpend)}
-                </span>
-              </div>
+              {/* Terpakai & Sisa (Sebelahan Kanan Kiri / 2 Kolom) */}
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                {/* Terpakai */}
+                <div className="flex flex-col justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 min-w-0 border border-slate-100 dark:border-slate-800/60">
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                    {isEn ? 'Spent' : 'Terpakai'}
+                  </span>
+                  <span className="text-xs xs:text-sm sm:text-base font-bold font-mono text-blue-600 dark:text-blue-400 mt-1 truncate">
+                    {formatIDR(currSpend)}
+                  </span>
+                </div>
 
-              {/* Sisa */}
-              <div className="flex flex-col justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 min-w-0">
-                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                  {currStatus.isOver ? (isEn ? 'Overspent' : 'Kelebihan') : (isEn ? 'Remaining' : 'Sisa')}
-                </span>
-                <span className={`text-sm sm:text-base font-bold font-mono mt-0.5 truncate ${currStatus.isOver ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                  {currStatus.isOver ? `-${formatIDR(Math.abs(currStatus.remaining))}` : formatIDR(currStatus.remaining)}
-                </span>
+                {/* Sisa */}
+                <div className="flex flex-col justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 min-w-0 border border-slate-100 dark:border-slate-800/60">
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                    {currStatus.isOver ? (isEn ? 'Overspent' : 'Kelebihan') : (isEn ? 'Remaining' : 'Sisa')}
+                  </span>
+                  <span className={`text-xs xs:text-sm sm:text-base font-bold font-mono mt-1 truncate ${currStatus.isOver ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                    {currStatus.isOver ? `-${formatIDR(Math.abs(currStatus.remaining))}` : formatIDR(currStatus.remaining)}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -497,14 +500,14 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                         cat?.icon && <IconRenderer name={cat.icon} className="w-5 h-5" style={{ color: cat.color }} />
                       )}
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 flex flex-col justify-center gap-1.5 py-0.5">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 truncate">{categoryTitle}</h4>
+                        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 leading-normal">{categoryTitle}</h4>
                         <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full border shrink-0 ${scopeClass}`}>
                           {scopeLabel}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-400 font-semibold truncate">
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-semibold leading-normal">
                         <span>{getIndonesianMonthName(b.month)}</span>
                         <span className="text-slate-300 dark:text-slate-700">•</span>
                         <span className="font-bold text-indigo-500 dark:text-indigo-400 truncate">
@@ -614,17 +617,17 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
             <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
             {/* Header */}
-            <div className="px-4 sm:px-5 pt-3 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
-              <div>
+            <div className="px-4 sm:px-5 pt-3.5 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+              <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-tight">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
                     {isEn ? 'Counted Expenses Detail' : 'Rincian Transaksi Terpakai'}
                   </h3>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
                     {inspectingModal.transactions.length} trx
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-normal">
                   {inspectingModal.title} • {getIndonesianMonthName(selectedMonth)}
                 </p>
               </div>
@@ -684,7 +687,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                     return (
                       <div
                         key={tx.id}
-                        className="h-[60px] px-3 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 flex items-center justify-between gap-3 transition shrink-0 shadow-2xs"
+                        className="min-h-[64px] py-2.5 px-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 flex items-center justify-between gap-3 transition shrink-0 shadow-2xs"
                       >
                         {/* Left Side: Category Icon + Description & Info */}
                         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -698,11 +701,11 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                               <Receipt className="w-4 h-4 text-rose-500" />
                             )}
                           </div>
-                          <div className="min-w-0 flex-1 flex flex-col justify-center">
-                            <div className="text-xs font-bold text-slate-800 dark:text-slate-100 truncate leading-snug">
+                          <div className="min-w-0 flex-1 flex flex-col justify-center gap-1.5 py-0.5">
+                            <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 leading-normal">
                               {tx.description || (isEn ? 'Expense' : 'Pengeluaran')}
                             </div>
-                            <div className="text-[10px] text-slate-400 dark:text-slate-500 truncate flex items-center gap-1.5 mt-0.5 leading-none">
+                            <div className="text-[10.5px] sm:text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1.5 leading-normal">
                               <span className="shrink-0">{new Date(tx.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
                               <span className="shrink-0">•</span>
                               <span className="text-indigo-600 dark:text-indigo-400 font-semibold truncate max-w-[100px]">{txWal?.name || 'Dompet'}</span>
