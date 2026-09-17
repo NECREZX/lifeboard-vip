@@ -50,10 +50,41 @@
   }
 }
 
-.flamenco-regular {
-  font-family: "Flamenco", system-ui;
-  font-weight: 400;
+.playwrite-de-grund-regular,
+.playwrite-de-grund-300 {
+  font-family: "Playwrite DE Grund", cursive;
+  font-optical-sizing: auto;
+  font-weight: 300;
   font-style: normal;
+}
+
+/* Penyesuaian proporsional Playwrite DE Grund agar tidak terlalu besar dan tetap ramping di seluruh elemen UI */
+[data-font-style="playwrite"] {
+  font-size: 13.5px;
+}
+
+[data-font-style="playwrite"] body {
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+[data-font-style="playwrite"] * {
+  font-weight: 300 !important;
+  letter-spacing: -0.015em;
+}
+
+[data-font-style="playwrite"] h1,
+[data-font-style="playwrite"] h2,
+[data-font-style="playwrite"] h3,
+[data-font-style="playwrite"] .font-black,
+[data-font-style="playwrite"] .font-extrabold,
+[data-font-style="playwrite"] .font-bold {
+  font-weight: 400 !important;
+}
+
+[data-font-style="playwrite"] .font-mono {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 500 !important;
 }
 
 .petit-formal-script-regular {
