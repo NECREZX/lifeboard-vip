@@ -80,9 +80,23 @@ html[data-font-style="playwrite"] {
 [data-font-style="playwrite"] h4,
 [data-font-style="playwrite"] h5,
 [data-font-style="playwrite"] h6 {
-  line-height: 1.5 !important;
+  line-height: 1.55 !important;
   margin-bottom: 0.25rem !important;
-  padding-bottom: 0.1rem;
+  padding-bottom: 0.15rem;
+}
+
+/* Hindari pemotongan descender huruf (g, j, p, q, y) pada elemen berkarakter Playwrite */
+[data-font-style="playwrite"] nav,
+[data-font-style="playwrite"] [aria-label="Breadcrumb"],
+[data-font-style="playwrite"] [aria-label="Breadcrumb"] span,
+[data-font-style="playwrite"] [aria-label="Breadcrumb"] button {
+  line-height: 1.6 !important;
+  overflow: visible !important;
+}
+
+[data-font-style="playwrite"] .truncate {
+  padding-bottom: 0.15rem;
+  margin-bottom: -0.15rem;
 }
 
 [data-font-style="playwrite"] .font-black,

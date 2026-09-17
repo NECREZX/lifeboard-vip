@@ -20,7 +20,7 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' })
   return (
     <nav 
       aria-label="Breadcrumb" 
-      className={`flex items-center flex-wrap gap-1.5 text-xs font-semibold py-0.5 w-fit max-w-full ${className}`}
+      className={`flex items-center flex-wrap gap-1.5 text-xs font-semibold py-1 w-fit max-w-full leading-normal ${className}`}
     >
       {items.map((item, index) => {
         const isLast = index === items.length - 1;
@@ -32,14 +32,14 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' })
             )}
 
             {isLast ? (
-              <span className="text-slate-900 dark:text-slate-100 font-bold tracking-tight truncate max-w-[200px] sm:max-w-xs">
+              <span className="text-slate-900 dark:text-slate-100 font-bold tracking-tight truncate max-w-[220px] sm:max-w-md py-0.5 pb-1 leading-normal inline-block">
                 {item.label}
               </span>
             ) : (
               <button
                 type="button"
                 onClick={item.onClick}
-                className="text-slate-500 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-300 cursor-pointer hover:underline underline-offset-2"
+                className="text-slate-500 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-300 cursor-pointer hover:underline underline-offset-2 py-0.5 pb-1 leading-normal inline-block"
               >
                 {item.label}
               </button>
