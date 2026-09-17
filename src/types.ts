@@ -99,7 +99,7 @@ export type UIStyle = 'modern' | 'minimal' | 'glass';
 export type CardStyle = 'flat' | 'bordered' | 'shadowed';
 export type CardRadius = 'sharp' | 'rounded' | 'extra';
 export type TableStyle = 'compact' | 'spacious' | 'striped';
-export type FontStyle = 'sans' | 'mono' | 'serif' | 'jakarta' | 'grotesk' | 'ios' | 'architect' | 'badscript' | 'neobrutalism' | 'pixel' | 'slabo' | 'iceberg';
+export type FontStyle = 'sans' | 'mono' | 'serif' | 'jakarta' | 'grotesk' | 'ios' | 'petit' | 'flamenco' | 'pompiere' | 'rye' | 'architect' | 'badscript' | 'neobrutalism' | 'pixel' | 'slabo' | 'iceberg';
 export type ThemeColor = 'classic' | 'emerald' | 'amber' | 'indigo' | 'rose' | 'custom';
 
 export interface UserProfile {

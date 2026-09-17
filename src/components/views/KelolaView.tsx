@@ -937,15 +937,15 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </span>
             <div className="relative">
               <select 
-                value={settings.fontStyle === 'sans' ? 'jakarta' : (settings.fontStyle === 'iceberg' || settings.fontStyle === 'pixel') ? 'slabo' : (settings.fontStyle === 'badscript' || settings.fontStyle === 'neobrutalism') ? 'architect' : settings.fontStyle}
+                value={settings.fontStyle === 'sans' ? 'jakarta' : (settings.fontStyle === 'iceberg' || settings.fontStyle === 'pixel' || settings.fontStyle === 'slabo' || settings.fontStyle === 'rye' || settings.fontStyle === 'pompiere') ? 'flamenco' : (settings.fontStyle === 'badscript' || settings.fontStyle === 'neobrutalism' || settings.fontStyle === 'architect') ? 'petit' : settings.fontStyle}
                 onChange={(e) => setSettings && setSettings({ ...settings, fontStyle: e.target.value as FontStyle })}
                 className="w-full p-3 pr-10 appearance-none rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
               >
                 <option value="jakarta">Jakarta Sans (Modern & Clean)</option>
                 <option value="grotesk">Space Grotesk (Tech & Edgy)</option>
                 <option value="ios">Roboto Slab (Klasik Serif)</option>
-                <option value="architect">Architects Daughter (Tulisan Tangan / Cursive)</option>
-                <option value="slabo">Slabo (Serif & Elegan)</option>
+                <option value="petit">Petit Formal Script (Tulisan Tangan / Cursive)</option>
+                <option value="flamenco">Flamenco (Artistic Serif / Casual)</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -1299,13 +1299,6 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
       action: () => setActiveSubPage('sumber')
     },
     {
-      id: 'tampilan',
-      title: t('menu_general_customization', currentLang),
-      icon: Palette,
-      iconColor: 'text-indigo-500 bg-indigo-500/10 border border-indigo-500/20',
-      action: () => setActiveSubPage('tampilan')
-    },
-    {
       id: 'cadangan',
       title: t('menu_backup', currentLang),
       icon: HardDrive,
@@ -1318,13 +1311,6 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
       icon: FileCheck2,
       iconColor: 'text-amber-500 bg-amber-500/10 border border-amber-500/20',
       action: () => setActiveSubPage('ekspor')
-    },
-    {
-      id: 'notifikasi',
-      title: t('menu_notifications', currentLang),
-      icon: Bell,
-      iconColor: 'text-slate-500 bg-slate-100 dark:text-slate-400 dark:bg-slate-800 border border-slate-300 dark:border-slate-700',
-      action: () => onOpenNotifications ? onOpenNotifications() : null
     },
     {
       id: 'bahaya',
@@ -1420,24 +1406,64 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Card Total Saldo Awal (Overlapping / Nimpa Banner Profil, NO icon, Minimalist Concept) */}
+      {/* 2. Card Total Saldo Awal (Overlapping / Nimpa Banner Profil with Quick Sub-Menus for Notifikasi & Kustomisasi Umum) */}
       <div 
-        className={`relative z-10 -mt-18 sm:-mt-20 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-2`}
+        className={`relative z-10 -mt-18 sm:-mt-20 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-3.5`}
       >
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
-            {t('total_initial_balance', currentLang)}
-          </span>
-          <div className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 text-[10px] sm:text-xs font-bold flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span>{walletsWithCurrentBalance.length} {t('registered_wallets', currentLang)}</span>
+        {/* Top Info: Label, Wallets Badge, & Big Total Initial Balance */}
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
+              {t('total_initial_balance', currentLang)}
+            </span>
+            <div className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 text-[10px] sm:text-xs font-bold flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>{walletsWithCurrentBalance.length} {t('registered_wallets', currentLang)}</span>
+            </div>
+          </div>
+
+          <div className="mt-0.5">
+            <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
+              {formatIDR(totalInitial)}
+            </span>
           </div>
         </div>
 
-        <div className="mt-1">
-          <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
-            {formatIDR(totalInitial)}
-          </span>
+        {/* Bottom Quick-Action Buttons inside the Card: Notifikasi & Kustomisasi (Kanan Kiri / 2 Kolom) */}
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-2 gap-2 sm:gap-3">
+          {/* Button: Notifikasi */}
+          <button
+            type="button"
+            onClick={() => onOpenNotifications ? onOpenNotifications() : null}
+            className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.98] text-left shadow-xs"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                Notifikasi
+              </span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+          </button>
+
+          {/* Button: Kustomisasi */}
+          <button
+            type="button"
+            onClick={() => setActiveSubPage('tampilan')}
+            className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.98] text-left shadow-xs"
+          >
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                Kustomisasi
+              </span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+          </button>
         </div>
       </div>
 
