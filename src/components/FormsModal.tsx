@@ -4,10 +4,11 @@
  */
 
 import React, { useState } from 'react';
-import { X, Wallet as WalletIcon, FolderPlus, Coins, Plus, Calendar, Bookmark, Landmark, Sparkles } from 'lucide-react';
+import { X, Wallet as WalletIcon, FolderPlus, Coins, Plus, Calendar, Bookmark, Landmark, Sparkles, Check, CheckSquare, Square, Layers, CheckCircle2 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Wallet, Category, IncomeSource } from '../types';
 import { formatIDR } from '../lib/formatters';
+import { IconRenderer } from './IconRenderer';
 
 export const parseAmountInput = (val: string | number): number => {
   if (typeof val === 'number') return Math.round(val);
@@ -64,8 +65,8 @@ interface FormsModalProps {
     sourceId?: string;
     toWalletId?: string;
   }) => void;
-  onAddBudget: (data: { categoryId: string; limitAmount: number; month: string; walletId?: string }) => void;
-  onUpdateBudget?: (id: string, data: { categoryId: string; limitAmount: number; month: string; walletId?: string }) => void;
+  onAddBudget: (data: { categoryId: string; categoryIds?: string[]; limitAmount: number; month: string; walletId?: string; walletIds?: string[] }) => void;
+  onUpdateBudget?: (id: string, data: { categoryId: string; categoryIds?: string[]; limitAmount: number; month: string; walletId?: string; walletIds?: string[] }) => void;
   onAddSaving: (data: { name: string; targetAmount: number; currentAmount: number; deadline: string; color: string }) => void;
   onUpdateSaving?: (id: string, data: { name: string; targetAmount: number; currentAmount: number; deadline: string; color: string }) => void;
   onAddActivity: (data: { title: string; description: string; deadline: string }) => void;
@@ -125,9 +126,9 @@ export default function FormsModal({
   // Transfer extra state
   const [adminFee, setAdminFee] = useState('');
   const [budgetLimit, setBudgetLimit] = useState('');
-  const [budgetCategoryId, setBudgetCategoryId] = useState('all');
   const [budgetMonth, setBudgetMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
-  const [budgetWalletId, setBudgetWalletId] = useState('all');
+  const [budgetSelectedCategoryIds, setBudgetSelectedCategoryIds] = useState<string[]>(['all']);
+  const [budgetSelectedWalletIds, setBudgetSelectedWalletIds] = useState<string[]>(['all']);
 
   // Saving states
   const [savingName, setSavingName] = useState('');
@@ -167,9 +168,37 @@ export default function FormsModal({
           if (editData.sourceId) setSelectedSourceId(editData.sourceId);
         } else if (targetForm === 'budgeting') {
           setBudgetLimit(editData.limitAmount.toString());
-          setBudgetCategoryId(editData.categoryId || 'all');
           setBudgetMonth(editData.month);
-          setBudgetWalletId(editData.walletId || 'all');
+
+          // Restore category selection
+          if (editData.categoryIds && Array.isArray(editData.categoryIds) && editData.categoryIds.length > 0) {
+            setBudgetSelectedCategoryIds(editData.categoryIds);
+          } else if (editData.categoryId) {
+            if (editData.categoryId === 'all') {
+              setBudgetSelectedCategoryIds(['all']);
+            } else if (editData.categoryId.includes(',')) {
+              setBudgetSelectedCategoryIds(editData.categoryId.split(',').map((s: string) => s.trim()));
+            } else {
+              setBudgetSelectedCategoryIds([editData.categoryId]);
+            }
+          } else {
+            setBudgetSelectedCategoryIds(['all']);
+          }
+
+          // Restore wallet selection
+          if (editData.walletIds && Array.isArray(editData.walletIds) && editData.walletIds.length > 0) {
+            setBudgetSelectedWalletIds(editData.walletIds);
+          } else if (editData.walletId) {
+            if (editData.walletId === 'all') {
+              setBudgetSelectedWalletIds(['all']);
+            } else if (editData.walletId.includes(',')) {
+              setBudgetSelectedWalletIds(editData.walletId.split(',').map((s: string) => s.trim()));
+            } else {
+              setBudgetSelectedWalletIds([editData.walletId]);
+            }
+          } else {
+            setBudgetSelectedWalletIds(['all']);
+          }
         } else if (targetForm === 'tabungan') {
           setSavingName(editData.name);
           setSavingTarget(editData.targetAmount.toString());
@@ -193,12 +222,12 @@ export default function FormsModal({
           setSelectedWalletId(wallets[0].id);
           const remaining = wallets.filter(w => w.id !== wallets[0].id);
           setSelectedToWalletId(remaining[0]?.id || '');
-          setBudgetWalletId('all');
         }
         if (categories.length > 0) {
           setSelectedCategoryId(categories[0].id);
         }
-        setBudgetCategoryId('all');
+        setBudgetSelectedCategoryIds(['all']);
+        setBudgetSelectedWalletIds(['all']);
         if (sources.length > 0) setSelectedSourceId(sources[0].id);
       }
     }
@@ -244,7 +273,8 @@ export default function FormsModal({
       setSelectedToWalletId(remaining[0]?.id || '');
     }
     setBudgetLimit('');
-    setBudgetWalletId('all');
+    setBudgetSelectedCategoryIds(['all']);
+    setBudgetSelectedWalletIds(['all']);
     setSavingName('');
     setSavingTarget('');
     setSavingCurrent('0');
@@ -338,13 +368,27 @@ export default function FormsModal({
     } else if (activeForm === 'budgeting') {
       const parsedLimit = parseAmountInput(budgetLimit);
       if (isNaN(parsedLimit) || parsedLimit <= 0) return showError('Anggaran limit harus valid!');
-      if (!budgetCategoryId) return showError('Silakan tentukan kategori anggaran!');
+
+      const isAllCats = budgetSelectedCategoryIds.includes('all') || (categories.length > 0 && budgetSelectedCategoryIds.length === categories.length);
+      const isAllWals = budgetSelectedWalletIds.includes('all') || (wallets.length > 0 && budgetSelectedWalletIds.length === wallets.length);
+
+      if (!isAllCats && budgetSelectedCategoryIds.length === 0) {
+        return showError('Silakan pilih minimal satu kategori pengeluaran!');
+      }
+      if (!isAllWals && budgetSelectedWalletIds.length === 0) {
+        return showError('Silakan pilih minimal satu dompet / akun!');
+      }
+
+      const finalCatIds = isAllCats ? ['all'] : budgetSelectedCategoryIds;
+      const finalWalIds = isAllWals ? ['all'] : budgetSelectedWalletIds;
 
       const data = {
-        categoryId: budgetCategoryId,
+        categoryId: isAllCats ? 'all' : finalCatIds.join(','),
+        categoryIds: finalCatIds,
         limitAmount: parsedLimit,
         month: budgetMonth,
-        walletId: budgetWalletId || 'all'
+        walletId: isAllWals ? 'all' : finalWalIds.join(','),
+        walletIds: finalWalIds
       };
 
       if (isEdit && onUpdateBudget) {
@@ -710,145 +754,301 @@ export default function FormsModal({
           )}
 
           {/* BUDGETING FORM */}
-          {activeForm === 'budgeting' && (
-            <>
-              {/* Wallet Dropdown for Budgeting */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
-                  {language === 'en' ? 'Select Wallet / Account' : 'Pilih Dompet / Akun'}
-                </label>
-                <select
-                  value={budgetWalletId}
-                  onChange={(e) => setBudgetWalletId(e.target.value)}
-                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
-                  required
-                >
-                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">
-                    {language === 'en' ? 'All Wallets (Global)' : 'Semua Dompet (Global)'}
-                  </option>
-                  {wallets.map((w) => (
-                    <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{w.name}</option>
-                  ))}
-                </select>
-              </div>
+          {activeForm === 'budgeting' && (() => {
+            const isAllWals = budgetSelectedWalletIds.includes('all') || (wallets.length > 0 && budgetSelectedWalletIds.length === wallets.length);
+            const isAllCats = budgetSelectedCategoryIds.includes('all') || (categories.length > 0 && budgetSelectedCategoryIds.length === categories.length);
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
-                  {language === 'en' ? 'Expense Category' : 'Kategori Pengeluaran'}
-                </label>
-                <select
-                  value={budgetCategoryId}
-                  onChange={(e) => setBudgetCategoryId(e.target.value)}
-                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
-                  required
-                >
-                  <option value="all" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-bold text-indigo-600 dark:text-indigo-400">
-                    {language === 'en' ? 'All Categories (Total Spending Limit)' : 'Semua Kategori (Batas Belanja Total)'}
-                  </option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold">{c.name}</option>
-                  ))}
-                </select>
-              </div>
+            const toggleAllWallets = () => {
+              if (isAllWals) {
+                setBudgetSelectedWalletIds([]);
+              } else {
+                setBudgetSelectedWalletIds(['all']);
+              }
+            };
 
-              {/* Contextual Scope Helper for the 4 Scenarios */}
-              {(() => {
-                const isAllWallet = !budgetWalletId || budgetWalletId === 'all';
-                const isAllCategory = !budgetCategoryId || budgetCategoryId === 'all';
-                const selectedW = wallets.find(w => w.id === budgetWalletId);
-                const selectedC = categories.find(c => c.id === budgetCategoryId);
-
-                let badgeTitle = '';
-                let badgeDesc = '';
-
-                if (isAllWallet && isAllCategory) {
-                  badgeTitle = language === 'en' ? 'Total Monthly Budget (All Wallets & Categories)' : 'Batas Belanja Bulanan (Total Keseluruhan)';
-                  badgeDesc = language === 'en'
-                    ? 'Limits total combined expenses across all wallets and all categories.'
-                    : 'Membatasi total pengeluaran gabungan dari seluruh dompet dan seluruh kategori.';
-                } else if (!isAllWallet && isAllCategory) {
-                  badgeTitle = language === 'en'
-                    ? `Wallet Spending Limit: ${selectedW?.name || 'Selected Wallet'}`
-                    : `Batas Belanja Dompet: ${selectedW?.name || 'Dompet Terpilih'}`;
-                  badgeDesc = language === 'en'
-                    ? `Any expense from ${selectedW?.name || 'this wallet'} (any category) will deduct this budget.`
-                    : `Setiap transaksi keluar dari ${selectedW?.name || 'dompet ini'} (kategori apa saja) akan memotong batas belanja dompet ini.`;
-                } else if (isAllWallet && !isAllCategory) {
-                  badgeTitle = language === 'en'
-                    ? `Global Category: ${selectedC?.name || 'Category'}`
-                    : `Kategori Global: ${selectedC?.name || 'Kategori'}`;
-                  badgeDesc = language === 'en'
-                    ? `Limits spending for ${selectedC?.name || 'this category'} regardless of payment wallet.`
-                    : `Membatasi pengeluaran kategori ${selectedC?.name || 'ini'} di semua dompet secara gabungan.`;
+            const toggleSingleWallet = (wId: string) => {
+              if (isAllWals) {
+                const remaining = wallets.filter(w => w.id !== wId).map(w => w.id);
+                setBudgetSelectedWalletIds(remaining);
+              } else {
+                if (budgetSelectedWalletIds.includes(wId)) {
+                  setBudgetSelectedWalletIds(budgetSelectedWalletIds.filter(id => id !== wId));
                 } else {
-                  badgeTitle = language === 'en'
-                    ? `Specific: ${selectedW?.name || 'Wallet'} • ${selectedC?.name || 'Category'}`
-                    : `Spesifik: ${selectedW?.name || 'Dompet'} • ${selectedC?.name || 'Kategori'}`;
-                  badgeDesc = language === 'en'
-                    ? `Only applies when spending on ${selectedC?.name || 'this category'} using ${selectedW?.name || 'this wallet'}.`
-                    : `Hanya terpotong ketika belanja ${selectedC?.name || 'kategori ini'} menggunakan dompet ${selectedW?.name || 'ini'}.`;
+                  const next = [...budgetSelectedWalletIds, wId];
+                  if (next.length === wallets.length) {
+                    setBudgetSelectedWalletIds(['all']);
+                  } else {
+                    setBudgetSelectedWalletIds(next);
+                  }
                 }
+              }
+            };
 
-                return (
-                  <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 flex flex-col gap-0.5">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-200">
-                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
-                      <span>{badgeTitle}</span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed pl-3">
-                      {badgeDesc}
-                    </p>
+            const isWalletActive = (wId: string) => {
+              return isAllWals || budgetSelectedWalletIds.includes(wId);
+            };
+
+            const toggleAllCategories = () => {
+              if (isAllCats) {
+                setBudgetSelectedCategoryIds([]);
+              } else {
+                setBudgetSelectedCategoryIds(['all']);
+              }
+            };
+
+            const toggleSingleCategory = (cId: string) => {
+              if (isAllCats) {
+                const remaining = categories.filter(c => c.id !== cId).map(c => c.id);
+                setBudgetSelectedCategoryIds(remaining);
+              } else {
+                if (budgetSelectedCategoryIds.includes(cId)) {
+                  setBudgetSelectedCategoryIds(budgetSelectedCategoryIds.filter(id => id !== cId));
+                } else {
+                  const next = [...budgetSelectedCategoryIds, cId];
+                  if (next.length === categories.length) {
+                    setBudgetSelectedCategoryIds(['all']);
+                  } else {
+                    setBudgetSelectedCategoryIds(next);
+                  }
+                }
+              }
+            };
+
+            const isCategoryActive = (cId: string) => {
+              return isAllCats || budgetSelectedCategoryIds.includes(cId);
+            };
+
+            const selectedWalletsList = isAllWals ? wallets : wallets.filter(w => budgetSelectedWalletIds.includes(w.id));
+            const selectedCategoriesList = isAllCats ? categories : categories.filter(c => budgetSelectedCategoryIds.includes(c.id));
+
+            return (
+              <>
+                {/* 1. Wallet Multi-Select Checkboxes */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                      {language === 'en' ? 'Select Wallet / Account' : 'Pilih Dompet / Akun'}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={toggleAllWallets}
+                      className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline px-1.5 py-0.5 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition cursor-pointer"
+                    >
+                      {isAllWals
+                        ? (language === 'en' ? 'Uncheck All' : 'Batal Pilih Semua')
+                        : (language === 'en' ? 'Select All' : 'Pilih Semua')}
+                    </button>
                   </div>
-                );
-              })()}
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
-                  {language === 'en' ? 'Monthly Spending Limit (Rp)' : 'Batas Belanja Bulanan (Rp)'}
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
+                  {/* Wallets Checkbox Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
+                    {/* All Wallets Option Card */}
+                    <button
+                      type="button"
+                      onClick={toggleAllWallets}
+                      className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        isAllWals
+                          ? 'bg-indigo-50/90 dark:bg-indigo-950/50 border-indigo-300 dark:border-indigo-700 text-indigo-950 dark:text-indigo-100 shadow-2xs'
+                          : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                          <Layers className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs font-bold block truncate">
+                            {language === 'en' ? 'All Wallets (Global)' : 'Semua Dompet (Global)'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={`w-4 h-4 rounded-md flex items-center justify-center transition-all shrink-0 ml-2 ${
+                        isAllWals
+                          ? 'bg-indigo-600 text-white shadow-xs'
+                          : 'border border-slate-300 dark:border-slate-600'
+                      }`}>
+                        {isAllWals && <Check className="w-3 h-3 stroke-[3]" />}
+                      </div>
+                    </button>
+
+                    {/* Individual Wallet Cards */}
+                    {wallets.map((w) => {
+                      const active = isWalletActive(w.id);
+                      return (
+                        <button
+                          key={w.id}
+                          type="button"
+                          onClick={() => toggleSingleWallet(w.id)}
+                          className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                            active && !isAllWals
+                              ? 'bg-indigo-50/90 dark:bg-indigo-950/50 border-indigo-300 dark:border-indigo-700 text-indigo-950 dark:text-indigo-100 shadow-2xs'
+                              : isAllWals
+                                ? 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-700/60 text-slate-700 dark:text-slate-300'
+                                : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div
+                              className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-2xs"
+                              style={{ backgroundColor: `${w.color || '#3b82f6'}20` }}
+                            >
+                              <IconRenderer name={w.icon || 'Wallet'} className="w-4 h-4" style={{ color: w.color || '#3b82f6' }} />
+                            </div>
+                            <div className="min-w-0">
+                              <span className="text-xs font-bold block truncate">{w.name}</span>
+                            </div>
+                          </div>
+                          <div className={`w-4 h-4 rounded-md flex items-center justify-center transition-all shrink-0 ml-2 ${
+                            active
+                              ? 'bg-indigo-600 text-white shadow-xs'
+                              : 'border border-slate-300 dark:border-slate-600'
+                          }`}>
+                            {active && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. Category Multi-Select Checkboxes */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                      {language === 'en' ? 'Select Expense Category' : 'Pilih Kategori Pengeluaran'}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={toggleAllCategories}
+                      className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline px-1.5 py-0.5 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition cursor-pointer"
+                    >
+                      {isAllCats
+                        ? (language === 'en' ? 'Uncheck All' : 'Batal Pilih Semua')
+                        : (language === 'en' ? 'Select All' : 'Pilih Semua')}
+                    </button>
+                  </div>
+
+                  {/* Categories Checkbox Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                    {/* All Categories Option Card */}
+                    <button
+                      type="button"
+                      onClick={toggleAllCategories}
+                      className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                        isAllCats
+                          ? 'bg-indigo-50/90 dark:bg-indigo-950/50 border-indigo-300 dark:border-indigo-700 text-indigo-950 dark:text-indigo-100 shadow-2xs'
+                          : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                          <Layers className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-xs font-bold block truncate">
+                            {language === 'en' ? 'All Categories (Total Spending Limit)' : 'Semua Kategori (Batas Belanja Total)'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={`w-4 h-4 rounded-md flex items-center justify-center transition-all shrink-0 ml-2 ${
+                        isAllCats
+                          ? 'bg-indigo-600 text-white shadow-xs'
+                          : 'border border-slate-300 dark:border-slate-600'
+                      }`}>
+                        {isAllCats && <Check className="w-3 h-3 stroke-[3]" />}
+                      </div>
+                    </button>
+
+                    {/* Individual Category Cards */}
+                    {categories.map((c) => {
+                      const active = isCategoryActive(c.id);
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => toggleSingleCategory(c.id)}
+                          className={`flex items-center justify-between p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                            active && !isAllCats
+                              ? 'bg-indigo-50/90 dark:bg-indigo-950/50 border-indigo-300 dark:border-indigo-700 text-indigo-950 dark:text-indigo-100 shadow-2xs'
+                              : isAllCats
+                                ? 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/80 dark:border-slate-700/60 text-slate-700 dark:text-slate-300'
+                                : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div
+                              className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-2xs"
+                              style={{ backgroundColor: `${c.color || '#10b981'}20` }}
+                            >
+                              <IconRenderer name={c.icon || 'Tag'} className="w-4 h-4" style={{ color: c.color || '#10b981' }} />
+                            </div>
+                            <div className="min-w-0">
+                              <span className="text-xs font-bold block truncate">{c.name}</span>
+                            </div>
+                          </div>
+                          <div className={`w-4 h-4 rounded-md flex items-center justify-center transition-all shrink-0 ml-2 ${
+                            active
+                              ? 'bg-indigo-600 text-white shadow-xs'
+                              : 'border border-slate-300 dark:border-slate-600'
+                          }`}>
+                            {active && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 4. Monthly Spending Limit (Rp) */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                    {language === 'en' ? 'Monthly Spending Limit (Rp)' : 'Batas Belanja Bulanan (Rp)'}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={budgetLimit}
+                      onChange={(e) => setBudgetLimit(e.target.value.replace(/[^0-9.,]/g, ''))}
+                      placeholder={language === 'en' ? 'Estimated spending limit' : 'Estimasi limit pengeluaran'}
+                      className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-xs rounded-xl font-mono")}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentVal = parseAmountInput(budgetLimit);
+                        setBudgetLimit(currentVal > 0 ? (currentVal * 1000).toString() : '1000000');
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm cursor-pointer"
+                    >
+                      +000
+                    </button>
+                  </div>
+                  {parseAmountInput(budgetLimit) > 0 && (
+                    <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 pl-1">
+                      = {formatIDR(parseAmountInput(budgetLimit))}
+                    </span>
+                  )}
+                </div>
+
+                {/* 5. Month Picker */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                    {language === 'en' ? 'Budget Month' : 'Bulan Anggaran'}
+                  </label>
                   <input
-                    type="text"
-                    inputMode="numeric"
-                    value={budgetLimit}
-                    onChange={(e) => setBudgetLimit(e.target.value.replace(/[^0-9.,]/g, ''))}
-                    placeholder={language === 'en' ? 'Estimated spending limit' : 'Estimasi limit pengeluaran'}
-                    className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-xs rounded-xl font-mono")}
+                    type="month"
+                    value={budgetMonth}
+                    onChange={(e) => setBudgetMonth(e.target.value)}
+                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
                     required
                   />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const currentVal = parseAmountInput(budgetLimit);
-                      setBudgetLimit(currentVal > 0 ? (currentVal * 1000).toString() : '1000000');
-                    }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
-                  >
-                    +000
-                  </button>
                 </div>
-                {parseAmountInput(budgetLimit) > 0 && (
-                  <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 pl-1">
-                    = {formatIDR(parseAmountInput(budgetLimit))}
-                  </span>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
-                  {language === 'en' ? 'Budget Month' : 'Bulan Anggaran'}
-                </label>
-                <input
-                  type="month"
-                  value={budgetMonth}
-                  onChange={(e) => setBudgetMonth(e.target.value)}
-                  className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
-                  required
-                />
-              </div>
-            </>
-          )}
+              </>
+            );
+          })()}
 
           {/* TABUNGAN FORM */}
           {activeForm === 'tabungan' && (

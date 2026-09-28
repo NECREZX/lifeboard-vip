@@ -64,9 +64,11 @@ export interface SavingLog {
 export interface Budget {
   id: string;
   categoryId: string;
+  categoryIds?: string[];
   limitAmount: number;
   month: string; // YYYY-MM
-  walletId?: string; // Optional for backward compatibility, represents the wallet this budget belongs to
+  walletId?: string; // Optional for backward compatibility
+  walletIds?: string[];
 }
 
 export interface Activity {

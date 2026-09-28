@@ -9,6 +9,14 @@ import { Trash2, AlertTriangle, Edit2, ChevronDown, Layers, Wallet as WalletIcon
 import { Budget, Category, Transaction, Wallet } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
+import { 
+  isAllCategoriesBudget, 
+  isAllWalletsBudget, 
+  isCategoryMatch, 
+  isWalletMatch, 
+  getBudgetCategories, 
+  getBudgetWallets 
+} from '../../lib/budgetUtils';
 
 interface BudgetsViewProps {
   budgets: Budget[];
@@ -162,11 +170,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
 
   const filteredBudgets = budgets.filter((b) => {
     const matchesMonth = b.month === selectedMonth;
-    const matchesWallet =
-      selectedWalletId === 'all' ||
-      !b.walletId ||
-      b.walletId === 'all' ||
-      b.walletId === selectedWalletId;
+    const matchesWallet = selectedWalletId === 'all' || isWalletMatch(b, selectedWalletId);
     return matchesMonth && matchesWallet;
   });
 
@@ -175,19 +179,17 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
     return transactions
       .filter((t) => {
         const isExpense = t.type === 'pengeluaran';
-        const isSameCategory = (!b.categoryId || b.categoryId === 'all') ? true : (t.categoryId === b.categoryId);
         const isSameMonth = isTransactionInMonth(t.date, b.month);
-        const isSameWallet = (!b.walletId || b.walletId === 'all')
-          ? true
-          : (t.walletId === b.walletId);
-        return isExpense && isSameCategory && isSameMonth && isSameWallet;
+        const matchCategory = isCategoryMatch(b, t.categoryId);
+        const matchWallet = isWalletMatch(b, t.walletId);
+        return isExpense && isSameMonth && matchCategory && matchWallet;
       })
       .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
   };
 
   // Specific vs Global Budget separation
-  const grandTotalBudgets = filteredBudgets.filter(b => (!b.categoryId || b.categoryId === 'all') && (!b.walletId || b.walletId === 'all'));
-  const specificBudgets = filteredBudgets.filter(b => !((!b.categoryId || b.categoryId === 'all') && (!b.walletId || b.walletId === 'all')));
+  const grandTotalBudgets = filteredBudgets.filter(b => isAllCategoriesBudget(b) && isAllWalletsBudget(b));
+  const specificBudgets = filteredBudgets.filter(b => !(isAllCategoriesBudget(b) && isAllWalletsBudget(b)));
 
   const hasGrandTotal = grandTotalBudgets.length > 0;
   const hasSpecific = specificBudgets.length > 0;
@@ -199,8 +201,8 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
     if (t.type !== 'pengeluaran' || !isTransactionInMonth(t.date, selectedMonth)) return false;
     if (selectedWalletId !== 'all' && t.walletId !== selectedWalletId) return false;
     return specificBudgets.some((b) => {
-      const matchCat = (!b.categoryId || b.categoryId === 'all') || t.categoryId === b.categoryId;
-      const matchWal = (!b.walletId || b.walletId === 'all') || t.walletId === b.walletId;
+      const matchCat = isCategoryMatch(b, t.categoryId);
+      const matchWal = isWalletMatch(b, t.walletId);
       return matchCat && matchWal;
     });
   });
@@ -435,28 +437,56 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
           </div>
         ) : (
           filteredBudgets.map((b) => {
-            const isAllCat = !b.categoryId || b.categoryId === 'all';
-            const isAllWal = !b.walletId || b.walletId === 'all';
+            const isAllCat = isAllCategoriesBudget(b);
+            const isAllWal = isAllWalletsBudget(b);
+            const budgetCats = getBudgetCategories(b, categories);
+            const budgetWals = getBudgetWallets(b, wallets);
 
-            const cat = categories.find((c) => c.id === b.categoryId);
             const matchingTxs = transactions.filter((t) => {
               const isExpense = t.type === 'pengeluaran';
-              const isSameCategory = (!b.categoryId || b.categoryId === 'all') ? true : (t.categoryId === b.categoryId);
               const isSameMonth = isTransactionInMonth(t.date, b.month);
-              const isSameWallet = (!b.walletId || b.walletId === 'all') ? true : (t.walletId === b.walletId);
-              return isExpense && isSameCategory && isSameMonth && isSameWallet;
+              const matchCategory = isCategoryMatch(b, t.categoryId);
+              const matchWallet = isWalletMatch(b, t.walletId);
+              return isExpense && isSameMonth && matchCategory && matchWallet;
             });
             const currentSpend = matchingTxs.reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
-            const targetWallet = wallets.find((w) => w.id === b.walletId);
             const itemStatus = getBudgetStatus(currentSpend, b.limitAmount);
-            const walletName = !isAllWal
-              ? (targetWallet?.name || 'Dompet')
-              : (isEn ? 'All Wallets' : 'Semua Dompet');
 
             // Category title
-            const categoryTitle = isAllCat
-              ? (isEn ? 'All Categories' : 'Semua Kategori')
-              : (cat?.name || (isEn ? 'Deleted Category' : 'Kategori Terhapus'));
+            let categoryTitle = '';
+            if (isAllCat) {
+              categoryTitle = isEn ? 'All Categories' : 'Semua Kategori';
+            } else if (budgetCats.length === 1) {
+              categoryTitle = budgetCats[0]?.name || (isEn ? 'Category' : 'Kategori');
+            } else if (budgetCats.length === 2) {
+              categoryTitle = `${budgetCats[0]?.name}, ${budgetCats[1]?.name}`;
+            } else if (budgetCats.length > 2) {
+              categoryTitle = `${budgetCats[0]?.name}, ${budgetCats[1]?.name} (+${budgetCats.length - 2})`;
+            } else {
+              categoryTitle = isEn ? 'Deleted Category' : 'Kategori Terhapus';
+            }
+
+            const fullCategoryNames = isAllCat 
+              ? (isEn ? 'All Categories' : 'Semua Kategori') 
+              : budgetCats.map(c => c.name).join(', ');
+
+            // Wallet title
+            let walletName = '';
+            if (isAllWal) {
+              walletName = isEn ? 'All Wallets' : 'Semua Dompet';
+            } else if (budgetWals.length === 1) {
+              walletName = budgetWals[0]?.name || (isEn ? 'Wallet' : 'Dompet');
+            } else if (budgetWals.length === 2) {
+              walletName = `${budgetWals[0]?.name}, ${budgetWals[1]?.name}`;
+            } else if (budgetWals.length > 2) {
+              walletName = `${budgetWals[0]?.name}, ${budgetWals[1]?.name} (+${budgetWals.length - 2})`;
+            } else {
+              walletName = isEn ? 'Deleted Wallet' : 'Dompet Terhapus';
+            }
+
+            const fullWalletNames = isAllWal
+              ? (isEn ? 'All Wallets' : 'Semua Dompet')
+              : budgetWals.map(w => w.name).join(', ');
 
             // Scope classification badge
             let scopeLabel = '';
@@ -465,68 +495,113 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
               scopeLabel = isEn ? 'All Expenses' : 'Total Belanja';
               scopeClass = 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800/40';
             } else if (!isAllWal && isAllCat) {
-              scopeLabel = isEn ? 'Wallet' : 'Dompet';
+              scopeLabel = budgetWals.length > 1 ? `${budgetWals.length} Dompet` : (isEn ? 'Wallet' : 'Dompet');
               scopeClass = 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800/40';
             } else if (isAllWal && !isAllCat) {
-              scopeLabel = isEn ? 'Category' : 'Kategori';
+              scopeLabel = budgetCats.length > 1 ? `${budgetCats.length} Kategori` : (isEn ? 'Category' : 'Kategori');
               scopeClass = 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/40';
             } else {
-              scopeLabel = isEn ? 'Specific' : 'Spesifik';
+              scopeLabel = (budgetWals.length > 1 || budgetCats.length > 1)
+                ? `${budgetWals.length} Dompet • ${budgetCats.length} Kategori`
+                : (isEn ? 'Specific' : 'Spesifik');
               scopeClass = 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800/40';
             }
+
+            // Icon determination
+            const primaryColor = isAllCat
+              ? (!isAllWal && budgetWals[0] ? budgetWals[0].color : '#8b5cf6')
+              : (budgetCats[0]?.color || '#3b82f6');
 
             return (
               <div key={b.id} className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between gap-3.5 relative overflow-hidden transition-all duration-200`}>
                 {/* Header Row: Category, Wallet & Actions */}
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="flex items-start gap-3 min-w-0 flex-1">
                     <div 
-                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
-                      style={{ 
-                        backgroundColor: isAllCat 
-                          ? (!isAllWal ? `${targetWallet?.color || '#3b82f6'}20` : '#8b5cf620')
-                          : `${cat?.color || '#3b82f6'}20` 
-                      }}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm relative mt-0.5"
+                      style={{ backgroundColor: `${primaryColor || '#3b82f6'}20` }}
                     >
                       {isAllCat ? (
-                        !isAllWal && targetWallet?.icon ? (
-                          <IconRenderer name={targetWallet.icon} className="w-5 h-5" style={{ color: targetWallet.color || '#3b82f6' }} />
+                        !isAllWal && budgetWals.length === 1 && budgetWals[0]?.icon ? (
+                          <IconRenderer name={budgetWals[0].icon} className="w-5 h-5" style={{ color: budgetWals[0].color || '#3b82f6' }} />
                         ) : isAllWal ? (
                           <Layers className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                         ) : (
                           <WalletIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         )
                       ) : (
-                        cat?.icon && <IconRenderer name={cat.icon} className="w-5 h-5" style={{ color: cat.color }} />
+                        budgetCats.length === 1 && budgetCats[0]?.icon ? (
+                          <IconRenderer name={budgetCats[0].icon} className="w-5 h-5" style={{ color: budgetCats[0].color }} />
+                        ) : (
+                          <Layers className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                        )
                       )}
                     </div>
-                    <div className="min-w-0 flex-1 flex flex-col justify-center gap-1.5 py-0.5">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 leading-normal">{categoryTitle}</h4>
+                    <div className="min-w-0 flex-1 flex flex-col justify-center gap-1 py-0.5">
+                      {/* Line 1: Title + Scope Badge */}
+                      <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 leading-snug">
+                          {isAllCat
+                            ? (isEn ? 'All Categories' : 'Semua Kategori')
+                            : budgetCats.length === 1
+                              ? (budgetCats[0]?.name || (isEn ? 'Category' : 'Kategori'))
+                              : (isEn ? `${budgetCats.length} Categories Selected` : `${budgetCats.length} Kategori Dipilih`)}
+                        </h4>
                         <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full border shrink-0 ${scopeClass}`}>
                           {scopeLabel}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-semibold leading-normal">
-                        <span>{getIndonesianMonthName(b.month)}</span>
-                        <span className="text-slate-300 dark:text-slate-700">•</span>
-                        <span className="font-bold text-indigo-500 dark:text-indigo-400 truncate">
-                          {walletName}
-                        </span>
+
+                      {/* Line 2: Category Chips (Side by side horizontally) */}
+                      {!isAllCat && budgetCats.length > 1 && (
+                        <div className="flex flex-row flex-wrap items-center gap-1 pt-0.5">
+                          {budgetCats.map(c => (
+                            <span 
+                              key={c.id} 
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700/70 shrink-0"
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: c.color || '#10b981' }} />
+                              <span className="whitespace-nowrap">{c.name}</span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Line 3: Month & Wallet Chips (Horizontal on the same row) */}
+                      <div className="flex flex-row flex-wrap items-center gap-1.5 text-[11px] text-slate-400 font-semibold leading-normal pt-0.5">
+                        <span className="shrink-0">{getIndonesianMonthName(b.month)}</span>
+                        <span className="text-slate-300 dark:text-slate-700 shrink-0">•</span>
+                        {!isAllWal && budgetWals.length > 1 ? (
+                          <div className="inline-flex flex-row flex-wrap items-center gap-1">
+                            {budgetWals.map(w => (
+                              <span 
+                                key={w.id} 
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 shrink-0"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: w.color || '#3b82f6' }} />
+                                <span className="whitespace-nowrap">{w.name}</span>
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="font-bold text-indigo-500 dark:text-indigo-400 truncate">
+                            {walletName}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => onEdit(b)}
-                      className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                       title={isEn ? "Edit" : "Ubah"}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteBudget(b.id)}
-                      className="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      className="p-1.5 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                       title={isEn ? "Delete" : "Hapus"}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -569,14 +644,18 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
                   </div>
                 </div>
 
-                {/* Action Row: Rincian Transaksi (Persis Konsep Menu Tabungan) */}
+                {/* Action Row: Rincian Transaksi */}
                 <div className="border-t border-slate-100 dark:border-slate-800/80 pt-2.5 flex items-center justify-between gap-2">
                   <button
                     type="button"
-                    onClick={() => openInspectingModal(
-                      `${categoryTitle} (${walletName})`,
-                      matchingTxs
-                    )}
+                    onClick={() => {
+                      const fullCatNames = isAllCat ? (isEn ? 'All Categories' : 'Semua Kategori') : budgetCats.map(c => c.name).join(', ');
+                      const fullWalNames = isAllWal ? (isEn ? 'All Wallets' : 'Semua Dompet') : budgetWals.map(w => w.name).join(', ');
+                      openInspectingModal(
+                        `${fullCatNames} (${fullWalNames})`,
+                        matchingTxs
+                      );
+                    }}
                     className="flex-1 flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50/80 hover:bg-slate-100/80 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center gap-2">

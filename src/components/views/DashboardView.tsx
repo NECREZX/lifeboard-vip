@@ -25,6 +25,7 @@ import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../t
 import { TrendChart, CategoryBarChart, SourceBarChart, CategoryPieChart, SourcePieChart } from '../InteractiveCharts';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
+import { isCategoryMatch, isWalletMatch, getBudgetCategoryLabel } from '../../lib/budgetUtils';
 
 // ... (DashboardView component remains largely the same)
 
@@ -718,13 +719,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         .filter(b => b.month === `${selectedYear}-${String(selectedMonth).padStart(2, '0')}`)
                         .slice(0, 3).map(b => {
                           const spent = transactions
-                            .filter(t => t.type === 'pengeluaran' && (!b.categoryId || b.categoryId === 'all' || t.categoryId === b.categoryId) && t.date.startsWith(`${selectedYear}-${String(selectedMonth).padStart(2, '0')}`) && (!b.walletId || b.walletId === 'all' || t.walletId === b.walletId))
+                            .filter(t => t.type === 'pengeluaran' && isCategoryMatch(b, t.categoryId) && t.date.startsWith(`${selectedYear}-${String(selectedMonth).padStart(2, '0')}`) && isWalletMatch(b, t.walletId))
                             .reduce((sum, t) => sum + t.amount, 0);
-                          const isAllCat = !b.categoryId || b.categoryId === 'all';
-                          const isAllWal = !b.walletId || b.walletId === 'all';
-                          const categoryName = isAllCat
-                            ? (isAllWal ? 'Total Bulanan' : `Total ${wallets.find(w => w.id === b.walletId)?.name || 'Dompet'}`)
-                            : (categories.find(c => c.id === b.categoryId)?.name || 'Kategori');
+                          const categoryName = getBudgetCategoryLabel(b, categories);
                           return (
                             <tr key={b.id} className="border-b border-slate-100 dark:border-slate-800">
                               <td className="py-2 truncate max-w-[80px] text-slate-700 dark:text-slate-200">{categoryName}</td>

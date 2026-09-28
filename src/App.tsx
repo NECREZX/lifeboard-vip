@@ -61,6 +61,14 @@ import {
 } from './types';
 
 import { IconRenderer } from './components/IconRenderer';
+import { 
+  isCategoryMatch, 
+  isWalletMatch, 
+  getBudgetCategoryLabel, 
+  getBudgetWalletLabel,
+  isAllCategoriesBudget,
+  isAllWalletsBudget
+} from './lib/budgetUtils';
 
 import {
   DEFAULT_WALLETS,
@@ -710,11 +718,11 @@ export default function App() {
   }, excludeTxId?: string, customTxList?: Transaction[]) => {
     if (txData.type === 'pengeluaran') {
       const txMonth = txData.date.slice(0, 7); // e.g. "2026-06"
-      // Find ALL budgets that apply to this transaction (supports Specific Wallet, All Wallets, Specific Category, and All Categories)
+      // Find ALL budgets that apply to this transaction (supports single, multiple, or all wallets & categories)
       const matchingBudgets = budgets.filter((b) => {
         const matchMonth = b.month === txMonth;
-        const matchWallet = !b.walletId || b.walletId === 'all' || b.walletId === txData.walletId;
-        const matchCategory = !b.categoryId || b.categoryId === 'all' || b.categoryId === txData.categoryId;
+        const matchWallet = isWalletMatch(b, txData.walletId);
+        const matchCategory = isCategoryMatch(b, txData.categoryId);
         return matchMonth && matchWallet && matchCategory;
       });
 
@@ -729,21 +737,17 @@ export default function App() {
               const isSameTx = t.id === excludeTxId;
               const isExpense = t.type === 'pengeluaran';
               const isSameMonth = t.date.slice(0, 7) === txMonth;
-              const isSameCategory = !budget.categoryId || budget.categoryId === 'all' || t.categoryId === budget.categoryId;
-              const isSameWallet = !budget.walletId || budget.walletId === 'all' || t.walletId === budget.walletId;
+              const isSameCategory = isCategoryMatch(budget, t.categoryId);
+              const isSameWallet = isWalletMatch(budget, t.walletId);
               return !isSameTx && isExpense && isSameMonth && isSameCategory && isSameWallet;
             })
             .reduce((sum, t) => sum + t.amount, 0) + txData.amount;
 
-          const isAllCat = !budget.categoryId || budget.categoryId === 'all';
-          const isAllWal = !budget.walletId || budget.walletId === 'all';
+          const catName = getBudgetCategoryLabel(budget, categories, settings.language === 'en');
+          const walletName = getBudgetWalletLabel(budget, wallets, settings.language === 'en');
 
-          const catName = isAllCat
-            ? (settings.language === 'en' ? 'All Categories' : 'Semua Kategori')
-            : (categories.find(c => c.id === budget.categoryId)?.name || '');
-          const walletName = !isAllWal
-            ? (wallets.find(w => w.id === budget.walletId)?.name || '')
-            : (settings.language === 'en' ? 'All Wallets' : 'Semua Dompet');
+          const isAllCat = isAllCategoriesBudget(budget);
+          const isAllWal = isAllWalletsBudget(budget);
 
           let budgetLabel = '';
           if (isAllCat && isAllWal) {
@@ -752,8 +756,8 @@ export default function App() {
               : 'Anggaran Total Bulanan (Semua Dompet & Kategori)';
           } else if (isAllCat) {
             budgetLabel = settings.language === 'en'
-              ? `Wallet Ceiling [ ${walletName} ]`
-              : `Batas Total Dompet [ ${walletName} ]`;
+              ? `Wallet [ ${walletName} ]`
+              : `Batas Dompet [ ${walletName} ]`;
           } else if (isAllWal) {
             budgetLabel = settings.language === 'en'
               ? `Category [ ${catName} ] (All Wallets)`
@@ -859,13 +863,13 @@ export default function App() {
     );
   };
 
-  const handleAddBudget = (data: { categoryId: string; limitAmount: number; month: string; walletId?: string }) => {
+  const handleAddBudget = (data: { categoryId: string; categoryIds?: string[]; limitAmount: number; month: string; walletId?: string; walletIds?: string[] }) => {
     const newBudget: Budget = {
       id: `b-${Date.now()}`,
       ...data
     };
     setBudgets(prev => [newBudget, ...prev]);
-    triggerNotification('Anggaran Baru Diatur', 'Batas anggaran bulanan untuk kategori berhasil disimpan.', 'info');
+    triggerNotification('Anggaran Baru Diatur', 'Batas anggaran bulanan berhasil disimpan.', 'info');
   };
 
   const handleAddSaving = (data: { name: string; targetAmount: number; currentAmount: number; deadline: string; color: string }) => {
@@ -1325,11 +1329,9 @@ export default function App() {
     csv += '\n=== ANGGARAN BULANAN ===\n';
     csv += 'Dompet,Kategori,Batas Belanja,Bulan\n';
     budgets.forEach(b => {
-      const isAllCat = !b.categoryId || b.categoryId === 'all';
-      const isAllWal = !b.walletId || b.walletId === 'all';
-      const cat = isAllCat ? 'Semua Kategori' : (categories.find(c => c.id === b.categoryId)?.name || '');
-      const wal = isAllWal ? 'Semua Dompet' : (wallets.find(w => w.id === b.walletId)?.name || '');
-      csv += `"${wal}","${cat}",${b.limitAmount},"${b.month}"\n`;
+      const cat = getBudgetCategoryLabel(b, categories);
+      const wal = getBudgetWalletLabel(b, wallets);
+      csv += `"${wal.replace(/"/g, '""')}","${cat.replace(/"/g, '""')}",${b.limitAmount},"${b.month}"\n`;
     });
 
     csv += '\n=== AKTIVITAS HARIAN ===\n';
@@ -2393,6 +2395,7 @@ export default function App() {
               );
             }}
             onEdit={(budget) => openAddModal('budgeting', budget)}
+            onAdd={() => openAddModal('budgeting')}
             settings={settings}
             handleDeleteTransaction={handleDeleteTransaction}
             onEditTransaction={(tx) => openAddModal(tx.type, tx)}
@@ -2647,7 +2650,7 @@ export default function App() {
             else openAddModal('wishlist');
           }
           else if (activeTab === 'tabungan') openAddModal('tabungan');
-          else if (activeTab === 'budgeting') openAddModal('budgeting');
+          else if (activeTab === 'anggaran' || activeTab === 'budgeting') openAddModal('budgeting');
           else if (activeTab === 'transaksi') openAddModal('pengeluaran');
           else openAddModal('pengeluaran');
         }}
