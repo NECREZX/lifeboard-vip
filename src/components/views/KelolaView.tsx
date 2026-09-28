@@ -937,13 +937,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </span>
             <div className="relative">
               <select 
-                value={settings.fontStyle === 'sans' ? 'jakarta' : (settings.fontStyle === 'iceberg' || settings.fontStyle === 'pixel' || settings.fontStyle === 'slabo' || settings.fontStyle === 'rye' || settings.fontStyle === 'pompiere' || settings.fontStyle === 'flamenco') ? 'playwrite' : (settings.fontStyle === 'badscript' || settings.fontStyle === 'neobrutalism' || settings.fontStyle === 'architect') ? 'petit' : settings.fontStyle}
+                value={settings.fontStyle === 'sans' ? 'jakarta' : settings.fontStyle === 'ios' ? 'spotify' : (settings.fontStyle === 'iceberg' || settings.fontStyle === 'pixel' || settings.fontStyle === 'slabo' || settings.fontStyle === 'rye' || settings.fontStyle === 'pompiere' || settings.fontStyle === 'flamenco') ? 'playwrite' : (settings.fontStyle === 'badscript' || settings.fontStyle === 'neobrutalism' || settings.fontStyle === 'architect') ? 'petit' : settings.fontStyle}
                 onChange={(e) => setSettings && setSettings({ ...settings, fontStyle: e.target.value as FontStyle })}
                 className="w-full p-3 pr-10 appearance-none rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
               >
                 <option value="jakarta">Jakarta Sans (Modern & Clean)</option>
+                <option value="spotify">Spotify Mix (Font Spotify APK Terbaru)</option>
                 <option value="grotesk">Space Grotesk (Tech & Edgy)</option>
-                <option value="ios">Roboto Slab (Klasik Serif)</option>
                 <option value="petit">Petit Formal Script (Kaligrafi Bersambung)</option>
                 <option value="playwrite">Playwrite DE Grund (Tulisan Tangan / Cursive)</option>
               </select>

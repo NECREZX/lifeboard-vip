@@ -134,6 +134,29 @@ html[data-font-style="playwrite"] {
   font-style: normal;
 }
 
+/* Spotify Mix / Circular App Font Styling */
+[data-font-style="spotify"],
+[data-font-style="ios"] {
+  font-family: 'SpotifyMix', 'Spotify Circular', 'Circular', 'Circular Std', 'Figtree', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  letter-spacing: -0.022em;
+}
+
+[data-font-style="spotify"] h1,
+[data-font-style="spotify"] h2,
+[data-font-style="spotify"] h3,
+[data-font-style="spotify"] h4,
+[data-font-style="spotify"] h5,
+[data-font-style="spotify"] h6,
+[data-font-style="ios"] h1,
+[data-font-style="ios"] h2,
+[data-font-style="ios"] h3,
+[data-font-style="ios"] h4,
+[data-font-style="ios"] h5,
+[data-font-style="ios"] h6 {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
 /* Hide scrollbars completely across all elements, themes & browsers while keeping scrolling 100% functional */
 * {
   scrollbar-width: none !important; /* Firefox */

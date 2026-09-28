@@ -356,12 +356,15 @@ export default function App() {
     let fontFamilyStr = "'Plus Jakarta Sans', sans-serif";
     switch (effectiveFontStyle) {
       case 'jakarta': fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
+      case 'spotify':
+      case 'ios':
+      case 'serif':
+        fontFamilyStr = "'SpotifyMix', 'Spotify Circular', 'Circular', 'Circular Std', 'Figtree', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+        break;
       case 'grotesk': fontFamilyStr = "'Space Grotesk', sans-serif"; break;
-      case 'ios': fontFamilyStr = "'Roboto Slab', serif"; break;
       case 'petit': fontFamilyStr = "'Petit Formal Script', cursive"; break;
       case 'playwrite': fontFamilyStr = "'Playwrite DE Grund', cursive"; break;
       case 'mono': fontFamilyStr = "'JetBrains Mono', monospace"; break;
-      case 'serif': fontFamilyStr = "'Roboto Slab', serif"; break;
       case 'sans': default: fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
     }
     document.body.style.fontFamily = fontFamilyStr;
