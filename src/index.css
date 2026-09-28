@@ -43,8 +43,8 @@
 @theme {
   --font-sans: "Instagram Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: "Instagram Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "Urbanist", "Instagram Sans", ui-monospace, sans-serif;
-  --font-numeric: "Urbanist", "Instagram Sans", sans-serif;
+  --font-mono: inherit;
+  --font-numeric: inherit;
   
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -144,27 +144,17 @@ html[data-font-style="playwrite"] {
   font-weight: 400 !important;
 }
 
-/* Font Khusus Nominal Angka & Keuangan (Urbanist: Berkarakter, Elegan, Ramping, & Tabular) */
+/* Font Angka Nominal Menyesuaikan Font Yang Sedang Digunakan (Dinamis, Tidak Hardcode) */
 .font-mono,
 .font-numeric {
-  font-family: 'Urbanist', 'Sora', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+  font-family: inherit !important;
   font-variant-numeric: tabular-nums lining-nums;
   font-feature-settings: "tnum" 1, "lnum" 1;
-  letter-spacing: -0.01em;
 }
 
-/* Hindari ketebalan ekstrem yang kaku/chunky */
 .font-mono.font-black,
 .font-numeric.font-black {
-  font-weight: 750 !important;
-}
-
-[data-font-style="playwrite"] .font-mono,
-[data-font-style="petit"] .font-mono {
-  font-family: 'Urbanist', 'Sora', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
-  font-weight: 600 !important;
-  font-variant-numeric: tabular-nums lining-nums;
-  letter-spacing: -0.01em;
+  font-weight: 800;
 }
 
 .petit-formal-script-regular {
