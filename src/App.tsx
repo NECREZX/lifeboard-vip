@@ -180,7 +180,7 @@ export default function App() {
       cardStyle: 'shadowed',
       cardRadius: 'rounded',
       tableStyle: 'compact',
-      fontStyle: 'sans',
+      fontStyle: 'instagram',
       themeColor: 'indigo',
       isDarkMode: false
     };
@@ -188,6 +188,9 @@ export default function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        if (parsed.fontStyle === 'sfpro' || parsed.fontStyle === 'sans' || parsed.fontStyle === 'jakarta') {
+          parsed.fontStyle = 'instagram';
+        }
         // Merge saved settings with defaults to keep all properties intact
         return { ...defaultSettings, ...parsed };
       } catch (e) {
@@ -353,9 +356,14 @@ export default function App() {
       ? 'petit'
       : settings.fontStyle;
 
-    let fontFamilyStr = "'Plus Jakarta Sans', sans-serif";
+    let fontFamilyStr = "'Instagram Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
     switch (effectiveFontStyle) {
-      case 'jakarta': fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
+      case 'instagram':
+      case 'sfpro':
+      case 'jakarta':
+      case 'sans':
+        fontFamilyStr = "'Instagram Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+        break;
       case 'spotify':
       case 'ios':
       case 'serif':
@@ -365,7 +373,7 @@ export default function App() {
       case 'petit': fontFamilyStr = "'Petit Formal Script', cursive"; break;
       case 'playwrite': fontFamilyStr = "'Playwrite DE Grund', cursive"; break;
       case 'mono': fontFamilyStr = "'JetBrains Mono', monospace"; break;
-      case 'sans': default: fontFamilyStr = "'Plus Jakarta Sans', sans-serif"; break;
+      default: fontFamilyStr = "'Instagram Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"; break;
     }
     document.body.style.fontFamily = fontFamilyStr;
     document.documentElement.style.setProperty('--font-sans', fontFamilyStr);

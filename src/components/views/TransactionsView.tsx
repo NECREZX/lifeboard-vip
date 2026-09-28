@@ -551,15 +551,12 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
             )}
 
             <div className="overflow-x-auto scrollbar-thin">
-              <table className={`${getTableClasses()} table-fixed min-w-[920px] w-full`}>
+              <table className={`${getTableClasses()} table-fixed w-full min-w-[500px]`}>
                 <colgroup>
-                  <col className="w-[160px]" />
-                  <col className="w-[130px]" />
-                  <col className="w-[150px]" />
-                  <col className="w-[150px]" />
-                  <col className="w-[110px]" />
-                  <col className="w-[140px]" />
-                  <col className="w-[115px]" />
+                  <col className="w-auto" />
+                  <col className="w-[100px] sm:w-[110px]" />
+                  <col className="w-[130px] sm:w-[150px]" />
+                  <col className="w-[105px] sm:w-[115px]" />
                 </colgroup>
                 <thead className={`border-b text-[10px] font-bold uppercase tracking-wider transition-all ${
                   uiStyle === 'glass'
@@ -568,11 +565,8 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                 }`}>
                   <tr>
                     <th className={getTableRowPadding()}>Deskripsi</th>
-                    <th className={getTableRowPadding()}>Tipe</th>
-                    <th className={getTableRowPadding()}>Dompet</th>
-                    <th className={getTableRowPadding()}>Kategori/Aliran</th>
-                    <th className={getTableRowPadding()}>Tanggal</th>
-                    <th className={getTableRowPadding()}>Jumlah</th>
+                    <th className={`${getTableRowPadding()} text-center`}>Tipe</th>
+                    <th className={`${getTableRowPadding()} text-right`}>Jumlah</th>
                     <th className={`${getTableRowPadding()} text-center`}>Aksi</th>
                   </tr>
                 </thead>
@@ -590,22 +584,27 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                             ? 'bg-white/30 dark:bg-slate-900/40 backdrop-blur-sm border-white/20 dark:border-white/10'
                             : 'bg-slate-50/40 dark:bg-slate-900/60 border-slate-100/80 dark:border-slate-800/80'
                         }`}>
-                          <td colSpan={7} className="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-cyan-400 font-mono tracking-tight whitespace-nowrap">
+                          <td colSpan={4} className="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-cyan-400 font-mono tracking-tight whitespace-nowrap">
                             {formattedDate} ({totalDateTxsCount} Transaksi)
                           </td>
                         </tr>
                         {dateTxs.map((t, idx) => {
-                          const wallet = wallets.find((w) => w.id === t.walletId);
-                          const toWallet = t.toWalletId ? wallets.find((w) => w.id === t.toWalletId) : null;
                           const isIncome = t.type === 'pemasukan';
                           const isTransfer = t.type === 'transfer';
-                          const catName = isIncome 
-                            ? sources.find(s => s.id === t.sourceId)
-                            : (isTransfer ? null : categories.find(c => c.id === t.categoryId));
                           return (
-                            <tr key={t.id} className={getTableRowClasses(idx)}>
-                              <td className={getTableRowPadding() + " font-semibold text-slate-800 dark:text-slate-200 truncate"} title={t.description}>{t.description}</td>
-                              <td className={getTableRowPadding() + " whitespace-nowrap"}>
+                            <tr 
+                              key={t.id} 
+                              className={`${getTableRowClasses(idx)} transition-colors cursor-pointer group`}
+                              onClick={() => setSelectedTxDetail(t)}
+                            >
+                              <td className={getTableRowPadding() + " font-semibold text-slate-800 dark:text-slate-200 truncate"} title={t.description}>
+                                <div className="flex items-center gap-2 truncate">
+                                  <span className="truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                    {t.description}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className={getTableRowPadding() + " whitespace-nowrap text-center"}>
                                 <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                                   isIncome 
                                     ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400' 
@@ -616,55 +615,24 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                                   {t.type}
                                 </span>
                               </td>
-                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium truncate"} title={isTransfer ? `${wallet?.name || 'Dompet Terhapus'} → ${toWallet?.name || 'Dompet Terhapus'}` : (wallet?.name || 'Dompet Terhapus')}>
-                                {isTransfer ? (
-                                  <span className="flex items-center gap-1.5 text-[11px] truncate">
-                                    <span className="truncate">{wallet?.name || 'Dompet Terhapus'}</span>
-                                    <span className="text-slate-300 dark:text-slate-600 shrink-0">→</span>
-                                    <span className="truncate">{toWallet?.name || 'Dompet Terhapus'}</span>
-                                  </span>
-                                ) : (
-                                  <span className="flex items-center gap-1.5 truncate">
-                                    {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3.5 h-3.5 shrink-0" />}
-                                    <span className="truncate">{wallet?.name || 'Dompet Terhapus'}</span>
-                                  </span>
-                                )}
-                              </td>
-                              <td className={getTableRowPadding() + " text-slate-500 dark:text-slate-400 font-medium truncate"} title={isTransfer ? 'Transfer Saldo' : (catName?.name || 'Kustom')}>
-                                {isTransfer ? (
-                                  <div className="flex flex-col truncate">
-                                    <span className="text-slate-400 dark:text-slate-500 italic text-[11px] truncate">Transfer Saldo</span>
-                                    {t.adminFee && t.adminFee > 0 ? (
-                                      <span className="text-[10px] text-sky-600 dark:text-sky-400 font-semibold truncate">
-                                        Biaya Admin: {formatIDR(t.adminFee)}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                ) : (
-                                  <span className="flex items-center gap-1.5 truncate">
-                                    {catName?.icon && <IconRenderer name={catName.icon} className="w-3.5 h-3.5 shrink-0" />}
-                                    <span className="truncate">{catName?.name || 'Kustom'}</span>
-                                  </span>
-                                )}
-                              </td>
-                              <td className={getTableRowPadding() + " font-mono text-slate-400 dark:text-slate-300 whitespace-nowrap"}>
-                                {new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                              </td>
-                              <td className={getTableRowPadding() + ` font-mono font-bold whitespace-nowrap ${isIncome ? 'text-emerald-500' : (isTransfer ? 'text-blue-500' : 'text-rose-500')}`}>
-                                <div className="flex flex-col">
+                              <td className={getTableRowPadding() + ` font-mono font-bold whitespace-nowrap text-right ${isIncome ? 'text-emerald-500' : (isTransfer ? 'text-blue-500' : 'text-rose-500')}`}>
+                                <div className="flex flex-col items-end">
                                   <span>{isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(t.amount)}</span>
                                   {isTransfer && t.adminFee && t.adminFee > 0 ? (
                                     <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">
-                                      Keluar Asal: {formatIDR(t.amount + t.adminFee)}
+                                      +Admin {formatIDR(t.adminFee)}
                                     </span>
                                   ) : null}
                                 </div>
                               </td>
-                              <td className={getTableRowPadding() + " text-center whitespace-nowrap"}>
+                              <td 
+                                className={getTableRowPadding() + " text-center whitespace-nowrap"}
+                                onClick={(e) => e.stopPropagation()}
+                              >
                                 <div className="flex items-center justify-center gap-1">
                                   <button 
                                     onClick={() => setSelectedTxDetail(t)} 
-                                    title="Lihat Detail Transaksi"
+                                    title="Lihat Detail Transaksi (Tiket)"
                                     className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-950/30 transition inline-flex items-center"
                                   >
                                     <Eye className="w-3.5 h-3.5" />
@@ -698,7 +666,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
         )}
       </div>
 
-      {/* Transaction Detail Pop-up Modal */}
+      {/* Transaction Detail Pop-up Modal - CINEMA TICKET DESIGN */}
       {selectedTxDetail && (() => {
         const wallet = wallets.find((w) => w.id === selectedTxDetail.walletId);
         const toWallet = selectedTxDetail.toWalletId ? wallets.find((w) => w.id === selectedTxDetail.toWalletId) : null;
@@ -717,155 +685,148 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
         });
 
         return (
-          <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto no-print">
-            <div className={`w-full max-w-[380px] sm:max-w-[430px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl my-6 transition-all animate-in fade-in zoom-in-95 duration-200 ${
-              uiStyle === 'glass'
-                ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.18)]'
-                : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80'
-            }`}>
-              {/* Modal Header */}
-              <div className={`p-4 sm:p-4.5 border-b flex items-center justify-between transition-all ${
-                uiStyle === 'glass'
-                  ? 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-white/50 dark:border-white/10'
-                  : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'
-              }`}>
-                <div className="flex items-center gap-2.5">
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-                    isIncome 
-                      ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-                      : isTransfer 
-                        ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20'
-                        : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/20'
-                  }`}>
-                    {isIncome ? <TrendingUp className="w-4 h-4" /> : isTransfer ? <ArrowLeftRight className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+          <div 
+            className="fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto no-print"
+            onClick={() => setSelectedTxDetail(null)}
+          >
+            {/* Cinema Ticket Container - Compact & Sleek */}
+            <div 
+              className="w-full max-w-[315px] sm:max-w-[335px] max-h-[90vh] flex flex-col rounded-2xl overflow-hidden shadow-2xl transition-all animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 relative select-none"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* MAIN TICKET BODY */}
+              <div className="p-3.5 flex flex-col gap-2.5 bg-white dark:bg-slate-900 overflow-y-auto scrollbar-none">
+                {/* Deskripsi (Kiri) & Barcode (Kanan) */}
+                <div className="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 block mb-0.5">
+                      DESKRIPSI
+                    </span>
+                    <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug break-words">
+                      {selectedTxDetail.description}
+                    </h2>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-base text-slate-950 dark:text-white tracking-tight leading-tight">
-                      Detail Transaksi
-                    </h3>
+
+                  {/* Barcode di kanan atas sebelah deskripsi */}
+                  <div className="shrink-0 pt-0.5">
+                    <div className="flex items-center gap-[1.5px] h-7 px-1.5 py-0.5 bg-slate-50 dark:bg-slate-800/80 rounded border border-slate-200/60 dark:border-slate-700/60 opacity-80 dark:opacity-90">
+                      {[2, 1, 3, 1, 2, 4, 1, 2, 1, 3, 1, 2, 3, 1, 2, 1, 3].map((w, i) => (
+                        <div key={i} className="bg-slate-900 dark:bg-white h-full" style={{ width: `${w}px` }} />
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Modal Body */}
-              <div className="p-4 sm:p-5 flex flex-col gap-3.5">
-                {/* Highlight Amount Card */}
-                <div className={`py-3.5 px-4 rounded-2xl text-center flex flex-col items-center justify-center gap-1 transition-all ${
-                  uiStyle === 'glass'
-                    ? (isIncome 
-                        ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-950 dark:text-emerald-100'
-                        : isTransfer 
-                          ? 'bg-blue-500/10 border border-blue-500/20 text-blue-950 dark:text-blue-100'
-                          : 'bg-rose-500/10 border border-rose-500/20 text-rose-950 dark:text-rose-100')
-                    : (isIncome 
-                        ? 'bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30'
-                        : isTransfer
-                          ? 'bg-blue-50/80 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30'
-                          : 'bg-rose-50/80 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30')
+                {/* Amount Banner (Ticket Price) */}
+                <div className={`py-2 px-3 rounded-xl text-center flex flex-col items-center justify-center border ${
+                  isIncome 
+                    ? 'bg-emerald-50/80 dark:bg-emerald-950/25 border-emerald-200 dark:border-emerald-900/40 text-emerald-600 dark:text-emerald-400' 
+                    : isTransfer 
+                      ? 'bg-blue-50/80 dark:bg-blue-950/25 border-blue-200 dark:border-blue-900/40 text-blue-600 dark:text-blue-400' 
+                      : 'bg-rose-50/80 dark:bg-rose-950/25 border-rose-200 dark:border-rose-900/40 text-rose-600 dark:text-rose-400'
                 }`}>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                    isIncome 
-                      ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' 
-                      : isTransfer 
-                        ? 'bg-blue-500/20 text-blue-700 dark:text-blue-300' 
-                        : 'bg-rose-500/20 text-rose-700 dark:text-rose-300'
-                  }`}>
-                    {selectedTxDetail.type}
+                  <span className="text-[8px] font-black uppercase tracking-widest opacity-80 block">
+                    JUMLAH NOMINAL
                   </span>
-                  <div className={`text-2xl sm:text-3xl font-black font-mono tracking-tight my-0.5 ${
-                    isIncome 
-                      ? 'text-emerald-600 dark:text-emerald-400' 
-                      : isTransfer 
-                        ? 'text-blue-600 dark:text-blue-400' 
-                        : 'text-rose-600 dark:text-rose-400'
-                  }`}>
+                  <div className="text-lg sm:text-xl font-black font-mono tracking-tight my-0.5">
                     {isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(selectedTxDetail.amount)}
                   </div>
-                  
                   {isTransfer && selectedTxDetail.adminFee && selectedTxDetail.adminFee > 0 ? (
-                    <div className="flex items-center gap-2 pt-1.5 border-t border-blue-200/50 dark:border-blue-800/30 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-                      <span>Admin: <strong className="text-sky-600 dark:text-sky-400">{formatIDR(selectedTxDetail.adminFee)}</strong></span>
-                      <span>•</span>
-                      <span>Total: <strong className="text-rose-600 dark:text-rose-400">{formatIDR(selectedTxDetail.amount + selectedTxDetail.adminFee)}</strong></span>
+                    <div className="text-[10px] font-medium opacity-85">
+                      +Admin {formatIDR(selectedTxDetail.adminFee)} (Total: {formatIDR(selectedTxDetail.amount + selectedTxDetail.adminFee)})
                     </div>
                   ) : null}
                 </div>
 
-                {/* Detail Information Grid */}
-                <div className={`flex flex-col gap-2.5 p-3.5 sm:p-4 rounded-2xl ${
-                  uiStyle === 'glass' 
-                    ? 'bg-white/40 dark:bg-slate-800/30 border border-white/50 dark:border-white/10'
-                    : 'bg-slate-50/80 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800'
-                }`}>
-                  {/* Deskripsi */}
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Deskripsi / Keterangan</span>
-                    <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 leading-snug break-words">
-                      {selectedTxDetail.description}
-                    </p>
+                {/* Ticket Details Grid */}
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Tanggal Transaksi (Icon Wajib Berwarna Hitam!) */}
+                  <div className="col-span-2 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div>
+                      <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block leading-none">
+                        Tanggal Transaksi
+                      </span>
+                      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block mt-0.5 leading-none">
+                        {formattedFullDate}
+                      </span>
+                    </div>
+                    {/* Icon Kalender Hitam */}
+                    <div className="w-6 h-6 rounded bg-black/10 dark:bg-white/10 flex items-center justify-center shrink-0" title="Tanggal Transaksi">
+                      <Calendar className="w-3.5 h-3.5 text-black dark:text-white shrink-0" />
+                    </div>
                   </div>
 
-                  {/* Tanggal */}
-                  <div className="flex flex-col gap-0.5 pt-2 border-t border-slate-200/60 dark:border-slate-700/50">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Tanggal Transaksi</span>
-                    <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200">
-                      <Calendar className="w-4 h-4 text-indigo-500 shrink-0" />
-                      <span>{formattedFullDate}</span>
-                    </div>
+                  {/* Tipe Transaksi */}
+                  <div className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                    <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block leading-none">
+                      Tipe
+                    </span>
+                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider mt-1 ${
+                      isIncome 
+                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300' 
+                        : isTransfer 
+                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' 
+                          : 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300'
+                    }`}>
+                      {selectedTxDetail.type}
+                    </span>
                   </div>
 
                   {/* Dompet */}
-                  <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-200/60 dark:border-slate-700/50">
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                        {isTransfer ? 'Dompet Asal' : 'Dompet'}
-                      </span>
-                      <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">
-                        {wallet?.icon && <IconRenderer name={wallet.icon} className="w-4 h-4 shrink-0" />}
-                        <span className="truncate">{wallet?.name || 'Dompet Terhapus'}</span>
-                      </div>
+                  <div className="px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                    <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block leading-none">
+                      {isTransfer ? 'Dompet Asal' : 'Dompet'}
+                    </span>
+                    <div className="flex items-center gap-1 text-[11px] font-bold text-slate-800 dark:text-slate-200 mt-1 truncate">
+                      {wallet?.icon && <IconRenderer name={wallet.icon} className="w-3 h-3 shrink-0" />}
+                      <span className="truncate">{wallet?.name || 'Dompet Terhapus'}</span>
                     </div>
+                  </div>
 
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                        {isTransfer ? 'Dompet Tujuan' : (isIncome ? 'Sumber' : 'Kategori')}
-                      </span>
-                      <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">
-                        {isTransfer ? (
-                          <>
-                            {toWallet?.icon && <IconRenderer name={toWallet.icon} className="w-4 h-4 shrink-0" />}
-                            <span className="truncate">{toWallet?.name || 'Dompet Terhapus'}</span>
-                          </>
-                        ) : (
-                          <>
-                            {catName?.icon && <IconRenderer name={catName.icon} className="w-4 h-4 shrink-0" />}
-                            <span className="truncate">{catName?.name || 'Kustom'}</span>
-                          </>
-                        )}
-                      </div>
+                  {/* Kategori / Dompet Tujuan */}
+                  <div className="col-span-2 px-2.5 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                    <span className="text-[8px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block leading-none">
+                      {isTransfer ? 'Dompet Tujuan' : (isIncome ? 'Sumber Pendapatan' : 'Kategori')}
+                    </span>
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-800 dark:text-slate-200 mt-1 truncate">
+                      {isTransfer ? (
+                        <>
+                          {toWallet?.icon && <IconRenderer name={toWallet.icon} className="w-3 h-3 shrink-0" />}
+                          <span className="truncate">{toWallet?.name || 'Dompet Terhapus'}</span>
+                        </>
+                      ) : (
+                        <>
+                          {catName?.icon && <IconRenderer name={catName.icon} className="w-3 h-3 shrink-0" />}
+                          <span className="truncate">{catName?.name || 'Kustom'}</span>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Modal Footer Actions */}
-              <div className={`p-3 sm:p-4 border-t flex items-center justify-end transition-all ${
-                uiStyle === 'glass'
-                  ? 'bg-white/30 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
-                  : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'
-              }`}>
+              {/* PERFORATED TICKET TEAR LINE WITH NOTCHES */}
+              <div className="relative py-0.5 bg-white dark:bg-slate-900 overflow-hidden shrink-0">
+                {/* Left circular cutout notch */}
+                <div className="absolute -left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-900/60 dark:bg-black/80 border border-slate-200/90 dark:border-slate-800 z-10 shadow-inner" />
+                {/* Right circular cutout notch */}
+                <div className="absolute -right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-900/60 dark:bg-black/80 border border-slate-200/90 dark:border-slate-800 z-10 shadow-inner" />
+                {/* Dashed perforated line */}
+                <div className="border-b border-dashed border-slate-300 dark:border-slate-700 mx-4" />
+              </div>
+
+              {/* BOTTOM SECTION: BUTTON TUTUP ONLY */}
+              <div className="p-3 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800/80 flex flex-col items-center shrink-0">
+                {/* Close Button */}
                 <button
                   type="button"
                   onClick={() => setSelectedTxDetail(null)}
-                  className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
-                    uiStyle === 'glass'
-                      ? 'bg-white/80 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-white dark:border-slate-700 shadow-sm'
-                      : 'bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200'
-                  }`}
+                  className="w-full py-1.5 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
                 >
                   Tutup
                 </button>
               </div>
+
             </div>
           </div>
         );

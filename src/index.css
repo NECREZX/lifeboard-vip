@@ -1,13 +1,50 @@
+@font-face {
+  font-family: 'Instagram Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/InstagramSans-Regular.woff2') format('woff2'),
+       url('https://static.xx.fbcdn.net/rsrc.php/yj/r/Sv_GxRrqjKO.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Instagram Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/InstagramSans-Medium.woff2') format('woff2'),
+       url('https://static.xx.fbcdn.net/rsrc.php/yn/r/DTFiwryGsns.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Instagram Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/InstagramSans-Bold.woff2') format('woff2'),
+       url('https://static.xx.fbcdn.net/rsrc.php/yq/r/fYXiAwbY5RH.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Instagram Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/InstagramSans-Bold.woff2') format('woff2'),
+       url('https://static.xx.fbcdn.net/rsrc.php/yq/r/fYXiAwbY5RH.woff2') format('woff2');
+}
+
+@import url('https://cdn.jsdelivr.net/npm/sf-font@1.0.0/stylesheet.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-mono: "Urbanist", "Plus Jakarta Sans", ui-monospace, sans-serif;
-  --font-numeric: "Urbanist", "Plus Jakarta Sans", sans-serif;
+  --font-sans: "Instagram Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Instagram Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Urbanist", "Instagram Sans", ui-monospace, sans-serif;
+  --font-numeric: "Urbanist", "Instagram Sans", sans-serif;
   
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -36,8 +73,10 @@
     min-height: 100dvh;
     background-color: #ffffff;
     -webkit-tap-highlight-color: transparent;
-    font-family: "Plus Jakarta Sans", sans-serif;
-    letter-spacing: -0.02em;
+    font-family: "Instagram Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.015em;
   }
   
   html.dark body, body.dark {
@@ -132,6 +171,46 @@ html[data-font-style="playwrite"] {
   font-family: "Petit Formal Script", cursive;
   font-weight: 400;
   font-style: normal;
+}
+
+/* Instagram Sans Official App Font Styling */
+[data-font-style="instagram"],
+[data-font-style="sfpro"],
+[data-font-style="jakarta"],
+[data-font-style="sans"] {
+  font-family: 'Instagram Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  letter-spacing: -0.015em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[data-font-style="instagram"] h1,
+[data-font-style="instagram"] h2,
+[data-font-style="instagram"] h3,
+[data-font-style="instagram"] h4,
+[data-font-style="instagram"] h5,
+[data-font-style="instagram"] h6,
+[data-font-style="sfpro"] h1,
+[data-font-style="sfpro"] h2,
+[data-font-style="sfpro"] h3,
+[data-font-style="sfpro"] h4,
+[data-font-style="sfpro"] h5,
+[data-font-style="sfpro"] h6,
+[data-font-style="jakarta"] h1,
+[data-font-style="jakarta"] h2,
+[data-font-style="jakarta"] h3,
+[data-font-style="jakarta"] h4,
+[data-font-style="jakarta"] h5,
+[data-font-style="jakarta"] h6,
+[data-font-style="sans"] h1,
+[data-font-style="sans"] h2,
+[data-font-style="sans"] h3,
+[data-font-style="sans"] h4,
+[data-font-style="sans"] h5,
+[data-font-style="sans"] h6 {
+  font-family: 'Instagram Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
 /* Spotify Mix / Circular App Font Styling */
