@@ -133,21 +133,21 @@ export default function BottomNav({
       }}
     >
       {/* 1. ALL-SVG UNIFIED BACKGROUND DOCK:
-          Left Wing SVG + Center Notch SVG + Right Wing SVG rendered together via flex.
-          Eliminates subpixel seams, misalignment or anti-aliasing issues completely.
+          Left Wing SVG + Center Notch SVG + Right Wing SVG overlapping seamlessly by 4px.
+          Eliminates any subpixel flex seam gap on mobile Chrome.
       */}
-      <div className="absolute left-0 right-0 top-0 -bottom-10 pointer-events-none overflow-hidden flex items-start">
+      <div className="absolute left-0 right-0 top-0 -bottom-10 pointer-events-none overflow-hidden">
         
-        {/* Left Wing SVG: Pure horizontal line at y=0.5 */}
-        <div className="flex-1 h-[120px] relative">
-          <svg className="w-full h-full block" preserveAspectRatio="none" viewBox="0 0 100 120">
+        {/* Left Wing SVG: Pure horizontal line at y=0.5 overlapping 4px into center scoop */}
+        <div className="absolute left-0 top-0 bottom-0" style={{ right: 'calc(50% + 46px)' }}>
+          <svg className="w-full h-[120px] block" preserveAspectRatio="none" viewBox="0 0 100 120">
             <path d="M 0,0 L 100,0 L 100,120 L 0,120 Z" className={svgFillClass} />
             <line x1="0" y1="0.5" x2="100" y2="0.5" stroke={outlineStroke} strokeWidth="1" />
           </svg>
         </div>
 
-        {/* Center Cradle Notch SVG: 100px wide classic organic S-curve (depth 42px, full 120px height) */}
-        <div className="w-[100px] shrink-0 h-[120px] relative">
+        {/* Center Cradle Notch SVG: 100px wide classic organic S-curve */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[100px] h-[120px] z-10">
           <svg className="w-full h-full block" viewBox="0 0 100 120" fill="none">
             {/* Background Fill */}
             <path 
@@ -164,15 +164,15 @@ export default function BottomNav({
           </svg>
         </div>
 
-        {/* Right Wing SVG: Pure horizontal line at y=0.5 */}
-        <div className="flex-1 h-[120px] relative">
-          <svg className="w-full h-full block" preserveAspectRatio="none" viewBox="0 0 100 120">
+        {/* Right Wing SVG: Pure horizontal line at y=0.5 overlapping 4px into center scoop */}
+        <div className="absolute right-0 top-0 bottom-0" style={{ left: 'calc(50% + 46px)' }}>
+          <svg className="w-full h-[120px] block" preserveAspectRatio="none" viewBox="0 0 100 120">
             <path d="M 0,0 L 100,0 L 100,120 L 0,120 Z" className={svgFillClass} />
             <line x1="0" y1="0.5" x2="100" y2="0.5" stroke={outlineStroke} strokeWidth="1" />
           </svg>
         </div>
 
-        {/* Deep Solid Base Fill extending below safe area without truncating curve */}
+        {/* Deep Solid Base Fill extending below safe area */}
         <div className={`absolute left-0 right-0 top-[60px] -bottom-20 ${wingBgClass}`} />
       </div>
 
