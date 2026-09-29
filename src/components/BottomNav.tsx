@@ -81,43 +81,10 @@ export default function BottomNav({
   // Clean, subtle 1px hairline border matching the screenshot
   const outlineStroke = isDarkMode ? '#334155' : '#e2e8f0';
 
-  const isLeftWingActive = tabs.slice(0, 3).some(t => t.id === activeTab);
-  const isRightWingActive = tabs.slice(3, 6).some(t => t.id === activeTab);
-
-  const renderNavTab = (tab: typeof tabs[0], isRightWing = false) => {
+  const renderNavTab = (tab: typeof tabs[0]) => {
     const isActive = activeTab === tab.id;
     const Icon = tab.icon;
 
-    if (isActive) {
-      // ACTIVE TAB: Padat & compact
-      // Sayap Kiri: [Icon] [Nama] (mengembang ke kanan)
-      // Sayap Kanan: [Nama] [Icon] (mengembang ke kiri)
-      return (
-        <button
-          key={tab.id}
-          type="button"
-          onClick={() => setActiveTab(tab.id)}
-          aria-label={tab.label}
-          title={tab.label}
-          className={`h-7 px-2 rounded-full flex items-center justify-center gap-1 shrink-0 focus:outline-none select-none touch-manipulation cursor-pointer active:scale-95 transition-all duration-200 shadow-xs ${
-            isRightWing ? 'flex-row-reverse' : 'flex-row'
-          }`}
-          style={{ 
-            backgroundColor: `${resolvedAccent}18`,
-            color: resolvedAccent,
-            border: `1px solid ${resolvedAccent}30`
-          }}
-          id={`nav-tab-${tab.id}`}
-        >
-          <Icon className="w-3.5 h-3.5 shrink-0 stroke-[2.2]" />
-          <span className="text-[9px] font-bold tracking-tight whitespace-nowrap leading-none max-w-[42px] truncate">
-            {tab.label}
-          </span>
-        </button>
-      );
-    }
-
-    // INACTIVE TAB: Compact icon circle, seragam dan sama besar
     return (
       <button
         key={tab.id}
@@ -125,10 +92,37 @@ export default function BottomNav({
         onClick={() => setActiveTab(tab.id)}
         aria-label={tab.label}
         title={tab.label}
-        className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all duration-200 focus:outline-none select-none touch-manipulation cursor-pointer active:scale-90"
+        className="w-full h-full flex flex-col items-center justify-center py-1 focus:outline-none select-none touch-manipulation cursor-pointer"
         id={`nav-tab-${tab.id}`}
       >
-        <Icon className="w-4 h-4 stroke-[1.8]" />
+        {/* Uniform Icon Container - Parallel & Identical Size across all tabs */}
+        <div 
+          className={`w-7.5 h-7.5 rounded-xl flex items-center justify-center ${
+            isActive 
+              ? 'shadow-2xs' 
+              : 'text-slate-400 dark:text-slate-500'
+          }`}
+          style={isActive ? { 
+            backgroundColor: `${resolvedAccent}18`,
+            color: resolvedAccent,
+          } : undefined}
+        >
+          <Icon className={`w-4 h-4 ${isActive ? 'stroke-[2.4]' : 'stroke-[1.8]'}`} />
+        </div>
+
+        {/* Navigation Label: ONLY for active tab, positioned cleanly underneath the icon */}
+        <div className="h-3 flex items-center justify-center mt-0.5 pointer-events-none">
+          {isActive ? (
+            <span 
+              className="text-[8.5px] xs:text-[9px] font-extrabold tracking-tight leading-none whitespace-nowrap max-w-[50px] truncate"
+              style={{ color: resolvedAccent }}
+            >
+              {tab.label}
+            </span>
+          ) : (
+            <span className="block w-1 h-1 rounded-full bg-transparent" />
+          )}
+        </div>
       </button>
     );
   };
@@ -191,22 +185,15 @@ export default function BottomNav({
       {/* 2. BALANCED NAVIGATION CONTENT & FLOATING CENTER FAB */}
       <div className="relative z-10 w-full h-[62px]">
         
-        {/* Left Wing Tabs:
-            - Saat TIDAK ADA tab aktif di kiri: normal seimbang di tengah (justify-evenly)
-            - Saat ADA tab aktif di kiri: justify-start (Dashboard melebar, Transaksi & Tabungan geser ke kanan)
-        */}
+        {/* Left Wing Tabs: Symmetrical 3-Column Grid, Equal Size, Aligned Horizontally */}
         <div 
-          className={`absolute left-2 xs:left-3 sm:left-6 top-0 bottom-0 flex items-center transition-all duration-300 ${
-            isLeftWingActive 
-              ? 'justify-start gap-1 xs:gap-1.5 sm:gap-2.5' 
-              : 'justify-evenly'
-          }`}
-          style={{ right: 'calc(50% + 56px)' }}
+          className="absolute left-1 xs:left-2 sm:left-4 top-0 bottom-0 grid grid-cols-3 items-center justify-items-center"
+          style={{ right: 'calc(50% + 54px)' }}
         >
-          {tabs.slice(0, 3).map((tab) => renderNavTab(tab, false))}
+          {tabs.slice(0, 3).map((tab) => renderNavTab(tab))}
         </div>
 
-        {/* Center Floating FAB Button: 48px circle, floating with soft shadow matching reference */}
+        {/* Center Floating FAB Button: 48px circle, floating with soft shadow */}
         <div className="absolute left-1/2 -translate-x-1/2 -top-4 flex items-center justify-center z-30">
           <button
             type="button"
@@ -223,19 +210,12 @@ export default function BottomNav({
           </button>
         </div>
 
-        {/* Right Wing Tabs:
-            - Saat TIDAK ADA tab aktif di kanan: normal seimbang di tengah (justify-evenly)
-            - Saat ADA tab aktif di kanan: justify-end (Budgeting melebar ke kiri)
-        */}
+        {/* Right Wing Tabs: Symmetrical 3-Column Grid, Equal Size, Aligned Horizontally */}
         <div 
-          className={`absolute top-0 bottom-0 right-2 xs:right-3 sm:right-6 flex items-center transition-all duration-300 ${
-            isRightWingActive 
-              ? 'justify-end gap-1 xs:gap-1.5 sm:gap-2.5' 
-              : 'justify-evenly'
-          }`}
-          style={{ left: 'calc(50% + 56px)' }}
+          className="absolute top-0 bottom-0 right-1 xs:right-2 sm:right-4 grid grid-cols-3 items-center justify-items-center"
+          style={{ left: 'calc(50% + 54px)' }}
         >
-          {tabs.slice(3, 6).map((tab) => renderNavTab(tab, true))}
+          {tabs.slice(3, 6).map((tab) => renderNavTab(tab))}
         </div>
 
       </div>
