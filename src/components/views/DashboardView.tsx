@@ -468,8 +468,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             {/* 2. Card Saldo Dompet - Unified Account Summary Card */}
-            <div className="mt-8 sm:mt-10">
-              <div className="flex items-center justify-between mb-3 px-1">
+            <div className="mt-11 sm:mt-14 pt-1">
+              <div className="flex items-center justify-between mb-3.5 sm:mb-4 px-1">
                 <h3 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
                   Saldo Dompet
                 </h3>
