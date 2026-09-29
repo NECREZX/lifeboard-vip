@@ -209,7 +209,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       )}
 
       {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #FF7777) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-1.5 xs:pt-2 sm:pt-4 px-4 sm:px-6 pb-12 xs:pb-14 sm:pb-28 lg:pb-32">
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -263,18 +263,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             {/* Left Column */}
             <div className="min-w-0 flex-1">
               {/* Badge TOTAL SALDO UTAMA */}
-              <div className="flex items-center gap-1.5 px-2 xs:px-2.5 sm:px-3 py-0.5 xs:py-1 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs w-fit">
-                <ShieldCheck className="w-3 h-3 xs:w-3.5 xs:h-3.5 text-rose-100 shrink-0" />
-                <span className="text-[9px] xs:text-[10px] sm:text-xs font-black tracking-[0.1em] sm:tracking-[0.16em] uppercase whitespace-nowrap">
+              <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs w-fit">
+                <ShieldCheck className="w-3.5 h-3.5 text-rose-100 shrink-0" />
+                <span className="text-[10px] sm:text-xs font-black tracking-[0.12em] sm:tracking-[0.16em] uppercase whitespace-nowrap">
                   {t('dash_total_balance', currentLang).toUpperCase()}
                 </span>
               </div>
 
               {/* Saldo Display with Eye Icon */}
-              <div className="mt-1 xs:mt-1.5 sm:mt-3 flex items-center gap-2 xs:gap-2.5">
+              <div className="mt-2.5 sm:mt-3 flex items-center gap-2.5">
                 <div className="relative inline-flex items-center">
                   <h2 
-                    className={`text-xl xs:text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-opacity duration-150 ${
+                    className={`text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-opacity duration-150 ${
                       showHideBalance ? 'opacity-0 select-none pointer-events-none' : 'opacity-100'
                     }`}
                     aria-hidden={showHideBalance}
@@ -284,7 +284,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                   {showHideBalance && (
                     <div className="absolute inset-0 flex items-center overflow-hidden">
-                      <span className="text-lg xs:text-xl sm:text-3xl lg:text-4xl font-black tracking-wider text-white font-mono drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] select-none">
+                      <span className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider text-white font-mono drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] select-none">
                         ••••••••
                       </span>
                     </div>
@@ -308,50 +308,50 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               onClick={() => setIncludeAdminFee(prev => !prev)}
               title={includeAdminFee ? (currentLang === 'en' ? "Admin Fee: Included (Active) • Click to toggle" : "Biaya Admin: Termasuk (Aktif) • Klik untuk ubah") : (currentLang === 'en' ? "Admin Fee: Excluded (Inactive) • Click to toggle" : "Biaya Admin: Tanpa Admin (Nonaktif) • Klik untuk ubah")}
               aria-label={includeAdminFee ? "Termasuk Biaya Admin (Aktif)" : "Tanpa Biaya Admin (Nonaktif)"}
-              className="flex flex-col items-center justify-center gap-1 xs:gap-1.5 px-2.5 py-1.5 xs:px-3 xs:py-2 sm:px-3.5 sm:py-2.5 rounded-xl xs:rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 transition-all cursor-pointer active:scale-95 select-none shrink-0 shadow-xs"
+              className="flex flex-col items-center justify-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 transition-all cursor-pointer active:scale-95 select-none shrink-0 shadow-xs"
             >
               {/* Direct Toggle Switch without any icon */}
-              <div className={`relative w-7 h-4 xs:w-8 xs:h-4.5 sm:w-9 sm:h-5 rounded-full p-0.5 transition-colors duration-200 border ${
+              <div className={`relative w-8 h-4.5 sm:w-9 sm:h-5 rounded-full p-0.5 transition-colors duration-200 border ${
                 includeAdminFee ? 'bg-emerald-400 border-emerald-300' : 'bg-black/40 border-white/30'
               }`}>
-                <div className={`w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-4 sm:h-4 rounded-full bg-white transition-transform duration-200 shadow-xs ${
-                  includeAdminFee ? 'translate-x-3 xs:translate-x-3.5 sm:translate-x-4' : 'translate-x-0'
+                <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-white transition-transform duration-200 shadow-xs ${
+                  includeAdminFee ? 'translate-x-3.5 sm:translate-x-4' : 'translate-x-0'
                 }`} />
               </div>
-              <span className="text-[10px] xs:text-[11px] sm:text-xs font-semibold text-white tracking-wide leading-none">
+              <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide leading-none">
                 {currentLang === 'en' ? 'Admin' : 'Admin'}
               </span>
             </button>
           </div>
 
           {/* GoPay-Style Monthly Expense & Income Report Bar */}
-          <div className="mt-1.5 xs:mt-2 pt-1.5 sm:pt-2.5 border-t border-white/20">
+          <div className="mt-3 pt-2.5 border-t border-white/20">
             <button
               type="button"
               onClick={() => setActiveTab('laporan')}
-              className="group w-full flex items-center justify-between gap-2.5 p-1 -mx-1 rounded-xl hover:bg-white/15 active:scale-[0.99] transition-all cursor-pointer select-none text-white text-left"
+              className="group w-full flex items-center justify-between gap-3 p-1.5 -mx-1.5 rounded-xl hover:bg-white/15 active:scale-[0.99] transition-all cursor-pointer select-none text-white text-left"
               title={currentLang === 'en' ? "Click to view full Monthly Report" : "Klik untuk lihat Laporan Bulanan Lengkap"}
             >
-              <div className="flex items-center gap-2 xs:gap-2.5 min-w-0">
+              <div className="flex items-center gap-2.5 min-w-0">
                 {/* 3 mini vertical bars icon matching GoPay */}
-                <div className="flex items-end gap-0.5 h-3.5 w-3 xs:h-4 xs:w-3.5 pb-0.5 shrink-0 text-white drop-shadow-3xs">
-                  <div className="w-1 h-1.5 xs:h-2 bg-white rounded-xs" />
-                  <div className="w-1 h-3 xs:h-4 bg-white rounded-xs" />
-                  <div className="w-1 h-2 xs:h-2.5 bg-white rounded-xs" />
+                <div className="flex items-end gap-0.5 h-4 w-3.5 pb-0.5 shrink-0 text-white drop-shadow-3xs">
+                  <div className="w-1 h-2 bg-white rounded-xs" />
+                  <div className="w-1 h-4 bg-white rounded-xs" />
+                  <div className="w-1 h-2.5 bg-white rounded-xs" />
                 </div>
 
                 <div className="min-w-0">
-                  <div className="flex items-center gap-1.5 text-[11px] xs:text-xs sm:text-sm leading-snug">
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm leading-snug">
                     <span className="font-bold text-white tracking-tight drop-shadow-3xs font-mono">
                       {showHideBalance ? '••••••' : formatIDR(currentMonthExpenses)}
                     </span>
-                    <span className="text-white/90 font-normal drop-shadow-3xs text-[10px] xs:text-[11px] sm:text-xs truncate">
+                    <span className="text-white/90 font-normal drop-shadow-3xs text-[11px] sm:text-xs truncate">
                       {currentLang === 'en' ? `spent in ${currentMonthName}` : `udah terpakai di ${currentMonthName}`}
                     </span>
                   </div>
 
                   {currentMonthIncomes > 0 && (
-                    <div className="flex items-center gap-1.5 text-[9px] xs:text-[10px] sm:text-[11px] text-white/85 mt-0.5">
+                    <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-white/85 mt-0.5">
                       <span>{currentLang === 'en' ? 'Total Income:' : 'Total Pendapatan:'}</span>
                       <span className="font-bold text-emerald-200 font-mono drop-shadow-3xs">
                         {showHideBalance ? '••••••' : `+${formatIDR(currentMonthIncomes)}`}
@@ -364,7 +364,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {/* Custom ChevronsRight SVG pointer icon (Larger & Bolder) */}
               <div className="flex items-center text-white shrink-0 pr-0.5">
                 <svg 
-                  className="w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6 text-white group-hover:scale-110 transition-transform shrink-0 drop-shadow-xs" 
+                  className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:scale-110 transition-transform shrink-0 drop-shadow-xs" 
                   xmlns="http://www.w3.org/2000/svg" 
                   viewBox="0 -960 960 960" 
                   fill="currentColor"
@@ -386,15 +386,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* - Card Aktivitas, Wishlist, Tabungan, Anggaran */}
       {/* - Seluruh visualisasi chart di dashboard */}
       {(() => {
-        let enclosingCardRadiusClass = "rounded-t-[28px] xs:rounded-t-[32px] sm:rounded-t-[40px] rounded-b-none";
-        let metricCardRadiusClass = "rounded-xl xs:rounded-2xl sm:rounded-3xl";
+        let enclosingCardRadiusClass = "rounded-t-[32px] sm:rounded-t-[40px] rounded-b-none";
+        let metricCardRadiusClass = "rounded-2xl sm:rounded-3xl";
 
         if (settings?.cardRadius === 'sharp') {
           enclosingCardRadiusClass = "rounded-none";
           metricCardRadiusClass = "rounded-none";
         } else if (settings?.cardRadius === 'extra') {
-          enclosingCardRadiusClass = "rounded-t-[36px] xs:rounded-t-[40px] sm:rounded-t-[48px] rounded-b-none";
-          metricCardRadiusClass = "rounded-2xl xs:rounded-3xl sm:rounded-[32px]";
+          enclosingCardRadiusClass = "rounded-t-[40px] sm:rounded-t-[48px] rounded-b-none";
+          metricCardRadiusClass = "rounded-3xl sm:rounded-[32px]";
         }
 
         let enclosingCardBgClass = "bg-slate-50 dark:bg-slate-950 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_-16px_36px_rgba(0,0,0,0.45)]";
@@ -412,71 +412,71 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-10 xs:-mt-12 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-3 xs:p-4 sm:p-6 lg:p-8 pt-2.5 xs:pt-3 sm:pt-6 pb-36 sm:pb-40 space-y-3.5 xs:space-y-4 sm:space-y-8 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-6 sm:space-y-8 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan, Pengeluaran, Admin Transfer) */}
-            <div className="grid grid-cols-3 gap-1.5 xs:gap-2.5 sm:gap-4 items-center justify-center w-full relative z-10">
+            <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan */}
               <div 
-                className={`min-h-[76px] xs:min-h-[82px] sm:min-h-[104px] ${metricCardRadiusClass} ${metricCardBgClass} py-1.5 xs:py-2 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
+                className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
               >
-                <div className="w-6 h-6 xs:w-6.5 xs:h-6.5 sm:w-10 sm:h-10 rounded-full bg-emerald-100/90 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
-                  <TrendingUp className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
+                <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-100/90 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                  <TrendingUp className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-full my-auto px-0.5 py-0.5">
-                  <span className="block font-mono font-black text-[10px] xs:text-[11px] sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                <div className="w-full my-auto px-0.5">
+                  <span className="block font-mono font-black text-[11px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalIncome)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5">
+                <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
                   Pendapatan
                 </span>
               </div>
 
               {/* Card 2: Total Pengeluaran */}
               <div 
-                className={`min-h-[76px] xs:min-h-[82px] sm:min-h-[104px] ${metricCardRadiusClass} ${metricCardBgClass} py-1.5 xs:py-2 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
+                className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
               >
-                <div className="w-6 h-6 xs:w-6.5 xs:h-6.5 sm:w-10 sm:h-10 rounded-full bg-rose-100/90 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
-                  <TrendingDown className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
+                <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-rose-100/90 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                  <TrendingDown className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-full my-auto px-0.5 py-0.5">
-                  <span className="block font-mono font-black text-[10px] xs:text-[11px] sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                <div className="w-full my-auto px-0.5">
+                  <span className="block font-mono font-black text-[11px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalExpense)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5">
+                <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
                   Pengeluaran
                 </span>
               </div>
 
               {/* Card 3: Biaya Admin Transfer */}
               <div 
-                className={`min-h-[76px] xs:min-h-[82px] sm:min-h-[104px] ${metricCardRadiusClass} ${metricCardBgClass} py-1.5 xs:py-2 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative`}
+                className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative`}
               >
-                <div className="w-6 h-6 xs:w-6.5 xs:h-6.5 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
-                  <Receipt className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
+                <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                  <Receipt className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-full my-auto px-0.5 py-0.5">
-                  <span className="block font-mono font-black text-[10px] xs:text-[11px] sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                <div className="w-full my-auto px-0.5">
+                  <span className="block font-mono font-black text-[11px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalTransferAdminFees)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5">
+                <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
                   Admin Transfer
                 </span>
               </div>
             </div>
 
             {/* 2. Card Saldo Dompet */}
-            <div className="mt-6 xs:mt-7 sm:mt-10">
-              <div className="flex items-center justify-between mb-2.5 xs:mb-3 sm:mb-3.5 px-0.5">
-                <h3 className="text-[11px] xs:text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
+            <div className="mt-6 sm:mt-8">
+              <div className="flex items-center justify-between mb-3 sm:mb-4 px-1">
+                <h3 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
                   Saldo Dompet
                 </h3>
                 <button
                   type="button"
                   onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                  className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-indigo-500 dark:text-indigo-400 hover:underline flex items-center gap-0.5 transition-colors cursor-pointer group"
+                  className="text-[11px] sm:text-xs font-bold text-indigo-500 dark:text-indigo-400 hover:underline flex items-center gap-0.5 transition-colors cursor-pointer group"
                   title="Buka Menu Kelola Dompet"
                 >
                   <span>Kelola Dompet</span>
@@ -485,56 +485,56 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
 
               {wallets.length === 0 ? (
-                <div className="p-5 text-center rounded-xl sm:rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-                  <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Belum ada dompet tersimpan</p>
+                <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Belum ada dompet tersimpan</p>
                   <button
                     type="button"
                     onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                    className="px-3.5 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition-colors"
+                    className="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition-colors"
                   >
                     Tambah Dompet Baru
                   </button>
                 </div>
               ) : (
-                <div className="w-full space-y-1.5 xs:space-y-2 sm:space-y-2.5">
+                <div className="w-full space-y-2.5 sm:space-y-3">
                   {wallets.map((w: any) => {
                     const balanceVal = w.currentBalance ?? w.initialBalance;
                     const cardColor = w.color || '#0284c7';
 
-                    let stackCardRadius = "rounded-xl xs:rounded-2xl sm:rounded-[20px]";
+                    let stackCardRadius = "rounded-2xl sm:rounded-[24px]";
                     if (settings?.cardRadius === 'sharp') {
                       stackCardRadius = "rounded-none";
                     } else if (settings?.cardRadius === 'extra') {
-                      stackCardRadius = "rounded-2xl xs:rounded-3xl sm:rounded-[28px]";
+                      stackCardRadius = "rounded-3xl sm:rounded-[30px]";
                     }
 
                     return (
                       <div 
                         key={w.id}
                         onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                        className={`group relative ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 shadow-[0_1px_6px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.2)] px-3 xs:px-3.5 sm:px-5 py-1.5 xs:py-2 sm:py-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer select-none`}
+                        className={`group relative ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.2)] px-4 sm:px-5 py-3.5 sm:py-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-md cursor-pointer select-none`}
                         title="Klik untuk kelola dompet ini"
                       >
-                        <div className="flex items-center justify-between gap-2.5 sm:gap-3 relative z-10">
+                        <div className="flex items-center justify-between gap-3 relative z-10">
                           {/* Left: Circular Icon Badge & Name */}
-                          <div className="flex items-center gap-2.5 xs:gap-3 sm:gap-3.5 min-w-0">
+                          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
                             <div 
-                              className="w-7.5 h-7.5 xs:w-8 xs:h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
+                              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
                               style={{ backgroundColor: cardColor }}
                             >
-                              <IconRenderer name={w.icon || 'Wallet'} className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-white" />
+                              <IconRenderer name={w.icon || 'Wallet'} className="w-5 h-5 text-white" />
                             </div>
 
                             <div className="min-w-0">
-                              <h4 className="font-bold text-slate-900 dark:text-white text-xs xs:text-sm sm:text-base leading-snug truncate">
+                              <h4 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug truncate">
                                 {w.name}
                               </h4>
                             </div>
                           </div>
 
                           {/* Right: Balance */}
-                          <div className="text-right shrink-0 pl-1.5 sm:pl-2">
-                            <span className="font-bold text-slate-950 dark:text-white text-xs xs:text-sm sm:text-base tracking-tight font-mono">
+                          <div className="text-right shrink-0 pl-2">
+                            <span className="font-bold text-slate-950 dark:text-white text-sm sm:text-base tracking-tight font-mono">
                               {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
                             </span>
                           </div>
