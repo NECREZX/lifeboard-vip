@@ -89,14 +89,14 @@ export default function BottomNav({
         onClick={() => setActiveTab(tab.id)}
         aria-label={tab.label}
         title={tab.label}
-        className="w-10 xs:w-11 sm:w-12 h-full flex flex-col items-center justify-center py-1 focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
+        className="w-10 xs:w-11 sm:w-12 h-full flex flex-col items-center justify-center pt-1.5 pb-1 focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
         id={`nav-tab-${tab.id}`}
       >
         {/* Uniform Icon Container */}
         <div 
-          className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+          className={`w-7.5 h-7.5 xs:w-8 xs:h-8 rounded-xl flex items-center justify-center transition-transform ${
             isActive 
-              ? 'shadow-2xs' 
+              ? 'shadow-2xs scale-102' 
               : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
           style={isActive ? { 
@@ -107,18 +107,16 @@ export default function BottomNav({
           <Icon className={`w-4.5 h-4.5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
         </div>
 
-        {/* Navigation Label: ONLY for active tab */}
-        <div className="h-3 flex items-center justify-center mt-0.5 pointer-events-none">
+        {/* Navigation Label: ONLY for active tab, compact spacing */}
+        <div className="h-2.5 flex items-center justify-center mt-0.5 pointer-events-none">
           {isActive ? (
             <span 
-              className="text-[8.5px] xs:text-[9px] font-extrabold tracking-tight leading-none whitespace-nowrap max-w-[48px] truncate"
+              className="text-[8px] xs:text-[8.5px] font-extrabold tracking-tight leading-none whitespace-nowrap max-w-[48px] truncate"
               style={{ color: resolvedAccent }}
             >
               {tab.label}
             </span>
-          ) : (
-            <span className="block w-1 h-1 rounded-full bg-transparent" />
-          )}
+          ) : null}
         </div>
       </button>
     );
