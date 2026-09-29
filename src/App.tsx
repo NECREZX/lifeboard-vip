@@ -2344,6 +2344,7 @@ export default function App() {
               setKelolaSubPage('dompet');
               setActiveTab('kelola');
             }}
+            onOpenNotifications={() => setActiveTab('notifikasi')}
             settings={settings}
           />
         )}

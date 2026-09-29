@@ -1566,40 +1566,27 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           </div>
         </div>
 
-        {/* Bottom Quick-Action Buttons inside the Card: Notifikasi & Kustomisasi (Kanan Kiri / 2 Kolom) */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-2 gap-2 sm:gap-3">
-          {/* Button: Notifikasi */}
-          <button
-            type="button"
-            onClick={() => onOpenNotifications ? onOpenNotifications() : null}
-            className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.98] text-left shadow-xs"
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                Notifikasi
-              </span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
-          </button>
-
-          {/* Button: Kustomisasi */}
+        {/* Bottom Quick-Action Button inside the Card: Kustomisasi */}
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80">
           <button
             type="button"
             onClick={() => setActiveSubPage('tampilan')}
-            className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.98] text-left shadow-xs"
+            className="w-full flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.99] text-left shadow-xs"
           >
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                Kustomisasi
-              </span>
+              <div className="min-w-0">
+                <span className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  Kustomisasi Tampilan & Tema
+                </span>
+                <span className="block text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 truncate">
+                  Atur warna tema, font, dan gaya tampilan
+                </span>
+              </div>
             </div>
-            <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
           </button>
         </div>
       </div>

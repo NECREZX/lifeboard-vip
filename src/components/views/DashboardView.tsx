@@ -18,7 +18,14 @@ import {
   ShieldCheck,
   Sparkles,
   ArrowUpRight,
-  ChevronRight
+  ChevronRight,
+  ArrowLeftRight,
+  SlidersHorizontal,
+  Calendar,
+  BarChart3,
+  Printer,
+  Bell,
+  Wallet as WalletIcon
 } from 'lucide-react';
 import { IconRenderer } from '../IconRenderer';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
@@ -62,6 +69,7 @@ interface DashboardViewProps {
   triggerPWAInstall: () => void;
   setActiveTab: (tab: string) => void;
   onOpenWalletManage?: () => void;
+  onOpenNotifications?: () => void;
   settings?: any;
 }
 
@@ -86,6 +94,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   triggerPWAInstall,
   setActiveTab,
   onOpenWalletManage,
+  onOpenNotifications,
   settings
 }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -326,12 +335,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           {/* GoPay-Style Monthly Expense & Income Report Bar */}
           <div className="mt-3 pt-2.5 border-t border-white/20">
-            <button
-              type="button"
-              onClick={() => setActiveTab('laporan')}
-              className="group w-full flex items-center justify-between gap-3 p-1.5 -mx-1.5 rounded-xl hover:bg-white/15 active:scale-[0.99] transition-all cursor-pointer select-none text-white text-left"
-              title={currentLang === 'en' ? "Click to view full Monthly Report" : "Klik untuk lihat Laporan Bulanan Lengkap"}
-            >
+            <div className="w-full flex items-center justify-between gap-3 p-1.5 -mx-1.5 text-white text-left select-none">
               <div className="flex items-center gap-2.5 min-w-0">
                 {/* 3 mini vertical bars icon matching GoPay */}
                 <div className="flex items-end gap-0.5 h-4 w-3.5 pb-0.5 shrink-0 text-white drop-shadow-3xs">
@@ -360,21 +364,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   )}
                 </div>
               </div>
-
-              {/* Custom ChevronsRight SVG pointer icon (Larger & Bolder) */}
-              <div className="flex items-center text-white shrink-0 pr-0.5">
-                <svg 
-                  className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:scale-110 transition-transform shrink-0 drop-shadow-xs" 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 -960 960 960" 
-                  fill="currentColor"
-                  stroke="currentColor"
-                  strokeWidth="36"
-                >
-                  <path d="M383-480 200-664l56-56 240 240-240 240-56-56 183-184Zm264 0L464-664l56-56 240 240-240 240-56-56 183-184Z"/>
-                </svg>
-              </div>
-            </button>
+            </div>
           </div>
         </div>
       </div>
@@ -467,23 +457,47 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-            {/* 2. Card Saldo Dompet - Unified Account Summary Card */}
-            <div className="mt-11 sm:mt-14 pt-1">
-              <div className="flex items-center justify-between mb-3.5 sm:mb-4 px-1">
-                <h3 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
-                  Saldo Dompet
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                  className="text-[11px] sm:text-xs font-bold text-indigo-500 dark:text-indigo-400 hover:underline flex items-center gap-0.5 transition-colors cursor-pointer group"
-                  title="Buka Menu Kelola Dompet"
-                >
-                  <span>Kelola Dompet</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 transition-transform group-hover:translate-x-0.5" />
-                </button>
-              </div>
+            {/* Quick Actions Bar: Notifikasi & Laporan (Clean Action Cards with Left Icon & Name + Right Arrow) */}
+            <div className="grid grid-cols-2 gap-2 xs:gap-3 sm:gap-4 pt-0.5 sm:pt-1">
+              {/* Button 1: Notifikasi */}
+              <button
+                type="button"
+                onClick={() => onOpenNotifications ? onOpenNotifications() : setActiveTab('notifikasi')}
+                className="group flex items-center justify-between p-2.5 xs:p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left"
+                title="Buka Pusat Notifikasi"
+              >
+                <div className="flex items-center gap-2 xs:gap-2.5 sm:gap-3 min-w-0">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                    Notifikasi
+                  </span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300 dark:text-slate-600 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+              </button>
 
+              {/* Button 2: Laporan */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('laporan')}
+                className="group flex items-center justify-between p-2.5 xs:p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left"
+                title="Buka Laporan Keuangan & Mutasi"
+              >
+                <div className="flex items-center gap-2 xs:gap-2.5 sm:gap-3 min-w-0">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                    Laporan
+                  </span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300 dark:text-slate-600 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+              </button>
+            </div>
+
+            {/* 2. Card Total Saldo Dompet - Unified Account Summary Card */}
+            <div className="mt-1 sm:mt-2">
               {wallets.length === 0 ? (
                 <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Belum ada dompet tersimpan</p>
@@ -524,11 +538,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                           </div>
                         </div>
 
-                        {/* Right: Directly visible Nominal Balance only */}
-                        <div className="text-right shrink-0 pl-2">
+                        {/* Right: Directly visible Nominal Balance with Chevron Arrow */}
+                        <div className="flex items-center gap-2 sm:gap-2.5 text-right shrink-0 pl-2">
                           <span className="font-bold text-slate-900 dark:text-white text-xs sm:text-base tracking-tight font-mono">
                             {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
                           </span>
+                          <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
                         </div>
                       </div>
                     );
@@ -538,7 +553,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
               {/* 3. Charts Section: Seluruh visualisasi chart di menu dashboard */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div id="dashboard-charts" className="grid grid-cols-1 lg:grid-cols-2 gap-6 scroll-mt-20">
                 <div className={getCardClasses() + " p-5 lg:p-6"}>
                   <TrendChart transactions={transactions} themeColor="indigo" />
                 </div>
