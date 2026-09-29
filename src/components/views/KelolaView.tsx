@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Plus, 
   Edit2, 
@@ -21,6 +21,7 @@ import {
   Database,
   ShieldCheck,
   ChevronRight,
+  GripVertical,
   ArrowLeft,
   Wallet as WalletIcon,
   Tag,
@@ -74,6 +75,7 @@ interface KelolaViewProps {
   getAccentBg: () => string;
   startEditWallet: (w: Wallet) => void;
   handleDeleteWallet: (id: string) => void;
+  onMoveWallet?: (fromIndex: number, toIndex: number) => void;
   startEditCategory: (c: Category) => void;
   handleDeleteCategory: (id: string) => void;
   startEditSource: (s: IncomeSource) => void;
@@ -130,6 +132,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   getAccentBg,
   startEditWallet,
   handleDeleteWallet,
+  onMoveWallet,
   startEditCategory,
   handleDeleteCategory,
   startEditSource,
@@ -188,6 +191,69 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [tempProfileName, setTempProfileName] = useState(profile?.name || '');
   const [tempProfileAvatar, setTempProfileAvatar] = useState(profile?.avatar || '/male_avatar.jpg');
+
+  // Drag & Drop State for Wallet Reordering
+  const [draggedWalletIdx, setDraggedWalletIdx] = useState<number | null>(null);
+  const [dragOverWalletIdx, setDragOverWalletIdx] = useState<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchDragIdxRef = useRef<number | null>(null);
+
+  const handleWalletDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedWalletIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', `${index}`);
+  };
+
+  const handleWalletDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverWalletIdx !== index) {
+      setDragOverWalletIdx(index);
+    }
+  };
+
+  const handleWalletDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    if (draggedWalletIdx !== null && draggedWalletIdx !== targetIndex) {
+      onMoveWallet && onMoveWallet(draggedWalletIdx, targetIndex);
+    }
+    setDraggedWalletIdx(null);
+    setDragOverWalletIdx(null);
+  };
+
+  const handleWalletDragEnd = () => {
+    setDraggedWalletIdx(null);
+    setDragOverWalletIdx(null);
+  };
+
+  const handleWalletTouchStart = (index: number, e: React.TouchEvent) => {
+    touchDragIdxRef.current = index;
+    touchStartYRef.current = e.touches[0].clientY;
+    setDraggedWalletIdx(index);
+  };
+
+  const handleWalletTouchMove = (e: React.TouchEvent) => {
+    if (touchDragIdxRef.current === null) return;
+    const touch = e.touches[0];
+    const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+    const cardEl = targetEl?.closest('[data-wallet-drag-idx]');
+    if (cardEl) {
+      const targetIdx = parseInt(cardEl.getAttribute('data-wallet-drag-idx') || '-1', 10);
+      if (targetIdx >= 0 && targetIdx !== dragOverWalletIdx) {
+        setDragOverWalletIdx(targetIdx);
+      }
+    }
+  };
+
+  const handleWalletTouchEnd = () => {
+    if (touchDragIdxRef.current !== null && dragOverWalletIdx !== null && touchDragIdxRef.current !== dragOverWalletIdx) {
+      onMoveWallet && onMoveWallet(touchDragIdxRef.current, dragOverWalletIdx);
+    }
+    touchDragIdxRef.current = null;
+    touchStartYRef.current = null;
+    setDraggedWalletIdx(null);
+    setDragOverWalletIdx(null);
+  };
 
   // Local state for Report Date Filter
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
@@ -337,28 +403,99 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
           {/* List Dompet Saat Ini */}
           <div className="flex flex-col gap-3">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Dompet Saat Ini</span>
-            {walletsWithCurrentBalance.map(w => (
-              <div key={w.id} className={getCardClasses() + " p-4 flex items-center justify-between group relative overflow-hidden"}>
-                <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: w.color || '#10b981' }} />
-                <div className="flex items-center gap-3 pl-2">
-                  <div 
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-xs shadow-xs"
-                    style={{ backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
-                  >
-                    {w.icon && <IconRenderer name={w.icon} className="w-5 h-5" />}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-xs text-slate-800 dark:text-white uppercase tracking-tight">{w.name}</h4>
-                    <p className="text-[11px] font-mono text-indigo-500 font-bold mt-0.5">{formatIDR(w.initialBalance)}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => startEditWallet(w)} className="p-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-slate-800 cursor-pointer"><Edit2 className="w-3.5 h-3.5" /></button>
-                  <button onClick={() => handleDeleteWallet(w.id)} className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-800 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
+                Daftar Dompet
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500">
+                {walletsWithCurrentBalance.length} Dompet
+              </span>
+            </div>
+
+            {walletsWithCurrentBalance.length === 0 ? (
+              <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                <p className="text-xs text-slate-400">Belum ada dompet tersimpan.</p>
               </div>
-            ))}
+            ) : (
+              <div className="flex flex-col gap-2.5">
+                {walletsWithCurrentBalance.map((w, idx) => {
+                  const isBeingDragged = draggedWalletIdx === idx;
+                  const isDragOver = dragOverWalletIdx === idx && draggedWalletIdx !== idx;
+
+                  return (
+                    <div 
+                      key={w.id} 
+                      data-wallet-drag-idx={idx}
+                      draggable
+                      onDragStart={(e) => handleWalletDragStart(e, idx)}
+                      onDragOver={(e) => handleWalletDragOver(e, idx)}
+                      onDrop={(e) => handleWalletDrop(e, idx)}
+                      onDragEnd={handleWalletDragEnd}
+                      onTouchStart={(e) => handleWalletTouchStart(idx, e)}
+                      onTouchMove={handleWalletTouchMove}
+                      onTouchEnd={handleWalletTouchEnd}
+                      className={`${getCardClasses()} p-3 sm:p-3.5 flex items-center justify-between group relative overflow-hidden transition-all duration-150 cursor-grab active:cursor-grabbing select-none ${
+                        isBeingDragged 
+                          ? 'opacity-40 scale-[0.98] border-2 border-dashed border-indigo-400 dark:border-indigo-500 shadow-none bg-indigo-50/20' 
+                          : isDragOver
+                            ? 'ring-2 ring-indigo-500 shadow-md bg-indigo-50/60 dark:bg-indigo-950/40 translate-y-0.5'
+                            : 'hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs'
+                      }`}
+                    >
+                      <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: w.color || '#10b981' }} />
+                      
+                      {/* Left: Drag Grip Handle, Position Badge & Wallet Info */}
+                      <div className="flex items-center gap-2.5 sm:gap-3 pl-1 min-w-0 flex-1">
+                        {/* Drag Handle & Position Badge */}
+                        <div 
+                          className="flex items-center gap-1.5 shrink-0 text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 transition-colors p-1"
+                          title="Tahan dan geser untuk mengatur urutan posisi dompet"
+                        >
+                          <GripVertical className="w-4 h-4 shrink-0" />
+                          <span className="font-mono font-bold text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                            #{idx + 1}
+                          </span>
+                        </div>
+
+                        {/* Wallet Icon */}
+                        <div 
+                          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-xs shadow-xs shrink-0"
+                          style={{ backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
+                        >
+                          {w.icon && <IconRenderer name={w.icon} className="w-4 h-4 sm:w-5 sm:h-5" />}
+                        </div>
+
+                        {/* Wallet Name & Balance */}
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-tight truncate">{w.name}</h4>
+                          <p className="text-[11px] font-mono text-indigo-500 dark:text-indigo-400 font-bold mt-0.5 truncate">{formatIDR(w.currentBalance ?? w.initialBalance)}</p>
+                        </div>
+                      </div>
+
+                      {/* Actions: Edit & Delete */}
+                      <div className="flex items-center gap-1 shrink-0 pl-2">
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); startEditWallet(w); }} 
+                          title={`Edit dompet ${w.name}`}
+                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-slate-800 cursor-pointer"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={(e) => { e.stopPropagation(); handleDeleteWallet(w.id); }} 
+                          title={`Hapus dompet ${w.name}`}
+                          className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-800 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -61,6 +61,7 @@ interface DashboardViewProps {
   isInstallable: boolean;
   triggerPWAInstall: () => void;
   setActiveTab: (tab: string) => void;
+  onOpenWalletManage?: () => void;
   settings?: any;
 }
 
@@ -84,6 +85,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   isInstallable,
   triggerPWAInstall,
   setActiveTab,
+  onOpenWalletManage,
   settings
 }) => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -473,7 +475,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </h3>
                   <button
                     type="button"
-                    onClick={() => setActiveTab('kelola')}
+                    onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
                     className="text-[10px] sm:text-[11px] font-bold text-indigo-500 dark:text-indigo-400 hover:underline flex items-center gap-0.5 transition-colors cursor-pointer group"
                     title="Buka Menu Kelola Dompet"
                   >
@@ -487,7 +489,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Belum ada dompet tersimpan</p>
                     <button
                       type="button"
-                      onClick={() => setActiveTab('kelola')}
+                      onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
                       className="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-xs transition-colors"
                     >
                       Tambah Dompet Baru
@@ -518,7 +520,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         return (
                           <div 
                             key={w.id}
-                            onClick={() => setActiveTab('kelola')}
+                            onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
                             style={{ zIndex: 10 + idx }}
                             className={`group relative ${idx > 0 ? '-mt-3.5 sm:-mt-4' : ''} ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 ${isLast ? 'border-b-0 pb-10 sm:pb-12' : 'pb-6 sm:pb-7'} shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.25)] px-4 sm:px-5 py-3.5 sm:py-4 transition-all duration-200 hover:-translate-y-2 hover:shadow-xl hover:z-50 cursor-pointer select-none`}
                             title="Klik untuk kelola dompet ini"

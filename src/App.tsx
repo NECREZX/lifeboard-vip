@@ -498,6 +498,21 @@ export default function App() {
     resetWalletForm();
   };
 
+  const handleMoveWallet = (fromIndex: number, toIndex: number) => {
+    if (fromIndex < 0 || fromIndex >= wallets.length || toIndex < 0 || toIndex >= wallets.length || fromIndex === toIndex) return;
+    setWallets(prev => {
+      const updated = [...prev];
+      const [moved] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, moved);
+      return updated;
+    });
+    triggerNotification(
+      settings.language === 'en' ? 'Wallet Order Updated' : 'Urutan Dompet Diperbarui',
+      settings.language === 'en' ? 'Wallet display order has been saved.' : 'Posisi urutan dompet berhasil disimpan.',
+      'info'
+    );
+  };
+
   // --- Manage Category Form States & Handlers ---
   const [categoryEditId, setCategoryEditId] = useState<string | null>(null);
   const [categoryFormName, setCategoryFormName] = useState<string>('');
@@ -2325,6 +2340,10 @@ export default function App() {
             isInstallable={isInstallable}
             triggerPWAInstall={triggerPWAInstall}
             setActiveTab={setActiveTab}
+            onOpenWalletManage={() => {
+              setKelolaSubPage('dompet');
+              setActiveTab('kelola');
+            }}
             settings={settings}
           />
         )}
@@ -2458,6 +2477,7 @@ export default function App() {
             getAccentBg={getAccentBg}
             startEditWallet={startEditWallet}
             handleDeleteWallet={handleDeleteWallet}
+            onMoveWallet={handleMoveWallet}
             startEditCategory={startEditCategory}
             handleDeleteCategory={handleDeleteCategory}
             startEditSource={startEditSource}
