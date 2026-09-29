@@ -4,7 +4,8 @@
  */
 
 import React, { useState } from 'react';
-import { X, Wallet as WalletIcon, FolderPlus, Coins, Plus, Calendar, Bookmark, Landmark, Sparkles, Check, CheckSquare, Square, Layers, CheckCircle2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Wallet as WalletIcon, FolderPlus, Coins, Plus, Calendar, Bookmark, Landmark, Sparkles, Check, CheckSquare, Square, Layers, CheckCircle2 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Wallet, Category, IncomeSource } from '../types';
 import { formatIDR } from '../lib/formatters';
@@ -237,6 +238,17 @@ export default function FormsModal({
 
   const isHex = accentColor.startsWith('#');
 
+  const getResolvedAccent = () => {
+    if (isHex) return accentColor;
+    switch (accentColor) {
+      case 'emerald': return '#10b981';
+      case 'amber': return '#f59e0b';
+      case 'rose': return '#f43f5e';
+      default: return '#6366f1';
+    }
+  };
+  const resolvedAccent = getResolvedAccent();
+
   const getAccentBg = () => {
     if (isHex) return '';
     switch (accentColor) {
@@ -457,76 +469,76 @@ export default function FormsModal({
     return `border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-slate-100 font-medium transition-all focus:outline-none ${extra}`;
   };
 
-  return (
-    <div className="fixed inset-0 bg-slate-900/40 dark:bg-black/75 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto no-print">
-      <div className={`w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl my-8 transition-all ${
+  return typeof document !== 'undefined' && createPortal(
+    <div 
+      className="fixed inset-0 z-[100] flex flex-col justify-end sm:justify-center p-0 sm:p-4 bg-slate-950/75 backdrop-blur-sm animate-in fade-in duration-200 overflow-hidden no-print"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          resetForms();
+          onClose();
+        }
+      }}
+    >
+      <div className={`relative w-full max-w-lg mx-auto rounded-t-[28px] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[78vh] sm:h-[580px] max-h-[85vh] sm:max-h-[80vh] border-t sm:border border-slate-200/90 dark:border-slate-800 animate-in slide-in-from-bottom duration-200 ${
         uiStyle === 'glass' 
-          ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)]' 
-          : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80'
+          ? 'glass-card' 
+          : 'bg-white dark:bg-slate-900'
       }`}>
+        {/* Mobile Sheet Drag Indicator */}
+        <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
+
         {/* Modal Header */}
-        <div className={`p-5 border-b flex items-center justify-between transition-all ${
-          uiStyle === 'glass' 
-            ? 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border-white/50 dark:border-white/10' 
-            : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'
-        }`}>
-          <div>
-            <h3 className="font-extrabold text-base text-slate-950 dark:text-white tracking-tight">
-              {editData ? 'Perbarui' : 'Tambah'} {activeForm.charAt(0).toUpperCase() + activeForm.slice(1)}
+        <div className="px-4 sm:px-5 pt-3.5 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
+              Form Input Data
             </h3>
+            <span 
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+              style={{
+                backgroundColor: `${resolvedAccent}18`,
+                color: resolvedAccent
+              }}
+            >
+              {activeForm.charAt(0).toUpperCase() + activeForm.slice(1)}
+            </span>
           </div>
-          <button
-            onClick={() => {
-              resetForms();
-              onClose();
-            }}
-            className={`p-1.5 rounded-full transition focus:outline-none ${
-              uiStyle === 'glass'
-                ? 'bg-white/60 dark:bg-white/10 hover:bg-white/90 dark:hover:bg-white/20 text-slate-800 dark:text-slate-100 border border-white dark:border-white/20 shadow-sm'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-400 dark:text-slate-300'
-            }`}
-          >
-            <X className="w-4 h-4" />
-          </button>
         </div>
 
-        {/* Tab Selection Navigation (iOS Liquid Glass Style) */}
-        <div className={`p-3.5 border-b transition-all ${
-          uiStyle === 'glass'
-            ? 'bg-white/20 dark:bg-slate-950/20 backdrop-blur-md border-white/30 dark:border-white/10'
-            : 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-800/80'
-        }`}>
-          <div className={`flex items-center p-1.5 rounded-2xl overflow-x-auto scrollbar-none gap-2 transition-all ${
-            uiStyle === 'glass'
-              ? 'bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner'
-              : 'bg-slate-100/90 dark:bg-slate-800/60 border border-slate-200/50 dark:border-slate-700/50'
-          }`}>
-            {(['pengeluaran', 'pemasukan', 'transfer', 'budgeting', 'tabungan', 'aktivitas', 'wishlist'] as FormType[]).map((tab) => {
-              const isActive = activeForm === tab;
-              return (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => setActiveForm(tab)}
-                  className={`shrink-0 px-4 py-2 text-[11px] sm:text-xs font-extrabold rounded-xl transition-all duration-200 uppercase tracking-wider focus:outline-none whitespace-nowrap select-none ${
-                    isActive 
-                      ? (uiStyle === 'glass' 
-                          ? 'bg-white/90 dark:bg-white/25 text-indigo-950 dark:text-white font-black shadow-[0_4px_14px_rgba(0,0,0,0.12),inset_0_1px_1.5px_rgba(255,255,255,0.9)] border border-white dark:border-white/40 backdrop-blur-xl' 
-                          : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-md font-black border border-slate-200/80 dark:border-slate-700') 
-                      : (uiStyle === 'glass'
-                          ? 'text-slate-700 dark:text-slate-200 font-bold hover:text-slate-950 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/10 border border-transparent'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-700/50 border border-transparent')
-                  }`}
-                >
-                  {tab === 'pengeluaran' ? 'Pengeluaran' : tab === 'pemasukan' ? 'Pemasukan' : tab === 'transfer' ? 'Transfer' : tab}
-                </button>
-              );
-            })}
+        {/* Tab Selection Navigation */}
+        {!editData && (
+          <div className="px-4 sm:px-5 pt-2.5 pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-slate-50/60 dark:bg-slate-900/60">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
+              {(['pengeluaran', 'pemasukan', 'transfer', 'budgeting', 'tabungan', 'aktivitas', 'wishlist'] as FormType[]).map((tab) => {
+                const isActive = activeForm === tab;
+                return (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setActiveForm(tab)}
+                    className={`shrink-0 px-3 py-1.5 text-xs font-bold rounded-xl transition-all duration-150 cursor-pointer select-none ${
+                      isActive 
+                        ? 'shadow-xs text-white' 
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 bg-slate-200/50 hover:bg-slate-200/80 dark:bg-slate-800/60 dark:hover:bg-slate-800'
+                    }`}
+                    style={isActive ? { backgroundColor: resolvedAccent } : undefined}
+                  >
+                    {tab === 'pengeluaran' ? 'Pengeluaran' : 
+                     tab === 'pemasukan' ? 'Pemasukan' : 
+                     tab === 'transfer' ? 'Transfer' : 
+                     tab === 'budgeting' ? 'Budgeting' : 
+                     tab === 'tabungan' ? 'Tabungan' : 
+                     tab === 'aktivitas' ? 'Aktivitas' : 'Wishlist'}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Modal Body Form */}
-        <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 overflow-y-auto max-h-[60vh]">
+        <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
+          <form id="forms-modal-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 flex flex-col gap-4">
           
           {/* PENGELUARAN & PEMASUKAN SHARED INPUTS */}
           {(activeForm === 'pengeluaran' || activeForm === 'pemasukan') && (
@@ -1207,32 +1219,32 @@ export default function FormsModal({
             </>
           )}
 
-          {/* Form Submit Footer */}
-          <div className={`mt-4 pt-4 border-t flex justify-end gap-3 transition-all ${
-            uiStyle === 'glass' 
-              ? 'border-white/20 dark:border-white/10 bg-transparent' 
-              : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900'
-          }`}>
-            <button
-              type="button"
-              onClick={() => {
-                resetForms();
-                onClose();
-              }}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              className={`px-5 py-2 rounded-xl text-xs font-bold text-white shadow-sm transition ${getAccentBg()}`}
-              style={isHex ? { backgroundColor: accentColor } : undefined}
-            >
-              Simpan Catatan
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
+
+        {/* Footer Summary with Action Buttons (Matching Rincian Transaksi Footer) */}
+        <div className="relative px-4 sm:px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] sm:pb-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 text-xs shrink-0 bg-slate-50/70 dark:bg-slate-900/70">
+          <button
+            type="button"
+            onClick={() => {
+              resetForms();
+              onClose();
+            }}
+            className="px-5 py-2.5 text-xs font-bold rounded-xl bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition shadow-xs cursor-pointer"
+          >
+            Batal
+          </button>
+          <button
+            type="submit"
+            form="forms-modal-form"
+            className={`px-6 py-2.5 text-xs font-bold text-white rounded-xl shadow-xs transition active:scale-95 cursor-pointer ${getAccentBg()}`}
+            style={isHex ? { backgroundColor: accentColor } : undefined}
+          >
+            {editData ? 'Simpan Perubahan' : 'Simpan Catatan'}
+          </button>
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
