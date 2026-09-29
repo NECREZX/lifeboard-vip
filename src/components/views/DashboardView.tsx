@@ -417,59 +417,59 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="grid grid-cols-3 gap-1.5 xs:gap-2.5 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan */}
               <div 
-                className={`min-h-[72px] xs:min-h-[80px] sm:min-h-[100px] ${metricCardRadiusClass} ${metricCardBgClass} py-2 xs:py-2.5 sm:py-3.5 px-1 xs:px-1.5 sm:px-3 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
+                className={`min-h-[82px] xs:min-h-[90px] sm:min-h-[108px] ${metricCardRadiusClass} ${metricCardBgClass} py-2.5 xs:py-3 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
               >
                 <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-10 sm:h-10 rounded-full bg-emerald-100/90 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
                   <TrendingUp className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-full my-auto px-0.5">
+                <div className="w-full my-auto px-0.5 py-0.5">
                   <span className="block font-mono font-black text-[10px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalIncome)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5 xs:mt-1">
                   Pendapatan
                 </span>
               </div>
 
               {/* Card 2: Total Pengeluaran */}
               <div 
-                className={`min-h-[72px] xs:min-h-[80px] sm:min-h-[100px] ${metricCardRadiusClass} ${metricCardBgClass} py-2 xs:py-2.5 sm:py-3.5 px-1 xs:px-1.5 sm:px-3 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
+                className={`min-h-[82px] xs:min-h-[90px] sm:min-h-[108px] ${metricCardRadiusClass} ${metricCardBgClass} py-2.5 xs:py-3 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
               >
                 <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-10 sm:h-10 rounded-full bg-rose-100/90 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
                   <TrendingDown className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-full my-auto px-0.5">
+                <div className="w-full my-auto px-0.5 py-0.5">
                   <span className="block font-mono font-black text-[10px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalExpense)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5 xs:mt-1">
                   Pengeluaran
                 </span>
               </div>
 
               {/* Card 3: Biaya Admin Transfer */}
               <div 
-                className={`min-h-[72px] xs:min-h-[80px] sm:min-h-[100px] ${metricCardRadiusClass} ${metricCardBgClass} py-2 xs:py-2.5 sm:py-3.5 px-1 xs:px-1.5 sm:px-3 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative`}
+                className={`min-h-[82px] xs:min-h-[90px] sm:min-h-[108px] ${metricCardRadiusClass} ${metricCardBgClass} py-2.5 xs:py-3 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative`}
               >
                 <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
                   <Receipt className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
                 </div>
-                <div className="w-full my-auto px-0.5">
+                <div className="w-full my-auto px-0.5 py-0.5">
                   <span className="block font-mono font-black text-[10px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalTransferAdminFees)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5 xs:mt-1">
                   Admin Transfer
                 </span>
               </div>
             </div>
 
             {/* 2. Card Saldo Dompet */}
-            <div className="mt-3.5 xs:mt-4 sm:mt-8">
-              <div className="flex items-center justify-between mb-1.5 xs:mb-2 sm:mb-3 px-0.5">
+            <div className="mt-6 xs:mt-7 sm:mt-9">
+              <div className="flex items-center justify-between mb-2.5 xs:mb-3 sm:mb-3.5 px-0.5">
                 <h3 className="text-[11px] xs:text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
                   Saldo Dompet
                 </h3>
