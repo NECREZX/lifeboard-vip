@@ -484,7 +484,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               >
                 <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 min-w-0">
                   <div className={`w-6 h-6 sm:w-7 sm:h-7 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
-                    <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    <svg 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2.2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0"
+                    >
+                      <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+                      <polyline points="16 6 12 2 8 6" />
+                      <line x1="12" y1="2" x2="12" y2="15" />
+                    </svg>
                   </div>
                   <span className="text-[10px] xs:text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                     Laporan
