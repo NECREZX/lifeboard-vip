@@ -467,9 +467,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-              {/* 3. Card Saldo Dompet - Stacked Wallet Cards in Pocket Sleeve */}
-              <div className="mt-5 sm:mt-6">
-                <div className="flex items-center justify-between mb-2.5 sm:mb-3 px-1">
+              {/* 3. Card Saldo Dompet */}
+              <div className="mt-8 sm:mt-10">
+                <div className="flex items-center justify-between mb-3 sm:mb-3.5 px-1">
                   <h3 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
                     Saldo Dompet
                   </h3>
@@ -496,103 +496,58 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     </button>
                   </div>
                 ) : (
-                  <div className="w-full relative py-1">
-                    <div className="flex flex-col relative">
-                      {wallets.map((w: any, idx: number) => {
-                        const balanceVal = w.currentBalance ?? w.initialBalance;
-                        const cardColor = w.color || '#0284c7';
-                        const isLast = idx === wallets.length - 1;
+                  <div className="w-full space-y-2.5 sm:space-y-3">
+                    {wallets.map((w: any) => {
+                      const balanceVal = w.currentBalance ?? w.initialBalance;
+                      const cardColor = w.color || '#0284c7';
 
-                        let stackCardRadius = "rounded-2xl sm:rounded-[24px]";
-                        if (settings?.cardRadius === 'sharp') {
-                          stackCardRadius = "rounded-none";
-                        } else if (settings?.cardRadius === 'extra') {
-                          stackCardRadius = "rounded-3xl sm:rounded-[30px]";
-                        }
+                      let stackCardRadius = "rounded-2xl sm:rounded-[20px]";
+                      if (settings?.cardRadius === 'sharp') {
+                        stackCardRadius = "rounded-none";
+                      } else if (settings?.cardRadius === 'extra') {
+                        stackCardRadius = "rounded-3xl sm:rounded-[28px]";
+                      }
 
-                        // For the bottom-most card entering the pocket sleeve, remove bottom rounding so it plunges straight into the sleeve without gaps
-                        if (isLast && settings?.cardRadius !== 'sharp') {
-                          stackCardRadius = settings?.cardRadius === 'extra' 
-                            ? "rounded-t-3xl sm:rounded-t-[30px] rounded-b-none" 
-                            : "rounded-t-2xl sm:rounded-t-[24px] rounded-b-none";
-                        }
-
-                        return (
-                          <div 
-                            key={w.id}
-                            onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                            style={{ zIndex: 10 + idx }}
-                            className={`group relative ${idx > 0 ? '-mt-3.5 sm:-mt-4' : ''} ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 ${isLast ? 'border-b-0 pb-10 sm:pb-12' : 'pb-6 sm:pb-7'} shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.25)] px-4 sm:px-5 py-3.5 sm:py-4 transition-all duration-200 hover:-translate-y-2 hover:shadow-xl hover:z-50 cursor-pointer select-none`}
-                            title="Klik untuk kelola dompet ini"
-                          >
-                            <div className="flex items-center justify-between gap-3 relative z-10">
-                              {/* Left: Circular Icon Badge & Heading Only */}
-                              <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                                <div 
-                                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
-                                  style={{ backgroundColor: cardColor }}
-                                >
-                                  <IconRenderer name={w.icon || 'Wallet'} className="w-5 h-5 text-white" />
-                                </div>
-
-                                <div className="min-w-0">
-                                  <h4 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug truncate">
-                                    {w.name}
-                                  </h4>
-                                </div>
+                      return (
+                        <div 
+                          key={w.id}
+                          onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
+                          className={`group relative ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.2)] px-4 sm:px-5 py-3.5 sm:py-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-md cursor-pointer select-none`}
+                          title="Klik untuk kelola dompet ini"
+                        >
+                          <div className="flex items-center justify-between gap-3 relative z-10">
+                            {/* Left: Circular Icon Badge & Name */}
+                            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+                              <div 
+                                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
+                                style={{ backgroundColor: cardColor }}
+                              >
+                                <IconRenderer name={w.icon || 'Wallet'} className="w-5 h-5 text-white" />
                               </div>
 
-                              {/* Right: Balance */}
-                              <div className="text-right shrink-0 pl-2">
-                                <span className="font-bold text-slate-950 dark:text-white text-sm sm:text-base tracking-tight font-mono">
-                                  {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
-                                </span>
+                              <div className="min-w-0">
+                                <h4 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug truncate">
+                                  {w.name}
+                                </h4>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
 
-                      {/* Physical Wallet Pocket Rim (Stitched bottom wave flap sleeve - GoPay style: melengkung ke bawah di tengah, menyatu tanpa garis batas) */}
-                      <div 
-                        style={{ zIndex: 30 + wallets.length }}
-                        className="relative -mt-6 sm:-mt-7 pointer-events-none select-none"
-                      >
-                        <svg 
-                          className="w-full h-10 sm:h-12 block" 
-                          preserveAspectRatio="none" 
-                          viewBox="0 0 1000 60"
-                        >
-                          {/* The pocket body that blends 100% seamlessly into the container background below without any border or shadow cutoff */}
-                          <path 
-                            d="M 0,6 L 260,6 C 350,6 410,24 500,24 C 590,24 650,6 740,6 L 1000,6 L 1000,60 L 0,60 Z" 
-                            className="fill-slate-50 dark:fill-slate-950" 
-                          />
-                          {/* Top edge rim line with smooth downward curve in the center */}
-                          <path 
-                            d="M 0,6 L 260,6 C 350,6 410,24 500,24 C 590,24 650,6 740,6 L 1000,6" 
-                            fill="none" 
-                            className="stroke-slate-200/90 dark:stroke-slate-700/90" 
-                            strokeWidth="1.2" 
-                          />
-                          {/* Dashed stitched seam parallel to the center downward curve */}
-                          <path 
-                            d="M 0,14 L 260,14 C 350,14 410,32 500,32 C 590,32 650,14 740,14 L 1000,14" 
-                            fill="none" 
-                            className="stroke-slate-300 dark:stroke-slate-600" 
-                            strokeWidth="1.25" 
-                            strokeDasharray="6,4" 
-                            strokeLinecap="round" 
-                          />
-                        </svg>
-                      </div>
-                    </div>
+                            {/* Right: Balance */}
+                            <div className="text-right shrink-0 pl-2">
+                              <span className="font-bold text-slate-950 dark:text-white text-sm sm:text-base tracking-tight font-mono">
+                                {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
 
               {/* 3. Charts Section: Seluruh visualisasi chart di menu dashboard */}
-              <div className="-mt-4 sm:-mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className={getCardClasses() + " p-5 lg:p-6"}>
                   <TrendChart transactions={transactions} themeColor="indigo" />
                 </div>
