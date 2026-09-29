@@ -367,17 +367,72 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                       key={color}
                       type="button"
                       onClick={() => setWalletFormColor(color)}
-                      className="w-7 h-7 rounded-full border-2 flex items-center justify-center relative shadow-sm cursor-pointer"
+                      className="w-7 h-7 rounded-full border-2 flex items-center justify-center relative shadow-sm cursor-pointer transition-transform hover:scale-105"
                       style={{ 
                         backgroundColor: color,
-                        borderColor: walletFormColor === color ? (settings?.isDarkMode ? '#ffffff' : '#0f172a') : 'transparent' 
+                        borderColor: walletFormColor?.toLowerCase() === color.toLowerCase() ? (settings?.isDarkMode ? '#ffffff' : '#0f172a') : 'transparent' 
                       }}
                     >
-                      {walletFormColor === color && (
+                      {walletFormColor?.toLowerCase() === color.toLowerCase() && (
                         <Check className="w-3.5 h-3.5 text-white drop-shadow-md" />
                       )}
                     </button>
                   ))}
+
+                  {/* Bebas / Custom Color Circle with Native Color Picker Trigger */}
+                  <label
+                    className="w-7 h-7 rounded-full border-2 flex items-center justify-center relative shadow-sm cursor-pointer transition-transform hover:scale-105 overflow-hidden"
+                    style={{
+                      backgroundColor: walletFormColor,
+                      borderColor: !PRESET_COLORS.map(c => c.toLowerCase()).includes(walletFormColor?.toLowerCase()) ? (settings?.isDarkMode ? '#ffffff' : '#0f172a') : 'transparent'
+                    }}
+                    title="Pilih Warna Bebas (Color Picker)"
+                  >
+                    <input 
+                      type="color" 
+                      value={walletFormColor?.startsWith('#') ? walletFormColor : '#10b981'}
+                      onChange={(e) => setWalletFormColor(e.target.value)}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    />
+                    {!PRESET_COLORS.map(c => c.toLowerCase()).includes(walletFormColor?.toLowerCase()) ? (
+                      <Check className="w-3.5 h-3.5 text-white drop-shadow-md pointer-events-none" />
+                    ) : (
+                      <span className="text-[11px] text-white font-black drop-shadow-md pointer-events-none">+</span>
+                    )}
+                  </label>
+                </div>
+
+                {/* Custom Color Hex Tool like in Kustomisasi Umum */}
+                <div className="mt-1 p-2.5 bg-slate-50 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative w-8 h-8 rounded-lg overflow-hidden border-2 border-white dark:border-slate-800 shadow-xs shrink-0">
+                      <input 
+                        type="color" 
+                        value={walletFormColor?.startsWith('#') ? walletFormColor : '#10b981'}
+                        onChange={(e) => setWalletFormColor(e.target.value)}
+                        className="absolute -top-2 -left-2 w-12 h-12 cursor-pointer border-0 p-0"
+                        title="Pilih Warna Kustom"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block">Pilih Warna Bebas</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500 block">Klik kotak warna atau isi kode HEX</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs font-mono font-bold text-slate-400">#</span>
+                    <input 
+                      type="text" 
+                      value={(walletFormColor || '#10b981').replace('#', '')}
+                      onChange={(e) => {
+                        const val = e.target.value.trim();
+                        setWalletFormColor(`#${val}`);
+                      }}
+                      className="w-20 px-2 py-1 text-xs font-mono font-bold uppercase rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      placeholder="10B981"
+                      maxLength={6}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex gap-2 pt-2">
@@ -1577,14 +1632,9 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
-              <div className="min-w-0">
-                <span className="block text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                  Kustomisasi Tampilan & Tema
-                </span>
-                <span className="block text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 truncate">
-                  Atur warna tema, font, dan gaya tampilan
-                </span>
-              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                Kustomisasi Tampilan & Tema
+              </span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
           </button>

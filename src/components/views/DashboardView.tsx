@@ -267,69 +267,45 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Foreground Content: Total Saldo Utama */}
         <div className="relative z-10">
-          {/* Main Hero Row: Left (Badge, Saldo) | Right (Simple Admin Toggle Card) */}
-          <div className="flex items-center justify-between gap-3">
-            {/* Left Column */}
-            <div className="min-w-0 flex-1">
-              {/* Badge TOTAL SALDO UTAMA */}
-              <div className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 border border-white/30 backdrop-blur-md text-white shadow-xs w-fit">
-                <ShieldCheck className="w-3.5 h-3.5 text-rose-100 shrink-0" />
-                <span className="text-[10px] sm:text-xs font-black tracking-[0.12em] sm:tracking-[0.16em] uppercase whitespace-nowrap">
-                  {t('dash_total_balance', currentLang).toUpperCase()}
-                </span>
-              </div>
+          {/* Top Row: Badge TOTAL SALDO UTAMA (Sleek, Proportionate, Slightly Smaller) */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 px-2.5 py-0.5 sm:py-1 rounded-full bg-white/20 border border-white/25 backdrop-blur-md text-white shadow-3xs w-fit">
+              <ShieldCheck className="w-3 h-3 text-rose-100 shrink-0" />
+              <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.1em] uppercase whitespace-nowrap">
+                {t('dash_total_balance', currentLang).toUpperCase()}
+              </span>
+            </div>
+          </div>
 
-              {/* Saldo Display with Eye Icon */}
-              <div className="mt-2.5 sm:mt-3 flex items-center gap-2.5">
-                <div className="relative inline-flex items-center">
-                  <h2 
-                    className={`text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-opacity duration-150 ${
-                      showHideBalance ? 'opacity-0 select-none pointer-events-none' : 'opacity-100'
-                    }`}
-                    aria-hidden={showHideBalance}
-                  >
-                    {formatIDR(activeDisplaySaldo)}
-                  </h2>
+          {/* Saldo Display Row: Saldo on Left, Eye Toggle at Far Right Edge */}
+          <div className="mt-2.5 sm:mt-3 flex items-center justify-between gap-3">
+            <div className="relative inline-flex items-center min-w-0">
+              <h2 
+                className={`text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-opacity duration-150 truncate ${
+                  showHideBalance ? 'opacity-0 select-none pointer-events-none' : 'opacity-100'
+                }`}
+                aria-hidden={showHideBalance}
+              >
+                {formatIDR(activeDisplaySaldo)}
+              </h2>
 
-                  {showHideBalance && (
-                    <div className="absolute inset-0 flex items-center overflow-hidden">
-                      <span className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider text-white font-mono drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] select-none">
-                        ••••••••
-                      </span>
-                    </div>
-                  )}
+              {showHideBalance && (
+                <div className="absolute inset-0 flex items-center overflow-hidden">
+                  <span className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider text-white font-mono drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] select-none">
+                    ••••••••
+                  </span>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={toggleHideBalance}
-                  title={showHideBalance ? (currentLang === 'en' ? "Show Main Balance" : "Tampilkan Saldo Utama") : (currentLang === 'en' ? "Hide Main Balance" : "Sembunyikan Saldo Utama")}
-                  className="p-1 sm:p-1.5 rounded-full transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 bg-white/15 hover:bg-white/25 text-white border border-white/30 backdrop-blur-sm shrink-0"
-                >
-                  {showHideBalance ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                </button>
-              </div>
+              )}
             </div>
 
-            {/* Right Column: Clean Simple Card with direct Toggle Switch + 'Admin' text below */}
+            {/* Eye toggle placed at the far right edge */}
             <button
               type="button"
-              onClick={() => setIncludeAdminFee(prev => !prev)}
-              title={includeAdminFee ? (currentLang === 'en' ? "Admin Fee: Included (Active) • Click to toggle" : "Biaya Admin: Termasuk (Aktif) • Klik untuk ubah") : (currentLang === 'en' ? "Admin Fee: Excluded (Inactive) • Click to toggle" : "Biaya Admin: Tanpa Admin (Nonaktif) • Klik untuk ubah")}
-              aria-label={includeAdminFee ? "Termasuk Biaya Admin (Aktif)" : "Tanpa Biaya Admin (Nonaktif)"}
-              className="flex flex-col items-center justify-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-2xl bg-black/20 hover:bg-black/30 border border-white/20 transition-all cursor-pointer active:scale-95 select-none shrink-0 shadow-xs"
+              onClick={toggleHideBalance}
+              title={showHideBalance ? (currentLang === 'en' ? "Show Main Balance" : "Tampilkan Saldo Utama") : (currentLang === 'en' ? "Hide Main Balance" : "Sembunyikan Saldo Utama")}
+              className={`p-2 sm:p-2.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-xl'} transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md shrink-0 ml-auto`}
             >
-              {/* Direct Toggle Switch without any icon */}
-              <div className={`relative w-8 h-4.5 sm:w-9 sm:h-5 rounded-full p-0.5 transition-colors duration-200 border ${
-                includeAdminFee ? 'bg-emerald-400 border-emerald-300' : 'bg-black/40 border-white/30'
-              }`}>
-                <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-white transition-transform duration-200 shadow-xs ${
-                  includeAdminFee ? 'translate-x-3.5 sm:translate-x-4' : 'translate-x-0'
-                }`} />
-              </div>
-              <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide leading-none">
-                {currentLang === 'en' ? 'Admin' : 'Admin'}
-              </span>
+              {showHideBalance ? <EyeOff className="w-4 h-4 sm:w-4.5 sm:h-4.5" /> : <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5" />}
             </button>
           </div>
 
@@ -371,7 +347,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* 2. Main Enclosing Card (GoPay style Sheet Card) */}
       {/* Overlaps the top banner halfway and wraps: */}
-      {/* - Card persegi panjang (Pendapatan, Pengeluaran, Admin Transfer) */}
+      {/* - Card persegi panjang (Pendapatan, Admin Transfer, Pengeluaran) */}
       {/* - Saldo Dompet */}
       {/* - Card Aktivitas, Wishlist, Tabungan, Anggaran */}
       {/* - Seluruh visualisasi chart di dashboard */}
@@ -403,9 +379,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         return (
           <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-6 sm:space-y-8 transition-all duration-300`}>
-            {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan, Pengeluaran, Admin Transfer) */}
+            {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan [Kiri], Admin Transfer [Tengah], Pengeluaran [Kanan]) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
-              {/* Card 1: Total Pendapatan */}
+              {/* Card 1: Total Pendapatan (Kiri) */}
               <div 
                 className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
               >
@@ -422,7 +398,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </span>
               </div>
 
-              {/* Card 2: Total Pengeluaran */}
+              {/* Card 2: Biaya Admin Transfer (Tengah) */}
+              <div 
+                className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative cursor-pointer`}
+                onClick={() => setIncludeAdminFee(prev => !prev)}
+                title="Klik untuk ubah pemotongan biaya admin"
+              >
+                <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                  <Receipt className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
+                </div>
+                <div className="w-full my-auto px-0.5">
+                  <span className="block font-mono font-black text-[11px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                    {showHideBalance ? '••••••' : formatIDR(totalTransferAdminFees)}
+                  </span>
+                </div>
+                <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                  Admin Transfer
+                </span>
+              </div>
+
+              {/* Card 3: Total Pengeluaran (Kanan) */}
               <div 
                 className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
               >
@@ -438,61 +433,64 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   Pengeluaran
                 </span>
               </div>
-
-              {/* Card 3: Biaya Admin Transfer */}
-              <div 
-                className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative`}
-              >
-                <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
-                  <Receipt className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
-                </div>
-                <div className="w-full my-auto px-0.5">
-                  <span className="block font-mono font-black text-[11px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
-                    {showHideBalance ? '••••••' : formatIDR(totalTransferAdminFees)}
-                  </span>
-                </div>
-                <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
-                  Admin Transfer
-                </span>
-              </div>
             </div>
 
-            {/* Quick Actions Bar: Notifikasi & Laporan (Clean Action Cards with Left Icon & Name + Right Arrow) */}
-            <div className="grid grid-cols-2 gap-2 xs:gap-3 sm:gap-4 pt-0.5 sm:pt-1">
+            {/* Quick Actions Bar: Notifikasi (Kiri), Toggle Admin (Tengah), Laporan (Kanan) */}
+            <div className="grid grid-cols-3 gap-2 xs:gap-2.5 sm:gap-3.5 pt-0.5 sm:pt-1">
               {/* Button 1: Notifikasi */}
               <button
                 type="button"
                 onClick={() => onOpenNotifications ? onOpenNotifications() : setActiveTab('notifikasi')}
-                className="group flex items-center justify-between p-2.5 xs:p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left"
+                className={`group flex items-center justify-between p-2 xs:p-2.5 sm:p-3 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left`}
                 title="Buka Pusat Notifikasi"
               >
-                <div className="flex items-center gap-2 xs:gap-2.5 sm:gap-3 min-w-0">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 min-w-0">
+                  <div className={`w-6 h-6 sm:w-7 sm:h-7 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
+                    <Bell className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </div>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                  <span className="text-[10px] xs:text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                     Notifikasi
                   </span>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300 dark:text-slate-600 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+                <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5 hidden xs:block" />
               </button>
 
-              {/* Button 2: Laporan */}
+              {/* Button 2: Toggle Admin */}
+              <button
+                type="button"
+                onClick={() => setIncludeAdminFee(prev => !prev)}
+                className={`group flex items-center justify-between p-2 xs:p-2.5 sm:p-3 px-3 sm:px-3.5 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-sky-300 dark:hover:border-sky-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left`}
+                title={includeAdminFee ? "Biaya admin transfer: Aktif (dipotong) • Klik untuk ubah" : "Biaya admin transfer: Nonaktif • Klik untuk ubah"}
+              >
+                <span className="text-[11px] xs:text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+                  Admin
+                </span>
+                {/* Mini Switch indicator */}
+                <div className={`w-6 h-3.5 sm:w-7 sm:h-4 rounded-full p-0.5 transition-colors duration-200 flex items-center shrink-0 ml-1 ${
+                  includeAdminFee ? 'bg-sky-500' : 'bg-slate-200 dark:bg-slate-700'
+                }`}>
+                  <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-white transition-transform duration-200 shadow-xs ${
+                    includeAdminFee ? 'translate-x-2.5 sm:translate-x-3' : 'translate-x-0'
+                  }`} />
+                </div>
+              </button>
+
+              {/* Button 3: Laporan */}
               <button
                 type="button"
                 onClick={() => setActiveTab('laporan')}
-                className="group flex items-center justify-between p-2.5 xs:p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left"
+                className={`group flex items-center justify-between p-2 xs:p-2.5 sm:p-3 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left`}
                 title="Buka Laporan Keuangan & Mutasi"
               >
-                <div className="flex items-center gap-2 xs:gap-2.5 sm:gap-3 min-w-0">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 min-w-0">
+                  <div className={`w-6 h-6 sm:w-7 sm:h-7 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
+                    <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </div>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  <span className="text-[10px] xs:text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                     Laporan
                   </span>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300 dark:text-slate-600 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
+                <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5 hidden xs:block" />
               </button>
             </div>
 
