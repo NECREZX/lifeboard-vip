@@ -467,9 +467,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
             </div>
 
-            {/* 2. Card Saldo Dompet */}
-            <div className="mt-6 sm:mt-8">
-              <div className="flex items-center justify-between mb-3 sm:mb-4 px-1">
+            {/* 2. Card Saldo Dompet - Unified Account Summary Card */}
+            <div className="mt-8 sm:mt-10">
+              <div className="flex items-center justify-between mb-3 px-1">
                 <h3 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
                   Saldo Dompet
                 </h3>
@@ -496,48 +496,39 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </button>
                 </div>
               ) : (
-                <div className="w-full space-y-2.5 sm:space-y-3">
+                <div className={`${getCardClasses()} overflow-hidden divide-y divide-slate-100 dark:divide-slate-800/80`}>
                   {wallets.map((w: any) => {
                     const balanceVal = w.currentBalance ?? w.initialBalance;
                     const cardColor = w.color || '#0284c7';
-
-                    let stackCardRadius = "rounded-2xl sm:rounded-[24px]";
-                    if (settings?.cardRadius === 'sharp') {
-                      stackCardRadius = "rounded-none";
-                    } else if (settings?.cardRadius === 'extra') {
-                      stackCardRadius = "rounded-3xl sm:rounded-[30px]";
-                    }
 
                     return (
                       <div 
                         key={w.id}
                         onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                        className={`group relative ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.2)] px-4 sm:px-5 py-3.5 sm:py-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-md cursor-pointer select-none`}
+                        className="group flex items-center justify-between p-3.5 sm:p-4 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors cursor-pointer select-none"
                         title="Klik untuk kelola dompet ini"
                       >
-                        <div className="flex items-center justify-between gap-3 relative z-10">
-                          {/* Left: Circular Icon Badge & Name */}
-                          <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                            <div 
-                              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
-                              style={{ backgroundColor: cardColor }}
-                            >
-                              <IconRenderer name={w.icon || 'Wallet'} className="w-5 h-5 text-white" />
-                            </div>
-
-                            <div className="min-w-0">
-                              <h4 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug truncate">
-                                {w.name}
-                              </h4>
-                            </div>
+                        {/* Left: Colored Icon & Wallet Name */}
+                        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+                          <div 
+                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
+                            style={{ backgroundColor: cardColor }}
+                          >
+                            <IconRenderer name={w.icon || 'Wallet'} className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-white" />
                           </div>
 
-                          {/* Right: Balance */}
-                          <div className="text-right shrink-0 pl-2">
-                            <span className="font-bold text-slate-950 dark:text-white text-sm sm:text-base tracking-tight font-mono">
-                              {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
-                            </span>
+                          <div className="min-w-0">
+                            <h4 className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm leading-snug truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                              {w.name}
+                            </h4>
                           </div>
+                        </div>
+
+                        {/* Right: Directly visible Nominal Balance only */}
+                        <div className="text-right shrink-0 pl-2">
+                          <span className="font-bold text-slate-900 dark:text-white text-xs sm:text-base tracking-tight font-mono">
+                            {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
+                          </span>
                         </div>
                       </div>
                     );
