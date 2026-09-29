@@ -89,14 +89,14 @@ export default function BottomNav({
         onClick={() => setActiveTab(tab.id)}
         aria-label={tab.label}
         title={tab.label}
-        className="w-10 xs:w-11 sm:w-12 h-full flex flex-col items-center justify-center pt-1.5 pb-1 focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
+        className="w-10 xs:w-11 sm:w-12 h-full flex flex-col items-center justify-center pt-1 pb-1 focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
         id={`nav-tab-${tab.id}`}
       >
-        {/* Uniform Icon Container */}
+        {/* Uniform Icon Container - Slightly Larger & Crisp */}
         <div 
-          className={`w-7.5 h-7.5 xs:w-8 xs:h-8 rounded-xl flex items-center justify-center transition-transform ${
+          className={`w-8 h-8 xs:w-8.5 xs:h-8.5 rounded-xl flex items-center justify-center transition-transform ${
             isActive 
-              ? 'shadow-2xs scale-102' 
+              ? 'shadow-2xs scale-105' 
               : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
           style={isActive ? { 
@@ -104,14 +104,14 @@ export default function BottomNav({
             color: resolvedAccent,
           } : undefined}
         >
-          <Icon className={`w-4.5 h-4.5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.8]'}`} />
+          <Icon className={`w-4.5 h-4.5 xs:w-5 xs:h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9]'}`} />
         </div>
 
-        {/* Navigation Label: ONLY for active tab, compact spacing */}
-        <div className="h-2.5 flex items-center justify-center mt-0.5 pointer-events-none">
+        {/* Navigation Label: Slightly larger, clear font without truncation */}
+        <div className="h-3 flex items-center justify-center mt-0.5 pointer-events-none">
           {isActive ? (
             <span 
-              className="text-[8px] xs:text-[8.5px] font-extrabold tracking-tight leading-none whitespace-nowrap max-w-[48px] truncate"
+              className="text-[9px] xs:text-[9.5px] font-extrabold tracking-tight leading-none whitespace-nowrap text-center"
               style={{ color: resolvedAccent }}
             >
               {tab.label}
@@ -139,20 +139,20 @@ export default function BottomNav({
         {/* Left Wing Box: 100% straight border-t from left edge to notch with 2px overlap to eliminate subpixel gap */}
         <div 
           className={`absolute left-0 top-0 bottom-0 ${wingBgClass} border-t border-slate-200 dark:border-slate-800`}
-          style={{ right: 'calc(50% + 58px)' }}
+          style={{ right: 'calc(50% + 54px)' }}
         />
 
-        {/* Center Cradle Notch SVG: 120px wide with generous 8px breathing space around circular button */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[120px] h-[140px]">
-          <svg className="w-full h-full block" viewBox="0 0 120 140" fill="none">
+        {/* Center Cradle Notch SVG: 112px wide with generous breathing space around circular button */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[112px] h-[140px]">
+          <svg className="w-full h-full block" viewBox="0 0 112 140" fill="none">
             {/* Background Fill */}
             <path 
-              d="M 0,0 L 6,0 C 16,0 22,2 26,7 C 31,13 39,44 60,44 C 81,44 89,13 94,7 C 98,2 104,0 114,0 L 120,0 L 120,140 L 0,140 Z" 
+              d="M 0,0 L 6,0 C 14,0 20,2 24,7 C 28,13 36,44 56,44 C 76,44 84,13 88,7 C 92,2 98,0 106,0 L 112,0 L 112,140 L 0,140 Z" 
               className={svgFillClass}
             />
             {/* Top Border Line: 100% continuous and seamless with wing border-t */}
             <path 
-              d="M 0,0.5 L 6,0.5 C 16,0.5 22,2.5 26,7.5 C 31,13.5 39,44.5 60,44.5 C 81,44.5 89,13.5 94,7.5 C 98,2.5 104,0.5 114,0.5 L 120,0.5" 
+              d="M 0,0.5 L 6,0.5 C 14,0.5 20,2.5 24,7.5 C 28,13.5 36,44.5 56,44.5 C 76,44.5 84,13.5 88,7.5 C 92,2.5 98,0.5 106,0.5 L 112,0.5" 
               fill="none" 
               stroke={outlineStroke}
               strokeWidth="1"
@@ -163,7 +163,7 @@ export default function BottomNav({
         {/* Right Wing Box: 100% straight border-t from notch to right edge with 2px overlap to eliminate subpixel gap */}
         <div 
           className={`absolute right-0 top-0 bottom-0 ${wingBgClass} border-t border-slate-200 dark:border-slate-800`}
-          style={{ left: 'calc(50% + 58px)' }}
+          style={{ left: 'calc(50% + 54px)' }}
         />
 
         {/* Solid Base Fill below safe area */}
@@ -173,23 +173,22 @@ export default function BottomNav({
       {/* TALLER CARD CONTENT CONTAINER (H-72PX) & FLOATING CENTER FAB */}
       <div className="relative z-10 w-full max-w-md mx-auto h-[72px]">
         
-        {/* Left Wing Tabs */}
+        {/* Left Wing Tabs: Clustered tightly closer towards center */}
         <div 
-          className="absolute top-0 bottom-0 flex items-center justify-evenly gap-1 xs:gap-2 sm:gap-3 pb-1"
+          className="absolute top-0 bottom-0 flex items-center justify-end gap-1 xs:gap-2 pb-1"
           style={{ 
-            right: 'calc(50% + 60px)',
-            left: '4px'
+            right: 'calc(50% + 44px)',
           }}
         >
           {tabs.slice(0, 3).map((tab) => renderNavTab(tab))}
         </div>
 
-        {/* Center Floating FAB Button: 50px circle nestled with clear space around it */}
+        {/* Center Floating FAB Button: 48px-50px circle nestled with clear space around it */}
         <div className="absolute left-1/2 -translate-x-1/2 -top-3.5 flex items-center justify-center z-30">
           <button
             type="button"
             onClick={onAddClick}
-            className={`group relative w-[50px] h-[50px] rounded-full flex items-center justify-center focus:outline-none cursor-pointer bg-gradient-to-tr ${getFabGradient()} transition-transform active:scale-95`}
+            className={`group relative w-[48px] h-[48px] xs:w-[50px] xs:h-[50px] rounded-full flex items-center justify-center focus:outline-none cursor-pointer bg-gradient-to-tr ${getFabGradient()} transition-transform active:scale-95`}
             style={{
               boxShadow: getFabShadowColor(),
               ...(isHex ? { backgroundColor: accentColor, backgroundImage: 'none' } : {})
@@ -197,16 +196,15 @@ export default function BottomNav({
             title="Catat Baru"
             id="center-fab-add"
           >
-            <Plus className="w-6 h-6 text-white stroke-[2.8]" />
+            <Plus className="w-5.5 h-5.5 xs:w-6 xs:h-6 text-white stroke-[2.8]" />
           </button>
         </div>
 
-        {/* Right Wing Tabs */}
+        {/* Right Wing Tabs: Clustered tightly closer towards center */}
         <div 
-          className="absolute top-0 bottom-0 flex items-center justify-evenly gap-1 xs:gap-2 sm:gap-3 pb-1"
+          className="absolute top-0 bottom-0 flex items-center justify-start gap-1 xs:gap-2 pb-1"
           style={{ 
-            left: 'calc(50% + 60px)',
-            right: '4px'
+            left: 'calc(50% + 44px)',
           }}
         >
           {tabs.slice(3, 6).map((tab) => renderNavTab(tab))}
