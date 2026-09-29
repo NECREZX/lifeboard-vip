@@ -267,11 +267,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         {/* Foreground Content: Total Saldo Utama */}
         <div className="relative z-10">
-          {/* Top Row: Badge TOTAL SALDO UTAMA (Sleek, Proportionate, Slightly Smaller) */}
+          {/* Top Row: Badge TOTAL SALDO UTAMA (Compact & Subtle) */}
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 sm:py-1 rounded-full bg-white/20 border border-white/25 backdrop-blur-md text-white shadow-3xs w-fit">
-              <ShieldCheck className="w-3 h-3 text-rose-100 shrink-0" />
-              <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.1em] uppercase whitespace-nowrap">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 border border-white/25 backdrop-blur-md text-white shadow-3xs w-fit">
+              <ShieldCheck className="w-2.5 h-2.5 text-rose-100 shrink-0" />
+              <span className="text-[8px] sm:text-[9px] font-bold tracking-wider uppercase whitespace-nowrap">
                 {t('dash_total_balance', currentLang).toUpperCase()}
               </span>
             </div>
