@@ -189,7 +189,7 @@ export function LaporanView({
   else if (settings?.cardRadius === 'extra') cardRadiusClass = "rounded-[32px]";
 
   return (
-    <div className="pt-1 sm:pt-2 space-y-4 pb-32 animate-in fade-in duration-200">
+    <div className="flex flex-col gap-4 pb-32 animate-in fade-in duration-200">
       <Breadcrumb 
         items={[
           { label: 'Dashboard', onClick: () => setActiveTab('dashboard') },
@@ -207,7 +207,7 @@ export function LaporanView({
           <button
             type="button"
             onClick={handlePrevMonth}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-90 transition-all cursor-pointer shrink-0"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-95 transition-colors cursor-pointer shrink-0"
             title="Bulan Sebelumnya"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -256,61 +256,61 @@ export function LaporanView({
           <button
             type="button"
             onClick={handleNextMonth}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-90 transition-all cursor-pointer shrink-0"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-95 transition-colors cursor-pointer shrink-0"
             title="Bulan Berikutnya"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Segmented Control Tabs: Pengeluaran / Pendapatan */}
+        {/* Segmented Control Tabs: Pengeluaran / Pendapatan (Rock-solid, Zero-shift layout) */}
         <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 select-none">
           <button
             type="button"
             onClick={() => {
+              if (selectedType === 'pengeluaran') return;
               setSelectedType('pengeluaran');
               setSelectedCategoryFilter(null);
               setShowAllMonthTx(false);
             }}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
               selectedType === 'pengeluaran'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-slate-700 relative'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-xs border-slate-200/90 dark:border-slate-700'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
           >
-            <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-              selectedType === 'pengeluaran' ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
+              selectedType === 'pengeluaran' 
+                ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400' 
+                : 'bg-slate-200/80 dark:bg-slate-700 text-slate-500'
             }`}>
               <ArrowUpCircle className="w-3.5 h-3.5" />
             </div>
             <span>Pengeluaran</span>
-            {selectedType === 'pengeluaran' && (
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-rose-500 rounded-full shadow-[0_0_6px_rgba(244,63,94,0.7)]" />
-            )}
           </button>
 
           <button
             type="button"
             onClick={() => {
+              if (selectedType === 'pemasukan') return;
               setSelectedType('pemasukan');
               setSelectedCategoryFilter(null);
               setShowAllMonthTx(false);
             }}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
               selectedType === 'pemasukan'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-slate-700 relative'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs border-slate-200/90 dark:border-slate-700'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
           >
-            <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-              selectedType === 'pemasukan' ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
+              selectedType === 'pemasukan' 
+                ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400' 
+                : 'bg-slate-200/80 dark:bg-slate-700 text-slate-500'
             }`}>
               <ArrowDownCircle className="w-3.5 h-3.5" />
             </div>
             <span>Pendapatan</span>
-            {selectedType === 'pemasukan' && (
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-emerald-500 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.7)]" />
-            )}
           </button>
         </div>
 
@@ -344,7 +344,7 @@ export function LaporanView({
 
         {/* Card Table of Top Categories/Sources */}
         {rankedItems.length === 0 ? (
-          <div className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-8 text-center ${cardRadiusClass} shadow-xs space-y-3`}>
+          <div key={`empty-${selectedType}`} className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-8 text-center ${cardRadiusClass} shadow-xs space-y-3`}>
             <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
               <PieChart className="w-6 h-6" />
             </div>
@@ -359,14 +359,14 @@ export function LaporanView({
             <button
               type="button"
               onClick={() => onAddTransaction(selectedType)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-colors cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Catat {selectedType === 'pengeluaran' ? 'Pengeluaran' : 'Pendapatan'} Sekarang</span>
             </button>
           </div>
         ) : (
-          <div className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 ${cardRadiusClass} shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
+          <div key={`rankings-${selectedType}`} className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 ${cardRadiusClass} shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
             {displayedRankings.map((item, idx) => {
               const isSelected = selectedCategoryFilter === item.id;
               
@@ -421,7 +421,7 @@ export function LaporanView({
                         {item.percentage}% <span className="font-normal text-slate-400 text-[11px]">dari total</span>
                       </span>
                       
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
                         isSelected 
                           ? 'bg-emerald-500 text-white rotate-90' 
                           : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/60'
@@ -431,10 +431,10 @@ export function LaporanView({
                     </div>
                   </div>
 
-                  {/* Horizontal Progress Bar */}
+                  {/* Horizontal Progress Bar (Lightweight, snappy) */}
                   <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
                     <div 
-                      className="h-full rounded-full transition-all duration-500" 
+                      className="h-full rounded-full transition-[width] duration-200 ease-out" 
                       style={{ 
                         width: `${Math.min(100, Math.max(item.percentage, 3))}%`,
                         backgroundColor: item.color 
@@ -483,7 +483,7 @@ export function LaporanView({
             </div>
           </div>
 
-          <div className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 ${cardRadiusClass} shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
+          <div key={`tx-list-${selectedType}`} className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 ${cardRadiusClass} shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
             {displayedTransactions.map((tx) => {
               const cat = categories.find(c => c.id === tx.categoryId);
               const src = sources.find(s => s.id === tx.sourceId);

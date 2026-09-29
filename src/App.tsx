@@ -2313,7 +2313,7 @@ export default function App() {
 
       {/* 2. MAIN CONTAINER CONTENT */}
       <main 
-        className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' || (activeTab === 'kelola' && kelolaSubPage === 'menu') ? 'pt-0' : activeTab === 'laporan' ? 'pt-7 sm:pt-9' : 'pt-6'} no-print relative z-10`}
+        className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' || (activeTab === 'kelola' && kelolaSubPage === 'menu') ? 'pt-0' : 'pt-6'} no-print relative z-10`}
         style={{
           paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 120px)'
         }}
