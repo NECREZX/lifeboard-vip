@@ -2287,8 +2287,8 @@ export default function App() {
         className="sticky top-0 z-50 w-full no-print bg-[#FF7777] text-white border-none shadow-none relative"
         style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
       >
-        <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
-          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs text-center">
+        <div className="max-w-2xl mx-auto h-12 sm:h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
+          <h1 className="text-lg sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs text-center">
             {activeTab === 'dashboard' && t('nav_dashboard', settings.language || 'id')}
             {activeTab === 'transaksi' && t('nav_transactions', settings.language || 'id')}
             {activeTab === 'tabungan' && t('nav_savings', settings.language || 'id')}
@@ -2315,7 +2315,7 @@ export default function App() {
       <main 
         className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' || (activeTab === 'kelola' && kelolaSubPage === 'menu') ? 'pt-0' : activeTab === 'laporan' ? 'pt-7 sm:pt-9' : 'pt-6'} no-print relative z-10`}
         style={{
-          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 90px)'
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 120px)'
         }}
       >
         

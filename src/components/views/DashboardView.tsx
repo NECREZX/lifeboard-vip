@@ -209,7 +209,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       )}
 
       {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #FF7777) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-2.5 xs:pt-3 sm:pt-5 px-4 sm:px-6 pb-16 xs:pb-18 sm:pb-28 lg:pb-32">
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-1.5 xs:pt-2 sm:pt-4 px-4 sm:px-6 pb-12 xs:pb-14 sm:pb-28 lg:pb-32">
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -271,7 +271,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </div>
 
               {/* Saldo Display with Eye Icon */}
-              <div className="mt-1.5 xs:mt-2 sm:mt-3 flex items-center gap-2 xs:gap-2.5">
+              <div className="mt-1 xs:mt-1.5 sm:mt-3 flex items-center gap-2 xs:gap-2.5">
                 <div className="relative inline-flex items-center">
                   <h2 
                     className={`text-xl xs:text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight font-mono text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-opacity duration-150 ${
@@ -325,7 +325,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* GoPay-Style Monthly Expense & Income Report Bar */}
-          <div className="mt-2 xs:mt-2.5 pt-2 sm:pt-2.5 border-t border-white/20">
+          <div className="mt-1.5 xs:mt-2 pt-1.5 sm:pt-2.5 border-t border-white/20">
             <button
               type="button"
               onClick={() => setActiveTab('laporan')}
@@ -412,63 +412,63 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-13 xs:-mt-15 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-3 xs:p-4 sm:p-6 lg:p-8 pt-3.5 xs:pt-4 sm:pt-8 pb-32 sm:pb-36 space-y-4 xs:space-y-5 sm:space-y-8 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-10 xs:-mt-12 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-3 xs:p-4 sm:p-6 lg:p-8 pt-2.5 xs:pt-3 sm:pt-6 pb-36 sm:pb-40 space-y-3.5 xs:space-y-4 sm:space-y-8 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan, Pengeluaran, Admin Transfer) */}
             <div className="grid grid-cols-3 gap-1.5 xs:gap-2.5 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan */}
               <div 
-                className={`min-h-[82px] xs:min-h-[90px] sm:min-h-[108px] ${metricCardRadiusClass} ${metricCardBgClass} py-2.5 xs:py-3 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
+                className={`min-h-[76px] xs:min-h-[82px] sm:min-h-[104px] ${metricCardRadiusClass} ${metricCardBgClass} py-1.5 xs:py-2 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
               >
-                <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-10 sm:h-10 rounded-full bg-emerald-100/90 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                <div className="w-6 h-6 xs:w-6.5 xs:h-6.5 sm:w-10 sm:h-10 rounded-full bg-emerald-100/90 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
                   <TrendingUp className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
                 </div>
                 <div className="w-full my-auto px-0.5 py-0.5">
-                  <span className="block font-mono font-black text-[10px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                  <span className="block font-mono font-black text-[10px] xs:text-[11px] sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalIncome)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5 xs:mt-1">
+                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5">
                   Pendapatan
                 </span>
               </div>
 
               {/* Card 2: Total Pengeluaran */}
               <div 
-                className={`min-h-[82px] xs:min-h-[90px] sm:min-h-[108px] ${metricCardRadiusClass} ${metricCardBgClass} py-2.5 xs:py-3 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
+                className={`min-h-[76px] xs:min-h-[82px] sm:min-h-[104px] ${metricCardRadiusClass} ${metricCardBgClass} py-1.5 xs:py-2 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
               >
-                <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-10 sm:h-10 rounded-full bg-rose-100/90 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                <div className="w-6 h-6 xs:w-6.5 xs:h-6.5 sm:w-10 sm:h-10 rounded-full bg-rose-100/90 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
                   <TrendingDown className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
                 </div>
                 <div className="w-full my-auto px-0.5 py-0.5">
-                  <span className="block font-mono font-black text-[10px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                  <span className="block font-mono font-black text-[10px] xs:text-[11px] sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalExpense)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5 xs:mt-1">
+                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5">
                   Pengeluaran
                 </span>
               </div>
 
               {/* Card 3: Biaya Admin Transfer */}
               <div 
-                className={`min-h-[82px] xs:min-h-[90px] sm:min-h-[108px] ${metricCardRadiusClass} ${metricCardBgClass} py-2.5 xs:py-3 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative`}
+                className={`min-h-[76px] xs:min-h-[82px] sm:min-h-[104px] ${metricCardRadiusClass} ${metricCardBgClass} py-1.5 xs:py-2 sm:py-3.5 px-1.5 xs:px-2 sm:px-3.5 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative`}
               >
-                <div className="w-6 h-6 xs:w-7 xs:h-7 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                <div className="w-6 h-6 xs:w-6.5 xs:h-6.5 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
                   <Receipt className="w-3 h-3 xs:w-3.5 xs:h-3.5 sm:w-5 sm:h-5" />
                 </div>
                 <div className="w-full my-auto px-0.5 py-0.5">
-                  <span className="block font-mono font-black text-[10px] xs:text-xs sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
+                  <span className="block font-mono font-black text-[10px] xs:text-[11px] sm:text-base lg:text-lg text-slate-800 dark:text-slate-100 tracking-tight truncate">
                     {showHideBalance ? '••••••' : formatIDR(totalTransferAdminFees)}
                   </span>
                 </div>
-                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5 xs:mt-1">
+                <span className="text-[8px] xs:text-[9px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate mt-0.5">
                   Admin Transfer
                 </span>
               </div>
             </div>
 
             {/* 2. Card Saldo Dompet */}
-            <div className="mt-6 xs:mt-7 sm:mt-9">
+            <div className="mt-6 xs:mt-7 sm:mt-10">
               <div className="flex items-center justify-between mb-2.5 xs:mb-3 sm:mb-3.5 px-0.5">
                 <h3 className="text-[11px] xs:text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
                   Saldo Dompet
@@ -496,7 +496,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </button>
                 </div>
               ) : (
-                <div className="w-full space-y-1.5 xs:space-y-2 sm:space-y-3">
+                <div className="w-full space-y-1.5 xs:space-y-2 sm:space-y-2.5">
                   {wallets.map((w: any) => {
                     const balanceVal = w.currentBalance ?? w.initialBalance;
                     const cardColor = w.color || '#0284c7';
@@ -512,17 +512,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       <div 
                         key={w.id}
                         onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                        className={`group relative ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 shadow-[0_1px_6px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.2)] px-3 xs:px-3.5 sm:px-5 py-2 xs:py-2.5 sm:py-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer select-none`}
+                        className={`group relative ${stackCardRadius} bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700/80 shadow-[0_1px_6px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.2)] px-3 xs:px-3.5 sm:px-5 py-1.5 xs:py-2 sm:py-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer select-none`}
                         title="Klik untuk kelola dompet ini"
                       >
                         <div className="flex items-center justify-between gap-2.5 sm:gap-3 relative z-10">
                           {/* Left: Circular Icon Badge & Name */}
                           <div className="flex items-center gap-2.5 xs:gap-3 sm:gap-3.5 min-w-0">
                             <div 
-                              className="w-8 h-8 xs:w-9 xs:h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
+                              className="w-7.5 h-7.5 xs:w-8 xs:h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
                               style={{ backgroundColor: cardColor }}
                             >
-                              <IconRenderer name={w.icon || 'Wallet'} className="w-4 h-4 xs:w-4.5 xs:h-4.5 sm:w-5 sm:h-5 text-white" />
+                              <IconRenderer name={w.icon || 'Wallet'} className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-white" />
                             </div>
 
                             <div className="min-w-0">
