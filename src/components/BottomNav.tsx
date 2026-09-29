@@ -75,8 +75,8 @@ export default function BottomNav({
   const svgFillClass = isDarkMode ? 'fill-slate-950' : 'fill-white';
   const wingBgClass = isDarkMode ? 'bg-slate-950' : 'bg-white';
   
-  // Clean, subtle hairline border matching across all SVG elements
-  const outlineStroke = isDarkMode ? '#334155' : '#e2e8f0';
+  // Clean border matching across all elements
+  const outlineStroke = isDarkMode ? '#1e293b' : '#e2e8f0';
 
   const renderNavTab = (tab: typeof tabs[0]) => {
     const isActive = activeTab === tab.id;
@@ -126,37 +126,35 @@ export default function BottomNav({
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none shadow-[0_-3px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-3px_25px_rgba(0,0,0,0.4)]"
+      className="fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none shadow-[0_-4px_25px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_30px_rgba(0,0,0,0.45)]"
       id="bottom-dock-nav"
       style={{
         paddingBottom: 'env(safe-area-inset-bottom, 0px)'
       }}
     >
-      {/* 1. ALL-SVG UNIFIED BACKGROUND DOCK:
-          Left Wing SVG + Center Notch SVG + Right Wing SVG overlapping seamlessly by 4px.
-          Eliminates any subpixel flex seam gap on mobile Chrome.
+      {/* BACKGROUND DOCK CONTAINER:
+          Left wing (pure horizontal border-t) + Right wing (pure horizontal border-t)
+          + Seamless Round Center Notch SVG (ultra smooth continuous curve matching reference exactly)
       */}
-      <div className="absolute left-0 right-0 top-0 -bottom-10 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         
-        {/* Left Wing SVG: Pure horizontal line at y=0.5 overlapping 4px into center scoop */}
-        <div className="absolute left-0 top-0 bottom-0" style={{ right: 'calc(50% + 46px)' }}>
-          <svg className="w-full h-[120px] block" preserveAspectRatio="none" viewBox="0 0 100 120">
-            <path d="M 0,0 L 100,0 L 100,120 L 0,120 Z" className={svgFillClass} />
-            <line x1="0" y1="0.5" x2="100" y2="0.5" stroke={outlineStroke} strokeWidth="1" />
-          </svg>
-        </div>
+        {/* Left Wing Box: 100% straight border-t from left edge to notch with 2px overlap to eliminate subpixel gap */}
+        <div 
+          className={`absolute left-0 top-0 bottom-0 ${wingBgClass} border-t border-slate-200 dark:border-slate-800`}
+          style={{ right: 'calc(50% + 58px)' }}
+        />
 
-        {/* Center Cradle Notch SVG: 100px wide classic organic S-curve */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[100px] h-[120px] z-10">
-          <svg className="w-full h-full block" viewBox="0 0 100 120" fill="none">
+        {/* Center Cradle Notch SVG: 120px wide with generous 8px breathing space around circular button */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[120px] h-[140px]">
+          <svg className="w-full h-full block" viewBox="0 0 120 140" fill="none">
             {/* Background Fill */}
             <path 
-              d="M 0,0 C 10,0 16,2 20,8 C 25,24 35,42 50,42 C 65,42 75,24 80,8 C 84,2 90,0 100,0 L 100,120 L 0,120 Z" 
+              d="M 0,0 L 6,0 C 16,0 22,2 26,7 C 31,13 39,44 60,44 C 81,44 89,13 94,7 C 98,2 104,0 114,0 L 120,0 L 120,140 L 0,140 Z" 
               className={svgFillClass}
             />
-            {/* Continuous 1px Outline Stroke */}
+            {/* Top Border Line: 100% continuous and seamless with wing border-t */}
             <path 
-              d="M 0,0.5 C 10,0.5 16,2.5 20,8.5 C 25,24 35,42.5 50,42.5 C 65,42.5 75,24 80,8.5 C 84,2.5 90,0.5 100,0.5" 
+              d="M 0,0.5 L 6,0.5 C 16,0.5 22,2.5 26,7.5 C 31,13.5 39,44.5 60,44.5 C 81,44.5 89,13.5 94,7.5 C 98,2.5 104,0.5 114,0.5 L 120,0.5" 
               fill="none" 
               stroke={outlineStroke}
               strokeWidth="1"
@@ -164,38 +162,36 @@ export default function BottomNav({
           </svg>
         </div>
 
-        {/* Right Wing SVG: Pure horizontal line at y=0.5 overlapping 4px into center scoop */}
-        <div className="absolute right-0 top-0 bottom-0" style={{ left: 'calc(50% + 46px)' }}>
-          <svg className="w-full h-[120px] block" preserveAspectRatio="none" viewBox="0 0 100 120">
-            <path d="M 0,0 L 100,0 L 100,120 L 0,120 Z" className={svgFillClass} />
-            <line x1="0" y1="0.5" x2="100" y2="0.5" stroke={outlineStroke} strokeWidth="1" />
-          </svg>
-        </div>
+        {/* Right Wing Box: 100% straight border-t from notch to right edge with 2px overlap to eliminate subpixel gap */}
+        <div 
+          className={`absolute right-0 top-0 bottom-0 ${wingBgClass} border-t border-slate-200 dark:border-slate-800`}
+          style={{ left: 'calc(50% + 58px)' }}
+        />
 
-        {/* Deep Solid Base Fill extending below safe area */}
-        <div className={`absolute left-0 right-0 top-[60px] -bottom-20 ${wingBgClass}`} />
+        {/* Solid Base Fill below safe area */}
+        <div className={`absolute left-0 right-0 top-[68px] -bottom-20 ${wingBgClass}`} />
       </div>
 
-      {/* 2. RAISED TALLER BOTTOM BAR CONTENT (H-74PX) & FLOATING CENTER FAB */}
-      <div className="relative z-10 w-full max-w-md mx-auto h-[74px]">
+      {/* TALLER CARD CONTENT CONTAINER (H-72PX) & FLOATING CENTER FAB */}
+      <div className="relative z-10 w-full max-w-md mx-auto h-[72px]">
         
-        {/* Left Wing Tabs: Compact, aligned & closer to center */}
+        {/* Left Wing Tabs */}
         <div 
-          className="absolute top-0 bottom-0 flex items-center justify-end gap-1.5 xs:gap-2.5 sm:gap-3.5 pb-1"
+          className="absolute top-0 bottom-0 flex items-center justify-evenly gap-1 xs:gap-2 sm:gap-3 pb-1"
           style={{ 
-            right: 'calc(50% + 50px)',
-            left: '8px'
+            right: 'calc(50% + 60px)',
+            left: '4px'
           }}
         >
           {tabs.slice(0, 3).map((tab) => renderNavTab(tab))}
         </div>
 
-        {/* Center Floating FAB Button: 48px circle */}
-        <div className="absolute left-1/2 -translate-x-1/2 -top-4 flex items-center justify-center z-30">
+        {/* Center Floating FAB Button: 50px circle nestled with clear space around it */}
+        <div className="absolute left-1/2 -translate-x-1/2 -top-3.5 flex items-center justify-center z-30">
           <button
             type="button"
             onClick={onAddClick}
-            className={`group relative w-[48px] h-[48px] rounded-full flex items-center justify-center focus:outline-none cursor-pointer bg-gradient-to-tr ${getFabGradient()}`}
+            className={`group relative w-[50px] h-[50px] rounded-full flex items-center justify-center focus:outline-none cursor-pointer bg-gradient-to-tr ${getFabGradient()} transition-transform active:scale-95`}
             style={{
               boxShadow: getFabShadowColor(),
               ...(isHex ? { backgroundColor: accentColor, backgroundImage: 'none' } : {})
@@ -203,16 +199,16 @@ export default function BottomNav({
             title="Catat Baru"
             id="center-fab-add"
           >
-            <Plus className="w-5.5 h-5.5 text-white stroke-[2.8]" />
+            <Plus className="w-6 h-6 text-white stroke-[2.8]" />
           </button>
         </div>
 
-        {/* Right Wing Tabs: Compact, aligned & closer to center */}
+        {/* Right Wing Tabs */}
         <div 
-          className="absolute top-0 bottom-0 flex items-center justify-start gap-1.5 xs:gap-2.5 sm:gap-3.5 pb-1"
+          className="absolute top-0 bottom-0 flex items-center justify-evenly gap-1 xs:gap-2 sm:gap-3 pb-1"
           style={{ 
-            left: 'calc(50% + 50px)',
-            right: '8px'
+            left: 'calc(50% + 60px)',
+            right: '4px'
           }}
         >
           {tabs.slice(3, 6).map((tab) => renderNavTab(tab))}
