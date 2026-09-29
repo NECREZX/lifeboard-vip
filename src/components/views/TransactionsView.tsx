@@ -817,11 +817,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
 
               {/* BOTTOM SECTION: BUTTON TUTUP ONLY */}
               <div className="p-3 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800/80 flex flex-col items-center shrink-0">
-                {/* Close Button */}
+                {/* Close Button (Secondary Gray Style) */}
                 <button
                   type="button"
                   onClick={() => setSelectedTxDetail(null)}
-                  className="w-full py-1.5 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+                  className="w-full py-2 rounded-xl text-xs font-bold bg-slate-200/90 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all active:scale-[0.98] cursor-pointer"
                 >
                   Tutup
                 </button>

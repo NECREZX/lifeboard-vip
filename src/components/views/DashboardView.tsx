@@ -468,8 +468,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
               {/* 3. Card Saldo Dompet - Stacked Wallet Cards in Pocket Sleeve */}
-              <div className="mt-12 sm:mt-16 pt-2 sm:pt-3">
-                <div className="flex items-center justify-between mb-3.5 px-1">
+              <div className="mt-5 sm:mt-6">
+                <div className="flex items-center justify-between mb-2.5 sm:mb-3 px-1">
                   <h3 className="text-xs sm:text-sm font-bold tracking-wider uppercase text-slate-700 dark:text-slate-200">
                     Saldo Dompet
                   </h3>
