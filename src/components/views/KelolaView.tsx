@@ -191,6 +191,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [tempProfileName, setTempProfileName] = useState(profile?.name || '');
   const [tempProfileAvatar, setTempProfileAvatar] = useState(profile?.avatar || '/male_avatar.jpg');
+  const [tempProfileEmail, setTempProfileEmail] = useState(profile?.email || 'rifqithoohaa12@gmail.com');
 
   // Drag & Drop State for Wallet Reordering
   const [draggedWalletIdx, setDraggedWalletIdx] = useState<number | null>(null);
@@ -272,10 +273,12 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = tempProfileName.trim();
+    const trimmedEmail = tempProfileEmail.trim();
     if (trimmed && setProfile && profile) {
       const updated: UserProfile = { 
         ...profile, 
         name: trimmed, 
+        email: trimmedEmail || 'rifqithoohaa12@gmail.com',
         avatar: tempProfileAvatar 
       };
       setProfile(updated);
@@ -1466,59 +1469,66 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
   // ==========================================
   // VIEW UTAMA: SEABANK-STYLE MENU LIST (DEFAULT)
-  // Each sub-menu item has a UNIQUE distinct color!
+  // Each sub-menu item formatted as a matching card button
   // ==========================================
   const menuItems = [
+    {
+      id: 'tampilan',
+      title: 'Kustomisasi Tampilan & Tema',
+      icon: Palette,
+      iconColor: 'bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400',
+      action: () => setActiveSubPage('tampilan')
+    },
     {
       id: 'dompet',
       title: t('menu_wallets', currentLang),
       icon: WalletIcon,
-      iconColor: 'text-amber-700 bg-amber-100 dark:text-amber-300 dark:bg-amber-950/40 border border-amber-600/20',
+      iconColor: 'bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400',
       action: () => setActiveSubPage('dompet')
     },
     {
       id: 'kategori',
       title: t('menu_categories', currentLang),
       icon: Tag,
-      iconColor: 'text-rose-500 bg-rose-500/10 border border-rose-500/20',
+      iconColor: 'bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400',
       action: () => setActiveSubPage('kategori')
     },
     {
       id: 'sumber',
       title: t('menu_sources', currentLang),
       icon: TrendingUp,
-      iconColor: 'text-teal-500 bg-teal-500/10 border border-teal-500/20',
+      iconColor: 'bg-teal-500/10 border border-teal-500/20 text-teal-600 dark:text-teal-400',
       action: () => setActiveSubPage('sumber')
     },
     {
       id: 'cadangan',
       title: t('menu_backup', currentLang),
       icon: HardDrive,
-      iconColor: 'text-sky-500 bg-sky-500/10 border border-sky-500/20',
+      iconColor: 'bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400',
       action: () => setActiveSubPage('cadangan')
     },
     {
       id: 'ekspor',
       title: t('menu_export', currentLang),
       icon: FileCheck2,
-      iconColor: 'text-amber-500 bg-amber-500/10 border border-amber-500/20',
+      iconColor: 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400',
       action: () => setActiveSubPage('ekspor')
     },
     {
       id: 'bahaya',
       title: t('menu_danger', currentLang),
       icon: Trash2,
-      iconColor: 'text-red-600 bg-red-500/10 border border-red-500/20',
+      iconColor: 'bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400',
       action: () => setActiveSubPage('bahaya')
     }
   ];
 
   return (
-    <div className="flex flex-col gap-4 max-w-2xl mx-auto w-full pb-6" id="view-manage">
+    <div className="flex flex-col" id="view-manage">
       
-      {/* 1. Profil Banner Atas (Banner Songket Centered style like Dashboard Hero) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-30">
-        {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
+      {/* 1. Backdrop Banner Atas (Persis Identik dengan Dashboard Hero Banner agar tidak loncat/bergeser motifnya) */}
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32 min-h-[224px] sm:min-h-[240px] lg:min-h-[260px]">
+        {/* Authentic Indonesian Songket Weave Vector Motif (Identik 100% dengan Banner Dashboard) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
           style={{
@@ -1559,56 +1569,62 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             <rect width="100%" height="100%" fill="url(#banner-songket-motif-kelola)" />
           </svg>
 
-          {/* Subtle luminous rose-wine atmospheric glow in the lower corners (pure soft blur, no rings) */}
+          {/* Subtle luminous rose-wine atmospheric glow in the lower corners */}
           <div className="absolute right-0 bottom-0 w-72 h-40 bg-rose-500/25 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute left-10 bottom-0 w-64 h-32 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
         </div>
+      </div>
 
-        {/* Centered Profile Content */}
+      {/* 2. Unified Single Mega Card - Posisi Dinaikkan Lebih Tinggi ke Atas Banner */}
+      <div 
+        className={`relative z-10 -mt-40 sm:-mt-46 lg:-mt-50 p-5 sm:p-6 rounded-3xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-xl flex flex-col gap-4 max-w-2xl mx-auto w-full mb-6`}
+      >
+        {/* Bagian Profil di Dalam Card dengan Garis Pembatas di Bawahnya */}
         <div 
           onClick={() => {
             setTempProfileName(profile?.name || '');
+            setTempProfileEmail(profile?.email || 'rifqithoohaa12@gmail.com');
             setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
             setShowEditProfileModal(true);
           }}
-          className="relative z-10 flex flex-col items-center justify-center text-center cursor-pointer group"
-          title="Klik untuk mengubah nama dan avatar profil"
+          className="flex flex-col items-center justify-center text-center cursor-pointer group pt-1 pb-4 border-b border-slate-100 dark:border-slate-800/80 w-full"
+          title="Klik untuk mengubah nama, email, dan avatar profil"
         >
-          {/* Centered Avatar with clean ring */}
-          <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-4 border-white/60 bg-white/20 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
-            <img 
-              src={profile?.avatar || '/male_avatar.jpg'} 
-              alt="Avatar Profil" 
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = 'none';
-              }} 
-            />
-          </div>
-
-          {/* Centered Name with Edit Icon right beside it */}
-          <div className="flex items-center justify-center gap-1.5 mt-2.5">
-            <h3 className="font-black text-lg sm:text-xl text-white tracking-tight drop-shadow-xs">
-              {profile?.name || t('user_default_name', currentLang)}
-            </h3>
-            <div className="p-1 rounded-full bg-white/20 border border-white/30 text-white group-hover:bg-white/35 transition-all shadow-xs shrink-0">
+          {/* Centered Avatar with edit badge */}
+          <div className="relative">
+            <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-4 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <img 
+                src={profile?.avatar || '/male_avatar.jpg'} 
+                alt="Avatar Profil" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }} 
+              />
+            </div>
+            <div className="absolute bottom-0 right-0 p-1.5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md group-hover:scale-110 transition-transform">
               <Edit3 className="w-3.5 h-3.5" />
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* 2. Card Total Saldo Awal (Overlapping / Nimpa Banner Profil with Quick Sub-Menus for Notifikasi & Kustomisasi Umum) */}
-      <div 
-        className={`relative z-10 -mt-18 sm:-mt-20 p-4 sm:p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-md flex flex-col gap-3.5`}
-      >
-        {/* Top Info: Label, Wallets Badge, & Big Total Initial Balance */}
-        <div className="flex flex-col gap-1.5">
+          {/* User Name & Email */}
+          <div className="flex flex-col items-center justify-center gap-0.5 mt-3">
+            <h3 className="font-black text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight">
+              {profile?.name || t('user_default_name', currentLang)}
+            </h3>
+            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+              {profile?.email || 'rifqithoohaa12@gmail.com'}
+            </span>
+          </div>
+        </div>
+
+        {/* Bagian Total Saldo Awal Terintegrasi dalam 1 Card */}
+        <div className="flex flex-col gap-1.5 pt-1">
           <div className="flex items-center justify-between gap-2">
             <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
               {t('total_initial_balance', currentLang)}
             </span>
-            <div className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 text-[10px] sm:text-xs font-bold flex items-center gap-1.5">
+            <div className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 text-[10px] sm:text-xs font-bold flex items-center gap-1.5 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>{walletsWithCurrentBalance.length} {t('registered_wallets', currentLang)}</span>
             </div>
@@ -1621,52 +1637,33 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           </div>
         </div>
 
-        {/* Bottom Quick-Action Button inside the Card: Kustomisasi */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80">
-          <button
-            type="button"
-            onClick={() => setActiveSubPage('tampilan')}
-            className="w-full flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.99] text-left shadow-xs"
-          >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <Palette className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              </div>
-              <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                Kustomisasi Tampilan & Tema
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-          </button>
+        {/* Seluruh Sub Menu Pengaturan Dibuat Seragam & Selaras (Cards Button) */}
+        <div className="flex flex-col gap-2 pt-1">
+          {menuItems.map((item) => {
+            const IconComp = item.icon;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={item.action}
+                className="w-full flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.99] text-left shadow-xs"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${item.iconColor}`}>
+                    <IconComp className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    {item.title}
+                  </span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* 3. Daftar Menu Pengaturan (Unique Color Icons) */}
-      <div className={`rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden shadow-xs`}>
-        {menuItems.map((item) => {
-          const IconComp = item.icon;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={item.action}
-              className="w-full p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer text-left"
-            >
-              <div className="flex items-center gap-3.5 min-w-0">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.iconColor}`}>
-                  <IconComp className="w-5 h-5" />
-                </div>
-                <h4 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
-                  {item.title}
-                </h4>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0 ml-3" />
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Modal Edit Profil (Nama + Foto Profil Cowo / Cewe) */}
+      {/* Modal Edit Profil (Nama, Email, dan Foto Profil) */}
       {showEditProfileModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
           <div className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-2xl flex flex-col gap-4">
@@ -1739,6 +1736,19 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   value={tempProfileName}
                   onChange={(e) => setTempProfileName(e.target.value)}
                   placeholder="Masukkan nama Anda"
+                  required
+                  className={getInputClass("px-4 py-2.5")}
+                />
+              </div>
+
+              {/* Input Email */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Alamat Email</label>
+                <input
+                  type="email"
+                  value={tempProfileEmail}
+                  onChange={(e) => setTempProfileEmail(e.target.value)}
+                  placeholder="cth: nama@email.com"
                   required
                   className={getInputClass("px-4 py-2.5")}
                 />

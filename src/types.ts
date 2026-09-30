@@ -107,6 +107,7 @@ export type ThemeColor = 'classic' | 'emerald' | 'amber' | 'indigo' | 'rose' | '
 export interface UserProfile {
   name: string;
   avatar: string;
+  email?: string;
 }
 
 export type KelolaSubPage = 'menu' | 'dompet' | 'kategori' | 'sumber' | 'tampilan' | 'cadangan' | 'ekspor' | 'bahaya' | 'kustomisasi_ui';

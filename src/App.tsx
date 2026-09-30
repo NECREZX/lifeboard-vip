@@ -168,9 +168,12 @@ export default function App() {
         parsed.avatar = parsed.avatar.includes('male') ? '/male_avatar.jpg' : '/female_avatar.jpg';
         localStorage.setItem('fin_profile', JSON.stringify(parsed));
       }
+      if (!parsed.email) {
+        parsed.email = 'rifqithoohaa12@gmail.com';
+      }
       return parsed;
     }
-    return { name: 'Rifqi Thoohaa', avatar: '/male_avatar.jpg' };
+    return { name: 'Rifqi Thoohaa', avatar: '/male_avatar.jpg', email: 'rifqithoohaa12@gmail.com' };
   });
 
   const [settings, setSettings] = useState<UserSettings>(() => {
