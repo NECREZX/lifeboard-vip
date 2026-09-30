@@ -414,68 +414,63 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <button
                 type="button"
                 onClick={() => onOpenNotifications ? onOpenNotifications() : setActiveTab('notifikasi')}
-                className={`group flex items-center justify-between p-2 xs:p-2.5 sm:p-3 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left`}
+                className={`group flex flex-col items-center justify-center p-2.5 sm:p-3 gap-1.5 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-center`}
                 title="Buka Pusat Notifikasi"
               >
-                <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 min-w-0">
-                  <div className={`w-6 h-6 sm:w-7 sm:h-7 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
-                    <Bell className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  </div>
-                  <span className="text-[10px] xs:text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                    Notifikasi
-                  </span>
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
+                  <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5 hidden xs:block" />
+                <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                  Notifikasi
+                </span>
               </button>
 
               {/* Button 2: Toggle Admin */}
               <button
                 type="button"
                 onClick={() => setIncludeAdminFee(prev => !prev)}
-                className={`group flex items-center justify-between p-2 xs:p-2.5 sm:p-3 px-3 sm:px-3.5 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-sky-300 dark:hover:border-sky-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left`}
+                className={`group flex flex-col items-center justify-center p-2.5 sm:p-3 gap-1.5 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-sky-300 dark:hover:border-sky-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-center`}
                 title={includeAdminFee ? "Biaya admin transfer: Aktif (dipotong) • Klik untuk ubah" : "Biaya admin transfer: Nonaktif • Klik untuk ubah"}
               >
-                <span className="text-[11px] xs:text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+                <div className="h-7 sm:h-8 flex items-center justify-center shrink-0">
+                  <div className={`w-8 h-4.5 sm:w-9 sm:h-5 rounded-full p-0.5 transition-colors duration-200 flex items-center shrink-0 ${
+                    includeAdminFee ? 'bg-sky-500' : 'bg-slate-300 dark:bg-slate-700'
+                  }`}>
+                    <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-white transition-transform duration-200 shadow-xs ${
+                      includeAdminFee ? 'translate-x-3.5 sm:translate-x-4' : 'translate-x-0'
+                    }`} />
+                  </div>
+                </div>
+                <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 truncate group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
                   Admin
                 </span>
-                {/* Mini Switch indicator */}
-                <div className={`w-6 h-3.5 sm:w-7 sm:h-4 rounded-full p-0.5 transition-colors duration-200 flex items-center shrink-0 ml-1 ${
-                  includeAdminFee ? 'bg-sky-500' : 'bg-slate-200 dark:bg-slate-700'
-                }`}>
-                  <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-white transition-transform duration-200 shadow-xs ${
-                    includeAdminFee ? 'translate-x-2.5 sm:translate-x-3' : 'translate-x-0'
-                  }`} />
-                </div>
               </button>
 
               {/* Button 3: Laporan */}
               <button
                 type="button"
                 onClick={() => setActiveTab('laporan')}
-                className={`group flex items-center justify-between p-2 xs:p-2.5 sm:p-3 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-left`}
+                className={`group flex flex-col items-center justify-center p-2.5 sm:p-3 gap-1.5 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-center`}
                 title="Buka Laporan Keuangan & Mutasi"
               >
-                <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-2.5 min-w-0">
-                  <div className={`w-6 h-6 sm:w-7 sm:h-7 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
-                    <svg 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2.2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0"
-                    >
-                      <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
-                      <polyline points="16 6 12 2 8 6" />
-                      <line x1="12" y1="2" x2="12" y2="15" />
-                    </svg>
-                  </div>
-                  <span className="text-[10px] xs:text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                    Laporan
-                  </span>
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
+                  <svg 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2.2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400 shrink-0"
+                  >
+                    <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+                    <polyline points="16 6 12 2 8 6" />
+                    <line x1="12" y1="2" x2="12" y2="15" />
+                  </svg>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-0.5 hidden xs:block" />
+                <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  Laporan
+                </span>
               </button>
             </div>
 
