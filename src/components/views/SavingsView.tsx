@@ -60,6 +60,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
   const [formAmount, setFormAmount] = useState<string>('');
   const [formDate, setFormDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
   const [formNotes, setFormNotes] = useState<string>('');
+  const [selectedWalletFilter, setSelectedWalletFilter] = useState<string>('all');
 
   // 2. Modal Rincian Riwayat Transaksi (Inspecting Logs Modal, persis menu Budgeting)
   const [inspectingSaving, setInspectingSaving] = useState<Saving | null>(null);
@@ -212,62 +213,69 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
     }
   }, [inspectingSaving, inspectingLogs, checkModalScroll]);
 
+  const filteredSavings = useMemo(() => {
+    return savings.filter((s) => {
+      const cur = Number(s.currentAmount) || 0;
+      const tgt = Number(s.targetAmount) || 0;
+      const isDone = cur >= tgt;
+
+      // 1. Status Filter
+      if (savingFilter === 'berjalan' && isDone) return false;
+      if (savingFilter === 'tercapai' && !isDone) return false;
+
+      // 2. Wallet Filter (if specific wallet selected, show savings with logs or linked to this wallet)
+      if (selectedWalletFilter !== 'all') {
+        const hasLogWithWallet = savingLogs.some(l => l.savingId === s.id && l.walletId === selectedWalletFilter);
+        const hasDirectWallet = (s as any).walletId === selectedWalletFilter;
+        if (!hasLogWithWallet && !hasDirectWallet) return false;
+      }
+      return true;
+    });
+  }, [savings, savingLogs, savingFilter, selectedWalletFilter]);
+
   return (
     <div className="flex flex-col gap-6" id="view-savings">
-      {/* 1. Filter Status Tabs (Top) */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 bg-slate-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 w-fit backdrop-blur-sm">
-          <button
-            onClick={() => setSavingFilter('semua')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-              savingFilter === 'semua'
-                ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm shadow-slate-900/20'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
-            }`}
-          >
-            <span>Semua</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
-              savingFilter === 'semua'
-                ? 'bg-white/20 text-white'
-                : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-            }`}>
-              {savings.length}
+      {/* Filter Selectors (Matching Budgeting Concept Exactly) */}
+      <div className="flex items-center justify-end w-full">
+        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
+          {/* Status Selector Dropdown Card */}
+          <div className="relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs">
+            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+              Status:
             </span>
-          </button>
-          <button
-            onClick={() => setSavingFilter('berjalan')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-              savingFilter === 'berjalan'
-                ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/20'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
-            }`}
-          >
-            <span>Berjalan</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
-              savingFilter === 'berjalan'
-                ? 'bg-white/20 text-white'
-                : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-            }`}>
-              {runningCount}
+            <div className="relative flex items-center min-w-0 flex-1 justify-end">
+              <select
+                value={savingFilter}
+                onChange={(e) => setSavingFilter(e.target.value as 'semua' | 'berjalan' | 'tercapai')}
+                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+              >
+                <option value="semua">Semua</option>
+                <option value="berjalan">Berjalan</option>
+                <option value="tercapai">Tercapai</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-0 shrink-0" />
+            </div>
+          </div>
+
+          {/* Wallet Selector Dropdown Card */}
+          <div className="relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs">
+            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+              Dompet:
             </span>
-          </button>
-          <button
-            onClick={() => setSavingFilter('tercapai')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
-              savingFilter === 'tercapai'
-                ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
-            }`}
-          >
-            <span>Tercapai</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
-              savingFilter === 'tercapai'
-                ? 'bg-white/20 text-white'
-                : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-            }`}>
-              {completedCount}
-            </span>
-          </button>
+            <div className="relative flex items-center min-w-0 flex-1 justify-end">
+              <select
+                value={selectedWalletFilter}
+                onChange={(e) => setSelectedWalletFilter(e.target.value)}
+                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+              >
+                <option value="all">Semua</option>
+                {wallets.map((w) => (
+                  <option key={w.id} value={w.id}>{w.name}</option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-0 shrink-0" />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -389,37 +397,35 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
       )}
 
       {/* 3. Savings List */}
-      {savings.length === 0 ? (
+      {filteredSavings.length === 0 ? (
         <div className="p-8 sm:p-12 text-center rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 flex flex-col items-center justify-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
             <Coins className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="font-bold text-slate-800 dark:text-slate-200 text-base">Belum Ada Target Tabungan</h4>
+            <h4 className="font-bold text-slate-800 dark:text-slate-200 text-base">
+              {savings.length === 0 ? 'Belum Ada Target Tabungan' : 'Tidak Ada Tabungan Sesuai Filter'}
+            </h4>
             <p className="text-xs text-slate-400 max-w-sm mt-1">
-              Tambahkan target tabungan Anda melalui tombol + di menu bawah.
+              {savings.length === 0 
+                ? 'Tambahkan target tabungan Anda melalui tombol + di menu bawah.' 
+                : 'Coba ubah opsi filter status atau dompet di atas.'}
             </p>
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {savings
-            .filter((s) => {
-              if (savingFilter === 'berjalan') return s.currentAmount < s.targetAmount;
-              if (savingFilter === 'tercapai') return s.currentAmount >= s.targetAmount;
-              return true;
-            })
-            .map((s) => {
-              const pct = Math.min((s.currentAmount / s.targetAmount) * 100, 100);
-              const isDone = s.currentAmount >= s.targetAmount;
-              const remaining = Math.max(0, s.targetAmount - s.currentAmount);
-              const cardLogs = savingLogs.filter(l => l.savingId === s.id);
+          {filteredSavings.map((s) => {
+            const pct = Math.min((s.currentAmount / s.targetAmount) * 100, 100);
+            const isDone = s.currentAmount >= s.targetAmount;
+            const remaining = Math.max(0, s.targetAmount - s.currentAmount);
+            const cardLogs = savingLogs.filter(l => l.savingId === s.id);
 
-              return (
-                <div 
-                  key={s.id} 
-                  className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between gap-4 relative overflow-hidden transition-all duration-200`}
-                >
+            return (
+              <div 
+                key={s.id} 
+                className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between gap-4 relative overflow-hidden transition-all duration-200`}
+              >
                   {/* Top Bar: Title, Badge & Actions */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">

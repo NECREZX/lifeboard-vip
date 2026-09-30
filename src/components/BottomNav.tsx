@@ -89,15 +89,15 @@ export default function BottomNav({
         onClick={() => setActiveTab(tab.id)}
         aria-label={tab.label}
         title={tab.label}
-        className="w-10 xs:w-11 sm:w-12 h-full flex flex-col items-center justify-center pt-1 pb-1 focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
+        className="group relative h-full flex flex-col items-center justify-center py-1 px-0.5 focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
         id={`nav-tab-${tab.id}`}
       >
-        {/* Uniform Icon Container - Slightly Larger & Crisp */}
+        {/* Unified Pill/Capsule: Encloses BOTH Icon AND Navigation Label together for hover & active states */}
         <div 
-          className={`w-8 h-8 xs:w-8.5 xs:h-8.5 rounded-xl flex items-center justify-center transition-transform ${
+          className={`flex flex-col items-center justify-center px-1.5 xs:px-2 py-1 rounded-2xl transition-all duration-200 min-w-[36px] xs:min-w-[40px] ${
             isActive 
-              ? 'shadow-2xs scale-105' 
-              : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
+              ? 'shadow-2xs scale-102 font-bold' 
+              : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
           }`}
           style={isActive ? { 
             backgroundColor: `${resolvedAccent}18`,
@@ -105,13 +105,11 @@ export default function BottomNav({
           } : undefined}
         >
           <Icon className={`w-4.5 h-4.5 xs:w-5 xs:h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9]'}`} />
-        </div>
 
-        {/* Navigation Label: Slightly larger, clear font without truncation */}
-        <div className="h-3 flex items-center justify-center mt-0.5 pointer-events-none">
+          {/* Navigation Label: Inside the hover/active capsule */}
           {isActive ? (
             <span 
-              className="text-[9px] xs:text-[9.5px] font-extrabold tracking-tight leading-none whitespace-nowrap text-center"
+              className="text-[9px] xs:text-[9.5px] font-extrabold tracking-tight leading-none whitespace-nowrap text-center mt-1"
               style={{ color: resolvedAccent }}
             >
               {tab.label}

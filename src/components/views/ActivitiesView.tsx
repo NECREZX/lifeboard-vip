@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { Trash2, CheckCircle, Circle, Calendar, Bookmark, Edit2, PlusCircle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Trash2, CheckCircle, Circle, Calendar, Bookmark, Edit2, PlusCircle, ChevronDown } from 'lucide-react';
 import { Activity, Wishlist } from '../../types';
 import { formatIDR } from '../../lib/formatters';
 import { AgendaKerjaIcon, WishlistIcon } from '../CustomIcons';
@@ -36,60 +36,95 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
   onEditActivity,
   onEditWishlist
 }) => {
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  const filteredActivities = useMemo(() => {
+    return activities.filter((a) => {
+      if (statusFilter === 'pending') return a.status !== 'completed';
+      if (statusFilter === 'completed') return a.status === 'completed';
+      return true;
+    });
+  }, [activities, statusFilter]);
+
+  const filteredWishlists = useMemo(() => {
+    return wishlists.filter((w) => {
+      if (statusFilter === 'pending') return !w.isPurchased;
+      if (statusFilter === 'completed') return Boolean(w.isPurchased);
+      return true;
+    });
+  }, [wishlists, statusFilter]);
+
   return (
     <div className="flex flex-col gap-6" id="view-activities">
-      <div className="flex flex-col gap-4 mb-2">
-        <div className="flex items-center gap-2 bg-slate-100/80 dark:bg-slate-900/80 p-1.5 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 w-fit backdrop-blur-sm">
-          <button
-            onClick={() => setActiveSubTab('agenda')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
-              activeSubTab === 'agenda'
-                ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm shadow-slate-900/20'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
-            }`}
-          >
-            <span>Agenda Kerja</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
-              activeSubTab === 'agenda'
-                ? 'bg-white/20 text-white'
-                : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-            }`}>
-              {activities.length}
+      {/* Filter Selectors (Matching Budgeting Concept Exactly) */}
+      <div className="flex items-center justify-end w-full">
+        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
+          {/* Tipe / SubTab Selector Dropdown Card */}
+          <div className="relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs">
+            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+              Tipe:
             </span>
-          </button>
-          <button
-            onClick={() => setActiveSubTab('wishlist')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
-              activeSubTab === 'wishlist'
-                ? 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm shadow-slate-900/20'
-                : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50'
-            }`}
-          >
-            <span>Daftar Keinginan</span>
-            <span className={`text-[10px] px-1.5 py-0.2 rounded-md font-extrabold ${
-              activeSubTab === 'wishlist'
-                ? 'bg-white/20 text-white'
-                : 'bg-slate-200/70 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-            }`}>
-              {wishlists.length}
+            <div className="relative flex items-center min-w-0 flex-1 justify-end">
+              <select
+                value={activeSubTab}
+                onChange={(e) => {
+                  setActiveSubTab(e.target.value as 'agenda' | 'wishlist');
+                  setStatusFilter('all');
+                }}
+                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+              >
+                <option value="agenda">Agenda Kerja</option>
+                <option value="wishlist">Daftar Keinginan</option>
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-0 shrink-0" />
+            </div>
+          </div>
+
+          {/* Status Selector Dropdown Card */}
+          <div className="relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs">
+            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+              Status:
             </span>
-          </button>
+            <div className="relative flex items-center min-w-0 flex-1 justify-end">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+              >
+                <option value="all">Semua</option>
+                {activeSubTab === 'agenda' ? (
+                  <>
+                    <option value="pending">Belum Selesai</option>
+                    <option value="completed">Selesai</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="pending">Rencana</option>
+                    <option value="completed">Terbeli</option>
+                  </>
+                )}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-0 shrink-0" />
+            </div>
+          </div>
         </div>
       </div>
 
       {activeSubTab === 'agenda' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {activities.length === 0 ? (
+          {filteredActivities.length === 0 ? (
             <div className="col-span-full py-12 text-center text-slate-400">
-              Belum ada agenda aktivitas terjadwal.
+              {activities.length === 0 
+                ? 'Belum ada agenda aktivitas terjadwal.' 
+                : 'Tidak ada agenda aktivitas sesuai filter status.'}
             </div>
           ) : (
-            activities.map((a) => {
+            filteredActivities.map((a) => {
               const isDone = a.status === 'completed';
               return (
                 <div key={a.id} className={getCardClasses() + ` p-4 flex flex-col gap-3 transition-all duration-300 ${isDone ? 'opacity-60 bg-slate-50/50 dark:bg-slate-900/40 grayscale-[0.5]' : 'hover:border-indigo-200 dark:hover:border-indigo-900'}`}>
                   <div className="flex items-start justify-between gap-3">
-                    <button onClick={() => handleToggleActivity(a.id)} className={`shrink-0 mt-0.5 transition ${isDone ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-700 hover:text-indigo-400'}`}>
+                    <button onClick={() => handleToggleActivity(a.id)} className={`shrink-0 mt-0.5 transition cursor-pointer ${isDone ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-700 hover:text-indigo-400'}`}>
                       {isDone ? <CheckCircle className="w-5 h-5 fill-emerald-50 dark:fill-emerald-950/30" /> : <Circle className="w-5 h-5" />}
                     </button>
                     <div className="flex-1">
@@ -97,10 +132,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                       {a.description && <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{a.description}</p>}
                     </div>
                     <div className="flex gap-1">
-                      <button onClick={() => onEditActivity(a)} className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition">
+                      <button onClick={() => onEditActivity(a)} className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition cursor-pointer">
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
-                      <button onClick={() => handleDeleteActivity(a.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition">
+                      <button onClick={() => handleDeleteActivity(a.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition cursor-pointer">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -124,15 +159,17 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {wishlists.length === 0 ? (
+          {filteredWishlists.length === 0 ? (
             <div className="col-span-full py-12 text-center text-slate-400">
-              Daftar keinginan masih kosong.
+              {wishlists.length === 0 
+                ? 'Daftar keinginan masih kosong.' 
+                : 'Tidak ada daftar keinginan sesuai filter status.'}
             </div>
           ) : (
-            wishlists.map((w) => (
+            filteredWishlists.map((w) => (
               <div key={w.id} className={getCardClasses() + ` p-4 flex flex-col gap-3 transition-all duration-300 ${w.isPurchased ? 'opacity-60 bg-slate-50/50 dark:bg-slate-900/40 grayscale-[0.5]' : 'hover:border-indigo-200 dark:hover:border-indigo-900'}`}>
                 <div className="flex items-start justify-between gap-3">
-                  <button onClick={() => handleToggleWishlist(w.id)} className={`shrink-0 mt-0.5 transition ${w.isPurchased ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-700 hover:text-indigo-400'}`}>
+                  <button onClick={() => handleToggleWishlist(w.id)} className={`shrink-0 mt-0.5 transition cursor-pointer ${w.isPurchased ? 'text-emerald-500' : 'text-slate-300 dark:text-slate-700 hover:text-indigo-400'}`}>
                     {w.isPurchased ? <CheckCircle className="w-5 h-5 fill-emerald-50 dark:fill-emerald-950/30" /> : <Circle className="w-5 h-5" />}
                   </button>
                   <div className="flex-1">
@@ -144,10 +181,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    <button onClick={() => onEditWishlist(w)} className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition">
+                    <button onClick={() => onEditWishlist(w)} className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition cursor-pointer">
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
-                    <button onClick={() => handleDeleteWishlist(w.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition">
+                    <button onClick={() => handleDeleteWishlist(w.id)} className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition cursor-pointer">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
