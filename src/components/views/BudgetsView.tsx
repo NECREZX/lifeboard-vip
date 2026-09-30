@@ -223,13 +223,15 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
     ? (isEn ? 'All Wallets' : 'Seluruh Dompet')
     : (wallets.find(w => w.id === selectedWalletId)?.name || 'Dompet Terpilih');
 
+  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+
   return (
     <div className="flex flex-col gap-5" id="view-budgeting">
       {/* Filter Selectors */}
       <div className="flex items-center justify-end w-full">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Wallet Selector Dropdown */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden ${
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden ${
             uiStyle === 'glass'
               ? 'glass-input'
               : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-sm'
@@ -253,7 +255,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
           </div>
 
           {/* Period Selector */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden ${
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden ${
             uiStyle === 'glass'
               ? 'glass-input'
               : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-sm'

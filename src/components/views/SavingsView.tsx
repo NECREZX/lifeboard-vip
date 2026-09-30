@@ -51,6 +51,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
   onUpdateSavingLog,
   onDeleteSavingLog,
   onEdit,
+  settings
 }) => {
   // 1. Modal Setor / Tarik / Edit Log State
   const [activeModalSaving, setActiveModalSaving] = useState<Saving | null>(null);
@@ -233,13 +234,15 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
     });
   }, [savings, savingLogs, savingFilter, selectedWalletFilter]);
 
+  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+
   return (
     <div className="flex flex-col gap-6" id="view-savings">
       {/* Filter Selectors (Matching Budgeting Concept Exactly) */}
       <div className="flex items-center justify-end w-full">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Status Selector Dropdown Card */}
-          <div className="relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs">
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs`}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
               Status:
             </span>
@@ -258,7 +261,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
           </div>
 
           {/* Wallet Selector Dropdown Card */}
-          <div className="relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs">
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs`}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
               Dompet:
             </span>

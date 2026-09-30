@@ -21,6 +21,7 @@ interface ActivitiesViewProps {
   handleToggleWishlist: (id: string) => void;
   onEditActivity: (activity: Activity) => void;
   onEditWishlist: (wishlist: Wishlist) => void;
+  settings?: any;
 }
 
 export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
@@ -34,9 +35,12 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
   handleDeleteWishlist,
   handleToggleWishlist,
   onEditActivity,
-  onEditWishlist
+  onEditWishlist,
+  settings
 }) => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
 
   const filteredActivities = useMemo(() => {
     return activities.filter((a) => {
@@ -60,7 +64,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
       <div className="flex items-center justify-end w-full">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Tipe / SubTab Selector Dropdown Card */}
-          <div className="relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs">
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs`}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
               Tipe:
             </span>
@@ -81,7 +85,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
           </div>
 
           {/* Status Selector Dropdown Card */}
-          <div className="relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs">
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs`}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
               Status:
             </span>

@@ -307,13 +307,29 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   // ==========================================
   if (activeSubPage === 'dompet') {
     return (
-      <div className="flex flex-col gap-4" id="subview-dompet">
+      <div className="flex flex-col gap-4 pt-5 sm:pt-6" id="subview-dompet">
         <Breadcrumb 
           items={[
             { label: t('title_manage', currentLang), onClick: () => setActiveSubPage('menu') },
             { label: t('title_wallet_manage', currentLang) }
           ]} 
         />
+
+        {/* Card Simpel Total Saldo Awal & Badge Jumlah Dompet */}
+        <div className={`p-4 sm:p-5 ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between gap-4`}>
+          <div className="flex flex-col gap-1 min-w-0">
+            <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
+              {t('total_initial_balance', currentLang)}
+            </span>
+            <span className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight truncate">
+              {formatIDR(totalInitial)}
+            </span>
+          </div>
+          <div className="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 text-xs font-bold flex items-center gap-2 shadow-2xs shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span>{walletsWithCurrentBalance.length} {t('registered_wallets', currentLang)}</span>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Form Tambah Dompet Baru / Edit Dompet */}
@@ -565,7 +581,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   // ==========================================
   if (activeSubPage === 'kategori') {
     return (
-      <div className="flex flex-col gap-4" id="subview-kategori">
+      <div className="flex flex-col gap-4 pt-5 sm:pt-6" id="subview-kategori">
         <Breadcrumb 
           items={[
             { label: t('title_manage', currentLang), onClick: () => setActiveSubPage('menu') },
@@ -696,7 +712,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   // ==========================================
   if (activeSubPage === 'sumber') {
     return (
-      <div className="flex flex-col gap-4" id="subview-sumber">
+      <div className="flex flex-col gap-4 pt-5 sm:pt-6" id="subview-sumber">
         <Breadcrumb 
           items={[
             { label: t('title_manage', currentLang), onClick: () => setActiveSubPage('menu') },
@@ -826,8 +842,11 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   // VIEW 4: KUSTOMISASI UMUM (General Customization)
   // ==========================================
   if (activeSubPage === 'tampilan') {
+    const subCardRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-3xl' : 'rounded-2xl';
+    const subIconRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+
     return (
-      <div className="flex flex-col gap-4" id="subview-tampilan">
+      <div className="flex flex-col gap-4 pt-5 sm:pt-6" id="subview-tampilan">
         <Breadcrumb 
           items={[
             { label: t('title_manage', currentLang), onClick: () => setActiveSubPage('menu') },
@@ -847,18 +866,18 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               <button
                 type="button"
                 onClick={() => setDarkModeValue(false)}
-                className={`p-4 rounded-2xl border text-left cursor-pointer flex flex-col justify-between h-24 relative overflow-hidden ${
+                className={`p-4 ${subCardRadius} border text-left cursor-pointer flex flex-col justify-between h-24 relative overflow-hidden transition-all ${
                   !settings?.isDarkMode 
-                    ? 'border-indigo-600 bg-indigo-50/70 dark:bg-slate-850 shadow-xs ring-2 ring-indigo-500/20' 
+                    ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-50/70 dark:bg-slate-850 shadow-xs ring-2 ring-indigo-500/20' 
                     : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${!settings?.isDarkMode ? 'bg-amber-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                  <div className={`w-8 h-8 ${subIconRadius} flex items-center justify-center ${!settings?.isDarkMode ? 'bg-amber-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
                     <Sun className="w-4 h-4" />
                   </div>
                   {!settings?.isDarkMode && (
-                    <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-wider uppercase">
+                    <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-wider uppercase shadow-2xs">
                       {currentLang === 'en' ? 'Active' : 'Aktif'}
                     </span>
                   )}
@@ -874,18 +893,20 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               <button
                 type="button"
                 onClick={() => setDarkModeValue(true)}
-                className={`p-4 rounded-2xl border text-left cursor-pointer flex flex-col justify-between h-24 relative overflow-hidden ${
+                className={`p-4 ${subCardRadius} border text-left cursor-pointer flex flex-col justify-between h-24 relative overflow-hidden transition-all ${
                   settings?.isDarkMode 
-                    ? 'border-indigo-500 bg-indigo-950/40 shadow-xs ring-2 ring-indigo-500/30' 
+                    ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-950/40 shadow-xs ring-2 ring-indigo-500/30' 
                     : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${settings?.isDarkMode ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                  <div 
+                    className={`w-8 h-8 ${subIconRadius} flex items-center justify-center ${settings?.isDarkMode ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}
+                  >
                     <Moon className="w-4 h-4" />
                   </div>
                   {settings?.isDarkMode && (
-                    <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-wider uppercase">
+                    <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-wider uppercase shadow-2xs">
                       {currentLang === 'en' ? 'Active' : 'Aktif'}
                     </span>
                   )}
@@ -920,18 +941,18 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                     }
                   }
                 }}
-                className={`p-4 rounded-2xl border text-left cursor-pointer flex flex-col justify-between h-24 relative overflow-hidden ${
+                className={`p-4 ${subCardRadius} border text-left cursor-pointer flex flex-col justify-between h-24 relative overflow-hidden transition-all ${
                   (settings?.language || 'id') === 'id'
-                    ? 'border-indigo-600 bg-indigo-50/70 dark:bg-slate-850 shadow-xs ring-2 ring-indigo-500/20'
+                    ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-50/70 dark:bg-slate-850 shadow-xs ring-2 ring-indigo-500/20'
                     : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-black text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700">
+                  <div className={`w-8 h-8 ${subIconRadius} bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-black text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700`}>
                     ID
                   </div>
                   {(settings?.language || 'id') === 'id' && (
-                    <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-wider uppercase">
+                    <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-wider uppercase shadow-2xs">
                       {currentLang === 'en' ? 'Active' : 'Aktif'}
                     </span>
                   )}
@@ -958,18 +979,18 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                     }
                   }
                 }}
-                className={`p-4 rounded-2xl border text-left cursor-pointer flex flex-col justify-between h-24 relative overflow-hidden ${
+                className={`p-4 ${subCardRadius} border text-left cursor-pointer flex flex-col justify-between h-24 relative overflow-hidden transition-all ${
                   settings?.language === 'en'
-                    ? 'border-indigo-600 bg-indigo-50/70 dark:bg-slate-850 shadow-xs ring-2 ring-indigo-500/20'
+                    ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-50/70 dark:bg-slate-850 shadow-xs ring-2 ring-indigo-500/20'
                     : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-black text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700">
+                  <div className={`w-8 h-8 ${subIconRadius} bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-black text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700`}>
                     EN
                   </div>
                   {settings?.language === 'en' && (
-                    <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-wider uppercase">
+                    <span className="px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-black tracking-wider uppercase shadow-2xs">
                       Active
                     </span>
                   )}
@@ -991,10 +1012,12 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             <button
               type="button"
               onClick={() => setActiveSubPage('kustomisasi_ui')}
-              className={`w-full p-4.5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer text-left`}
+              className={`w-full p-4.5 ${subCardRadius} ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer text-left transition-all shadow-xs`}
             >
               <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-500/20">
+                <div 
+                  className={`w-10 h-10 ${subIconRadius} bg-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border`}
+                >
                   <Palette className="w-5 h-5" />
                 </div>
                 <div>
@@ -1016,7 +1039,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   // ==========================================
   if (activeSubPage === 'kustomisasi_ui') {
     return (
-      <div className="flex flex-col gap-4 max-w-xl mx-auto w-full" id="subview-kustomisasi-ui">
+      <div className="flex flex-col gap-4 pt-5 sm:pt-6 max-w-xl mx-auto w-full" id="subview-kustomisasi-ui">
         <Breadcrumb 
           items={[
             { label: t('title_manage', currentLang), onClick: () => setActiveSubPage('menu') },
@@ -1287,7 +1310,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   // ==========================================
   if (activeSubPage === 'cadangan') {
     return (
-      <div className="flex flex-col gap-4" id="subview-cadangan">
+      <div className="flex flex-col gap-4 pt-5 sm:pt-6" id="subview-cadangan">
         <Breadcrumb 
           items={[
             { label: t('title_manage', currentLang), onClick: () => setActiveSubPage('menu') },
@@ -1353,7 +1376,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   // ==========================================
   if (activeSubPage === 'ekspor') {
     return (
-      <div className="flex flex-col gap-4" id="subview-ekspor">
+      <div className="flex flex-col gap-4 pt-5 sm:pt-6" id="subview-ekspor">
         <Breadcrumb 
           items={[
             { label: t('title_manage', currentLang), onClick: () => setActiveSubPage('menu') },
@@ -1432,7 +1455,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   // ==========================================
   if (activeSubPage === 'bahaya') {
     return (
-      <div className="flex flex-col gap-4" id="subview-bahaya">
+      <div className="flex flex-col gap-4 pt-5 sm:pt-6" id="subview-bahaya">
         <Breadcrumb 
           items={[
             { label: t('title_manage', currentLang), onClick: () => setActiveSubPage('menu') },
@@ -1524,16 +1547,16 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   ];
 
   return (
-    <div className="flex flex-col" id="view-manage">
+    <div className="flex flex-col gap-3.5 sm:gap-4" id="view-manage">
       
-      {/* 1. Backdrop Banner Atas (Persis Identik dengan Dashboard Hero Banner agar tidak loncat/bergeser motifnya) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32 min-h-[224px] sm:min-h-[240px] lg:min-h-[260px]">
+      {/* 1. Backdrop Banner Atas (Persis Identik & Selaras dengan Dashboard Hero Banner) */}
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[162px] sm:h-[172px] lg:h-[182px]">
         {/* Authentic Indonesian Songket Weave Vector Motif (Identik 100% dengan Banner Dashboard) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
           style={{
-            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
+            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)'
           }}
         >
           <svg className="w-full h-full opacity-35 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
@@ -1575,24 +1598,53 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Unified Single Mega Card - Posisi Dinaikkan Lebih Tinggi ke Atas Banner */}
+      {/* 2. Card 1: Profil (Menimpa Banner Lebih Tinggi, Foto Profil Mengambang di Atas dengan Icon Pensil, Ukiran Songket Batik di Kiri & Kanan) */}
       <div 
-        className={`relative z-10 -mt-40 sm:-mt-46 lg:-mt-50 p-5 sm:p-6 rounded-3xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-xl flex flex-col gap-4 max-w-2xl mx-auto w-full mb-6`}
+        onClick={() => {
+          setTempProfileName(profile?.name || '');
+          setTempProfileEmail(profile?.email || 'rifqithoohaa12@gmail.com');
+          setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
+          setShowEditProfileModal(true);
+        }}
+        className={`relative z-10 -mt-20 sm:-mt-22 lg:-mt-24 p-4 sm:p-5 pt-8 sm:pt-9 ${getCardClasses()} !overflow-visible border border-slate-200/80 dark:border-slate-800 shadow-xl flex items-center justify-center max-w-2xl mx-auto w-full cursor-pointer group hover:border-slate-300 dark:hover:border-slate-700`}
+        title="Klik untuk mengubah nama, email, dan avatar profil"
       >
-        {/* Bagian Profil di Dalam Card dengan Garis Pembatas di Bawahnya */}
-        <div 
-          onClick={() => {
-            setTempProfileName(profile?.name || '');
-            setTempProfileEmail(profile?.email || 'rifqithoohaa12@gmail.com');
-            setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
-            setShowEditProfileModal(true);
-          }}
-          className="flex flex-col items-center justify-center text-center cursor-pointer group pt-1 pb-4 border-b border-slate-100 dark:border-slate-800/80 w-full"
-          title="Klik untuk mengubah nama, email, dan avatar profil"
-        >
-          {/* Centered Avatar with edit badge */}
-          <div className="relative">
-            <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-full overflow-hidden border-4 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+        {/* Ornamen Motif Batik Kawung di Sisi Kiri Card */}
+        <div className="absolute left-2.5 sm:left-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 dark:opacity-25 text-[#FF7777] dark:text-rose-400 group-hover:opacity-50 transition-opacity">
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 sm:w-8.5 sm:h-8.5">
+            {/* Authentic Indonesian Batik Kawung Motif */}
+            <path d="M 19 19 C 14 13, 14 5, 19 2 C 24 5, 24 13, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="19" cy="8" r="1.2" fill="currentColor" />
+            <path d="M 19 19 C 14 25, 14 33, 19 36 C 24 33, 24 25, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="19" cy="30" r="1.2" fill="currentColor" />
+            <path d="M 19 19 C 13 14, 5 14, 2 19 C 5 24, 13 24, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="8" cy="19" r="1.2" fill="currentColor" />
+            <path d="M 19 19 C 25 14, 33 14, 36 19 C 33 24, 25 24, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="30" cy="19" r="1.2" fill="currentColor" />
+            <circle cx="19" cy="19" r="2.2" fill="none" stroke="currentColor" strokeWidth="1" />
+          </svg>
+        </div>
+
+        {/* Ornamen Motif Batik Kawung di Sisi Kanan Card */}
+        <div className="absolute right-2.5 sm:right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 dark:opacity-25 text-[#FF7777] dark:text-rose-400 group-hover:opacity-50 transition-opacity">
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 sm:w-8.5 sm:h-8.5">
+            {/* Authentic Indonesian Batik Kawung Motif */}
+            <path d="M 19 19 C 14 13, 14 5, 19 2 C 24 5, 24 13, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="19" cy="8" r="1.2" fill="currentColor" />
+            <path d="M 19 19 C 14 25, 14 33, 19 36 C 24 33, 24 25, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="19" cy="30" r="1.2" fill="currentColor" />
+            <path d="M 19 19 C 13 14, 5 14, 2 19 C 5 24, 13 24, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="8" cy="19" r="1.2" fill="currentColor" />
+            <path d="M 19 19 C 25 14, 33 14, 36 19 C 33 24, 25 24, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="30" cy="19" r="1.2" fill="currentColor" />
+            <circle cx="19" cy="19" r="2.2" fill="none" stroke="currentColor" strokeWidth="1" />
+          </svg>
+        </div>
+
+        {/* Foto Profil Dikeluarkan dan Terletak di Tengah Mengambang (di Bagian Banner) dengan Icon Pensil */}
+        <div className="absolute -top-8 sm:-top-9 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
+          <div className="relative group/avatar">
+            <div className={`w-16 h-16 sm:w-18 sm:h-18 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} overflow-hidden border-4 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-lg group-hover/avatar:scale-105 transition-transform`}>
               <img 
                 src={profile?.avatar || '/male_avatar.jpg'} 
                 alt="Avatar Profil" 
@@ -1602,65 +1654,49 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 }} 
               />
             </div>
-            <div className="absolute bottom-0 right-0 p-1.5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md group-hover:scale-110 transition-transform">
-              <Edit3 className="w-3.5 h-3.5" />
+            {/* Icon Pensil di Foto Profil */}
+            <div className={`absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-6.5 sm:h-6.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} bg-[#FF7777] text-white border-2 border-white dark:border-slate-800 flex items-center justify-center shadow-md group-hover/avatar:scale-110 transition-transform`}>
+              <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
             </div>
-          </div>
-
-          {/* User Name & Email */}
-          <div className="flex flex-col items-center justify-center gap-0.5 mt-3">
-            <h3 className="font-black text-lg sm:text-xl text-slate-900 dark:text-white tracking-tight">
-              {profile?.name || t('user_default_name', currentLang)}
-            </h3>
-            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
-              {profile?.email || 'rifqithoohaa12@gmail.com'}
-            </span>
           </div>
         </div>
 
-        {/* Bagian Total Saldo Awal Terintegrasi dalam 1 Card */}
-        <div className="flex flex-col gap-1.5 pt-1">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
-              {t('total_initial_balance', currentLang)}
-            </span>
-            <div className="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 text-[10px] sm:text-xs font-bold flex items-center gap-1.5 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>{walletsWithCurrentBalance.length} {t('registered_wallets', currentLang)}</span>
-            </div>
-          </div>
-
-          <div className="mt-0.5">
-            <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
-              {formatIDR(totalInitial)}
-            </span>
-          </div>
+        {/* Nama & Email (Rata Tengah) */}
+        <div className="flex flex-col min-w-0 items-center text-center px-10 sm:px-14 z-10">
+          <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-white tracking-tight truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors max-w-xs sm:max-w-md">
+            {profile?.name || t('user_default_name', currentLang)}
+          </h3>
+          <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 truncate mt-0.5 max-w-xs sm:max-w-md">
+            {profile?.email || 'rifqithoohaa12@gmail.com'}
+          </span>
         </div>
+      </div>
 
-        {/* Seluruh Sub Menu Pengaturan Dibuat Seragam & Selaras (Cards Button) */}
-        <div className="flex flex-col gap-2 pt-1">
-          {menuItems.map((item) => {
-            const IconComp = item.icon;
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={item.action}
-                className="w-full flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.99] text-left shadow-xs"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${item.iconColor}`}>
-                    <IconComp className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-                  </div>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                    {item.title}
-                  </span>
+      {/* 3. Card 2: Daftar Sub Menu Pengaturan */}
+      <div 
+        className={`relative z-10 p-4 sm:p-5 ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-xl flex flex-col gap-2 max-w-2xl mx-auto w-full mb-6`}
+      >
+        {menuItems.map((item) => {
+          const IconComp = item.icon;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={item.action}
+              className={`w-full flex items-center justify-between p-3 sm:p-3.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl'} bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.99] text-left shadow-xs`}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className={`w-8 h-8 sm:w-9 sm:h-9 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg'} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${item.iconColor}`}>
+                  <IconComp className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
-              </button>
-            );
-          })}
-        </div>
+                <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  {item.title}
+                </span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+            </button>
+          );
+        })}
       </div>
 
       {/* Modal Edit Profil (Nama, Email, dan Foto Profil) */}

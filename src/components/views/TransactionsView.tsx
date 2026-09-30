@@ -89,10 +89,14 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
   getTableRowClasses,
   handleDeleteTransaction,
   onAdd,
-  onEdit
+  onEdit,
+  settings
 }) => {
   const [selectedTxDetail, setSelectedTxDetail] = useState<Transaction | null>(null);
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
+
+  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+  const badgeRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg';
 
   const now = useMemo(() => new Date(), []);
   const currentRealYear = now.getFullYear();
@@ -187,7 +191,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
               placeholder="Cari transaksi berdasarkan judul..."
               value={txSearch}
               onChange={(e) => setTxSearch(e.target.value)}
-              className={`w-full pl-10 pr-9 py-2.5 text-xs font-medium rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-xs ${
+              className={`w-full pl-10 pr-9 py-2.5 text-xs font-medium ${btnRadius} transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-xs ${
                 uiStyle === 'glass' 
                   ? 'glass-input text-slate-800 dark:text-slate-100' 
                   : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100'
@@ -209,7 +213,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
             <button
               type="button"
               onClick={handleResetAllFilters}
-              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/50 shadow-xs hover:scale-[1.02] active:scale-95 transition-all duration-200 shrink-0 cursor-pointer whitespace-nowrap animate-in fade-in zoom-in-95"
+              className={`flex items-center gap-1.5 px-3 py-2.5 ${btnRadius} text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/50 shadow-xs hover:scale-[1.02] active:scale-95 transition-all duration-200 shrink-0 cursor-pointer whitespace-nowrap animate-in fade-in zoom-in-95`}
               title="Reset Semua Filter"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -223,7 +227,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           <button
             type="button"
             onClick={() => setTxTypeFilter('semua')}
-            className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
+            className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
               txTypeFilter === 'semua'
                 ? (uiStyle === 'glass' 
                     ? 'bg-white/85 dark:bg-white/20 text-slate-950 dark:text-white font-black shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-white dark:border-white/30 backdrop-blur-md' 
@@ -238,7 +242,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           <button
             type="button"
             onClick={() => setTxTypeFilter('pemasukan')}
-            className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
+            className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
               txTypeFilter === 'pemasukan'
                 ? (uiStyle === 'glass' 
                     ? 'bg-emerald-500/90 text-white font-black shadow-[0_4px_12px_rgba(16,185,129,0.3)] border border-emerald-300/40 backdrop-blur-md'
@@ -253,7 +257,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           <button
             type="button"
             onClick={() => setTxTypeFilter('pengeluaran')}
-            className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
+            className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
               txTypeFilter === 'pengeluaran'
                 ? (uiStyle === 'glass'
                     ? 'bg-rose-500/90 text-white font-black shadow-[0_4px_12px_rgba(244,63,94,0.3)] border border-rose-300/40 backdrop-blur-md'
@@ -268,7 +272,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           <button
             type="button"
             onClick={() => setTxTypeFilter('transfer')}
-            className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
+            className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
               txTypeFilter === 'transfer'
                 ? (uiStyle === 'glass'
                     ? 'bg-blue-500/90 text-white font-black shadow-[0_4px_12px_rgba(59,130,246,0.3)] border border-blue-300/40 backdrop-blur-md'
@@ -285,7 +289,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
         {/* 3. Remaining 4 Filters in 2x2 Grid (2 top, 2 bottom) */}
         <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
           {/* Top-Left: Dompet Dropdown Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden ${
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden ${
             uiStyle === 'glass' 
               ? 'glass-input' 
               : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
@@ -308,7 +312,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           </div>
 
           {/* Top-Right: Kategori & Sumber Dropdown Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden ${
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden ${
             uiStyle === 'glass' 
               ? 'glass-input' 
               : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
@@ -338,7 +342,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           </div>
 
           {/* Bottom-Left: Tanggal Picker Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 ${
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 ${
             uiStyle === 'glass' 
               ? 'glass-input' 
               : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
@@ -373,7 +377,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
 
           {/* Bottom-Right: Calendar Month & Year Picker Card */}
           <div className="relative min-w-0">
-            <div className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all ${
+            <div className={`flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all ${
               uiStyle === 'glass' 
                 ? 'glass-input' 
                 : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
@@ -585,10 +589,10 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       setShowAllTransactions(true);
                     }
                   }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
+                  className={`px-3.5 py-1.5 ${btnRadius} text-xs font-bold transition-all duration-200 flex items-center gap-1.5 shrink-0 cursor-pointer shadow-xs hover:scale-105 active:scale-95 ${
                     uiStyle === 'glass'
-                      ? 'glass-panel hover:scale-105 active:scale-95 text-slate-800 dark:text-slate-100 shadow-sm'
-                      : 'bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
+                      ? 'glass-panel text-slate-800 dark:text-slate-100 shadow-sm border border-slate-200/60 dark:border-white/10 hover:bg-white/40 dark:hover:bg-white/10'
+                      : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/90 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {showAllTransactions ? (
