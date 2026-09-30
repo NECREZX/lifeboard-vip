@@ -648,60 +648,85 @@ export default function App() {
 
   // --- Math/Financial Computations ---
   // Wallets with calculated current balance based on transactions and savings deposits/withdrawals
-  const walletsWithCurrentBalance = wallets.map(w => {
-    const incomes = transactions
-      .filter(t => t.type === 'pemasukan' && t.walletId === w.id)
-      .reduce((sum, t) => sum + t.amount, 0);
-    const expenses = transactions
-      .filter(t => t.type === 'pengeluaran' && t.walletId === w.id)
-      .reduce((sum, t) => sum + t.amount, 0);
-    const incomingTransfers = transactions
-      .filter(t => t.type === 'transfer' && t.toWalletId === w.id)
-      .reduce((sum, t) => sum + t.amount, 0);
-    const outgoingTransfers = transactions
-      .filter(t => t.type === 'transfer' && t.walletId === w.id)
-      .reduce((sum, t) => sum + t.amount + (t.adminFee || 0), 0);
-    const savingsDeposits = savingLogs
-      .filter(l => l.walletId === w.id && l.type === 'setor')
-      .reduce((sum, l) => sum + l.amount, 0);
-    const savingsWithdrawals = savingLogs
-      .filter(l => l.walletId === w.id && l.type === 'tarik')
-      .reduce((sum, l) => sum + l.amount, 0);
+  const walletsWithCurrentBalance = React.useMemo(() => {
+    return wallets.map(w => {
+      let incomes = 0;
+      let expenses = 0;
+      let incomingTransfers = 0;
+      let outgoingTransfers = 0;
 
-    return {
-      ...w,
-      currentBalance: w.initialBalance + incomes - expenses + incomingTransfers - outgoingTransfers - savingsDeposits + savingsWithdrawals
-    };
-  });
+      for (let i = 0; i < transactions.length; i++) {
+        const t = transactions[i];
+        if (t.type === 'pemasukan' && t.walletId === w.id) {
+          incomes += t.amount;
+        } else if (t.type === 'pengeluaran' && t.walletId === w.id) {
+          expenses += t.amount;
+        } else if (t.type === 'transfer') {
+          if (t.toWalletId === w.id) incomingTransfers += t.amount;
+          if (t.walletId === w.id) outgoingTransfers += t.amount + (t.adminFee || 0);
+        }
+      }
+
+      let savingsDeposits = 0;
+      let savingsWithdrawals = 0;
+      for (let i = 0; i < savingLogs.length; i++) {
+        const l = savingLogs[i];
+        if (l.walletId === w.id) {
+          if (l.type === 'setor') savingsDeposits += l.amount;
+          else if (l.type === 'tarik') savingsWithdrawals += l.amount;
+        }
+      }
+
+      return {
+        ...w,
+        currentBalance: w.initialBalance + incomes - expenses + incomingTransfers - outgoingTransfers - savingsDeposits + savingsWithdrawals
+      };
+    });
+  }, [wallets, transactions, savingLogs]);
 
   // Total Wallet Balance = Sum of all Wallet static initial balances
-  const totalWalletBalance = wallets.reduce((sum, w) => sum + w.initialBalance, 0);
+  const totalWalletBalance = React.useMemo(() => {
+    return wallets.reduce((sum, w) => sum + w.initialBalance, 0);
+  }, [wallets]);
   
   // Total Income = Sum of incomes
-  const totalIncome = transactions
-    .filter((t) => t.type === 'pemasukan')
-    .reduce((sum, t) => sum + t.amount, 0);
+  const totalIncome = React.useMemo(() => {
+    return transactions
+      .filter((t) => t.type === 'pemasukan')
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions]);
 
   // Total Expense = Sum of expenses
-  const totalExpense = transactions
-    .filter((t) => t.type === 'pengeluaran')
-    .reduce((sum, t) => sum + t.amount, 0);
+  const totalExpense = React.useMemo(() => {
+    return transactions
+      .filter((t) => t.type === 'pengeluaran')
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions]);
 
   // Total Transfer Admin Fees
-  const totalTransferAdminFees = transactions
-    .filter((t) => t.type === 'transfer')
-    .reduce((sum, t) => sum + (t.adminFee || 0), 0);
+  const totalTransferAdminFees = React.useMemo(() => {
+    return transactions
+      .filter((t) => t.type === 'transfer')
+      .reduce((sum, t) => sum + (t.adminFee || 0), 0);
+  }, [transactions]);
 
   // Total Savings Deposits / Withdrawals across all wallets
-  const totalSavingsDeposits = savingLogs
-    .filter((l) => l.type === 'setor')
-    .reduce((sum, l) => sum + l.amount, 0);
-  const totalSavingsWithdrawals = savingLogs
-    .filter((l) => l.type === 'tarik')
-    .reduce((sum, l) => sum + l.amount, 0);
+  const totalSavingsDeposits = React.useMemo(() => {
+    return savingLogs
+      .filter((l) => l.type === 'setor')
+      .reduce((sum, l) => sum + l.amount, 0);
+  }, [savingLogs]);
+
+  const totalSavingsWithdrawals = React.useMemo(() => {
+    return savingLogs
+      .filter((l) => l.type === 'tarik')
+      .reduce((sum, l) => sum + l.amount, 0);
+  }, [savingLogs]);
 
   // Total Main Balance (Total Saldo Utama) = Initial Wallets + Incomes - Expenses - Transfer Admin Fees - Savings Deposits + Savings Withdrawals
-  const totalSaldoUtama = totalWalletBalance + totalIncome - totalExpense - totalTransferAdminFees - totalSavingsDeposits + totalSavingsWithdrawals;
+  const totalSaldoUtama = React.useMemo(() => {
+    return totalWalletBalance + totalIncome - totalExpense - totalTransferAdminFees - totalSavingsDeposits + totalSavingsWithdrawals;
+  }, [totalWalletBalance, totalIncome, totalExpense, totalTransferAdminFees, totalSavingsDeposits, totalSavingsWithdrawals]);
 
   // --- Notification triggers & warnings ---
   const triggerNotification = (title: string, message: string, type: 'info' | 'warning' | 'success') => {
@@ -2034,20 +2059,20 @@ export default function App() {
   };
 
   // --- Dynamic Styling Helpers ---
-  const getThemeFontClass = () => {
+  const getThemeFontClass = React.useCallback(() => {
     return 'font-sans ';
-  };
+  }, []);
 
-  const getThemeBackground = () => {
+  const getThemeBackground = React.useCallback(() => {
     if (settings.isDarkMode) {
       if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-slate-950 via-slate-900/90 to-slate-950 text-slate-100 ';
       return 'bg-slate-950 ';
     }
     if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-teal-50/25 via-slate-50/70 to-sky-50/25 text-slate-900 ';
     return 'bg-slate-50 ';
-  };
+  }, [settings.isDarkMode, settings.uiStyle]);
 
-  const getCardClasses = () => {
+  const getCardClasses = React.useCallback(() => {
     let cls = "overflow-hidden ";
     
     // 1. Apply UI Style baseline background & structural styles
@@ -2079,13 +2104,13 @@ export default function App() {
     }
     
     return cls;
-  };
+  }, [settings.uiStyle, settings.cardRadius, settings.cardStyle]);
 
-  const getTableClasses = () => {
+  const getTableClasses = React.useCallback(() => {
     return "w-full text-left text-xs border-collapse ";
-  };
+  }, []);
 
-  const getTableRowClasses = (index: number) => {
+  const getTableRowClasses = React.useCallback((index: number) => {
     let cls = "hover:bg-slate-50/40 dark:hover:bg-slate-800/10 ";
     
     if (settings.tableStyle === 'striped') {
@@ -2098,14 +2123,14 @@ export default function App() {
       cls += "border-b border-slate-100 dark:border-slate-800/40 ";
     }
     return cls;
-  };
+  }, [settings.tableStyle]);
 
-  const getTableRowPadding = () => {
+  const getTableRowPadding = React.useCallback(() => {
     if (settings.tableStyle === 'compact') return 'py-1.5 px-3 ';
     return 'py-3.5 px-4 ';
-  };
+  }, [settings.tableStyle]);
 
-  const getAccentColorHex = () => {
+  const getAccentColorHex = React.useCallback(() => {
     if (settings.themeColor === 'custom') return settings.customAccentColor || '#8b5cf6';
     switch (settings.themeColor) {
       case 'emerald': return '#10b981';
@@ -2114,9 +2139,9 @@ export default function App() {
       case 'classic': return '#0f172a';
       case 'indigo': default: return '#6366f1';
     }
-  };
+  }, [settings.themeColor, settings.customAccentColor]);
 
-  const getAccentGradient = () => {
+  const getAccentGradient = React.useCallback(() => {
     switch (settings.themeColor) {
       case 'emerald': return 'from-emerald-500 to-teal-500 shadow-emerald-500/20';
       case 'amber': return 'from-amber-500 to-orange-500 shadow-amber-500/20';
@@ -2124,9 +2149,9 @@ export default function App() {
       case 'custom': return '';
       default: return 'from-indigo-600 to-blue-500 shadow-indigo-600/20';
     }
-  };
+  }, [settings.themeColor]);
 
-  const getAccentBg = () => {
+  const getAccentBg = React.useCallback(() => {
     switch (settings.themeColor) {
       case 'emerald': return 'bg-emerald-600 hover:bg-emerald-700 text-white';
       case 'amber': return 'bg-amber-600 hover:bg-amber-700 text-white';
@@ -2135,7 +2160,7 @@ export default function App() {
       case 'custom': return 'bg-indigo-600 hover:bg-indigo-700 text-white';
       default: return 'bg-indigo-600 hover:bg-indigo-700 text-white';
     }
-  };
+  }, [settings.themeColor]);
 
   const getAccentText = () => {
     switch (settings.themeColor) {
@@ -2210,49 +2235,39 @@ export default function App() {
   };
 
   // --- Filtered Transactions list ---
-  const filteredTransactions = transactions.filter((t) => {
-    const matchesType = txTypeFilter === 'semua' || t.type === txTypeFilter;
-    const matchesWallet = txWalletFilter === 'semua' || t.walletId === txWalletFilter || (t.type === 'transfer' && t.toWalletId === txWalletFilter);
-    
-    let matchesCategory = true;
-    if (txCategoryFilter !== 'semua') {
-      if (t.type === 'pengeluaran') {
-        matchesCategory = t.categoryId === txCategoryFilter;
-      } else if (t.type === 'pemasukan') {
-        matchesCategory = t.sourceId === txCategoryFilter;
-      } else {
-        matchesCategory = false;
+  const filteredTransactions = React.useMemo(() => {
+    const trimmedSearch = txSearch.trim().toLowerCase();
+    return transactions.filter((t) => {
+      if (txTypeFilter !== 'semua' && t.type !== txTypeFilter) return false;
+      if (txWalletFilter !== 'semua' && t.walletId !== txWalletFilter && (t.type !== 'transfer' || t.toWalletId !== txWalletFilter)) return false;
+      
+      if (txCategoryFilter !== 'semua') {
+        if (t.type === 'pengeluaran') {
+          if (t.categoryId !== txCategoryFilter) return false;
+        } else if (t.type === 'pemasukan') {
+          if (t.sourceId !== txCategoryFilter) return false;
+        } else {
+          return false;
+        }
       }
-    }
 
-    const matchesSearch = txSearch.trim() === '' || 
-      t.description.toLowerCase().includes(txSearch.toLowerCase()) ||
-      t.amount.toString().includes(txSearch);
-
-    const matchesDate = txDateFilter === '' || t.date === txDateFilter;
-    
-    let matchesMonth = true;
-    if (txMonthFilter !== '') {
-      const parts = t.date.split('-');
-      if (parts.length >= 2) {
-        matchesMonth = parts[1] === txMonthFilter;
-      } else {
-        matchesMonth = false;
+      if (trimmedSearch && !t.description.toLowerCase().includes(trimmedSearch) && !t.amount.toString().includes(trimmedSearch)) {
+        return false;
       }
-    }
 
-    let matchesYear = true;
-    if (txYearFilter !== '') {
-      const parts = t.date.split('-');
-      if (parts.length >= 1) {
-        matchesYear = parts[0] === txYearFilter;
-      } else {
-        matchesYear = false;
+      if (txDateFilter && t.date !== txDateFilter) return false;
+      
+      if (txMonthFilter) {
+        if (t.date.slice(5, 7) !== txMonthFilter) return false;
       }
-    }
 
-    return matchesType && matchesWallet && matchesCategory && matchesSearch && matchesDate && matchesMonth && matchesYear;
-  });
+      if (txYearFilter) {
+        if (t.date.slice(0, 4) !== txYearFilter) return false;
+      }
+
+      return true;
+    });
+  }, [transactions, txTypeFilter, txWalletFilter, txCategoryFilter, txSearch, txDateFilter, txMonthFilter, txYearFilter]);
 
   if (appState === 'splash') {
     return <SplashView onFinish={() => setAppState('auth')} />;
@@ -2267,18 +2282,18 @@ export default function App() {
       
       {/* AMBIENT BACKGROUND BLOBS FOR LIQUID GLASS UI */}
       {settings.uiStyle === 'glass' && activeTab !== 'dashboard' && (
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print">
+        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print transform-gpu">
           {/* Fluid Cyan & Sky Blue Orb */}
-          <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-cyan-400/25 via-sky-400/20 to-blue-500/15 dark:from-cyan-700/20 dark:via-sky-800/15 dark:to-blue-900/10 blur-[100px]" />
+          <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-cyan-400/20 via-sky-400/15 to-blue-500/10 dark:from-cyan-700/15 dark:via-sky-800/10 dark:to-blue-900/10 blur-[60px] transform-gpu" />
           
           {/* Fluid Ocean Blue & Cyan Orb */}
-          <div className="absolute top-[25%] right-[-15%] w-[60vw] h-[60vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-br from-cyan-400/20 via-sky-500/15 to-blue-600/15 dark:from-cyan-900/15 dark:via-sky-950/10 dark:to-blue-950/10 blur-[100px]" />
+          <div className="absolute top-[25%] right-[-15%] w-[60vw] h-[60vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-br from-cyan-400/15 via-sky-500/10 to-blue-600/10 dark:from-cyan-900/10 dark:via-sky-950/10 dark:to-blue-950/10 blur-[60px] transform-gpu" />
           
           {/* Fluid Mint & Teal Orb */}
-          <div className="absolute bottom-[-10%] left-[10%] w-[70vw] h-[70vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-teal-300/25 via-emerald-400/20 to-cyan-300/15 dark:from-teal-700/20 dark:via-emerald-800/15 dark:to-cyan-900/10 blur-[110px]" />
+          <div className="absolute bottom-[-10%] left-[10%] w-[70vw] h-[70vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-teal-300/20 via-emerald-400/15 to-cyan-300/10 dark:from-teal-700/15 dark:via-emerald-800/10 dark:to-cyan-900/10 blur-[60px] transform-gpu" />
           
           {/* Fluid Soft Azure Blue Orb */}
-          <div className="absolute top-[60%] right-[15%] w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full bg-gradient-to-br from-blue-400/20 via-sky-300/15 to-indigo-400/10 dark:from-blue-800/15 dark:via-sky-900/10 dark:to-indigo-950/10 blur-[90px]" />
+          <div className="absolute top-[60%] right-[15%] w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full bg-gradient-to-br from-blue-400/15 via-sky-300/10 to-indigo-400/10 dark:from-blue-800/10 dark:via-sky-900/10 dark:to-indigo-950/10 blur-[60px] transform-gpu" />
         </div>
       )}
 

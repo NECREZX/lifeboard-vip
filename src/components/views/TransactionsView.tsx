@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   Search, Filter, Trash2, Edit2, Eye, PlusCircle, X, Calendar, 
@@ -46,9 +46,20 @@ interface TransactionsViewProps {
   handleDeleteTransaction: (id: string) => void;
   onAdd?: (type?: any) => void;
   onEdit: (tx: Transaction) => void;
+  settings?: any;
 }
 
-export const TransactionsView: React.FC<TransactionsViewProps> = ({
+const MONTH_NAMES = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+];
+
+const MONTH_SHORT = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+  'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'
+];
+
+export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
   transactions,
   wallets,
   categories,
@@ -83,47 +94,77 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
   const [selectedTxDetail, setSelectedTxDetail] = useState<Transaction | null>(null);
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
 
-  const now = new Date();
+  const now = useMemo(() => new Date(), []);
   const currentRealYear = now.getFullYear();
   const currentRealMonth = String(now.getMonth() + 1).padStart(2, '0');
   const [pickerYear, setPickerYear] = useState<number>(() => {
     return txYearFilter ? parseInt(txYearFilter, 10) : currentRealYear;
   });
 
-  const MONTH_NAMES = [
-    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-  ];
-  const MONTH_SHORT = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-    'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'
-  ];
+  const displayedTransactions = useMemo(() => {
+    return showAllTransactions 
+      ? filteredTransactions 
+      : filteredTransactions.slice(0, 5);
+  }, [showAllTransactions, filteredTransactions]);
 
-  const displayedTransactions = showAllTransactions 
-    ? filteredTransactions 
-    : filteredTransactions.slice(0, 5);
-
-  const groupedByDate: Record<string, Transaction[]> = {};
-  displayedTransactions.forEach((t) => {
-    if (!groupedByDate[t.date]) {
-      groupedByDate[t.date] = [];
+  // Pre-calculate date groupings and date counts in a single O(N) pass
+  const { groupedByDate, sortedDates, totalCountByDate } = useMemo(() => {
+    const totalCount: Record<string, number> = {};
+    for (let i = 0; i < filteredTransactions.length; i++) {
+      const d = filteredTransactions[i].date;
+      totalCount[d] = (totalCount[d] || 0) + 1;
     }
-    groupedByDate[t.date].push(t);
-  });
 
-  const sortedDates = Object.keys(groupedByDate).sort((a, b) => b.localeCompare(a));
+    const grouped: Record<string, Transaction[]> = {};
+    for (let i = 0; i < displayedTransactions.length; i++) {
+      const t = displayedTransactions[i];
+      if (!grouped[t.date]) {
+        grouped[t.date] = [];
+      }
+      grouped[t.date].push(t);
+    }
 
-  const activeFilterCount = [
-    txSearch ? 1 : 0,
-    txTypeFilter !== 'semua' ? 1 : 0,
-    txWalletFilter !== 'semua' ? 1 : 0,
-    txCategoryFilter !== 'semua' ? 1 : 0,
-    txDateFilter ? 1 : 0,
-    txMonthFilter ? 1 : 0,
-    txYearFilter ? 1 : 0,
-  ].reduce((a, b) => a + b, 0);
+    const sorted = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+    return { groupedByDate: grouped, sortedDates: sorted, totalCountByDate: totalCount };
+  }, [filteredTransactions, displayedTransactions]);
 
-  const handleResetAllFilters = () => {
+  // Cached date formatter
+  const formattedDateMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    sortedDates.forEach(dateStr => {
+      try {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          const y = parseInt(parts[0], 10);
+          const m = parseInt(parts[1], 10) - 1;
+          const d = parseInt(parts[2], 10);
+          const dateObj = new Date(y, m, d);
+          map[dateStr] = dateObj.toLocaleDateString('id-ID', {
+            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+          });
+        } else {
+          map[dateStr] = dateStr;
+        }
+      } catch {
+        map[dateStr] = dateStr;
+      }
+    });
+    return map;
+  }, [sortedDates]);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (txSearch) count++;
+    if (txTypeFilter !== 'semua') count++;
+    if (txWalletFilter !== 'semua') count++;
+    if (txCategoryFilter !== 'semua') count++;
+    if (txDateFilter) count++;
+    if (txMonthFilter) count++;
+    if (txYearFilter) count++;
+    return count;
+  }, [txSearch, txTypeFilter, txWalletFilter, txCategoryFilter, txDateFilter, txMonthFilter, txYearFilter]);
+
+  const handleResetAllFilters = useCallback(() => {
     setTxSearch('');
     setTxTypeFilter('semua');
     setTxWalletFilter('semua');
@@ -131,7 +172,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
     setTxDateFilter('');
     setTxMonthFilter('');
     setTxYearFilter('');
-  };
+  }, [setTxSearch, setTxTypeFilter, setTxWalletFilter, setTxCategoryFilter, setTxDateFilter, setTxMonthFilter, setTxYearFilter]);
 
   return (
     <div className="flex flex-col gap-5" id="view-transactions">
@@ -588,10 +629,8 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {sortedDates.map((dateStr) => {
                     const dateTxs = groupedByDate[dateStr];
-                    const totalDateTxsCount = filteredTransactions.filter(t => t.date === dateStr).length;
-                    const formattedDate = new Date(dateStr).toLocaleDateString('id-ID', {
-                      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-                    });
+                    const totalDateTxsCount = totalCountByDate[dateStr] || (dateTxs ? dateTxs.length : 0);
+                    const formattedDate = formattedDateMap[dateStr] || dateStr;
                     return (
                       <React.Fragment key={dateStr}>
                         <tr className={`select-none border-y transition-all ${
@@ -818,4 +857,4 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
       )}
     </div>
   );
-};
+});
