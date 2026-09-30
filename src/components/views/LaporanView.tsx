@@ -7,7 +7,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle, 
   TrendingDown, TrendingUp, Tag, PlusCircle, ArrowRight, Filter, 
-  Calendar, CheckCircle2, ChevronDown, ChevronUp, Sparkles, PieChart, Home, BarChart3
+  Calendar, CheckCircle2, ChevronDown, ChevronUp, Sparkles, PieChart, Home, BarChart3, Wallet as WalletIcon
 } from 'lucide-react';
 import { Transaction, Category, IncomeSource, Wallet, UserSettings } from '../../types';
 import { IconRenderer } from '../IconRenderer';
@@ -105,6 +105,21 @@ export function LaporanView({
   const totalAmount = useMemo(() => {
     return monthTransactions.reduce((sum, t) => sum + t.amount, 0);
   }, [monthTransactions]);
+
+  // Total Income & Expense for the selected month to compute net balance
+  const monthTotalIncome = useMemo(() => {
+    return transactions
+      .filter(t => t.date && t.date.startsWith(monthKey) && t.type === 'pemasukan')
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions, monthKey]);
+
+  const monthTotalExpense = useMemo(() => {
+    return transactions
+      .filter(t => t.date && t.date.startsWith(monthKey) && t.type === 'pengeluaran')
+      .reduce((sum, t) => sum + t.amount, 0);
+  }, [transactions, monthKey]);
+
+  const monthNetBalance = monthTotalIncome - monthTotalExpense;
 
   // Group by category (if pengeluaran) or by source (if pemasukan)
   const rankedItems = useMemo(() => {
@@ -334,7 +349,53 @@ export function LaporanView({
 
       </div>
 
-      {/* 2. Visualisasi Grafik Chart Bulanan (Sesuai Bulan & Tipe yang Dipilih) */}
+      {/* 2. Card Simpel Total Saldo Akhir */}
+      <div className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 shadow-xs flex items-center justify-between gap-4`}>
+        <div className="flex items-center gap-3 min-w-0">
+          <div className={`w-10 h-10 sm:w-11 sm:h-11 ${btnRadius} flex items-center justify-center shrink-0 shadow-xs ${
+            monthNetBalance > 0 
+              ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400' 
+              : monthNetBalance < 0 
+              ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400' 
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+          }`}>
+            {monthNetBalance > 0 ? (
+              <TrendingUp className="w-5 h-5" />
+            ) : monthNetBalance < 0 ? (
+              <TrendingDown className="w-5 h-5" />
+            ) : (
+              <WalletIcon className="w-5 h-5" />
+            )}
+          </div>
+
+          <div className="min-w-0">
+            <h4 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug truncate">
+              Total Saldo Akhir
+            </h4>
+            <p className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium truncate">
+              Periode {currentMonthName} {selectedYear}
+            </p>
+          </div>
+        </div>
+
+        <div className="text-right shrink-0">
+          <span className={`text-lg sm:text-2xl font-black font-mono tracking-tight block ${
+            monthNetBalance > 0 
+              ? 'text-emerald-600 dark:text-emerald-400' 
+              : monthNetBalance < 0 
+              ? 'text-rose-600 dark:text-rose-400' 
+              : 'text-slate-700 dark:text-slate-300'
+          }`}>
+            {monthNetBalance > 0 
+              ? `+${formatIDR(monthNetBalance)}` 
+              : monthNetBalance < 0 
+              ? `-${formatIDR(Math.abs(monthNetBalance))}` 
+              : formatIDR(0)}
+          </span>
+        </div>
+      </div>
+
+      {/* 3. Visualisasi Grafik Chart Bulanan (Sesuai Bulan & Tipe yang Dipilih) */}
       <div className={`${getCardClasses()} p-4 sm:p-6 border border-slate-200/90 dark:border-slate-800 space-y-4`}>
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3">
           <div className="flex items-center gap-2.5">
