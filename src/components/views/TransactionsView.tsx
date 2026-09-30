@@ -245,14 +245,14 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
             className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
               txTypeFilter === 'pemasukan'
                 ? (uiStyle === 'glass' 
-                    ? 'bg-emerald-500/90 text-white font-black shadow-[0_4px_12px_rgba(16,185,129,0.3)] border border-emerald-300/40 backdrop-blur-md'
+                    ? 'bg-emerald-500/90 text-white font-black shadow-[0_4px_12px_rgba(16,185,129,0.3)] border border-emerald-300/40 backdrop-blur-md' 
                     : 'bg-emerald-500 text-white font-bold border border-emerald-500')
                 : (uiStyle === 'glass'
                     ? 'glass-input text-emerald-700 dark:text-emerald-300 font-semibold hover:bg-emerald-500/10'
                     : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 font-semibold hover:bg-emerald-50 dark:hover:bg-emerald-950/40')
             }`}
           >
-            Pemasukan
+            Pendapatan
           </button>
           <button
             type="button"

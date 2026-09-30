@@ -7,12 +7,13 @@ import React, { useState, useMemo } from 'react';
 import { 
   ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle, 
   TrendingDown, TrendingUp, Tag, PlusCircle, ArrowRight, Filter, 
-  Calendar, CheckCircle2, ChevronDown, ChevronUp, Sparkles, PieChart, Home
+  Calendar, CheckCircle2, ChevronDown, ChevronUp, Sparkles, PieChart, Home, BarChart3
 } from 'lucide-react';
 import { Transaction, Category, IncomeSource, Wallet, UserSettings } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
 import { Breadcrumb } from '../Breadcrumb';
+import { CategoryBarChart, SourceBarChart } from '../InteractiveCharts';
 
 interface LaporanViewProps {
   transactions: Transaction[];
@@ -184,12 +185,11 @@ export function LaporanView({
   const displayedRankings = rankedItems.slice(0, 3);
 
   // Card styling tokens based on settings
-  let cardRadiusClass = "rounded-3xl";
-  if (settings?.cardRadius === 'sharp') cardRadiusClass = "rounded-none";
-  else if (settings?.cardRadius === 'extra') cardRadiusClass = "rounded-[32px]";
+  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+  const innerCardRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
 
   return (
-    <div className="flex flex-col gap-4 pb-32 animate-in fade-in duration-200">
+    <div className="flex flex-col gap-4 pb-32">
       <Breadcrumb 
         items={[
           { label: 'Dashboard', onClick: () => setActiveTab('dashboard') },
@@ -197,17 +197,17 @@ export function LaporanView({
         ]} 
       />
       
-      {/* 1. Top Main Control Card (GoPay style) */}
-      {/* Wraps: Month Ruler/Slider, Pengeluaran/Pemasukan Tabs, and Total Summary */}
-      <div className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-md ${cardRadiusClass} p-4 sm:p-6 space-y-4`}>
+      {/* 1. Top Main Control Card */}
+      {/* Wraps: Month Ruler/Slider, Pengeluaran/Pendapatan Tabs, and Total Summary */}
+      <div className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 shadow-md p-4 sm:p-6 space-y-4`}>
         
         {/* Month Selector Ruler Tape */}
-        <div className="flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 sm:p-2.5 rounded-2xl border border-slate-200/70 dark:border-slate-700/60 select-none">
+        <div className={`flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 sm:p-2.5 ${innerCardRadius} border border-slate-200/70 dark:border-slate-700/60 select-none`}>
           {/* Left button */}
           <button
             type="button"
             onClick={handlePrevMonth}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-95 transition-colors cursor-pointer shrink-0"
+            className={`w-8 h-8 sm:w-9 sm:h-9 ${btnRadius} bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-95 transition-colors cursor-pointer shrink-0`}
             title="Bulan Sebelumnya"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -243,7 +243,7 @@ export function LaporanView({
               <div className="w-0.5 h-1.5 bg-slate-300 dark:bg-slate-600" />
               <div className="w-0.5 h-1 bg-slate-300 dark:bg-slate-600" />
               <div className="w-0.5 h-1 bg-slate-300 dark:bg-slate-600" />
-              {/* Active Center Red Notch */}
+              {/* Active Center Red/Theme Notch */}
               <div className="w-1 h-3 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
               <div className="w-0.5 h-1 bg-slate-300 dark:bg-slate-600" />
               <div className="w-0.5 h-1 bg-slate-300 dark:bg-slate-600" />
@@ -256,15 +256,15 @@ export function LaporanView({
           <button
             type="button"
             onClick={handleNextMonth}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-95 transition-colors cursor-pointer shrink-0"
+            className={`w-8 h-8 sm:w-9 sm:h-9 ${btnRadius} bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-95 transition-colors cursor-pointer shrink-0`}
             title="Bulan Berikutnya"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Segmented Control Tabs: Pengeluaran / Pendapatan (Rock-solid, Zero-shift layout) */}
-        <div className="grid grid-cols-2 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 select-none">
+        {/* Segmented Control Tabs: Pengeluaran / Pendapatan */}
+        <div className={`grid grid-cols-2 p-1 ${innerCardRadius} bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 select-none`}>
           <button
             type="button"
             onClick={() => {
@@ -273,7 +273,7 @@ export function LaporanView({
               setSelectedCategoryFilter(null);
               setShowAllMonthTx(false);
             }}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 ${btnRadius} font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
               selectedType === 'pengeluaran'
                 ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-xs border-slate-200/90 dark:border-slate-700'
                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -297,7 +297,7 @@ export function LaporanView({
               setSelectedCategoryFilter(null);
               setShowAllMonthTx(false);
             }}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
+            className={`flex items-center justify-center gap-2 py-2.5 px-3 ${btnRadius} font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
               selectedType === 'pemasukan'
                 ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs border-slate-200/90 dark:border-slate-700'
                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -334,7 +334,59 @@ export function LaporanView({
 
       </div>
 
-      {/* 2. Top 3 Categories / Sources Section */}
+      {/* 2. Visualisasi Grafik Chart Bulanan (Sesuai Bulan & Tipe yang Dipilih) */}
+      <div className={`${getCardClasses()} p-4 sm:p-6 border border-slate-200/90 dark:border-slate-800 space-y-4`}>
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className={`w-8 h-8 ${btnRadius} flex items-center justify-center ${
+              selectedType === 'pengeluaran' 
+                ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400' 
+                : 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400'
+            }`}>
+              <BarChart3 className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base tracking-tight">
+                {selectedType === 'pengeluaran' ? 'Grafik Alokasi Pengeluaran' : 'Grafik Sumber Pendapatan'}
+              </h4>
+              <p className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium">
+                Periode {currentMonthName} {selectedYear}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full pt-1">
+          {monthTransactions.length === 0 ? (
+            <div className={`p-8 text-center ${innerCardRadius} border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col items-center justify-center gap-2`}>
+              <PieChart className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">
+                Belum ada transaksi {selectedType === 'pengeluaran' ? 'pengeluaran' : 'pendapatan'} di bulan {currentMonthName} {selectedYear}
+              </p>
+            </div>
+          ) : (
+            <div className="w-full">
+              {selectedType === 'pengeluaran' ? (
+                <CategoryBarChart 
+                  transactions={transactions} 
+                  categories={categories} 
+                  month={selectedMonth} 
+                  year={selectedYear} 
+                />
+              ) : (
+                <SourceBarChart 
+                  transactions={transactions} 
+                  sources={sources} 
+                  month={selectedMonth} 
+                  year={selectedYear} 
+                />
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 3. Top 3 Categories / Sources Section */}
       <div className="space-y-3 pt-6 sm:pt-8">
         <div className="flex items-center justify-between px-1">
           <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg tracking-tight">
@@ -344,7 +396,7 @@ export function LaporanView({
 
         {/* Card Table of Top Categories/Sources */}
         {rankedItems.length === 0 ? (
-          <div key={`empty-${selectedType}`} className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-8 text-center ${cardRadiusClass} shadow-xs space-y-3`}>
+          <div key={`empty-${selectedType}`} className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 p-8 text-center shadow-xs space-y-3`}>
             <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
               <PieChart className="w-6 h-6" />
             </div>
@@ -366,7 +418,7 @@ export function LaporanView({
             </button>
           </div>
         ) : (
-          <div key={`rankings-${selectedType}`} className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 ${cardRadiusClass} shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
+          <div key={`rankings-${selectedType}`} className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
             {displayedRankings.map((item, idx) => {
               const isSelected = selectedCategoryFilter === item.id;
               
@@ -483,7 +535,7 @@ export function LaporanView({
             </div>
           </div>
 
-          <div key={`tx-list-${selectedType}`} className={`bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 ${cardRadiusClass} shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
+          <div key={`tx-list-${selectedType}`} className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
             {displayedTransactions.map((tx) => {
               const cat = categories.find(c => c.id === tx.categoryId);
               const src = sources.find(s => s.id === tx.sourceId);

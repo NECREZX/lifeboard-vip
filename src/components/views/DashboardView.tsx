@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import { IconRenderer } from '../IconRenderer';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
-import { TrendChart, CategoryBarChart, SourceBarChart, CategoryPieChart, SourcePieChart } from '../InteractiveCharts';
+import { TrendChart, CategoryPieChart, SourcePieChart } from '../InteractiveCharts';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
 import { isCategoryMatch, isWalletMatch, getBudgetCategoryLabel } from '../../lib/budgetUtils';
@@ -190,33 +190,6 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="flex flex-col" id="view-dashboard">
-      {isFilterModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 w-full max-w-sm flex flex-col gap-6">
-            <h3 className="text-xl font-bold">{currentLang === 'en' ? 'Set Month' : 'Setel bulan'}</h3>
-            <div className="flex gap-4">
-              <div className="flex-1 h-40 overflow-y-auto">
-                {months.map((m, i) => (
-                   <button key={m.value} onClick={() => setTempMonth(m.value)} className={`w-full py-2 ${tempMonth === m.value ? 'font-bold' : 'text-slate-400'}`}>{m.label}</button>
-                ))}
-              </div>
-              <div className="flex-1 h-40 overflow-y-auto">
-                {years.map(y => (
-                  <button key={y} onClick={() => setTempYear(y)} className={`w-full py-2 ${tempYear === y ? 'font-bold' : 'text-slate-400'}`}>{y}</button>
-                ))}
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <button onClick={handleResetFilter} className="text-indigo-600 font-bold">{currentLang === 'en' ? 'Reset' : 'Hapus'}</button>
-              <div className="flex gap-4">
-                <button onClick={() => setIsFilterModalOpen(false)} className="text-slate-500 font-bold">{currentLang === 'en' ? 'Cancel' : 'Batal'}</button>
-                <button onClick={handleApplyFilter} className="text-indigo-600 font-bold">{currentLang === 'en' ? 'Apply' : 'Setel'}</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #FF7777) */}
       <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
@@ -564,41 +537,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
               {/* 3. Charts Section: Seluruh visualisasi chart di menu dashboard */}
               <div id="dashboard-charts" className="grid grid-cols-1 lg:grid-cols-2 gap-6 scroll-mt-20">
-                <div className={getCardClasses() + " p-5 lg:p-6"}>
+                <div className={`${getCardClasses()} p-5 lg:p-6 col-span-1 lg:col-span-2`}>
                   <TrendChart transactions={transactions} themeColor="indigo" />
                 </div>
-                <div className={getCardClasses() + " p-5 lg:p-6"}>
+                <div className={`${getCardClasses()} p-5 lg:p-6`}>
                   <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Alokasi Pengeluaran (Keseluruhan)</h4>
+                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Alokasi Pengeluaran Keseluruhan</h4>
                   </div>
                   <CategoryPieChart transactions={transactions} categories={categories} />
                 </div>
-                <div className={getCardClasses() + " p-5 lg:p-6"}>
+                <div className={`${getCardClasses()} p-5 lg:p-6`}>
                   <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Sumber Pendapatan (Keseluruhan)</h4>
+                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Sumber Pendapatan Keseluruhan</h4>
                   </div>
                   <SourcePieChart transactions={transactions} sources={sources} />
-                </div>
-                <div className={getCardClasses() + " p-5 lg:p-6"}>
-                  <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Statistik Bulanan</h4>
-                    <button 
-                      onClick={() => setIsFilterModalOpen(true)}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition"
-                    >
-                      {months.find(m => m.value === selectedMonth)?.label} {selectedYear}
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div>
-                        <h4 className="text-xs font-semibold mb-2 text-slate-600 dark:text-slate-400">Alokasi Pengeluaran</h4>
-                        <CategoryBarChart transactions={transactions} categories={categories} month={selectedMonth} year={selectedYear} />
-                     </div>
-                     <div>
-                        <h4 className="text-xs font-semibold mb-2 text-slate-600 dark:text-slate-400">Sumber Pendapatan</h4>
-                        <SourceBarChart transactions={transactions} sources={sources} month={selectedMonth} year={selectedYear} />
-                     </div>
-                  </div>
                 </div>
               </div>
 
