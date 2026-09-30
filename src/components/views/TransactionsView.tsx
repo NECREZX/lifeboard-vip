@@ -135,193 +135,207 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
 
   return (
     <div className="flex flex-col gap-5" id="view-transactions">
-      {activeFilterCount > 0 && (
-        <div className="flex justify-end mb-1">
-          <button
-            onClick={handleResetAllFilters}
-            className="flex items-center gap-1.5 text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 px-3 py-1.5 rounded-xl border border-rose-200/60 dark:border-rose-900/50 transition-all hover:scale-[1.02]"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>Reset {activeFilterCount} Filter</span>
-          </button>
-        </div>
-      )}
-
-      {/* Filter Panel */}
-      <div className={`${getCardClasses().replace('overflow-hidden', '')} !overflow-visible relative z-30 p-4 md:p-5 flex flex-col gap-4`}>
-        {/* Top Controls Header */}
-        <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
-          {/* Search bar */}
-          <div className="relative flex-1 max-w-md">
+      {/* Filter Controls - No Outer Wrapper */}
+      <div className="flex flex-col gap-2.5 sm:gap-3 w-full relative z-30">
+        {/* 1. Topmost: Search bar + Dynamic Reset Filter Button */}
+        <div className="flex items-center gap-2 sm:gap-2.5 w-full">
+          <div className="relative flex-1 min-w-0 transition-all duration-200">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10" />
             <input
               type="text"
               placeholder="Cari transaksi berdasarkan judul..."
               value={txSearch}
               onChange={(e) => setTxSearch(e.target.value)}
-              className={`w-full pl-10 pr-9 py-2 text-xs font-medium rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 ${
+              className={`w-full pl-10 pr-9 py-2.5 text-xs font-medium rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-xs ${
                 uiStyle === 'glass' 
                   ? 'glass-input text-slate-800 dark:text-slate-100' 
-                  : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100'
+                  : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100'
               }`}
             />
             {txSearch && (
               <button
+                type="button"
                 onClick={() => setTxSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition z-10"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition z-10 cursor-pointer"
+                title="Hapus Pencarian"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* Type Filter Pills */}
-          <div className={`grid grid-cols-4 w-full gap-1 p-1 rounded-2xl transition-all ${
-            uiStyle === 'glass' 
-              ? 'bg-black/5 dark:bg-white/5 backdrop-blur-xl border border-white/50 dark:border-white/10 shadow-inner' 
-              : 'bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800'
-          }`}>
+          {activeFilterCount > 0 && (
             <button
-              onClick={() => setTxTypeFilter('semua')}
-              className={`py-1.5 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
-                txTypeFilter === 'semua'
-                  ? (uiStyle === 'glass' 
-                      ? 'bg-white/85 dark:bg-white/20 text-slate-950 dark:text-white font-black shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_1px_1.5px_rgba(255,255,255,0.9)] border border-white dark:border-white/30 backdrop-blur-md scale-[1.02]' 
-                      : 'bg-slate-900 text-white dark:bg-indigo-600 shadow-sm')
-                  : (uiStyle === 'glass'
-                      ? 'text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/10'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/60')
-              }`}
+              type="button"
+              onClick={handleResetAllFilters}
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/50 shadow-xs hover:scale-[1.02] active:scale-95 transition-all duration-200 shrink-0 cursor-pointer whitespace-nowrap animate-in fade-in zoom-in-95"
+              title="Reset Semua Filter"
             >
-              Semua
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset ({activeFilterCount})</span>
             </button>
-            <button
-              onClick={() => setTxTypeFilter('pemasukan')}
-              className={`py-1.5 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
-                txTypeFilter === 'pemasukan'
-                  ? (uiStyle === 'glass' 
-                      ? 'bg-emerald-500/90 text-white font-black shadow-[0_4px_12px_rgba(16,185,129,0.3),inset_0_1px_1.5px_rgba(255,255,255,0.5)] border border-emerald-300/40 backdrop-blur-md scale-[1.02]'
-                      : 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20')
-                  : (uiStyle === 'glass'
-                      ? 'text-emerald-700 dark:text-emerald-300 font-bold hover:bg-emerald-500/10'
-                      : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40')
-              }`}
-            >
-              Pemasukan
-            </button>
-            <button
-              onClick={() => setTxTypeFilter('pengeluaran')}
-              className={`py-1.5 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
-                txTypeFilter === 'pengeluaran'
-                  ? (uiStyle === 'glass'
-                      ? 'bg-rose-500/90 text-white font-black shadow-[0_4px_12px_rgba(244,63,94,0.3),inset_0_1px_1.5px_rgba(255,255,255,0.5)] border border-rose-300/40 backdrop-blur-md scale-[1.02]'
-                      : 'bg-rose-500 text-white shadow-sm shadow-rose-500/20')
-                  : (uiStyle === 'glass'
-                      ? 'text-rose-700 dark:text-rose-300 font-bold hover:bg-rose-500/10'
-                      : 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40')
-              }`}
-            >
-              Pengeluaran
-            </button>
-            <button
-              onClick={() => setTxTypeFilter('transfer')}
-              className={`py-1.5 px-1 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 text-center truncate ${
-                txTypeFilter === 'transfer'
-                  ? (uiStyle === 'glass'
-                      ? 'bg-blue-500/90 text-white font-black shadow-[0_4px_12px_rgba(59,130,246,0.3),inset_0_1px_1.5px_rgba(255,255,255,0.5)] border border-blue-300/40 backdrop-blur-md scale-[1.02]'
-                      : 'bg-blue-500 text-white shadow-sm shadow-blue-500/20')
-                  : (uiStyle === 'glass'
-                      ? 'text-blue-700 dark:text-blue-300 font-bold hover:bg-blue-500/10'
-                      : 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40')
-              }`}
-            >
-              Transfer
-            </button>
-          </div>
+          )}
         </div>
 
-        {/* Secondary Filter Row: Wallet & Category Selects */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-100 dark:border-slate-800/60">
-          {/* Wallet Dropdown */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all ${
+        {/* 2. Below Search: Type Filter Cards (Matching card styles) */}
+        <div className="grid grid-cols-4 gap-2.5 sm:gap-3 w-full">
+          <button
+            type="button"
+            onClick={() => setTxTypeFilter('semua')}
+            className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
+              txTypeFilter === 'semua'
+                ? (uiStyle === 'glass' 
+                    ? 'bg-white/85 dark:bg-white/20 text-slate-950 dark:text-white font-black shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-white dark:border-white/30 backdrop-blur-md' 
+                    : 'bg-slate-900 text-white dark:bg-indigo-600 font-bold border border-slate-900 dark:border-indigo-600')
+                : (uiStyle === 'glass'
+                    ? 'glass-input text-slate-700 dark:text-slate-300 font-semibold hover:bg-white/40 dark:hover:bg-white/10'
+                    : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800/80')
+            }`}
+          >
+            Semua
+          </button>
+          <button
+            type="button"
+            onClick={() => setTxTypeFilter('pemasukan')}
+            className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
+              txTypeFilter === 'pemasukan'
+                ? (uiStyle === 'glass' 
+                    ? 'bg-emerald-500/90 text-white font-black shadow-[0_4px_12px_rgba(16,185,129,0.3)] border border-emerald-300/40 backdrop-blur-md'
+                    : 'bg-emerald-500 text-white font-bold border border-emerald-500')
+                : (uiStyle === 'glass'
+                    ? 'glass-input text-emerald-700 dark:text-emerald-300 font-semibold hover:bg-emerald-500/10'
+                    : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 font-semibold hover:bg-emerald-50 dark:hover:bg-emerald-950/40')
+            }`}
+          >
+            Pemasukan
+          </button>
+          <button
+            type="button"
+            onClick={() => setTxTypeFilter('pengeluaran')}
+            className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
+              txTypeFilter === 'pengeluaran'
+                ? (uiStyle === 'glass'
+                    ? 'bg-rose-500/90 text-white font-black shadow-[0_4px_12px_rgba(244,63,94,0.3)] border border-rose-300/40 backdrop-blur-md'
+                    : 'bg-rose-500 text-white font-bold border border-rose-500')
+                : (uiStyle === 'glass'
+                    ? 'glass-input text-rose-700 dark:text-rose-300 font-semibold hover:bg-rose-500/10'
+                    : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/40')
+            }`}
+          >
+            Pengeluaran
+          </button>
+          <button
+            type="button"
+            onClick={() => setTxTypeFilter('transfer')}
+            className={`py-2 px-1 sm:px-2 rounded-xl text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
+              txTypeFilter === 'transfer'
+                ? (uiStyle === 'glass'
+                    ? 'bg-blue-500/90 text-white font-black shadow-[0_4px_12px_rgba(59,130,246,0.3)] border border-blue-300/40 backdrop-blur-md'
+                    : 'bg-blue-500 text-white font-bold border border-blue-500')
+                : (uiStyle === 'glass'
+                    ? 'glass-input text-blue-700 dark:text-blue-300 font-semibold hover:bg-blue-500/10'
+                    : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-950/40')
+            }`}
+          >
+            Transfer
+          </button>
+        </div>
+
+        {/* 3. Remaining 4 Filters in 2x2 Grid (2 top, 2 bottom) */}
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
+          {/* Top-Left: Dompet Dropdown Card */}
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden ${
             uiStyle === 'glass' 
               ? 'glass-input' 
-              : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+              : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
           }`}>
-            <WalletIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Dompet:</span>
-            <select
-              value={txWalletFilter}
-              onChange={(e) => setTxWalletFilter(e.target.value)}
-              className="w-full text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer truncate"
-            >
-              <option value="semua" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">Semua</option>
-              {wallets.map((w) => (
-                <option key={w.id} value={w.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">{w.name}</option>
-              ))}
-            </select>
+            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <WalletIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Dompet:</span>
+              <select
+                value={txWalletFilter}
+                onChange={(e) => setTxWalletFilter(e.target.value)}
+                className="w-full text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer truncate py-0 pl-0.5 pr-4 appearance-none"
+              >
+                <option value="semua">Semua</option>
+                {wallets.map((w) => (
+                  <option key={w.id} value={w.id}>{w.name}</option>
+                ))}
+              </select>
+            </div>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-2.5 shrink-0" />
           </div>
 
-          {/* Category & Source Dropdown */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl sm:col-span-1 lg:col-span-1 transition-all ${
+          {/* Top-Right: Kategori & Sumber Dropdown Card */}
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 overflow-hidden ${
             uiStyle === 'glass' 
               ? 'glass-input' 
-              : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+              : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
           }`}>
-            <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Kategori:</span>
-            <select
-              value={txCategoryFilter}
-              onChange={(e) => setTxCategoryFilter(e.target.value)}
-              className="w-full text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer truncate"
-            >
-              <option value="semua" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">Semua Kategori & Sumber</option>
-              <optgroup label="Pengeluaran" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-bold">
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">{c.name}</option>
-                ))}
-              </optgroup>
-              <optgroup label="Pemasukan" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-bold">
-                {sources.map((s) => (
-                  <option key={s.id} value={s.id} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-medium">{s.name}</option>
-                ))}
-              </optgroup>
-            </select>
+            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Kategori:</span>
+              <select
+                value={txCategoryFilter}
+                onChange={(e) => setTxCategoryFilter(e.target.value)}
+                className="w-full text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer truncate py-0 pl-0.5 pr-4 appearance-none"
+              >
+                <option value="semua">Semua</option>
+                <optgroup label="Pengeluaran">
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </optgroup>
+                <optgroup label="Pemasukan">
+                  {sources.map((s) => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </optgroup>
+              </select>
+            </div>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-2.5 shrink-0" />
           </div>
 
-          {/* Date Selector */}
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all ${
+          {/* Bottom-Left: Tanggal Picker Card */}
+          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all min-w-0 ${
             uiStyle === 'glass' 
               ? 'glass-input' 
-              : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+              : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
           }`}>
-            <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Tanggal:</span>
-            <input
-              type="date"
-              value={txDateFilter}
-              onChange={(e) => {
-                setTxDateFilter(e.target.value);
-                if (e.target.value) {
-                  setTxMonthFilter('');
-                  setTxYearFilter('');
-                }
-              }}
-              className="w-full text-xs font-semibold bg-transparent border-none text-slate-800 dark:text-slate-100 focus:outline-none cursor-pointer"
-            />
+            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Tanggal:</span>
+              <input
+                type="date"
+                value={txDateFilter}
+                onChange={(e) => {
+                  setTxDateFilter(e.target.value);
+                  if (e.target.value) {
+                    setTxMonthFilter('');
+                    setTxYearFilter('');
+                  }
+                }}
+                className="w-full text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer min-w-0 py-0"
+              />
+            </div>
             {txDateFilter && (
-              <button onClick={() => setTxDateFilter('')} className="text-slate-400 hover:text-slate-600">
+              <button 
+                type="button" 
+                onClick={() => setTxDateFilter('')} 
+                className="text-slate-400 hover:text-rose-500 cursor-pointer ml-1 p-0.5"
+                title="Hapus Filter Tanggal"
+              >
                 <X className="w-3 h-3" />
               </button>
             )}
           </div>
 
-          {/* Calendar Month & Year Picker */}
-          <div className="relative">
-            <div className={`flex items-center justify-between gap-1.5 px-3 py-1.5 rounded-xl transition-all ${
+          {/* Bottom-Right: Calendar Month & Year Picker Card */}
+          <div className="relative min-w-0">
+            <div className={`flex items-center justify-between gap-1.5 px-3 py-2 rounded-xl transition-all ${
               uiStyle === 'glass' 
                 ? 'glass-input' 
-                : 'border border-slate-200 dark:border-slate-700/80 bg-slate-50/50 dark:bg-slate-900/60'
+                : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
             } ${txDateFilter ? 'opacity-40 pointer-events-none' : ''}`}>
               <div 
                 onClick={() => {
@@ -334,9 +348,9 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                 title="Pilih Kalender Bulan & Tahun"
               >
                 <CalendarDays className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Bulan/Thn:</span>
+                <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Bulan/Thn:</span>
                 <span className={`text-xs font-bold truncate ${
-                  (txMonthFilter || txYearFilter) ? 'text-slate-900 dark:text-white font-black' : 'text-slate-700 dark:text-slate-300'
+                  (txMonthFilter || txYearFilter) ? 'text-slate-900 dark:text-white font-black' : 'text-slate-700 dark:text-slate-200'
                 }`}>
                   {txMonthFilter && txYearFilter 
                     ? `${MONTH_SHORT[parseInt(txMonthFilter, 10) - 1]} ${txYearFilter}`
@@ -348,7 +362,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center gap-0.5 shrink-0">
+              <div className="flex items-center gap-1 shrink-0">
                 {(txMonthFilter || txYearFilter) && (
                   <button
                     type="button"
@@ -357,7 +371,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                       setTxMonthFilter('');
                       setTxYearFilter('');
                     }}
-                    className="p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                    className="p-0.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
                     title="Hapus Filter Bulan & Tahun"
                   >
                     <X className="w-3 h-3" />
@@ -387,7 +401,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = ({
                   onClick={() => setIsMonthPickerOpen(false)}
                 />
 
-                <div className="absolute right-0 sm:right-auto sm:left-0 top-full mt-2 z-50 w-72 xs:w-80 max-w-[calc(100vw-2.5rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-3.5 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 sm:right-0 top-full mt-2 z-50 w-72 xs:w-80 max-w-[calc(100vw-2.5rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-3.5 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
                   {/* Calendar Year Header with Prev/Next Controls */}
                   <div className="flex items-center justify-between px-1">
                     <button

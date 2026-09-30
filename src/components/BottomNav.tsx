@@ -89,14 +89,14 @@ export default function BottomNav({
         onClick={() => setActiveTab(tab.id)}
         aria-label={tab.label}
         title={tab.label}
-        className="group relative h-full flex flex-col items-center justify-center py-1 px-0.5 focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
+        className="group relative flex flex-col items-center justify-center focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
         id={`nav-tab-${tab.id}`}
       >
-        {/* Unified Pill/Capsule: Encloses BOTH Icon AND Navigation Label together for hover & active states */}
+        {/* Compact Unified Capsule: Precision aligned with identical height & width */}
         <div 
-          className={`flex flex-col items-center justify-center px-1.5 xs:px-2 py-1 rounded-2xl transition-all duration-200 min-w-[36px] xs:min-w-[40px] ${
+          className={`flex flex-col items-center justify-center w-[46px] xs:w-[50px] py-1.5 rounded-2xl transition-all duration-150 ${
             isActive 
-              ? 'shadow-2xs scale-102 font-bold' 
+              ? 'shadow-xs font-bold' 
               : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
           }`}
           style={isActive ? { 
@@ -104,17 +104,21 @@ export default function BottomNav({
             color: resolvedAccent,
           } : undefined}
         >
-          <Icon className={`w-4.5 h-4.5 xs:w-5 xs:h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9]'}`} />
+          <div className="w-5 h-5 flex items-center justify-center shrink-0">
+            <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9]'}`} />
+          </div>
 
-          {/* Navigation Label: Inside the hover/active capsule */}
-          {isActive ? (
-            <span 
-              className="text-[9px] xs:text-[9.5px] font-extrabold tracking-tight leading-none whitespace-nowrap text-center mt-1"
-              style={{ color: resolvedAccent }}
-            >
-              {tab.label}
-            </span>
-          ) : null}
+          {/* Navigation Label: Precision aligned text baseline */}
+          <span 
+            className={`text-[9.5px] xs:text-[10px] tracking-tight leading-none whitespace-nowrap text-center mt-1 transition-colors ${
+              isActive 
+                ? 'font-extrabold' 
+                : 'font-semibold text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200'
+            }`}
+            style={isActive ? { color: resolvedAccent } : undefined}
+          >
+            {tab.label}
+          </span>
         </div>
       </button>
     );
@@ -168,20 +172,20 @@ export default function BottomNav({
         <div className={`absolute left-0 right-0 top-[68px] -bottom-20 ${wingBgClass}`} />
       </div>
 
-      {/* TALLER CARD CONTENT CONTAINER (H-72PX) & FLOATING CENTER FAB */}
-      <div className="relative z-10 w-full max-w-md mx-auto h-[72px]">
+      {/* COMPACT & PRECISE CARD CONTENT CONTAINER (H-70PX) & FLOATING CENTER FAB */}
+      <div className="relative z-10 w-full max-w-lg mx-auto h-[70px]">
         
-        {/* Left Wing Tabs: Clustered tightly closer towards center */}
+        {/* Left Wing Tabs: Compact, clustered tightly towards center, perfectly leveled */}
         <div 
           className="absolute top-0 bottom-0 flex items-center justify-end gap-1 xs:gap-2 pb-1"
           style={{ 
-            right: 'calc(50% + 44px)',
+            right: 'calc(50% + 40px)',
           }}
         >
           {tabs.slice(0, 3).map((tab) => renderNavTab(tab))}
         </div>
 
-        {/* Center Floating FAB Button: 48px-50px circle nestled with clear space around it */}
+        {/* Center Floating FAB Button: 48px circle nested precisely with balanced margins */}
         <div className="absolute left-1/2 -translate-x-1/2 -top-3.5 flex items-center justify-center z-30">
           <button
             type="button"
@@ -198,11 +202,11 @@ export default function BottomNav({
           </button>
         </div>
 
-        {/* Right Wing Tabs: Clustered tightly closer towards center */}
+        {/* Right Wing Tabs: Compact, clustered tightly towards center, perfectly leveled */}
         <div 
           className="absolute top-0 bottom-0 flex items-center justify-start gap-1 xs:gap-2 pb-1"
           style={{ 
-            left: 'calc(50% + 44px)',
+            left: 'calc(50% + 40px)',
           }}
         >
           {tabs.slice(3, 6).map((tab) => renderNavTab(tab))}
