@@ -86,120 +86,120 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none"
-      style={{ backgroundColor: '#FF7777' }}
+      className="fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none bg-[#FF7777]"
     >
-      {/* Motif Songket dengan Gradasi Pudar di Bagian Atas:
-          Bagian paling atas polos warna solid #FF7777 menyatu mulus 100% dengan status bar HP,
-          lalu motif perlahan memudar muncul ke bawah secara halus */}
-      <div 
-        className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden"
-        style={{
-          maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 12%, rgba(0, 0, 0, 0.4) 22%, rgba(0, 0, 0, 1) 36%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 12%, rgba(0, 0, 0, 0.4) 22%, rgba(0, 0, 0, 1) 36%)'
-        }}
-      >
-        <svg className="w-full h-full opacity-20 text-white" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="auth-songket-motif-solid" width="48" height="48" patternUnits="userSpaceOnUse">
-              {/* Outer Diamond Weave */}
-              <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
-              {/* Secondary Inset Diamond */}
-              <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-              {/* Tertiary Inset Diamond */}
-              <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              
-              {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
-              <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.6" />
-              <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.6" />
-              <rect x="23" y="23" width="2" height="2" fill="white" />
-              
-              {/* Corner Songket Cross Weaves connecting the grid */}
-              <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="1.2" />
-              <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.4" />
-              <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.4" />
-              <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.4" />
-              <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.4" />
-              
-              {/* Fine Songket Horizontal & Vertical Weave Ticks */}
-              <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-              <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-              <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-              <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#auth-songket-motif-solid)" />
-        </svg>
-      </div>
-
       <form onSubmit={handleSubmit} className="min-h-[100dvh] flex flex-col justify-between relative z-10 w-full">
         {/* ========================================================
-            BAGIAN ATAS (BANNER FORM LOGIN):
-            Logo, Judul, Input Username, & Input Password
+            BAGIAN ATAS: HERO BANNER LOGIN
+            Persis Identik 100% dengan Banner Menu Dashboard & Menu Pengaturan
+            (Warna #FF7777, Mask Gradasi Pudar, Pattern Songket, Mix-blend & Glow)
             ======================================================== */}
         <div 
-          className="flex-1 flex flex-col justify-center items-center px-6 pt-12 sm:pt-16 pb-8 max-w-sm mx-auto w-full"
-          style={{ paddingTop: 'max(env(safe-area-inset-top), 36px)' }}
+          className="relative z-0 overflow-hidden bg-[#FF7777] text-white flex-1 flex flex-col justify-center items-center px-6 pt-10 sm:pt-14 pb-8 w-full"
+          style={{ paddingTop: 'max(env(safe-area-inset-top), 24px)' }}
         >
-          {/* Logo & Header Branding */}
-          <div className="flex flex-col items-center text-center mb-6 sm:mb-8">
-            <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-3xl p-1 bg-white/20 backdrop-blur-xl border border-white/35 shadow-[0_8px_32px_rgba(0,0,0,0.12)] flex items-center justify-center mb-3.5">
-              <img 
-                src="/icon.svg" 
-                className="w-full h-full object-cover scale-[1.15]" 
-                alt="Lifeboard Logo" 
-                referrerPolicy="no-referrer" 
-              />
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-sm">
-              Lifeboard
-            </h1>
+          {/* Authentic Indonesian Songket Weave Vector Motif (Identik 100% dengan Banner Dashboard & Kelola) */}
+          <div 
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{
+              maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
+            }}
+          >
+            <svg className="w-full h-full opacity-35 mix-blend-overlay text-white" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                {/* Tradisional Songket Motif: Belah Ketupat / Bunga Melati / Tapak Catur Weave */}
+                <pattern id="banner-songket-motif" width="48" height="48" patternUnits="userSpaceOnUse">
+                  {/* Outer Diamond Weave */}
+                  <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  {/* Secondary Inset Diamond */}
+                  <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                  {/* Tertiary Inset Diamond */}
+                  <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  
+                  {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
+                  <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.6" />
+                  <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.6" />
+                  <rect x="23" y="23" width="2" height="2" fill="white" />
+                  
+                  {/* Corner Songket Cross Weaves connecting the grid */}
+                  <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="1.2" />
+                  <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.4" />
+                  <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.4" />
+                  <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.4" />
+                  <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.4" />
+                  
+                  {/* Fine Songket Horizontal & Vertical Weave Ticks */}
+                  <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                  <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                  <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                  <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#banner-songket-motif)" />
+            </svg>
           </div>
 
-          {/* Seamless Modern Input Fields */}
-          <div className="w-full space-y-3.5 sm:space-y-4">
-            {/* Field 1: Username */}
-            <div>
-              <label className="text-[11px] font-extrabold uppercase tracking-wider text-white/90 mb-1.5 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-white/80" />
-                <span>Username</span>
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Masukkan Username Anda"
-                  autoComplete="username"
-                  className="w-full px-4 py-3.5 rounded-2xl bg-white/15 hover:bg-white/20 focus:bg-white/25 border border-white/30 focus:border-white text-white placeholder:text-white/60 text-sm font-medium tracking-wide backdrop-blur-xl shadow-inner outline-none focus:ring-2 focus:ring-white/40"
+          {/* Form Content: Logo, Title, Username, Password */}
+          <div className="relative z-10 max-w-sm mx-auto w-full flex flex-col items-center">
+            {/* Logo & Header */}
+            <div className="flex flex-col items-center text-center mb-6 sm:mb-8">
+              <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-3xl p-1 bg-white/20 backdrop-blur-xl border border-white/35 shadow-[0_8px_32px_rgba(0,0,0,0.12)] flex items-center justify-center mb-3.5">
+                <img 
+                  src="/icon.svg" 
+                  className="w-full h-full object-cover scale-[1.15]" 
+                  alt="Lifeboard Logo" 
+                  referrerPolicy="no-referrer" 
                 />
               </div>
+
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-sm">
+                Lifeboard
+              </h1>
             </div>
 
-            {/* Field 2: Password with Eye Toggle */}
-            <div>
-              <label className="text-[11px] font-extrabold uppercase tracking-wider text-white/90 mb-1.5 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-white/80" />
-                <span>Password</span>
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Masukkan Password Anda"
-                  autoComplete="current-password"
-                  className="w-full pl-4 pr-12 py-3.5 rounded-2xl bg-white/15 hover:bg-white/20 focus:bg-white/25 border border-white/30 focus:border-white text-white placeholder:text-white/60 text-sm font-medium tracking-wide backdrop-blur-xl shadow-inner outline-none focus:ring-2 focus:ring-white/40"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(prev => !prev)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-white/70 hover:text-white transition-colors cursor-pointer"
-                  title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+            {/* Inputs */}
+            <div className="w-full space-y-3.5 sm:space-y-4">
+              <div>
+                <label className="text-[11px] font-extrabold uppercase tracking-wider text-white/90 mb-1.5 flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-white/80" />
+                  <span>Username</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Masukkan Username Anda"
+                    autoComplete="username"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white/15 hover:bg-white/20 focus:bg-white/25 border border-white/30 focus:border-white text-white placeholder:text-white/60 text-sm font-medium tracking-wide backdrop-blur-xl shadow-inner outline-none focus:ring-2 focus:ring-white/40"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-extrabold uppercase tracking-wider text-white/90 mb-1.5 flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-white/80" />
+                  <span>Password</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Masukkan Password Anda"
+                    autoComplete="current-password"
+                    className="w-full pl-4 pr-12 py-3.5 rounded-2xl bg-white/15 hover:bg-white/20 focus:bg-white/25 border border-white/30 focus:border-white text-white placeholder:text-white/60 text-sm font-medium tracking-wide backdrop-blur-xl shadow-inner outline-none focus:ring-2 focus:ring-white/40"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(prev => !prev)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-white/70 hover:text-white transition-colors cursor-pointer"
+                    title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
