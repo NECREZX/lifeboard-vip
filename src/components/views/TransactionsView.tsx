@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   Search, Filter, Trash2, Edit2, Eye, PlusCircle, X, Calendar, 
@@ -104,6 +104,24 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
   const [pickerYear, setPickerYear] = useState<number>(() => {
     return txYearFilter ? parseInt(txYearFilter, 10) : currentRealYear;
   });
+
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  const formattedSelectedDate = useMemo(() => {
+    if (!txDateFilter) return '';
+    try {
+      const parts = txDateFilter.split('-');
+      if (parts.length === 3) {
+        const d = parseInt(parts[2], 10);
+        const m = MONTH_SHORT[parseInt(parts[1], 10) - 1];
+        const y = parts[0];
+        return `${d} ${m} ${y}`;
+      }
+      return txDateFilter;
+    } catch {
+      return txDateFilter;
+    }
+  }, [txDateFilter]);
 
   const displayedTransactions = useMemo(() => {
     return showAllTransactions 
@@ -347,10 +365,16 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
               ? 'glass-input' 
               : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
           }`}>
-            <div className="flex items-center gap-1.5 min-w-0 flex-1">
+            <div className="flex items-center gap-1.5 min-w-0 flex-1 relative">
               <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Tanggal:</span>
+              <span className={`text-xs font-bold truncate ${
+                txDateFilter ? 'text-slate-900 dark:text-white font-black' : 'text-slate-700 dark:text-slate-200'
+              }`}>
+                {formattedSelectedDate || 'Pilih'}
+              </span>
               <input
+                ref={dateInputRef}
                 type="date"
                 value={txDateFilter}
                 onChange={(e) => {
@@ -360,18 +384,24 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                     setTxYearFilter('');
                   }
                 }}
-                className="w-full text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer min-w-0 py-0"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                title="Pilih Tanggal"
               />
             </div>
-            {txDateFilter && (
+            {txDateFilter ? (
               <button 
                 type="button" 
-                onClick={() => setTxDateFilter('')} 
-                className="text-slate-400 hover:text-rose-500 cursor-pointer ml-1 p-0.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTxDateFilter('');
+                }} 
+                className="text-slate-400 hover:text-rose-500 cursor-pointer ml-1 p-0.5 relative z-20"
                 title="Hapus Filter Tanggal"
               >
                 <X className="w-3 h-3" />
               </button>
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none shrink-0" />
             )}
           </div>
 
@@ -403,7 +433,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       ? MONTH_NAMES[parseInt(txMonthFilter, 10) - 1]
                       : txYearFilter 
                         ? `Tahun ${txYearFilter}` 
-                        : 'Semua'}
+                        : 'Pilih'}
                 </span>
               </div>
 
