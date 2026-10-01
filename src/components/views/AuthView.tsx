@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogIn, User, Lock, Layout } from 'lucide-react';
+import { LogIn, User, Lock, Eye, EyeOff } from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
       Swal.fire({
         title: 'Input Tidak Lengkap',
         text: 'Harap isi Username dan Password terlebih dahulu.',
-        confirmButtonColor: '#ea580c'
+        confirmButtonColor: '#FF7777'
       });
       return;
     }
@@ -41,10 +42,10 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
     // Trigger animasi keluar
     setIsExiting(true);
     
-    // Panggil onLogin setelah animasi selesai (misal 500ms)
+    // Panggil onLogin setelah animasi selesai
     setTimeout(() => {
       onLogin();
-    }, 500);
+    }, 450);
   };
 
   return (
@@ -52,82 +53,123 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
       {!isExiting && (
         <motion.div 
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center z-40 p-4"
+          exit={{ opacity: 0, scale: 1.02 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 overflow-y-auto select-none"
+          style={{ backgroundColor: '#FF7777' }}
         >
+          {/* Authentic Songket Weave Vector Motif (Identik dengan Banner Dashboard & Menu Pengaturan Tanpa Gradasi) */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
+            <svg className="w-full h-full opacity-20 text-white" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="auth-songket-motif-solid" width="48" height="48" patternUnits="userSpaceOnUse">
+                  {/* Outer Diamond Weave */}
+                  <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  {/* Secondary Inset Diamond */}
+                  <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                  {/* Tertiary Inset Diamond */}
+                  <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
+                  
+                  {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
+                  <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.6" />
+                  <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.6" />
+                  <rect x="23" y="23" width="2" height="2" fill="white" />
+                  
+                  {/* Corner Songket Cross Weaves connecting the grid */}
+                  <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="1.2" />
+                  <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.4" />
+                  <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.4" />
+                  <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.4" />
+                  <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.4" />
+                  
+                  {/* Fine Songket Horizontal & Vertical Weave Ticks */}
+                  <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                  <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                  <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                  <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#auth-songket-motif-solid)" />
+            </svg>
+          </div>
+
+          {/* Modern Frameless Login Form Container (Tanpa Kotak/Card Mengambang) */}
           <motion.div
-            initial={{ y: 30, opacity: 0, scale: 0.95 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 50, opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-sm bg-gradient-to-br from-[#FF9999] via-[#FF7777] to-[#E56666] rounded-3xl shadow-2xl overflow-hidden border border-white/20 text-white relative"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-sm mx-auto flex flex-col items-center relative z-10"
           >
-            {/* Semi-circle Polkadot (Setengah Lingkaran) Motif Pattern Overlay */}
-            <div className="absolute inset-0 pointer-events-none opacity-15">
-              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="auth-semicircle-polkadot" width="28" height="28" patternUnits="userSpaceOnUse">
-                    {/* Semi-circles facing up and down forming scalloped polkadot fan texture */}
-                    <path d="M 0 14 A 7 7 0 0 1 14 14 Z" fill="white" />
-                    <path d="M 14 14 A 7 7 0 0 0 28 14 Z" fill="white" />
-                    <path d="M 7 0 A 7 7 0 0 1 21 0 Z" fill="white" />
-                    <path d="M 7 28 A 7 7 0 0 0 21 28 Z" fill="white" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#auth-semicircle-polkadot)" />
-              </svg>
-            </div>
-
-            <div className="p-8 pb-4 flex flex-col items-center justify-center relative overflow-hidden">
-              <div className="w-16 h-16 rounded-3xl overflow-hidden shadow-lg relative z-10 mb-4 border border-white/20 bg-transparent">
-                <img src="/icon.svg" className="w-full h-full object-cover scale-[1.15]" alt="Lifeboard Logo" referrerPolicy="no-referrer" />
+            {/* Logo & Header Branding */}
+            <div className="flex flex-col items-center text-center mb-8">
+              <div className="w-20 h-20 rounded-3xl p-1 bg-white/20 backdrop-blur-xl border border-white/35 shadow-[0_8px_32px_rgba(0,0,0,0.12)] flex items-center justify-center mb-4 transition-transform hover:scale-105">
+                <img 
+                  src="/icon.svg" 
+                  className="w-full h-full object-cover scale-[1.15]" 
+                  alt="Lifeboard Logo" 
+                  referrerPolicy="no-referrer" 
+                />
               </div>
-              <h2 className="text-3xl font-bold text-white relative z-10 tracking-tight">Lifeboard</h2>
-              <p className="text-white/90 text-xs font-medium tracking-wide uppercase mt-2 relative z-10 text-center">Masuk atau Daftar Sekali</p>
+
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-sm">
+                Lifeboard
+              </h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-8 pt-4 relative z-10">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-white/80 uppercase tracking-wider block mb-1">Username</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-white/60">
-                      <User size={16} />
-                    </div>
-                    <input
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      placeholder="Masukkan Username"
-                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white placeholder:text-white/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md transition"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-white/80 uppercase tracking-wider block mb-1">Password</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-white/60">
-                      <Lock size={16} />
-                    </div>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Masukkan Password"
-                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/20 bg-white/10 text-white placeholder:text-white/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md transition"
-                    />
-                  </div>
+            {/* Seamless Modern Input Fields */}
+            <form onSubmit={handleSubmit} className="w-full space-y-4">
+              {/* Field 1: Username */}
+              <div>
+                <label className="text-[11px] font-extrabold uppercase tracking-wider text-white/90 mb-1.5 flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-white/80" />
+                  <span>Username</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Masukkan Username Anda"
+                    autoComplete="username"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white/15 hover:bg-white/20 focus:bg-white/25 border border-white/30 focus:border-white text-white placeholder:text-white/60 text-sm font-medium tracking-wide backdrop-blur-xl shadow-inner transition-all outline-none focus:ring-2 focus:ring-white/40"
+                  />
                 </div>
               </div>
 
+              {/* Field 2: Password with Eye Toggle */}
+              <div>
+                <label className="text-[11px] font-extrabold uppercase tracking-wider text-white/90 mb-1.5 flex items-center gap-1.5">
+                  <Lock className="w-3.5 h-3.5 text-white/80" />
+                  <span>Password</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Masukkan Password Anda"
+                    autoComplete="current-password"
+                    className="w-full pl-4 pr-12 py-3.5 rounded-2xl bg-white/15 hover:bg-white/20 focus:bg-white/25 border border-white/30 focus:border-white text-white placeholder:text-white/60 text-sm font-medium tracking-wide backdrop-blur-xl shadow-inner transition-all outline-none focus:ring-2 focus:ring-white/40"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(prev => !prev)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-white/70 hover:text-white transition-colors cursor-pointer"
+                    title={showPassword ? "Sembunyikan Password" : "Tampilkan Password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Modern Action Button */}
               <button
                 type="submit"
-                className="w-full mt-8 bg-white text-[#E56666] hover:bg-rose-50 active:bg-rose-100 font-bold py-3 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2"
+                className="w-full mt-6 py-4 rounded-2xl bg-white text-[#FF7777] font-black text-sm uppercase tracking-wider shadow-[0_12px_28px_rgba(0,0,0,0.16)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.22)] hover:bg-white/95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <LogIn size={18} />
-                Masuk
+                <LogIn className="w-4 h-4 stroke-[2.5]" />
+                <span>Masuk</span>
               </button>
             </form>
           </motion.div>
