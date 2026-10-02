@@ -890,6 +890,7 @@ export default function App() {
   const handleAddTransaction = (data: {
     type: 'pemasukan' | 'pengeluaran' | 'transfer';
     amount: number;
+    adminFee?: number;
     description: string;
     date: string;
     walletId: string;

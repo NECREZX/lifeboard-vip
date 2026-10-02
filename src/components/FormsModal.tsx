@@ -290,10 +290,34 @@ export default function FormsModal({
           className: 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/60 font-bold',
           style: undefined
         };
+      case 'budgeting':
+        return {
+          label: 'Budgeting',
+          className: 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200/80 dark:border-purple-800/60 font-bold',
+          style: undefined
+        };
+      case 'tabungan':
+        return {
+          label: 'Tabungan',
+          className: 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200/80 dark:border-amber-800/60 font-bold',
+          style: undefined
+        };
+      case 'aktivitas':
+        return {
+          label: 'Aktivitas',
+          className: 'bg-amber-900/10 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-800/30 dark:border-amber-700/60 font-bold',
+          style: undefined
+        };
+      case 'wishlist':
+        return {
+          label: 'Wishlist',
+          className: 'bg-fuchsia-50 dark:bg-fuchsia-950/50 text-fuchsia-600 dark:text-fuchsia-400 border border-fuchsia-200/80 dark:border-fuchsia-800/60 font-bold',
+          style: undefined
+        };
       default:
         return {
           label: activeForm.charAt(0).toUpperCase() + activeForm.slice(1),
-          className: 'font-bold',
+          className: 'font-bold border border-slate-200/80 dark:border-slate-800/60',
           style: {
             backgroundColor: `${resolvedAccent}18`,
             color: resolvedAccent
@@ -511,7 +535,13 @@ export default function FormsModal({
         }
       }}
     >
-      <div className={`relative w-full max-w-lg mx-auto rounded-t-[28px] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[78vh] sm:h-[580px] max-h-[85vh] sm:max-h-[80vh] border-t sm:border border-slate-200/90 dark:border-slate-800 animate-in slide-in-from-bottom duration-200 ${
+      <div 
+        style={{
+          height: 'min(580px, 82vh)',
+          minHeight: 'min(580px, 82vh)',
+          maxHeight: 'min(580px, 82vh)'
+        }}
+        className={`relative w-full max-w-lg mx-auto rounded-t-[28px] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col border-t sm:border border-slate-200/90 dark:border-slate-800 animate-in slide-in-from-bottom duration-200 ${
         uiStyle === 'glass' 
           ? 'glass-card' 
           : 'bg-white dark:bg-slate-900'
@@ -520,16 +550,16 @@ export default function FormsModal({
         <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
         {/* Modal Header */}
-        <div className="px-4 sm:px-5 pt-3.5 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
+        <div className="px-4 sm:px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 h-[48px]">
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-none">
               Form Input Data
             </h3>
             {(() => {
               const badge = getBadgeProps();
               return (
                 <span 
-                  className={`text-[10px] px-2.5 py-0.5 rounded-full ${badge.className}`}
+                  className={`text-[10px] px-2.5 py-0.5 rounded-full inline-flex items-center leading-none ${badge.className}`}
                   style={badge.style}
                 >
                   {badge.label}
@@ -572,7 +602,7 @@ export default function FormsModal({
 
         {/* Modal Body Form */}
         <div className="relative flex-1 min-h-0 flex flex-col overflow-hidden">
-          <form id="forms-modal-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 flex flex-col gap-4">
+          <form id="forms-modal-form" onSubmit={handleSubmit} className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-6 py-4 flex flex-col gap-4">
           
           {/* PENGELUARAN & PEMASUKAN SHARED INPUTS */}
           {(activeForm === 'pengeluaran' || activeForm === 'pemasukan') && (
@@ -615,7 +645,7 @@ export default function FormsModal({
                       const currentVal = parseAmountInput(amount);
                       setAmount(currentVal > 0 ? (currentVal * 1000).toString() : '100000');
                     }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm cursor-pointer"
                   >
                     +000
                   </button>
@@ -671,7 +701,7 @@ export default function FormsModal({
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                     required
                   />
                 </div>
@@ -682,7 +712,7 @@ export default function FormsModal({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Beli kopi, jajan dll"
-                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   />
                 </div>
               </div>
@@ -736,22 +766,30 @@ export default function FormsModal({
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={(e) => setAmount(e.target.value.replace(/[^0-9.,]/g, ''))}
                       placeholder="0"
-                      min="1"
                       className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-sm rounded-xl font-mono")}
                       required
                     />
                     <button
                       type="button"
-                      onClick={() => setAmount(prev => prev ? prev + '000' : '1000')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
+                      onClick={() => {
+                        const currentVal = parseAmountInput(amount);
+                        setAmount(currentVal > 0 ? (currentVal * 1000).toString() : '100000');
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm cursor-pointer"
                     >
                       +000
                     </button>
                   </div>
+                  {parseAmountInput(amount) > 0 && (
+                    <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 pl-1">
+                      = {formatIDR(parseAmountInput(amount))}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-1.5">
@@ -759,14 +797,19 @@ export default function FormsModal({
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 font-black text-xs text-slate-600 dark:text-slate-300">Rp</span>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={adminFee}
-                      onChange={(e) => setAdminFee(e.target.value)}
-                      placeholder="0 (misal: 1200)"
-                      min="0"
+                      onChange={(e) => setAdminFee(e.target.value.replace(/[^0-9.,]/g, ''))}
+                      placeholder="0 (misal: 1500)"
                       className={getFormInputClass("w-full pl-9 pr-3 py-2.5 text-sm rounded-xl font-mono")}
                     />
                   </div>
+                  {parseAmountInput(adminFee) > 0 && (
+                    <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 pl-1">
+                      = {formatIDR(parseAmountInput(adminFee))}
+                    </span>
+                  )}
                 </div>
               </div>
               <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium -mt-2">
@@ -781,7 +824,7 @@ export default function FormsModal({
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                     required
                   />
                 </div>
@@ -792,7 +835,7 @@ export default function FormsModal({
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Mutasi, Tarik ATM, dll"
-                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   />
                 </div>
               </div>
@@ -887,7 +930,7 @@ export default function FormsModal({
                   </div>
 
                   {/* Wallets Checkbox Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1">
                     {/* All Wallets Option Card */}
                     <button
                       type="button"
@@ -975,7 +1018,7 @@ export default function FormsModal({
                   </div>
 
                   {/* Categories Checkbox Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
                     {/* All Categories Option Card */}
                     <button
                       type="button"
@@ -1058,7 +1101,7 @@ export default function FormsModal({
                       value={budgetLimit}
                       onChange={(e) => setBudgetLimit(e.target.value.replace(/[^0-9.,]/g, ''))}
                       placeholder={language === 'en' ? 'Estimated spending limit' : 'Estimasi limit pengeluaran'}
-                      className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-xs rounded-xl font-mono")}
+                      className={getFormInputClass("w-full pl-9 pr-16 py-2.5 text-sm rounded-xl font-mono")}
                       required
                     />
                     <button
@@ -1088,7 +1131,7 @@ export default function FormsModal({
                     type="month"
                     value={budgetMonth}
                     onChange={(e) => setBudgetMonth(e.target.value)}
-                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
+                    className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                     required
                   />
                 </div>
@@ -1116,16 +1159,20 @@ export default function FormsModal({
                   <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Target Jumlah (Rp)</label>
                   <div className="relative">
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={savingTarget}
-                      onChange={(e) => setSavingTarget(e.target.value)}
+                      onChange={(e) => setSavingTarget(e.target.value.replace(/[^0-9.,]/g, ''))}
                       placeholder="0"
-                      className={getFormInputClass("w-full pl-3.5 pr-14 py-2 text-xs rounded-xl font-mono")}
+                      className={getFormInputClass("w-full pl-3.5 pr-14 py-2.5 text-sm rounded-xl font-mono")}
                       required
                     />
                     <button
                       type="button"
-                      onClick={() => setSavingTarget(prev => prev ? prev + '000' : '1000')}
+                      onClick={() => {
+                        const currentVal = parseAmountInput(savingTarget);
+                        setSavingTarget(currentVal > 0 ? (currentVal * 1000).toString() : '100000');
+                      }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                     >
                       +000
@@ -1136,20 +1183,37 @@ export default function FormsModal({
                   <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Dana Terkumpul Awal (Rp)</label>
                   <div className="relative">
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={savingCurrent}
-                      onChange={(e) => setSavingCurrent(e.target.value)}
-                      className={getFormInputClass("w-full pl-3.5 pr-14 py-2 text-xs rounded-xl font-mono")}
+                      onChange={(e) => setSavingCurrent(e.target.value.replace(/[^0-9.,]/g, ''))}
+                      placeholder="0"
+                      className={getFormInputClass("w-full pl-3.5 pr-14 py-2.5 text-sm rounded-xl font-mono")}
                     />
                     <button
                       type="button"
-                      onClick={() => setSavingCurrent(prev => prev ? prev + '000' : '1000')}
+                      onClick={() => {
+                        const currentVal = parseAmountInput(savingCurrent);
+                        setSavingCurrent(currentVal > 0 ? (currentVal * 1000).toString() : '100000');
+                      }}
                       className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
                     >
                       +000
                     </button>
                   </div>
                 </div>
+              </div>
+
+              {/* Target Tanggal Selesai */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Target Tanggal Selesai</label>
+                <input
+                  type="date"
+                  value={savingDeadline}
+                  onChange={(e) => setSavingDeadline(e.target.value)}
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
+                  required
+                />
               </div>
             </>
           )}
@@ -1176,7 +1240,7 @@ export default function FormsModal({
                   onChange={(e) => setActivityDesc(e.target.value)}
                   placeholder="Keterangan singkat aktivitas..."
                   rows={2}
-                  className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                 />
               </div>
 
@@ -1186,7 +1250,7 @@ export default function FormsModal({
                   type="date"
                   value={activityDeadline}
                   onChange={(e) => setActivityDeadline(e.target.value)}
-                  className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                   required
                 />
               </div>
@@ -1208,36 +1272,15 @@ export default function FormsModal({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Estimasi Harga (Optional)</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={wishlistPrice}
-                      onChange={(e) => setWishlistPrice(e.target.value)}
-                      placeholder="0"
-                      className={getFormInputClass("w-full pl-3.5 pr-14 py-2.5 text-xs rounded-xl font-mono")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setWishlistPrice(prev => prev ? prev + '000' : '1000')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-black bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 rounded hover:bg-indigo-200 dark:hover:bg-slate-700 transition focus:outline-none select-none z-10 shadow-sm"
-                    >
-                      +000
-                    </button>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Target Bulan Rencana</label>
-                  <input
-                    type="month"
-                    value={wishlistMonth}
-                    onChange={(e) => setWishlistMonth(e.target.value)}
-                    className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
-                    required
-                  />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider">Target Bulan Rencana</label>
+                <input
+                  type="month"
+                  value={wishlistMonth}
+                  onChange={(e) => setWishlistMonth(e.target.value)}
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
+                  required
+                />
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -1247,7 +1290,7 @@ export default function FormsModal({
                   onChange={(e) => setWishlistNotes(e.target.value)}
                   placeholder="Keterangan atau link produk..."
                   rows={2}
-                  className={getFormInputClass("px-3.5 py-2 text-xs rounded-xl")}
+                  className={getFormInputClass("px-3.5 py-2.5 text-xs rounded-xl")}
                 />
               </div>
             </>

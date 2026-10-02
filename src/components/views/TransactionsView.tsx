@@ -9,7 +9,8 @@ import {
   Search, Filter, Trash2, X, Calendar, 
   Wallet as WalletIcon, Tag, RotateCcw, ChevronUp, 
   ChevronDown, ArrowUpRight, ArrowDownLeft, ArrowLeftRight,
-  ChevronLeft, ChevronRight, MoreVertical, Pencil
+  ChevronLeft, ChevronRight, MoreVertical, Pencil,
+  ArrowRight
 } from 'lucide-react';
 import { Transaction, Wallet, Category, IncomeSource } from '../../types';
 import { formatIDR } from '../../lib/formatters';
@@ -736,7 +737,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
       )}
 
       {/* ========================================================
-          8. FORM DETAIL TRANSAKSI POP-UP (MODAL BENTO GRID TETAP SAMA)
+          8. FORM RINCIAN DETAIL TRANSAKSI (KONSEP E-RECEIPT / STRUK DIGITAL FINTECH)
           ======================================================== */}
       {selectedTxDetail && typeof document !== 'undefined' && createPortal(
         (() => {
@@ -758,109 +759,169 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
 
           return (
             <div 
-              className="fixed inset-0 z-[100] flex flex-col justify-end sm:justify-center p-0 sm:p-4 bg-slate-950/75 backdrop-blur-sm animate-in fade-in duration-200 overflow-hidden no-print"
+              className="fixed inset-0 z-[100] flex flex-col justify-end sm:justify-center p-0 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200 overflow-hidden no-print"
               onClick={() => setSelectedTxDetail(null)}
             >
               {/* Sheet Card Container */}
               <div 
-                className="relative w-full max-w-lg mx-auto rounded-t-[28px] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[78vh] sm:h-[580px] max-h-[85vh] sm:max-h-[80vh] border-t sm:border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 animate-in slide-in-from-bottom duration-200"
+                className="relative w-full max-w-md mx-auto rounded-t-[32px] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[78vh] sm:h-[580px] max-h-[88vh] sm:max-h-[82vh] border-t sm:border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 animate-in slide-in-from-bottom duration-200"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Mobile Sheet Drag Handle */}
-                <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
+                <div className="w-12 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
-                {/* Header - Title & Badge ONLY */}
-                <div className="px-4 sm:px-5 pt-3.5 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
+                {/* Top Bar Header */}
+                <div className="px-5 pt-3.5 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
                       Rincian Detail Transaksi
                     </h3>
                     <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                       isIncome 
-                        ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400' 
+                        ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40' 
                         : isTransfer 
-                          ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400' 
-                          : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
+                          ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/40' 
+                          : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/40'
                     }`}>
-                      {isIncome ? 'Pendapatan' : selectedTxDetail.type}
+                      {isIncome ? 'Pendapatan' : isTransfer ? 'Transfer' : 'Pengeluaran'}
                     </span>
                   </div>
                 </div>
 
-                {/* Body - Bento Grid Layout */}
-                <div className="p-4 sm:p-5 flex flex-col gap-3 overflow-y-auto min-h-0 flex-1">
-                  <div className="grid grid-cols-2 gap-2.5">
-                    {/* Bento 1: Hero Amount Banner */}
-                    <div className={`col-span-2 p-4 rounded-2xl flex flex-col items-center justify-center text-center border ${
+                {/* Scrollable Receipt Body */}
+                <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-4">
+                  {/* HERO NOMINAL CARD (DENGAN RUANG LEGA & DESKRIPSI DI BAWAH NOMINAL) */}
+                  <div className={`rounded-3xl p-5 sm:p-6 flex flex-col items-center justify-center text-center border ${
+                    isIncome 
+                      ? 'bg-emerald-50/70 dark:bg-emerald-950/25 border-emerald-200/80 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-300' 
+                      : isTransfer 
+                        ? 'bg-blue-50/70 dark:bg-blue-950/25 border-blue-200/80 dark:border-blue-900/40 text-blue-700 dark:text-blue-300' 
+                        : 'bg-rose-50/70 dark:bg-rose-950/25 border-rose-200/80 dark:border-rose-900/40 text-rose-700 dark:text-rose-300'
+                  }`}>
+                    {/* Badge Jenis Transaksi */}
+                    <div className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/90 dark:bg-slate-900/90 border border-slate-200/70 dark:border-slate-700/70 text-slate-800 dark:text-slate-200 shadow-2xs mb-2">
+                      <span>{isIncome ? 'PENDAPATAN' : isTransfer ? 'TRANSFER' : 'PENGELUARAN'}</span>
+                    </div>
+
+                    {/* Big Nominal (Pendapatan: Hijau, Transfer: Biru, Pengeluaran: Merah) */}
+                    <div className={`text-3xl sm:text-4xl font-black font-mono tracking-tight my-1 leading-normal ${
                       isIncome 
-                        ? 'bg-emerald-50/80 dark:bg-emerald-950/25 border-emerald-200 dark:border-emerald-900/40 text-emerald-600 dark:text-emerald-400' 
+                        ? 'text-emerald-600 dark:text-emerald-400' 
                         : isTransfer 
-                          ? 'bg-blue-50/80 dark:bg-blue-950/25 border-blue-200 dark:border-blue-900/40 text-blue-600 dark:text-blue-400' 
-                          : 'bg-rose-50/80 dark:bg-rose-950/25 border-rose-200 dark:border-rose-900/40 text-rose-600 dark:text-rose-400'
+                          ? 'text-blue-600 dark:text-blue-400' 
+                          : 'text-rose-600 dark:text-rose-400'
                     }`}>
-                      <span className="text-[10px] font-black uppercase tracking-widest opacity-80 block">
-                        Jumlah Nominal
-                      </span>
-                      <div className="text-2xl sm:text-3xl font-black font-mono tracking-tight my-1">
-                        {isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(selectedTxDetail.amount)}
+                      {isIncome ? '+' : (isTransfer ? '' : '-')}{formatIDR(selectedTxDetail.amount)}
+                    </div>
+
+                    {/* Keterangan Biaya Admin Khusus Transfer (Warna Biru) */}
+                    {isTransfer && selectedTxDetail.adminFee && selectedTxDetail.adminFee > 0 ? (
+                      <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-1">
+                        +Biaya Admin {formatIDR(selectedTxDetail.adminFee)} (Total: {formatIDR(selectedTxDetail.amount + selectedTxDetail.adminFee)})
                       </div>
-                      {isTransfer && selectedTxDetail.adminFee && selectedTxDetail.adminFee > 0 ? (
-                        <div className="text-xs font-semibold opacity-85 mt-0.5">
-                          +Biaya Admin {formatIDR(selectedTxDetail.adminFee)} (Total: {formatIDR(selectedTxDetail.amount + selectedTxDetail.adminFee)})
+                    ) : null}
+
+                    {/* Deskripsi Transaksi di bawah Nominal (Warna Hitam / Slate-900) */}
+                    <p className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-slate-100 mt-2 max-w-[90%] break-words">
+                      "{selectedTxDetail.description || 'Tidak ada deskripsi'}"
+                    </p>
+                  </div>
+
+                  {/* GARIS PUTUS-PUTUS PEMISAH BERSIH (TANPA SETENGAH LINGKARAN) */}
+                  <div className="border-b border-dashed border-slate-200 dark:border-slate-800 my-0.5" />
+
+                  {/* KETERANGAN TANPA BUNGKUS CARD - LANGSUNG TEKS BERGARIS PEMISAH */}
+                  <div className="flex flex-col gap-1 pt-1">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                      Keterangan
+                    </span>
+
+                    <div className="space-y-2.5">
+                      {/* Baris Tanggal & Waktu */}
+                      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-slate-500 dark:text-slate-400">
+                            <Calendar className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="text-xs text-slate-500 dark:text-slate-400">Waktu & Tanggal</span>
                         </div>
-                      ) : null}
-                    </div>
-
-                    {/* Bento 2: Deskripsi */}
-                    <div className="col-span-2 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
-                        Deskripsi Transaksi
-                      </span>
-                      <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 leading-normal break-words">
-                        {selectedTxDetail.description || 'Tidak ada deskripsi'}
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 text-right truncate">
+                          {formattedFullDate}
+                        </span>
                       </div>
-                    </div>
 
-                    {/* Bento 3: Tanggal Transaksi */}
-                    <div className="col-span-1 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex flex-col justify-center">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
-                        Tanggal
-                      </span>
-                      <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">
-                        {formattedFullDate}
+                      {/* Baris Jenis / Kategori */}
+                      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-slate-500 dark:text-slate-400">
+                            <Tag className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                            {isIncome ? 'Sumber Pendapatan' : isTransfer ? 'Jenis Transaksi' : 'Kategori Pengeluaran'}
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 text-right truncate">
+                          {isTransfer ? 'Transfer Antar Dompet' : (catOrSource?.name || 'Kustom')}
+                        </span>
                       </div>
-                    </div>
 
-                    {/* Bento 4: Dompet */}
-                    <div className="col-span-1 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex flex-col justify-center">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
-                        {isTransfer ? 'Dompet Asal' : 'Dompet'}
-                      </span>
-                      <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">
-                        {wallet?.name || 'Dompet Terhapus'}
+                      {/* Baris Dompet Sumber */}
+                      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-slate-500 dark:text-slate-400">
+                            <WalletIcon className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
+                            {isTransfer ? 'Dompet Asal' : 'Dompet / Rekening'}
+                          </span>
+                        </div>
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 text-right truncate">
+                          {wallet?.name || 'Dompet Terhapus'}
+                        </span>
                       </div>
-                    </div>
 
-                    {/* Bento 5: Kategori / Sumber / Dompet Tujuan */}
-                    <div className="col-span-2 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex flex-col justify-center">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
-                        {isTransfer ? 'Dompet Tujuan' : (isIncome ? 'Sumber Pendapatan' : 'Kategori')}
-                      </span>
-                      <div className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">
-                        {isTransfer 
-                          ? (toWallet?.name || 'Dompet Terhapus') 
-                          : (catOrSource?.name || 'Kustom')}
-                      </div>
+                      {/* Baris Khusus Transfer: Dompet Tujuan & Admin Fee */}
+                      {isTransfer && (
+                        <>
+                          <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-blue-500">
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </div>
+                              <span className="text-xs text-slate-500 dark:text-slate-400">Dompet Tujuan</span>
+                            </div>
+                            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 text-right truncate">
+                              {toWallet?.name || 'Dompet Terhapus'}
+                            </span>
+                          </div>
+
+                          {selectedTxDetail.adminFee && selectedTxDetail.adminFee > 0 ? (
+                            <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                              <span className="text-xs text-slate-500 dark:text-slate-400 pl-1">Biaya Layanan/Admin</span>
+                              <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300">
+                                {formatIDR(selectedTxDetail.adminFee)}
+                              </span>
+                            </div>
+                          ) : null}
+
+                          <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 pl-1">Total Pengurangan</span>
+                            <span className="font-mono font-black text-slate-900 dark:text-white text-sm">
+                              {formatIDR(selectedTxDetail.amount + (selectedTxDetail.adminFee || 0))}
+                            </span>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Footer - TUTUP BUTTON */}
-                <div className="px-4 sm:px-5 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom,24px))] sm:pb-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end text-xs shrink-0 bg-slate-50/90 dark:bg-slate-900/90 sticky bottom-0 z-10">
+                {/* BOTTOM ACTION BAR - BUTTON TUTUP DI SEBELAH KANAN BAWAH */}
+                <div className="px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] sm:pb-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end shrink-0 bg-white dark:bg-slate-900">
                   <button
                     type="button"
                     onClick={() => setSelectedTxDetail(null)}
-                    className="px-7 py-2.5 text-xs font-bold rounded-xl bg-slate-200/90 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition shadow-xs cursor-pointer active:scale-95"
+                    className="px-6 py-2.5 text-xs font-bold rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition shadow-2xs cursor-pointer active:scale-95 text-center"
                   >
                     Tutup
                   </button>
