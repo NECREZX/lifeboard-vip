@@ -39,7 +39,7 @@ import {
   UserSettings 
 } from '../../types';
 import { IconRenderer } from '../IconRenderer';
-import { formatIDR } from '../../lib/formatters';
+import { formatIDR, getLocalDateString } from '../../lib/formatters';
 
 export type FormType = 'pengeluaran' | 'pemasukan' | 'transfer' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist';
 
@@ -228,7 +228,7 @@ export function TambahDataView({
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const [selectedSourceId, setSelectedSourceId] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState<string>(getLocalDateString());
 
   // Budgeting fields
   const [budgetLimit, setBudgetLimit] = useState<string>('');
@@ -246,7 +246,7 @@ export function TambahDataView({
   const [savingDeadline, setSavingDeadline] = useState<string>(() => {
     const d = new Date();
     d.setFullYear(d.getFullYear() + 1);
-    return d.toISOString().split('T')[0];
+    return getLocalDateString(d);
   });
 
   // Aktivitas fields
@@ -255,7 +255,7 @@ export function TambahDataView({
   const [activityDeadline, setActivityDeadline] = useState<string>(() => {
     const d = new Date();
     d.setDate(d.getDate() + 7);
-    return d.toISOString().split('T')[0];
+    return getLocalDateString(d);
   });
 
   // Wishlist fields
@@ -356,18 +356,18 @@ export function TambahDataView({
   const changeDateByDays = (days: number) => {
     const current = new Date(date);
     current.setDate(current.getDate() + days);
-    setDate(current.toISOString().split('T')[0]);
+    setDate(getLocalDateString(current));
   };
 
   const isToday = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalDateString();
     return date === today;
   }, [date]);
 
   const isYesterday = useMemo(() => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    return date === yesterday.toISOString().split('T')[0];
+    return date === getLocalDateString(yesterday);
   }, [date]);
 
   const formattedDateLabel = useMemo(() => {
@@ -401,7 +401,7 @@ export function TambahDataView({
       if (item.categoryId) setSelectedCategoryId(item.categoryId);
       if (item.sourceId) setSelectedSourceId(item.sourceId);
       if (item.description) setDescription(item.description);
-      setDate(new Date().toISOString().split('T')[0]);
+      setDate(getLocalDateString());
       triggerNotification?.('Data Berhasil Disalin', `Data ${activeForm} disalin ke formulir dengan tanggal hari ini`, 'success');
     } else if (activeForm === 'transfer') {
       if (item.amount) setAmount(item.amount.toString());
@@ -409,7 +409,7 @@ export function TambahDataView({
       if (item.toWalletId) setSelectedToWalletId(item.toWalletId);
       if (item.adminFee) setAdminFee(item.adminFee.toString());
       if (item.description) setDescription(item.description);
-      setDate(new Date().toISOString().split('T')[0]);
+      setDate(getLocalDateString());
       triggerNotification?.('Data Berhasil Disalin', 'Data transfer disalin ke formulir dengan tanggal hari ini', 'success');
     } else if (activeForm === 'budgeting') {
       const lim = item.limitAmount || item.monthlyLimit || 0;

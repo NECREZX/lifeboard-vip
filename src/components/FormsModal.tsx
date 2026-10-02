@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import { Wallet as WalletIcon, FolderPlus, Coins, Plus, Calendar, Bookmark, Landmark, Sparkles, Check, CheckSquare, Square, Layers, CheckCircle2 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import { Wallet, Category, IncomeSource } from '../types';
-import { formatIDR } from '../lib/formatters';
+import { formatIDR, getLocalDateString, getLocalMonthString } from '../lib/formatters';
 import { IconRenderer } from './IconRenderer';
 
 export const parseAmountInput = (val: string | number): number => {
@@ -106,7 +106,7 @@ export default function FormsModal({
   // Form input states
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(getLocalDateString());
   const [selectedWalletId, setSelectedWalletId] = useState(wallets[0]?.id || '');
   const [selectedToWalletId, setSelectedToWalletId] = useState(() => {
     const remaining = wallets.filter(w => w.id !== (wallets[0]?.id || ''));
@@ -127,7 +127,7 @@ export default function FormsModal({
   // Transfer extra state
   const [adminFee, setAdminFee] = useState('');
   const [budgetLimit, setBudgetLimit] = useState('');
-  const [budgetMonth, setBudgetMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
+  const [budgetMonth, setBudgetMonth] = useState(getLocalMonthString()); // YYYY-MM
   const [budgetSelectedCategoryIds, setBudgetSelectedCategoryIds] = useState<string[]>(['all']);
   const [budgetSelectedWalletIds, setBudgetSelectedWalletIds] = useState<string[]>(['all']);
 
@@ -135,19 +135,19 @@ export default function FormsModal({
   const [savingName, setSavingName] = useState('');
   const [savingTarget, setSavingTarget] = useState('');
   const [savingCurrent, setSavingCurrent] = useState('0');
-  const [savingDeadline, setSavingDeadline] = useState(new Date().toISOString().split('T')[0]);
+  const [savingDeadline, setSavingDeadline] = useState(getLocalDateString());
   const [savingColor, setSavingColor] = useState('#10b981');
 
   // Activity states
   const [activityTitle, setActivityTitle] = useState('');
   const [activityDesc, setActivityDesc] = useState('');
-  const [activityDeadline, setActivityDeadline] = useState(new Date().toISOString().split('T')[0]);
+  const [activityDeadline, setActivityDeadline] = useState(getLocalDateString());
 
   // Wishlist states
   const [wishlistTitle, setWishlistTitle] = useState('');
   const [wishlistPrice, setWishlistPrice] = useState('');
   const [wishlistNotes, setWishlistNotes] = useState('');
-  const [wishlistMonth, setWishlistMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [wishlistMonth, setWishlistMonth] = useState(getLocalMonthString());
 
   // Effect to handle edit data and initial tab
   React.useEffect(() => {
