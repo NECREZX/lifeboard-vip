@@ -530,7 +530,6 @@ export function TambahDataView({
         triggerNotification?.('Transaksi Diperbarui', 'Perubahan transaksi berhasil disimpan', 'success');
       } else {
         onAddTransaction(txData);
-        triggerNotification?.('Transaksi Disimpan', `${activeForm === 'pengeluaran' ? 'Pengeluaran' : 'Pendapatan'} Rp ${currentNumericAmount.toLocaleString('id-ID')} berhasil dicatat`, 'success');
       }
     } else if (activeForm === 'transfer') {
       if (currentNumericAmount <= 0) {
@@ -562,7 +561,6 @@ export function TambahDataView({
         triggerNotification?.('Transfer Diperbarui', 'Perubahan transfer berhasil disimpan', 'success');
       } else {
         onAddTransaction(txData);
-        triggerNotification?.('Transfer Disimpan', `Transfer Rp ${currentNumericAmount.toLocaleString('id-ID')} berhasil dicatat`, 'success');
       }
     } else if (activeForm === 'budgeting') {
       const limitNum = parseAmountInput(budgetLimit);
@@ -584,7 +582,6 @@ export function TambahDataView({
         triggerNotification?.('Anggaran Diperbarui', 'Batas anggaran bulanan berhasil diperbarui', 'success');
       } else {
         onAddBudget(budgetData);
-        triggerNotification?.('Anggaran Disimpan', `Batas anggaran Rp ${limitNum.toLocaleString('id-ID')} berhasil ditetapkan`, 'success');
       }
     } else if (activeForm === 'tabungan') {
       const targetNum = parseAmountInput(savingTarget);
@@ -611,7 +608,6 @@ export function TambahDataView({
         triggerNotification?.('Tabungan Diperbarui', 'Target tabungan berhasil diperbarui', 'success');
       } else {
         onAddSaving(savingData);
-        triggerNotification?.('Tabungan Disimpan', `Target tabungan "${savingName}" berhasil dibuat`, 'success');
       }
     } else if (activeForm === 'aktivitas') {
       if (!activityTitle.trim()) {
@@ -631,7 +627,6 @@ export function TambahDataView({
         triggerNotification?.('Aktivitas Diperbarui', 'Aktivitas berhasil diperbarui', 'success');
       } else {
         onAddActivity(actData);
-        triggerNotification?.('Aktivitas Disimpan', `Aktivitas "${activityTitle}" berhasil ditambahkan`, 'success');
       }
     } else if (activeForm === 'wishlist') {
       if (!wishlistTitle.trim()) {
@@ -650,7 +645,6 @@ export function TambahDataView({
         triggerNotification?.('Wishlist Diperbarui', 'Barang wishlist berhasil diperbarui', 'success');
       } else {
         onAddWishlist(wishData);
-        triggerNotification?.('Wishlist Disimpan', `Wishlist "${wishlistTitle}" berhasil disimpan`, 'success');
       }
     }
 
@@ -770,9 +764,9 @@ export function TambahDataView({
       </div>
 
       {/* =======================================================
-          2. MAIN ENCLOSING SHEET CARD (Naikkan sedikit lagi bener-bener sedikit)
+          2. MAIN ENCLOSING SHEET CARD (-mt-20.4 sm:-mt-22.4 lg:-mt-24.4 -> -mt-[81.6px] sm:-mt-[89.6px] lg:-mt-[97.6px])
          ======================================================= */}
-      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-4 sm:space-y-5`}>
+      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[81.6px] sm:-mt-[89.6px] lg:-mt-[97.6px] -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-4 sm:space-y-5`}>
 
         {/* DATE SELECTOR BAR (Black Vector Calendar with < > navigation) */}
         {(activeForm === 'pengeluaran' || activeForm === 'pemasukan' || activeForm === 'transfer') && (

@@ -924,6 +924,9 @@ export default function App() {
       `${data.description} sebesar ${formatIDR(data.amount)} berhasil dicatat.`,
       'success'
     );
+
+    setActiveTab('transaksi');
+    window.scrollTo(0, 0);
   };
 
   const handleAddBudget = (data: { categoryId: string; categoryIds?: string[]; limitAmount: number; month: string; walletId?: string; walletIds?: string[] }) => {
@@ -933,6 +936,8 @@ export default function App() {
     };
     setBudgets(prev => [newBudget, ...prev]);
     triggerNotification('Anggaran Baru Diatur', 'Batas anggaran bulanan berhasil disimpan.', 'info');
+    setActiveTab('anggaran');
+    window.scrollTo(0, 0);
   };
 
   const handleAddSaving = (data: { name: string; targetAmount: number; currentAmount: number; deadline: string; color: string }) => {
@@ -942,6 +947,8 @@ export default function App() {
     };
     setSavings(prev => [newSaving, ...prev]);
     triggerNotification('Target Tabungan Baru', `Menabung untuk "${data.name}" berhasil dibuat.`, 'success');
+    setActiveTab('tabungan');
+    window.scrollTo(0, 0);
   };
 
   const handleAddActivity = (data: { title: string; description: string; deadline: string }) => {
@@ -952,6 +959,8 @@ export default function App() {
     };
     setActivities(prev => [newActivity, ...prev]);
     triggerNotification('Aktivitas Harian Ditambah', `Aktivitas "${data.title}" siap dikerjakan.`, 'info');
+    setActiveTab('aktivitas');
+    window.scrollTo(0, 0);
   };
 
   const handleAddWishlist = (data: { title: string; month: string; price?: number; notes?: string }) => {
@@ -962,6 +971,8 @@ export default function App() {
     };
     setWishlists(prev => [newWish, ...prev]);
     triggerNotification('Wishlist Ditambahkan', `Barang impian "${data.title}" masuk dalam daftar keinginan.`, 'info');
+    setActiveTab('aktivitas');
+    window.scrollTo(0, 0);
   };
 
   // --- Wallet Quick Actions ---
