@@ -270,6 +270,38 @@ export default function FormsModal({
     }
   };
 
+  const getBadgeProps = () => {
+    switch (activeForm) {
+      case 'pemasukan':
+        return {
+          label: 'Pendapatan',
+          className: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60 font-bold',
+          style: undefined
+        };
+      case 'pengeluaran':
+        return {
+          label: 'Pengeluaran',
+          className: 'bg-rose-50 dark:bg-rose-950/50 text-rose-500 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 font-bold',
+          style: undefined
+        };
+      case 'transfer':
+        return {
+          label: 'Transfer',
+          className: 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/60 font-bold',
+          style: undefined
+        };
+      default:
+        return {
+          label: activeForm.charAt(0).toUpperCase() + activeForm.slice(1),
+          className: 'font-bold',
+          style: {
+            backgroundColor: `${resolvedAccent}18`,
+            color: resolvedAccent
+          }
+        };
+    }
+  };
+
   const getActiveTabClass = (type: FormType) => {
     return activeForm === type
       ? `border-b-2 py-2 px-3 text-xs font-bold shrink-0 transition ${getAccentText(true)}`
@@ -493,15 +525,17 @@ export default function FormsModal({
             <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
               Form Input Data
             </h3>
-            <span 
-              className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{
-                backgroundColor: `${resolvedAccent}18`,
-                color: resolvedAccent
-              }}
-            >
-              {activeForm.charAt(0).toUpperCase() + activeForm.slice(1)}
-            </span>
+            {(() => {
+              const badge = getBadgeProps();
+              return (
+                <span 
+                  className={`text-[10px] px-2.5 py-0.5 rounded-full ${badge.className}`}
+                  style={badge.style}
+                >
+                  {badge.label}
+                </span>
+              );
+            })()}
           </div>
         </div>
 
@@ -524,7 +558,7 @@ export default function FormsModal({
                     style={isActive ? { backgroundColor: resolvedAccent } : undefined}
                   >
                     {tab === 'pengeluaran' ? 'Pengeluaran' : 
-                     tab === 'pemasukan' ? 'Pemasukan' : 
+                     tab === 'pemasukan' ? 'Pendapatan' : 
                      tab === 'transfer' ? 'Transfer' : 
                      tab === 'budgeting' ? 'Budgeting' : 
                      tab === 'tabungan' ? 'Tabungan' : 
