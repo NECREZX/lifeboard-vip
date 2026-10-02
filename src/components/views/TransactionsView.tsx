@@ -798,11 +798,6 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                         ? 'bg-blue-50/70 dark:bg-blue-950/25 border-blue-200/80 dark:border-blue-900/40 text-blue-700 dark:text-blue-300' 
                         : 'bg-rose-50/70 dark:bg-rose-950/25 border-rose-200/80 dark:border-rose-900/40 text-rose-700 dark:text-rose-300'
                   }`}>
-                    {/* Badge Jenis Transaksi */}
-                    <div className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/90 dark:bg-slate-900/90 border border-slate-200/70 dark:border-slate-700/70 text-slate-800 dark:text-slate-200 shadow-2xs mb-2">
-                      <span>{isIncome ? 'PENDAPATAN' : isTransfer ? 'TRANSFER' : 'PENGELUARAN'}</span>
-                    </div>
-
                     {/* Big Nominal (Pendapatan: Hijau, Transfer: Biru, Pengeluaran: Merah) */}
                     <div className={`text-3xl sm:text-4xl font-black font-mono tracking-tight my-1 leading-normal ${
                       isIncome 
