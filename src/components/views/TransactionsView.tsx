@@ -3,16 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo, useCallback, useRef } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { 
-  Search, Filter, Trash2, Edit2, Eye, PlusCircle, X, Calendar, 
-  Wallet as WalletIcon, Tag, RotateCcw, SlidersHorizontal, ChevronUp, 
-  ChevronDown, ArrowRight, TrendingUp, TrendingDown, ArrowLeftRight,
-  Clock, Hash, FileText, CheckCircle2, ChevronLeft, ChevronRight, CalendarDays
+  Search, Filter, Trash2, X, Calendar, 
+  Wallet as WalletIcon, Tag, RotateCcw, ChevronUp, 
+  ChevronDown, ArrowUpRight, ArrowDownLeft, ArrowLeftRight,
+  ChevronLeft, ChevronRight, MoreVertical, Pencil
 } from 'lucide-react';
 import { Transaction, Wallet, Category, IncomeSource } from '../../types';
-import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
 
 interface TransactionsViewProps {
@@ -56,8 +55,28 @@ const MONTH_NAMES = [
 
 const MONTH_SHORT = [
   'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-  'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'
+  'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
 ];
+
+const DAYS_SHORT = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+function formatCardDate(dateStr: string): string {
+  try {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      const d = parseInt(parts[2], 10);
+      const dateObj = new Date(y, m, d);
+      const dayName = DAYS_SHORT[dateObj.getDay()] || '';
+      const monthName = MONTH_SHORT[m] || '';
+      return `${dayName}, ${d} ${monthName} ${y}`;
+    }
+    return dateStr;
+  } catch {
+    return dateStr;
+  }
+}
 
 export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
   transactions,
@@ -94,19 +113,59 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
 }) => {
   const [selectedTxDetail, setSelectedTxDetail] = useState<Transaction | null>(null);
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
-
-  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
-  const badgeRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg';
+  const [activeMenuTxId, setActiveMenuTxId] = useState<string | null>(null);
 
   const now = useMemo(() => new Date(), []);
   const currentRealYear = now.getFullYear();
   const currentRealMonth = String(now.getMonth() + 1).padStart(2, '0');
+
+  // Default periode ke bulan & tahun sekarang jika kosong
+  useEffect(() => {
+    if (!txMonthFilter && !txYearFilter) {
+      setTxMonthFilter(currentRealMonth);
+      setTxYearFilter(String(currentRealYear));
+    }
+  }, [txMonthFilter, txYearFilter, currentRealMonth, currentRealYear, setTxMonthFilter, setTxYearFilter]);
+
+  const activeSelectedMonthNum = txMonthFilter || currentRealMonth;
+  const activeSelectedYearNum = txYearFilter || String(currentRealYear);
+
   const [pickerYear, setPickerYear] = useState<number>(() => {
-    return txYearFilter ? parseInt(txYearFilter, 10) : currentRealYear;
+    return parseInt(activeSelectedYearNum, 10);
   });
 
   const dateInputRef = useRef<HTMLInputElement>(null);
 
+  // Navigasi bulan sebelumnya dan berikutnya
+  const handlePrevMonth = () => {
+    const currentM = parseInt(activeSelectedMonthNum, 10);
+    const currentY = parseInt(activeSelectedYearNum, 10);
+    if (currentM === 1) {
+      setTxMonthFilter('12');
+      setTxYearFilter(String(currentY - 1));
+      setPickerYear(currentY - 1);
+    } else {
+      setTxMonthFilter(String(currentM - 1).padStart(2, '0'));
+      setTxYearFilter(String(currentY));
+    }
+    setTxDateFilter('');
+  };
+
+  const handleNextMonth = () => {
+    const currentM = parseInt(activeSelectedMonthNum, 10);
+    const currentY = parseInt(activeSelectedYearNum, 10);
+    if (currentM === 12) {
+      setTxMonthFilter('01');
+      setTxYearFilter(String(currentY + 1));
+      setPickerYear(currentY + 1);
+    } else {
+      setTxMonthFilter(String(currentM + 1).padStart(2, '0'));
+      setTxYearFilter(String(currentY));
+    }
+    setTxDateFilter('');
+  };
+
+  // Format tanggal tanggal yang dipilih
   const formattedSelectedDate = useMemo(() => {
     if (!txDateFilter) return '';
     try {
@@ -114,8 +173,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
       if (parts.length === 3) {
         const d = parseInt(parts[2], 10);
         const m = MONTH_SHORT[parseInt(parts[1], 10) - 1];
-        const y = parts[0];
-        return `${d} ${m} ${y}`;
+        return `${d} ${m}`;
       }
       return txDateFilter;
     } catch {
@@ -123,56 +181,12 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
     }
   }, [txDateFilter]);
 
+  // Transaksi yang ditampilkan: ringkaskan 5 saja atau lihat semua
   const displayedTransactions = useMemo(() => {
     return showAllTransactions 
       ? filteredTransactions 
       : filteredTransactions.slice(0, 5);
   }, [showAllTransactions, filteredTransactions]);
-
-  // Pre-calculate date groupings and date counts in a single O(N) pass
-  const { groupedByDate, sortedDates, totalCountByDate } = useMemo(() => {
-    const totalCount: Record<string, number> = {};
-    for (let i = 0; i < filteredTransactions.length; i++) {
-      const d = filteredTransactions[i].date;
-      totalCount[d] = (totalCount[d] || 0) + 1;
-    }
-
-    const grouped: Record<string, Transaction[]> = {};
-    for (let i = 0; i < displayedTransactions.length; i++) {
-      const t = displayedTransactions[i];
-      if (!grouped[t.date]) {
-        grouped[t.date] = [];
-      }
-      grouped[t.date].push(t);
-    }
-
-    const sorted = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
-    return { groupedByDate: grouped, sortedDates: sorted, totalCountByDate: totalCount };
-  }, [filteredTransactions, displayedTransactions]);
-
-  // Cached date formatter
-  const formattedDateMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    sortedDates.forEach(dateStr => {
-      try {
-        const parts = dateStr.split('-');
-        if (parts.length === 3) {
-          const y = parseInt(parts[0], 10);
-          const m = parseInt(parts[1], 10) - 1;
-          const d = parseInt(parts[2], 10);
-          const dateObj = new Date(y, m, d);
-          map[dateStr] = dateObj.toLocaleDateString('id-ID', {
-            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-          });
-        } else {
-          map[dateStr] = dateStr;
-        }
-      } catch {
-        map[dateStr] = dateStr;
-      }
-    });
-    return map;
-  }, [sortedDates]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -181,10 +195,8 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
     if (txWalletFilter !== 'semua') count++;
     if (txCategoryFilter !== 'semua') count++;
     if (txDateFilter) count++;
-    if (txMonthFilter) count++;
-    if (txYearFilter) count++;
     return count;
-  }, [txSearch, txTypeFilter, txWalletFilter, txCategoryFilter, txDateFilter, txMonthFilter, txYearFilter]);
+  }, [txSearch, txTypeFilter, txWalletFilter, txCategoryFilter, txDateFilter]);
 
   const handleResetAllFilters = useCallback(() => {
     setTxSearch('');
@@ -192,569 +204,540 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
     setTxWalletFilter('semua');
     setTxCategoryFilter('semua');
     setTxDateFilter('');
-    setTxMonthFilter('');
-    setTxYearFilter('');
-  }, [setTxSearch, setTxTypeFilter, setTxWalletFilter, setTxCategoryFilter, setTxDateFilter, setTxMonthFilter, setTxYearFilter]);
+    setTxMonthFilter(currentRealMonth);
+    setTxYearFilter(String(currentRealYear));
+  }, [setTxSearch, setTxTypeFilter, setTxWalletFilter, setTxCategoryFilter, setTxDateFilter, setTxMonthFilter, setTxYearFilter, currentRealMonth, currentRealYear]);
+
+  // Nama dompet terpilih
+  const selectedWalletName = useMemo(() => {
+    if (txWalletFilter === 'semua') return 'Semua';
+    const found = wallets.find(w => w.id === txWalletFilter);
+    return found ? found.name : 'Semua';
+  }, [txWalletFilter, wallets]);
+
+  // Nama kategori terpilih
+  const selectedCategoryName = useMemo(() => {
+    if (txCategoryFilter === 'semua') return 'Semua';
+    const cat = categories.find(c => c.id === txCategoryFilter);
+    if (cat) return cat.name;
+    const src = sources.find(s => s.id === txCategoryFilter);
+    if (src) return src.name;
+    return 'Semua';
+  }, [txCategoryFilter, categories, sources]);
 
   return (
-    <div className="flex flex-col gap-5" id="view-transactions">
-      {/* Filter Controls - No Outer Wrapper */}
-      <div className="flex flex-col gap-2.5 sm:gap-3 w-full relative z-30">
-        {/* 1. Topmost: Search bar + Dynamic Reset Filter Button */}
-        <div className="flex items-center gap-2 sm:gap-2.5 w-full">
-          <div className="relative flex-1 min-w-0 transition-all duration-200">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10" />
-            <input
-              type="text"
-              placeholder="Cari transaksi berdasarkan judul..."
-              value={txSearch}
-              onChange={(e) => setTxSearch(e.target.value)}
-              className={`w-full pl-10 pr-9 py-2.5 text-xs font-medium ${btnRadius} transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-xs ${
-                uiStyle === 'glass' 
-                  ? 'glass-input text-slate-800 dark:text-slate-100' 
-                  : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100'
-              }`}
-            />
-            {txSearch && (
-              <button
-                type="button"
-                onClick={() => setTxSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition z-10 cursor-pointer"
-                title="Hapus Pencarian"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          {activeFilterCount > 0 && (
+    <div className="flex flex-col gap-4 sm:gap-5 pb-32 sm:pb-36" id="view-transactions">
+      {/* ========================================================
+          1. SEARCH BAR DENGAN RESET FILTER BUTTON (GLOBAL SEARCH)
+          ======================================================== */}
+      <div className="flex items-center gap-2 sm:gap-2.5 w-full">
+        <div className="relative flex-1 min-w-0 transition-all duration-200">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none z-10" />
+          <input
+            type="text"
+            placeholder="Cari transaksi berdasarkan judul..."
+            value={txSearch}
+            onChange={(e) => setTxSearch(e.target.value)}
+            className={`w-full pl-10 pr-9 py-2.5 text-xs font-medium rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 shadow-2xs ${
+              uiStyle === 'glass' 
+                ? 'glass-input text-slate-800 dark:text-slate-100' 
+                : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100'
+            }`}
+          />
+          {txSearch && (
             <button
               type="button"
-              onClick={handleResetAllFilters}
-              className={`flex items-center gap-1.5 px-3 py-2.5 ${btnRadius} text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/50 shadow-xs hover:scale-[1.02] active:scale-95 transition-all duration-200 shrink-0 cursor-pointer whitespace-nowrap animate-in fade-in zoom-in-95`}
-              title="Reset Semua Filter"
+              onClick={() => setTxSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition z-10 cursor-pointer"
+              title="Hapus Pencarian"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset ({activeFilterCount})</span>
+              <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
 
-        {/* 2. Below Search: Type Filter Cards (Matching card styles) */}
-        <div className="grid grid-cols-4 gap-2.5 sm:gap-3 w-full">
+        {activeFilterCount > 0 && (
           <button
             type="button"
-            onClick={() => setTxTypeFilter('semua')}
-            className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
-              txTypeFilter === 'semua'
-                ? (uiStyle === 'glass' 
-                    ? 'bg-white/85 dark:bg-white/20 text-slate-950 dark:text-white font-black shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-white dark:border-white/30 backdrop-blur-md' 
-                    : 'bg-slate-900 text-white dark:bg-indigo-600 font-bold border border-slate-900 dark:border-indigo-600')
-                : (uiStyle === 'glass'
-                    ? 'glass-input text-slate-700 dark:text-slate-300 font-semibold hover:bg-white/40 dark:hover:bg-white/10'
-                    : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800/80')
-            }`}
+            onClick={handleResetAllFilters}
+            className="flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/50 shadow-2xs hover:scale-[1.02] active:scale-95 transition-all duration-200 shrink-0 cursor-pointer whitespace-nowrap animate-in fade-in zoom-in-95"
+            title="Reset Filter Aktif"
           >
-            Semua
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset ({activeFilterCount})</span>
           </button>
-          <button
-            type="button"
-            onClick={() => setTxTypeFilter('pemasukan')}
-            className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
-              txTypeFilter === 'pemasukan'
-                ? (uiStyle === 'glass' 
-                    ? 'bg-emerald-500/90 text-white font-black shadow-[0_4px_12px_rgba(16,185,129,0.3)] border border-emerald-300/40 backdrop-blur-md' 
-                    : 'bg-emerald-500 text-white font-bold border border-emerald-500')
-                : (uiStyle === 'glass'
-                    ? 'glass-input text-emerald-700 dark:text-emerald-300 font-semibold hover:bg-emerald-500/10'
-                    : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 font-semibold hover:bg-emerald-50 dark:hover:bg-emerald-950/40')
-            }`}
-          >
-            Pendapatan
-          </button>
-          <button
-            type="button"
-            onClick={() => setTxTypeFilter('pengeluaran')}
-            className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
-              txTypeFilter === 'pengeluaran'
-                ? (uiStyle === 'glass'
-                    ? 'bg-rose-500/90 text-white font-black shadow-[0_4px_12px_rgba(244,63,94,0.3)] border border-rose-300/40 backdrop-blur-md'
-                    : 'bg-rose-500 text-white font-bold border border-rose-500')
-                : (uiStyle === 'glass'
-                    ? 'glass-input text-rose-700 dark:text-rose-300 font-semibold hover:bg-rose-500/10'
-                    : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/40')
-            }`}
-          >
-            Pengeluaran
-          </button>
-          <button
-            type="button"
-            onClick={() => setTxTypeFilter('transfer')}
-            className={`py-2 px-1 sm:px-2 ${btnRadius} text-[11px] sm:text-xs transition-all duration-200 text-center truncate cursor-pointer shadow-xs ${
-              txTypeFilter === 'transfer'
-                ? (uiStyle === 'glass'
-                    ? 'bg-blue-500/90 text-white font-black shadow-[0_4px_12px_rgba(59,130,246,0.3)] border border-blue-300/40 backdrop-blur-md'
-                    : 'bg-blue-500 text-white font-bold border border-blue-500')
-                : (uiStyle === 'glass'
-                    ? 'glass-input text-blue-700 dark:text-blue-300 font-semibold hover:bg-blue-500/10'
-                    : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-950/40')
-            }`}
-          >
-            Transfer
-          </button>
-        </div>
-
-        {/* 3. Remaining 4 Filters in 2x2 Grid (2 top, 2 bottom) */}
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
-          {/* Top-Left: Dompet Dropdown Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden ${
-            uiStyle === 'glass' 
-              ? 'glass-input' 
-              : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
-          }`}>
-            <div className="flex items-center gap-1.5 min-w-0 flex-1">
-              <WalletIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Dompet:</span>
-              <select
-                value={txWalletFilter}
-                onChange={(e) => setTxWalletFilter(e.target.value)}
-                className="w-full text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer truncate py-0 pl-0.5 pr-4 appearance-none"
-              >
-                <option value="semua">Semua</option>
-                {wallets.map((w) => (
-                  <option key={w.id} value={w.id}>{w.name}</option>
-                ))}
-              </select>
-            </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-2.5 shrink-0" />
-          </div>
-
-          {/* Top-Right: Kategori & Sumber Dropdown Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden ${
-            uiStyle === 'glass' 
-              ? 'glass-input' 
-              : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
-          }`}>
-            <div className="flex items-center gap-1.5 min-w-0 flex-1">
-              <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Kategori:</span>
-              <select
-                value={txCategoryFilter}
-                onChange={(e) => setTxCategoryFilter(e.target.value)}
-                className="w-full text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer truncate py-0 pl-0.5 pr-4 appearance-none"
-              >
-                <option value="semua">Semua</option>
-                <optgroup label="Pengeluaran">
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name}</option>
-                  ))}
-                </optgroup>
-                <optgroup label="Pemasukan">
-                  {sources.map((s) => (
-                    <option key={s.id} value={s.id}>{s.name}</option>
-                  ))}
-                </optgroup>
-              </select>
-            </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-2.5 shrink-0" />
-          </div>
-
-          {/* Bottom-Left: Tanggal Picker Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 ${
-            uiStyle === 'glass' 
-              ? 'glass-input' 
-              : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
-          }`}>
-            <div className="flex items-center gap-1.5 min-w-0 flex-1 relative">
-              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Tanggal:</span>
-              <span className={`text-xs font-bold truncate ${
-                txDateFilter ? 'text-slate-900 dark:text-white font-black' : 'text-slate-700 dark:text-slate-200'
-              }`}>
-                {formattedSelectedDate || 'Pilih'}
-              </span>
-              <input
-                ref={dateInputRef}
-                type="date"
-                value={txDateFilter}
-                onChange={(e) => {
-                  setTxDateFilter(e.target.value);
-                  if (e.target.value) {
-                    setTxMonthFilter('');
-                    setTxYearFilter('');
-                  }
-                }}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                title="Pilih Tanggal"
-              />
-            </div>
-            {txDateFilter ? (
-              <button 
-                type="button" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setTxDateFilter('');
-                }} 
-                className="text-slate-400 hover:text-rose-500 cursor-pointer ml-1 p-0.5 relative z-20"
-                title="Hapus Filter Tanggal"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            ) : (
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none shrink-0" />
-            )}
-          </div>
-
-          {/* Bottom-Right: Calendar Month & Year Picker Card */}
-          <div className="relative min-w-0">
-            <div className={`flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all ${
-              uiStyle === 'glass' 
-                ? 'glass-input' 
-                : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 shadow-xs'
-            } ${txDateFilter ? 'opacity-40 pointer-events-none' : ''}`}>
-              <div 
-                onClick={() => {
-                  if (!txDateFilter) {
-                    if (txYearFilter) setPickerYear(parseInt(txYearFilter, 10));
-                    setIsMonthPickerOpen(prev => !prev);
-                  }
-                }}
-                className="flex items-center gap-1.5 min-w-0 flex-1 cursor-pointer select-none"
-                title="Pilih Kalender Bulan & Tahun"
-              >
-                <CalendarDays className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0">Bulan/Thn:</span>
-                <span className={`text-xs font-bold truncate ${
-                  (txMonthFilter || txYearFilter) ? 'text-slate-900 dark:text-white font-black' : 'text-slate-700 dark:text-slate-200'
-                }`}>
-                  {txMonthFilter && txYearFilter 
-                    ? `${MONTH_SHORT[parseInt(txMonthFilter, 10) - 1]} ${txYearFilter}`
-                    : txMonthFilter 
-                      ? MONTH_NAMES[parseInt(txMonthFilter, 10) - 1]
-                      : txYearFilter 
-                        ? `Tahun ${txYearFilter}` 
-                        : 'Pilih'}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1 shrink-0">
-                {(txMonthFilter || txYearFilter) && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setTxMonthFilter('');
-                      setTxYearFilter('');
-                    }}
-                    className="p-0.5 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-md text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
-                    title="Hapus Filter Bulan & Tahun"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!txDateFilter) {
-                      if (txYearFilter) setPickerYear(parseInt(txYearFilter, 10));
-                      setIsMonthPickerOpen(prev => !prev);
-                    }
-                  }}
-                  className="p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                >
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMonthPickerOpen ? 'rotate-180' : ''}`} />
-                </button>
-              </div>
-            </div>
-
-            {/* Calendar Popover */}
-            {isMonthPickerOpen && (
-              <>
-                {/* Backdrop to close on outside click */}
-                <div 
-                  className="fixed inset-0 z-40" 
-                  onClick={() => setIsMonthPickerOpen(false)}
-                />
-
-                <div className="absolute right-0 sm:right-0 top-full mt-2 z-50 w-72 xs:w-80 max-w-[calc(100vw-2.5rem)] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl p-3.5 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
-                  {/* Calendar Year Header with Prev/Next Controls */}
-                  <div className="flex items-center justify-between px-1">
-                    <button
-                      type="button"
-                      onClick={() => setPickerYear(prev => prev - 1)}
-                      className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer active:scale-95"
-                      title="Tahun Sebelumnya"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-
-                    <div className="flex items-center gap-1.5 font-bold text-sm text-slate-900 dark:text-white">
-                      <Calendar className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-                      <span>{pickerYear}</span>
-                      {pickerYear === currentRealYear && (
-                        <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                          Tahun Ini
-                        </span>
-                      )}
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setPickerYear(prev => prev + 1)}
-                      className="p-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer active:scale-95"
-                      title="Tahun Berikutnya"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* 12 Months Grid */}
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {MONTH_SHORT.map((monthName, idx) => {
-                      const monthNum = String(idx + 1).padStart(2, '0');
-                      const isSelected = txMonthFilter === monthNum && txYearFilter === pickerYear.toString();
-                      const isCurrentMonth = pickerYear === currentRealYear && monthNum === currentRealMonth;
-
-                      return (
-                        <button
-                          key={monthNum}
-                          type="button"
-                          onClick={() => {
-                            setTxMonthFilter(monthNum);
-                            setTxYearFilter(pickerYear.toString());
-                            setTxDateFilter('');
-                            setIsMonthPickerOpen(false);
-                          }}
-                          className={`py-2 px-1 rounded-xl text-xs font-bold transition-all text-center relative cursor-pointer active:scale-95 ${
-                            isSelected
-                              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm font-black'
-                              : isCurrentMonth
-                                ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold border border-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                          }`}
-                        >
-                          <span>{monthName}</span>
-                          {isCurrentMonth && !isSelected && (
-                            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-900 dark:bg-slate-100" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  {/* Quick Action Footer Buttons */}
-                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPickerYear(currentRealYear);
-                        setTxMonthFilter(currentRealMonth);
-                        setTxYearFilter(currentRealYear.toString());
-                        setTxDateFilter('');
-                        setIsMonthPickerOpen(false);
-                      }}
-                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                    >
-                      Bulan Ini
-                    </button>
-
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setTxYearFilter(pickerYear.toString());
-                          setTxMonthFilter('');
-                          setTxDateFilter('');
-                          setIsMonthPickerOpen(false);
-                        }}
-                        className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-                        title={`Filter seluruh transaksi di tahun ${pickerYear}`}
-                      >
-                        Semua {pickerYear}
-                      </button>
-
-                      {(txMonthFilter || txYearFilter) && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setTxMonthFilter('');
-                            setTxYearFilter('');
-                            setIsMonthPickerOpen(false);
-                          }}
-                          className="px-2 py-1.5 rounded-lg text-[11px] font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-                        >
-                          Reset
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className={`${getCardClasses()} overflow-hidden flex flex-col`}>
-        {filteredTransactions.length === 0 ? (
-          <div className="p-12 text-center text-slate-400 dark:text-slate-400 flex flex-col items-center justify-center gap-2">
-            <Filter className="w-10 h-10 stroke-[1.2] opacity-50" />
-            <p className="text-xs font-semibold">Tidak menemukan transaksi yang cocok.</p>
-          </div>
-        ) : (
-          <>
-            {/* Top Bar with Toggle */}
-            {filteredTransactions.length > 5 && (
-              <div className={`px-4 pt-3 pb-3.5 flex justify-end transition-all ${
-                uiStyle === 'glass'
-                  ? 'border-b border-white/20 dark:border-white/10 bg-transparent'
-                  : 'bg-white dark:bg-slate-900/60 border-b border-slate-100 dark:border-slate-800'
-              }`}>
-                <button
-                  onClick={() => {
-                    if (showAllTransactions) {
-                      setShowAllTransactions(false);
-                      document.getElementById('view-transactions')?.scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                      setShowAllTransactions(true);
-                    }
-                  }}
-                  className={`px-3.5 py-1.5 ${btnRadius} text-xs font-bold transition-all duration-200 flex items-center gap-1.5 shrink-0 cursor-pointer shadow-xs hover:scale-105 active:scale-95 ${
-                    uiStyle === 'glass'
-                      ? 'glass-panel text-slate-800 dark:text-slate-100 shadow-sm border border-slate-200/60 dark:border-white/10 hover:bg-white/40 dark:hover:bg-white/10'
-                      : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/90 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {showAllTransactions ? (
-                    <>
-                      <span>Ringkaskan</span>
-                      <ChevronUp className="w-3.5 h-3.5" />
-                    </>
-                  ) : (
-                    <>
-                      <span>Lihat Semua</span>
-                      <ChevronDown className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
-
-            <div className="overflow-x-auto scrollbar-thin">
-              <table className={`${getTableClasses()} table-fixed w-full min-w-[500px]`}>
-                <colgroup>
-                  <col className="w-auto" />
-                  <col className="w-[100px] sm:w-[110px]" />
-                  <col className="w-[130px] sm:w-[150px]" />
-                  <col className="w-[105px] sm:w-[115px]" />
-                </colgroup>
-                <thead className={`border-b text-[10px] font-bold uppercase tracking-wider transition-all ${
-                  uiStyle === 'glass'
-                    ? 'bg-white/40 dark:bg-slate-900/50 backdrop-blur-md border-white/30 dark:border-white/10 text-slate-700 dark:text-slate-300'
-                    : 'bg-white dark:bg-slate-900/90 border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400'
-                }`}>
-                  <tr>
-                    <th className={getTableRowPadding()}>Deskripsi</th>
-                    <th className={`${getTableRowPadding()} text-center`}>Tipe</th>
-                    <th className={`${getTableRowPadding()} text-right`}>Jumlah</th>
-                    <th className={`${getTableRowPadding()} text-center`}>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {sortedDates.map((dateStr) => {
-                    const dateTxs = groupedByDate[dateStr];
-                    const totalDateTxsCount = totalCountByDate[dateStr] || (dateTxs ? dateTxs.length : 0);
-                    const formattedDate = formattedDateMap[dateStr] || dateStr;
-                    return (
-                      <React.Fragment key={dateStr}>
-                        <tr className={`select-none border-y transition-all ${
-                          uiStyle === 'glass'
-                            ? 'bg-white/30 dark:bg-slate-900/40 backdrop-blur-sm border-white/20 dark:border-white/10'
-                            : 'bg-slate-50/40 dark:bg-slate-900/60 border-slate-100/80 dark:border-slate-800/80'
-                        }`}>
-                          <td colSpan={4} className="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-cyan-400 font-mono tracking-tight whitespace-nowrap">
-                            {formattedDate} ({totalDateTxsCount} Transaksi)
-                          </td>
-                        </tr>
-                        {dateTxs.map((t, idx) => {
-                          const isIncome = t.type === 'pemasukan';
-                          const isTransfer = t.type === 'transfer';
-                          return (
-                            <tr 
-                              key={t.id} 
-                              className={`${getTableRowClasses(idx)} transition-colors cursor-pointer group`}
-                              onClick={() => setSelectedTxDetail(t)}
-                            >
-                              <td className={getTableRowPadding() + " font-semibold text-slate-800 dark:text-slate-200 truncate"} title={t.description}>
-                                <div className="flex items-center gap-2 truncate">
-                                  <span className="truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                    {t.description}
-                                  </span>
-                                </div>
-                              </td>
-                              <td className={getTableRowPadding() + " whitespace-nowrap text-center"}>
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                                  isIncome 
-                                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/20 dark:text-emerald-400' 
-                                    : isTransfer 
-                                      ? 'bg-blue-50 text-blue-500 dark:bg-blue-950/20 dark:text-blue-400' 
-                                      : 'bg-rose-50 text-rose-500 dark:bg-rose-950/20 dark:text-rose-400'
-                                }`}>
-                                  {t.type}
-                                </span>
-                              </td>
-                              <td className={getTableRowPadding() + ` font-mono font-bold whitespace-nowrap text-right ${isIncome ? 'text-emerald-500' : (isTransfer ? 'text-blue-500' : 'text-rose-500')}`}>
-                                <div className="flex flex-col items-end">
-                                  <span>{isIncome ? '+' : (isTransfer ? '⇄ ' : '-')}{formatIDR(t.amount)}</span>
-                                  {isTransfer && t.adminFee && t.adminFee > 0 ? (
-                                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-normal">
-                                      +Admin {formatIDR(t.adminFee)}
-                                    </span>
-                                  ) : null}
-                                </div>
-                              </td>
-                              <td 
-                                className={getTableRowPadding() + " text-center whitespace-nowrap"}
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <div className="flex items-center justify-center gap-1">
-                                  <button 
-                                    onClick={() => setSelectedTxDetail(t)} 
-                                    title="Lihat Detail Transaksi (Tiket)"
-                                    className="p-1.5 rounded-lg text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-950/30 transition inline-flex items-center"
-                                  >
-                                    <Eye className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button 
-                                    onClick={() => onEdit(t)} 
-                                    title="Edit Transaksi"
-                                    className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition inline-flex items-center"
-                                  >
-                                    <Edit2 className="w-3.5 h-3.5" />
-                                  </button>
-                                  <button 
-                                    onClick={() => handleDeleteTransaction(t.id)} 
-                                    title="Hapus Transaksi"
-                                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition inline-flex items-center"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </React.Fragment>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </>
         )}
       </div>
 
-      {/* Transaction Detail Pop-up Modal - Bento Grid Layout */}
+      {/* ========================================================
+          2. TYPE FILTER TABS (Semua, Pendapatan, Pengeluaran, Transfer)
+          Latar Belakang Putih Sesuai Permintaan
+          ======================================================== */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-1.5 rounded-2xl flex items-center justify-between gap-1 w-full shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setTxTypeFilter('semua')}
+          className={`flex-1 py-2 px-1 text-xs text-center rounded-xl transition-all duration-200 cursor-pointer ${
+            txTypeFilter === 'semua'
+              ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 font-semibold hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+          }`}
+        >
+          Semua
+        </button>
+        <button
+          type="button"
+          onClick={() => setTxTypeFilter('pemasukan')}
+          className={`flex-1 py-2 px-1 text-xs text-center rounded-xl transition-all duration-200 cursor-pointer ${
+            txTypeFilter === 'pemasukan'
+              ? 'bg-emerald-600 text-white font-bold shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 font-semibold hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+          }`}
+        >
+          Pendapatan
+        </button>
+        <button
+          type="button"
+          onClick={() => setTxTypeFilter('pengeluaran')}
+          className={`flex-1 py-2 px-1 text-xs text-center rounded-xl transition-all duration-200 cursor-pointer ${
+            txTypeFilter === 'pengeluaran'
+              ? 'bg-rose-500 text-white font-bold shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 font-semibold hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+          }`}
+        >
+          Pengeluaran
+        </button>
+        <button
+          type="button"
+          onClick={() => setTxTypeFilter('transfer')}
+          className={`flex-1 py-2 px-1 text-xs text-center rounded-xl transition-all duration-200 cursor-pointer ${
+            txTypeFilter === 'transfer'
+              ? 'bg-blue-600 text-white font-bold shadow-xs'
+              : 'text-slate-600 dark:text-slate-400 font-semibold hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+          }`}
+        >
+          Transfer
+        </button>
+      </div>
+
+      {/* ========================================================
+          3. TIGA FILTER DATA: DOMPET, TANGGAL, KATEGORI
+          ======================================================== */}
+      <div className="grid grid-cols-3 gap-2.5 sm:gap-3 w-full">
+        {/* Card 1: DOMPET */}
+        <div className="relative bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-100 dark:border-slate-800/80 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="w-6 h-6 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center">
+              <WalletIcon className="w-3.5 h-3.5" />
+            </div>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+          </div>
+          <div className="mt-2.5">
+            <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">DOMPET</span>
+            <span className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-slate-100 truncate block mt-0.5">
+              {selectedWalletName}
+            </span>
+          </div>
+          <select
+            value={txWalletFilter}
+            onChange={(e) => setTxWalletFilter(e.target.value)}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          >
+            <option value="semua">Semua</option>
+            {wallets.map((w) => (
+              <option key={w.id} value={w.id}>{w.name}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Card 2: TANGGAL */}
+        <div className="relative bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-100 dark:border-slate-800/80 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500 flex items-center justify-center">
+              <Calendar className="w-3.5 h-3.5" />
+            </div>
+            {txDateFilter ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTxDateFilter('');
+                }}
+                className="text-slate-400 hover:text-rose-500 z-20 cursor-pointer"
+                title="Hapus Tanggal"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            )}
+          </div>
+          <div className="mt-2.5">
+            <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">TANGGAL</span>
+            <span className={`text-xs sm:text-sm font-extrabold truncate block mt-0.5 ${txDateFilter ? 'text-slate-900 dark:text-white font-black' : 'text-slate-900 dark:text-slate-100'}`}>
+              {formattedSelectedDate || 'Pilih'}
+            </span>
+          </div>
+          <input
+            ref={dateInputRef}
+            type="date"
+            value={txDateFilter}
+            onChange={(e) => {
+              setTxDateFilter(e.target.value);
+              if (e.target.value) {
+                const parts = e.target.value.split('-');
+                if (parts.length === 3) {
+                  setTxMonthFilter(parts[1]);
+                  setTxYearFilter(parts[0]);
+                  setPickerYear(parseInt(parts[0], 10));
+                }
+              }
+            }}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          />
+        </div>
+
+        {/* Card 3: KATEGORI */}
+        <div className="relative bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-100 dark:border-slate-800/80 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <div className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500 flex items-center justify-center">
+              <Tag className="w-3.5 h-3.5" />
+            </div>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+          </div>
+          <div className="mt-2.5">
+            <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">KATEGORI</span>
+            <span className="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-slate-100 truncate block mt-0.5">
+              {selectedCategoryName}
+            </span>
+          </div>
+          <select
+            value={txCategoryFilter}
+            onChange={(e) => setTxCategoryFilter(e.target.value)}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          >
+            <option value="semua">Semua</option>
+            <optgroup label="Pengeluaran">
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </optgroup>
+            <optgroup label="Pendapatan">
+              {sources.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </optgroup>
+          </select>
+        </div>
+      </div>
+
+      {/* ========================================================
+          4. PERIODE (BULAN & TAHUN) KAPSUL
+          (Pill filter ekstra di bawahnya sudah ditiadakan sesuai instruksi)
+          ======================================================== */}
+      <div className="w-full relative">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-2.5 border border-slate-100 dark:border-slate-800/80 shadow-2xs flex items-center justify-between">
+          {/* Tombol Bulan Sebelumnya */}
+          <button
+            type="button"
+            onClick={handlePrevMonth}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95 cursor-pointer shrink-0"
+            title="Bulan Sebelumnya"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          {/* Tengah: Ikon Kalender & Label Periode */}
+          <div 
+            onClick={() => {
+              setPickerYear(parseInt(activeSelectedYearNum, 10));
+              setIsMonthPickerOpen(true);
+            }}
+            className="flex items-center gap-2.5 cursor-pointer px-3 py-1 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition select-none"
+          >
+            <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center shrink-0">
+              <Calendar className="w-4 h-4" />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                PERIODE
+              </span>
+              <div className="flex items-center gap-1">
+                <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-slate-100">
+                  {MONTH_NAMES[parseInt(activeSelectedMonthNum, 10) - 1]} {activeSelectedYearNum}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </div>
+            </div>
+          </div>
+
+          {/* Tombol Bulan Berikutnya */}
+          <button
+            type="button"
+            onClick={handleNextMonth}
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95 cursor-pointer shrink-0"
+            title="Bulan Berikutnya"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* ========================================================
+          5. MODAL DIALOG PEMILIH BULAN & TAHUN (CENTERED DIALOG AGAR TIDAK KEPOTONG)
+          ======================================================== */}
+      {isMonthPickerOpen && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-150"
+          onClick={() => setIsMonthPickerOpen(false)}
+        >
+          <div 
+            className="w-full max-w-xs bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-2xl p-4.5 space-y-3.5 animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Modal Tahun */}
+            <div className="flex items-center justify-between px-1">
+              <button
+                type="button"
+                onClick={() => setPickerYear(prev => prev - 1)}
+                className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                title="Tahun Sebelumnya"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <div className="flex items-center gap-1.5 font-black text-base text-slate-900 dark:text-white">
+                <Calendar className="w-4 h-4 text-rose-500" />
+                <span>{pickerYear}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPickerYear(prev => prev + 1)}
+                className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                title="Tahun Berikutnya"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Grid 12 Bulan */}
+            <div className="grid grid-cols-3 gap-2">
+              {MONTH_SHORT.map((monthName, idx) => {
+                const monthNum = String(idx + 1).padStart(2, '0');
+                const isSelected = activeSelectedMonthNum === monthNum && activeSelectedYearNum === pickerYear.toString();
+                return (
+                  <button
+                    key={monthNum}
+                    type="button"
+                    onClick={() => {
+                      setTxMonthFilter(monthNum);
+                      setTxYearFilter(pickerYear.toString());
+                      setTxDateFilter('');
+                      setIsMonthPickerOpen(false);
+                    }}
+                    className={`py-2.5 px-1 rounded-xl text-xs font-bold transition-all text-center cursor-pointer active:scale-95 ${
+                      isSelected
+                        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black shadow-xs'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    {monthName}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Tombol Tutup */}
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsMonthPickerOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ========================================================
+          6. BARIS KETERANGAN JUMLAH TRANSAKSI & BUTTON LIHAT SEMUA / RINGKAS (5 DATA)
+          Tinggi baris dibuat konsisten (min-h-[36px]) agar tidak terjadi pergeseran layout
+          ======================================================== */}
+      <div className="flex items-center justify-between min-h-[36px] px-1">
+        <span className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
+          {filteredTransactions.length} transaksi {txSearch ? 'ditemukan' : ''}
+        </span>
+
+        {filteredTransactions.length > 5 ? (
+          <button
+            type="button"
+            onClick={() => {
+              if (showAllTransactions) {
+                setShowAllTransactions(false);
+                document.getElementById('view-transactions')?.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                setShowAllTransactions(true);
+              }
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-2xs transition active:scale-95 cursor-pointer"
+          >
+            <span>{showAllTransactions ? 'Ringkaskan' : 'Lihat Semua'}</span>
+            {showAllTransactions ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+        ) : (
+          <div className="h-[31px] invisible pointer-events-none select-none" aria-hidden="true" />
+        )}
+      </div>
+
+      {/* ========================================================
+          7. CARD TRANSAKSI (CARD SATU-SATU DENGAN TITIK 3 EDIT & HAPUS)
+          ======================================================== */}
+      {filteredTransactions.length === 0 ? (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-10 text-center text-slate-400 dark:text-slate-500 border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center gap-2">
+          <Filter className="w-9 h-9 stroke-[1.2] opacity-40" />
+          <p className="text-xs font-bold">
+            {txSearch ? 'Tidak menemukan transaksi yang cocok dengan pencarian.' : 'Tidak menemukan transaksi pada periode ini.'}
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2.5 relative">
+          {/* Backdrop untuk menutup menu titik 3 saat klik di luar */}
+          {activeMenuTxId && (
+            <div 
+              className="fixed inset-0 z-20 cursor-default" 
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveMenuTxId(null);
+              }} 
+            />
+          )}
+
+          {displayedTransactions.map((t) => {
+            const isIncome = t.type === 'pemasukan';
+            const isTransfer = t.type === 'transfer';
+            const isMenuOpen = activeMenuTxId === t.id;
+
+            return (
+              <div
+                key={t.id}
+                onClick={() => setSelectedTxDetail(t)}
+                className="bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 dark:border-slate-800/80 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between gap-3 cursor-pointer group relative"
+              >
+                {/* Sisi Kiri: Ikon Tipe & Info Transaksi */}
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  {/* Ikon Tipe Transaksi */}
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${
+                    isIncome 
+                      ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400' 
+                      : isTransfer 
+                        ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-500 dark:text-blue-400' 
+                        : 'bg-rose-50 dark:bg-rose-950/40 text-rose-500 dark:text-rose-400'
+                  }`}>
+                    {isIncome ? (
+                      <ArrowDownLeft className="w-5 h-5 stroke-[2.4]" />
+                    ) : isTransfer ? (
+                      <ArrowLeftRight className="w-5 h-5 stroke-[2.4]" />
+                    ) : (
+                      <ArrowUpRight className="w-5 h-5 stroke-[2.4]" />
+                    )}
+                  </div>
+
+                  {/* Info Judul & Tanggal */}
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug truncate group-hover:text-rose-500 transition-colors">
+                      {t.description || 'Tanpa Judul'}
+                    </h4>
+                    <span className="text-[11px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5 truncate">
+                      {formatCardDate(t.date)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Sisi Kanan: Nominal & Tombol Titik 3 */}
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                  <div className="flex flex-col items-end">
+                    <span className={`text-sm sm:text-base font-black font-mono tracking-tight ${
+                      isIncome 
+                        ? 'text-emerald-600 dark:text-emerald-400' 
+                        : isTransfer 
+                          ? 'text-blue-600 dark:text-blue-400' 
+                          : 'text-slate-900 dark:text-slate-100'
+                    }`}>
+                      {isIncome ? '+' : (isTransfer ? '' : '-')}{formatIDR(t.amount)}
+                    </span>
+                    <span className={`text-[9px] font-black uppercase tracking-wider block mt-0.5 ${
+                      isIncome 
+                        ? 'text-emerald-600 dark:text-emerald-400' 
+                        : isTransfer 
+                          ? 'text-blue-500 dark:text-blue-400' 
+                          : 'text-rose-500 dark:text-rose-400'
+                    }`}>
+                      {isIncome ? 'PENDAPATAN' : t.type}
+                    </span>
+                  </div>
+
+                  {/* Tombol Titik 3 */}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveMenuTxId(isMenuOpen ? null : t.id);
+                      }}
+                      className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                      title="Menu Aksi"
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
+
+                    {/* Popover Menu: Edit & Hapus (Konsisten terbuka ke bawah untuk semua card) */}
+                    {isMenuOpen && (
+                      <div 
+                        className="absolute right-0 top-full mt-1.5 z-30 w-36 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/80 rounded-2xl p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-100"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {/* Tombol Edit */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuTxId(null);
+                            onEdit(t);
+                          }}
+                          className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 rounded-xl transition cursor-pointer"
+                        >
+                          <Pencil className="w-3.5 h-3.5 text-slate-500" />
+                          <span>Edit</span>
+                        </button>
+
+                        {/* Tombol Hapus */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuTxId(null);
+                            handleDeleteTransaction(t.id);
+                          }}
+                          className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                          <span>Hapus</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ========================================================
+          8. FORM DETAIL TRANSAKSI POP-UP (MODAL BENTO GRID TETAP SAMA)
+          ======================================================== */}
       {selectedTxDetail && typeof document !== 'undefined' && createPortal(
         (() => {
           const wallet = wallets.find((w) => w.id === selectedTxDetail.walletId);
@@ -786,7 +769,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                 {/* Mobile Sheet Drag Handle */}
                 <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
-                {/* Header - Title & Badge ONLY (No paragraph, No X button) */}
+                {/* Header - Title & Badge ONLY */}
                 <div className="px-4 sm:px-5 pt-3.5 sm:pt-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
@@ -799,15 +782,15 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                           ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400' 
                           : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
                     }`}>
-                      {selectedTxDetail.type}
+                      {isIncome ? 'Pendapatan' : selectedTxDetail.type}
                     </span>
                   </div>
                 </div>
 
-                {/* Body - Bento Grid Layout without icons and without Tipe (already on header badge) */}
+                {/* Body - Bento Grid Layout */}
                 <div className="p-4 sm:p-5 flex flex-col gap-3 overflow-y-auto min-h-0 flex-1">
                   <div className="grid grid-cols-2 gap-2.5">
-                    {/* Bento 1: Hero Amount Banner (Col span 2) */}
+                    {/* Bento 1: Hero Amount Banner */}
                     <div className={`col-span-2 p-4 rounded-2xl flex flex-col items-center justify-center text-center border ${
                       isIncome 
                         ? 'bg-emerald-50/80 dark:bg-emerald-950/25 border-emerald-200 dark:border-emerald-900/40 text-emerald-600 dark:text-emerald-400' 
@@ -828,7 +811,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       ) : null}
                     </div>
 
-                    {/* Bento 2: Deskripsi (Col span 2) */}
+                    {/* Bento 2: Deskripsi */}
                     <div className="col-span-2 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
                         Deskripsi Transaksi
@@ -838,7 +821,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       </div>
                     </div>
 
-                    {/* Bento 3: Tanggal Transaksi (Col span 1) */}
+                    {/* Bento 3: Tanggal Transaksi */}
                     <div className="col-span-1 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex flex-col justify-center">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
                         Tanggal
@@ -848,7 +831,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       </div>
                     </div>
 
-                    {/* Bento 4: Dompet (Col span 1) */}
+                    {/* Bento 4: Dompet */}
                     <div className="col-span-1 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex flex-col justify-center">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
                         {isTransfer ? 'Dompet Asal' : 'Dompet'}
@@ -858,7 +841,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       </div>
                     </div>
 
-                    {/* Bento 5: Kategori / Sumber / Dompet Tujuan (Col span 2) */}
+                    {/* Bento 5: Kategori / Sumber / Dompet Tujuan */}
                     <div className="col-span-2 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 flex flex-col justify-center">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1">
                         {isTransfer ? 'Dompet Tujuan' : (isIncome ? 'Sumber Pendapatan' : 'Kategori')}
@@ -872,7 +855,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                   </div>
                 </div>
 
-                {/* Footer - ONLY TUTUP BUTTON ON BOTTOM RIGHT */}
+                {/* Footer - TUTUP BUTTON */}
                 <div className="px-4 sm:px-5 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom,24px))] sm:pb-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end text-xs shrink-0 bg-slate-50/90 dark:bg-slate-900/90 sticky bottom-0 z-10">
                   <button
                     type="button"

@@ -2258,14 +2258,17 @@ export default function App() {
         return false;
       }
 
-      if (txDateFilter && t.date !== txDateFilter) return false;
-      
-      if (txMonthFilter) {
-        if (t.date.slice(5, 7) !== txMonthFilter) return false;
-      }
+      // Jika user sedang mencari (search), pencarian bersifat GLOBAL ke seluruh bulan & tahun
+      if (!trimmedSearch) {
+        if (txDateFilter && t.date !== txDateFilter) return false;
+        
+        if (txMonthFilter) {
+          if (t.date.slice(5, 7) !== txMonthFilter) return false;
+        }
 
-      if (txYearFilter) {
-        if (t.date.slice(0, 4) !== txYearFilter) return false;
+        if (txYearFilter) {
+          if (t.date.slice(0, 4) !== txYearFilter) return false;
+        }
       }
 
       return true;
