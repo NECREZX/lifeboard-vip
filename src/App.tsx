@@ -31,6 +31,7 @@ import {
   Tv,
   ArrowUpRight,
   ChevronRight,
+  ChevronLeft,
   Info,
   Palette,
   ChevronUp,
@@ -104,6 +105,7 @@ import { NotificationsView } from './components/views/NotificationsView';
 
 import { SplashView } from './components/views/SplashView';
 import { AuthView } from './components/views/AuthView';
+import { TambahDataView } from './components/views/TambahDataView';
 
 export default function App() {
   const [appState, setAppState] = useState<'splash' | 'auth' | 'main'>('splash');
@@ -206,6 +208,7 @@ export default function App() {
 
   // --- UI/Interaction States ---
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [prevTabBeforeAdd, setPrevTabBeforeAdd] = useState<string>('dashboard');
   const [kelolaSubPage, setKelolaSubPage] = useState<KelolaSubPage>('menu');
   const [activeActivitiesSubTab, setActiveActivitiesSubTab] = useState<'agenda' | 'wishlist'>('agenda');
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -757,10 +760,13 @@ export default function App() {
     });
   };
 
-  const openAddModal = (tab: 'pengeluaran' | 'pemasukan' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist' = 'pengeluaran', editData: any = null) => {
+  const openAddModal = (tab: 'pengeluaran' | 'pemasukan' | 'transfer' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist' = 'pengeluaran', editData: any = null) => {
     setModalFormTab(tab);
     setModalEditData(editData);
-    setIsAddModalOpen(true);
+    if (activeTab !== 'tambah_data') {
+      setPrevTabBeforeAdd(activeTab);
+    }
+    setActiveTab('tambah_data');
   };
 
   const checkBudgetLimit = (txData: {
@@ -2241,7 +2247,7 @@ export default function App() {
   // --- Filtered Transactions list ---
   const filteredTransactions = React.useMemo(() => {
     const trimmedSearch = txSearch.trim().toLowerCase();
-    return transactions.filter((t) => {
+    const list = transactions.filter((t) => {
       if (txTypeFilter !== 'semua' && t.type !== txTypeFilter) return false;
       if (txWalletFilter !== 'semua' && t.walletId !== txWalletFilter && (t.type !== 'transfer' || t.toWalletId !== txWalletFilter)) return false;
       
@@ -2273,6 +2279,13 @@ export default function App() {
       }
 
       return true;
+    });
+
+    return [...list].sort((a, b) => {
+      if (b.date !== a.date) {
+        return b.date.localeCompare(a.date);
+      }
+      return 0;
     });
   }, [transactions, txTypeFilter, txWalletFilter, txCategoryFilter, txSearch, txDateFilter, txMonthFilter, txYearFilter]);
 
@@ -2329,13 +2342,14 @@ export default function App() {
             )}
             {activeTab === 'laporan' && t('rep_title', settings.language || 'id')}
             {activeTab === 'notifikasi' && t('notif_title', settings.language || 'id')}
+            {activeTab === 'tambah_data' && 'Tambah Data'}
           </h1>
         </div>
       </header>
 
       {/* 2. MAIN CONTAINER CONTENT */}
       <main 
-        className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' || activeTab === 'kelola' ? 'pt-0' : 'pt-6'} no-print relative z-10`}
+        className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' || activeTab === 'kelola' || activeTab === 'tambah_data' ? 'pt-0' : 'pt-6'} no-print relative z-10`}
         style={{
           paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 120px)'
         }}
@@ -2590,6 +2604,39 @@ export default function App() {
             getCardClasses={getCardClasses}
             getAccentBg={getAccentBg}
             settings={settings}
+          />
+        )}
+
+        {activeTab === 'tambah_data' && (
+          <TambahDataView
+            wallets={walletsWithCurrentBalance}
+            categories={categories}
+            sources={sources}
+            recentTransactions={transactions}
+            settings={settings}
+            initialTab={modalFormTab}
+            editData={modalEditData}
+            onBack={() => {
+              setActiveTab(prevTabBeforeAdd || 'dashboard');
+              setModalEditData(null);
+            }}
+            onAddTransaction={handleAddTransaction}
+            onAddBudget={handleAddBudget}
+            onAddSaving={handleAddSaving}
+            onAddActivity={handleAddActivity}
+            onAddWishlist={handleAddWishlist}
+            onUpdateTransaction={handleUpdateTransaction}
+            onUpdateBudget={handleUpdateBudget}
+            onUpdateSaving={handleUpdateSaving}
+            onUpdateActivity={handleUpdateActivity}
+            onUpdateWishlist={handleUpdateWishlist}
+            onOpenManageWallets={() => {
+              setKelolaSubPage('dompet');
+              setActiveTab('kelola');
+            }}
+            getCardClasses={getCardClasses}
+            getAccentBg={getAccentBg}
+            triggerNotification={triggerNotification}
           />
         )}
 
