@@ -2613,6 +2613,10 @@ export default function App() {
             categories={categories}
             sources={sources}
             recentTransactions={transactions}
+            budgets={budgets}
+            savings={savings}
+            activities={activities}
+            wishlists={wishlists}
             settings={settings}
             initialTab={modalFormTab}
             editData={modalEditData}

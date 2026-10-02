@@ -664,7 +664,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                         ? 'text-emerald-600 dark:text-emerald-400' 
                         : isTransfer 
                           ? 'text-blue-600 dark:text-blue-400' 
-                          : 'text-slate-900 dark:text-slate-100'
+                          : 'text-rose-600 dark:text-rose-400'
                     }`}>
                       {isIncome ? '+' : (isTransfer ? '' : '-')}{formatIDR(t.amount)}
                     </span>

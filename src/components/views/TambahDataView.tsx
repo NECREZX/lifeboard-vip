@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -20,7 +21,11 @@ import {
   FileText, 
   DollarSign, 
   Info, 
-  X 
+  X,
+  Copy,
+  Download,
+  Search,
+  RotateCcw
 } from 'lucide-react';
 import { 
   Wallet, 
@@ -43,6 +48,10 @@ interface TambahDataViewProps {
   categories: Category[];
   sources: IncomeSource[];
   recentTransactions?: Transaction[];
+  budgets?: Budget[];
+  savings?: Saving[];
+  activities?: Activity[];
+  wishlists?: Wishlist[];
   settings: UserSettings;
   initialTab?: FormType;
   editData?: any;
@@ -77,6 +86,11 @@ export function TambahDataView({
   wallets,
   categories,
   sources,
+  recentTransactions = [],
+  budgets = [],
+  savings = [],
+  activities = [],
+  wishlists = [],
   settings,
   initialTab = 'pengeluaran',
   editData,
@@ -256,6 +270,10 @@ export function TambahDataView({
   // Date picker open state
   const [showDatePickerModal, setShowDatePickerModal] = useState(false);
 
+  // Histori / Duplicate Data Modal State
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [duplicateSearchQuery, setDuplicateSearchQuery] = useState('');
+
   // Initialize wallet defaults
   useEffect(() => {
     if (wallets.length > 0) {
@@ -374,6 +392,116 @@ export function TambahDataView({
     const next = currentNumericAmount > 0 ? currentNumericAmount * 1000 : 100000;
     setAmount(next.toString());
   };
+
+  // Duplicate / Clone Data Handler
+  const handleApplyDuplicate = (item: any) => {
+    if (activeForm === 'pengeluaran' || activeForm === 'pemasukan') {
+      if (item.amount) setAmount(item.amount.toString());
+      if (item.walletId) setSelectedWalletId(item.walletId);
+      if (item.categoryId) setSelectedCategoryId(item.categoryId);
+      if (item.sourceId) setSelectedSourceId(item.sourceId);
+      if (item.description) setDescription(item.description);
+      setDate(new Date().toISOString().split('T')[0]);
+      triggerNotification?.('Data Berhasil Disalin', `Data ${activeForm} disalin ke formulir dengan tanggal hari ini`, 'success');
+    } else if (activeForm === 'transfer') {
+      if (item.amount) setAmount(item.amount.toString());
+      if (item.walletId) setSelectedWalletId(item.walletId);
+      if (item.toWalletId) setSelectedToWalletId(item.toWalletId);
+      if (item.adminFee) setAdminFee(item.adminFee.toString());
+      if (item.description) setDescription(item.description);
+      setDate(new Date().toISOString().split('T')[0]);
+      triggerNotification?.('Data Berhasil Disalin', 'Data transfer disalin ke formulir dengan tanggal hari ini', 'success');
+    } else if (activeForm === 'budgeting') {
+      const lim = item.limitAmount || item.monthlyLimit || 0;
+      setBudgetLimit(lim.toString());
+      if (item.categoryIds) setBudgetSelectedCategoryIds(item.categoryIds);
+      else if (item.categoryId) setBudgetSelectedCategoryIds([item.categoryId]);
+      if (item.walletIds) setBudgetSelectedWalletIds(item.walletIds);
+      else if (item.walletId) setBudgetSelectedWalletIds([item.walletId]);
+      triggerNotification?.('Data Berhasil Disalin', 'Batas anggaran bulanan berhasil disalin', 'success');
+    } else if (activeForm === 'tabungan') {
+      if (item.name) setSavingName(item.name);
+      if (item.targetAmount) setSavingTarget(item.targetAmount.toString());
+      setSavingCurrent('0');
+      if (item.deadline) setSavingDeadline(item.deadline);
+      triggerNotification?.('Data Berhasil Disalin', `Target tabungan "${item.name}" berhasil disalin`, 'success');
+    } else if (activeForm === 'aktivitas') {
+      if (item.title) setActivityTitle(item.title);
+      if (item.description) setActivityDesc(item.description);
+      if (item.deadline) setActivityDeadline(item.deadline);
+      triggerNotification?.('Data Berhasil Disalin', `Aktivitas "${item.title}" berhasil disalin`, 'success');
+    } else if (activeForm === 'wishlist') {
+      if (item.title) setWishlistTitle(item.title);
+      if (item.notes) setWishlistNotes(item.notes);
+      if (item.month) setWishlistMonth(item.month);
+      triggerNotification?.('Data Berhasil Disalin', `Wishlist "${item.title}" berhasil disalin`, 'success');
+    }
+
+    setShowDuplicateModal(false);
+  };
+
+  // Duplicate candidates filtered by activeForm & duplicateSearchQuery
+  const duplicateCandidates = useMemo(() => {
+    const q = duplicateSearchQuery.toLowerCase().trim();
+
+    if (activeForm === 'pengeluaran') {
+      const filtered = recentTransactions.filter(t => t.type === 'pengeluaran');
+      if (!q) return filtered;
+      return filtered.filter(t => 
+        (t.description || '').toLowerCase().includes(q) ||
+        categories.find(c => c.id === t.categoryId)?.name.toLowerCase().includes(q) ||
+        wallets.find(w => w.id === t.walletId)?.name.toLowerCase().includes(q)
+      );
+    }
+
+    if (activeForm === 'pemasukan') {
+      const filtered = recentTransactions.filter(t => t.type === 'pemasukan');
+      if (!q) return filtered;
+      return filtered.filter(t => 
+        (t.description || '').toLowerCase().includes(q) ||
+        sources.find(s => s.id === t.sourceId)?.name.toLowerCase().includes(q) ||
+        wallets.find(w => w.id === t.walletId)?.name.toLowerCase().includes(q)
+      );
+    }
+
+    if (activeForm === 'transfer') {
+      const filtered = recentTransactions.filter(t => t.type === 'transfer');
+      if (!q) return filtered;
+      return filtered.filter(t => 
+        (t.description || '').toLowerCase().includes(q) ||
+        wallets.find(w => w.id === t.walletId)?.name.toLowerCase().includes(q) ||
+        wallets.find(w => w.id === t.toWalletId)?.name.toLowerCase().includes(q)
+      );
+    }
+
+    if (activeForm === 'budgeting') {
+      if (!q) return budgets;
+      return budgets.filter(b => (b.month || '').toLowerCase().includes(q));
+    }
+
+    if (activeForm === 'tabungan') {
+      if (!q) return savings;
+      return savings.filter(s => (s.name || '').toLowerCase().includes(q));
+    }
+
+    if (activeForm === 'aktivitas') {
+      if (!q) return activities;
+      return activities.filter(a => 
+        (a.title || '').toLowerCase().includes(q) ||
+        (a.description || '').toLowerCase().includes(q)
+      );
+    }
+
+    if (activeForm === 'wishlist') {
+      if (!q) return wishlists;
+      return wishlists.filter(w => 
+        (w.title || '').toLowerCase().includes(q) ||
+        (w.notes || '').toLowerCase().includes(q)
+      );
+    }
+
+    return [];
+  }, [activeForm, duplicateSearchQuery, recentTransactions, budgets, savings, activities, wishlists, categories, sources, wallets]);
 
   // Handle Save
   const handleSave = () => {
@@ -538,18 +666,18 @@ export function TambahDataView({
       {/* =======================================================
           1. HERO BANNER BACKGROUND LAYER
          ======================================================= */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-11 sm:pt-13 px-4 sm:px-6 pb-26 sm:pb-30 lg:pb-32">
+      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-7 sm:pt-9 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
         {/* Authentic Indonesian Songket Weave Vector Motif */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
           style={{
-            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 15%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 15%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
+            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
           }}
         >
           <svg className="w-full h-full opacity-35 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern id="tambah-songket-pattern-v15" width="48" height="48" patternUnits="userSpaceOnUse">
+              <pattern id="tambah-songket-pattern-v18" width="48" height="48" patternUnits="userSpaceOnUse">
                 <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
                 <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
@@ -567,7 +695,7 @@ export function TambahDataView({
                 <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
               </pattern>
             </defs>
-            <rect width="100%" height="100%" fill="url(#tambah-songket-pattern-v15)" />
+            <rect width="100%" height="100%" fill="url(#tambah-songket-pattern-v18)" />
           </svg>
 
           {/* Luminous soft atmospheric glow */}
@@ -575,8 +703,9 @@ export function TambahDataView({
           <div className="absolute left-10 bottom-0 w-64 h-32 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
         </div>
 
-        {/* Foreground in Banner: Positioned cleanly with dots sitting closely right above the sheet card */}
-        <div className="relative z-10 pt-4 sm:pt-6 pb-2">
+        {/* Foreground in Banner: Tabs + Scroll Dots + Centered Histori Data Button */}
+        <div className="relative z-10 pt-3 sm:pt-4 pb-1">
+          {/* Tabs Container */}
           <div 
             ref={tabsContainerRef}
             onScroll={handleTabsScroll}
@@ -605,9 +734,9 @@ export function TambahDataView({
             ))}
           </div>
 
-          {/* Clickable Pagination Dots for Tabs sitting close right above the sheet card curve */}
+          {/* Clickable Pagination Dots for Tabs */}
           {tabPages.length > 1 && (
-            <div className="flex items-center justify-center gap-1.5 pt-2 pb-0.5">
+            <div className="flex items-center justify-center gap-1.5 pt-2 pb-1">
               {tabPages.map((_, idx) => (
                 <button
                   key={idx}
@@ -621,13 +750,29 @@ export function TambahDataView({
               ))}
             </div>
           )}
+
+          {/* Tombol Histori Data: Diturunkan sedikit lagi */}
+          <div className="flex items-center justify-center pt-5 sm:pt-6 pb-0.5">
+            <button
+              type="button"
+              onClick={() => {
+                setDuplicateSearchQuery('');
+                setShowDuplicateModal(true);
+              }}
+              title="Histori Data yang Lalu"
+              className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/20 hover:bg-white/30 active:scale-95 text-white border border-white/30 backdrop-blur-md text-xs font-black shadow-xs transition duration-150 cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-rose-100" />
+              <span>Histori Data</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* =======================================================
-          2. MAIN ENCLOSING SHEET CARD (KEMBALI KE POSISI SEBELUMNYA YG PAS: -mt-16 sm:-mt-18 lg:-mt-20)
+          2. MAIN ENCLOSING SHEET CARD (Naikkan sedikit lagi bener-bener sedikit)
          ======================================================= */}
-      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-16 sm:-mt-18 lg:-mt-20 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-4 sm:space-y-5`}>
+      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-4 sm:space-y-5`}>
 
         {/* DATE SELECTOR BAR (Black Vector Calendar with < > navigation) */}
         {(activeForm === 'pengeluaran' || activeForm === 'pemasukan' || activeForm === 'transfer') && (
@@ -685,7 +830,6 @@ export function TambahDataView({
                     width: `${Math.max(1, (amount || '0').length) * 28 + 12}px`,
                     maxWidth: 'calc(100vw - 160px)'
                   }}
-                  autoFocus
                 />
               </div>
             </div>
@@ -1398,6 +1542,283 @@ export function TambahDataView({
         </div>
       )}
 
+      {/* =======================================================
+          HISTORI DATA MODAL SHEET (Rendered via createPortal to document.body with z-[99999] covering top bar & bottom nav)
+         ======================================================= */}
+      {showDuplicateModal && createPortal(
+        <div 
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md"
+          onClick={() => setShowDuplicateModal(false)}
+        >
+          <div 
+            className="w-full sm:max-w-md h-[520px] max-h-[85vh] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-2xl flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header & Search Container (Fixed at top without X button) */}
+            <div className="shrink-0 space-y-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                    <Download className="w-4 h-4" />
+                  </div>
+                  <h4 className="text-sm font-black text-slate-900 dark:text-white leading-tight">
+                    Histori {FORM_TABS.find(t => t.id === activeForm)?.label || 'Data'}
+                  </h4>
+                </div>
+              </div>
+
+              {/* Search Input Filter & Reset Filter Button */}
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    value={duplicateSearchQuery}
+                    onChange={(e) => setDuplicateSearchQuery(e.target.value)}
+                    placeholder={`Cari histori ${activeForm}...`}
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-xs font-semibold outline-none focus:border-slate-400"
+                  />
+                </div>
+
+                {duplicateSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setDuplicateSearchQuery('')}
+                    title="Reset Filter"
+                    className="px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition flex items-center gap-1 shrink-0 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reset</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* List of Previous Data to Duplicate (Scrollable area) */}
+            <div className="flex-1 overflow-y-auto space-y-2.5 pt-3 pr-0.5">
+              {duplicateCandidates.length === 0 ? (
+                <div className="py-12 text-center flex flex-col items-center justify-center gap-2">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                    <RotateCcw className="w-6 h-6" />
+                  </div>
+                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                    Belum ada histori {FORM_TABS.find(t => t.id === activeForm)?.label.toLowerCase()} yang tersimpan
+                  </p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 max-w-xs">
+                    Setelah Anda menyimpan transaksi atau data baru, data tersebut akan muncul di sini untuk bisa disalin kapan saja.
+                  </p>
+                </div>
+              ) : (
+                duplicateCandidates.map((item: any, idx: number) => {
+                  if (activeForm === 'pengeluaran' || activeForm === 'pemasukan') {
+                    const cat = categories.find(c => c.id === item.categoryId);
+                    const src = sources.find(s => s.id === item.sourceId);
+                    const wal = wallets.find(w => w.id === item.walletId);
+
+                    return (
+                      <button
+                        key={item.id || idx}
+                        type="button"
+                        onClick={() => handleApplyDuplicate(item)}
+                        className="w-full p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition flex items-center justify-between gap-3 group cursor-pointer shadow-3xs"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-black text-slate-900 dark:text-white truncate">
+                              {item.description || (activeForm === 'pengeluaran' ? 'Pengeluaran' : 'Pendapatan')}
+                            </span>
+                            {cat && (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 shrink-0">
+                                {cat.name}
+                              </span>
+                            )}
+                            {src && (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 shrink-0">
+                                {src.name}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                            <span>{wal?.name || 'Dompet'}</span>
+                            <span>•</span>
+                            <span>{item.date}</span>
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          <span className={`text-xs font-black font-mono ${
+                            activeForm === 'pengeluaran' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'
+                          }`}>
+                            {formatIDR(item.amount)}
+                          </span>
+                          <span className="block text-[10px] font-bold text-purple-600 dark:text-purple-400 group-hover:underline">
+                            Salin ➜
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  }
+
+                  if (activeForm === 'transfer') {
+                    const fromWal = wallets.find(w => w.id === item.walletId);
+                    const toWal = wallets.find(w => w.id === item.toWalletId);
+
+                    return (
+                      <button
+                        key={item.id || idx}
+                        type="button"
+                        onClick={() => handleApplyDuplicate(item)}
+                        className="w-full p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition flex items-center justify-between gap-3 group cursor-pointer shadow-3xs"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 text-xs font-black text-slate-900 dark:text-white mb-1">
+                            <span className="truncate">{fromWal?.name || 'Asal'}</span>
+                            <ArrowRight className="w-3 h-3 text-slate-400 shrink-0" />
+                            <span className="truncate">{toWal?.name || 'Tujuan'}</span>
+                          </div>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate block">
+                            {item.description || 'Transfer Antar Dompet'}
+                          </span>
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          <span className="text-xs font-black font-mono text-blue-600 dark:text-blue-400">
+                            {formatIDR(item.amount)}
+                          </span>
+                          <span className="block text-[10px] font-bold text-purple-600 dark:text-purple-400 group-hover:underline">
+                            Salin ➜
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  }
+
+                  if (activeForm === 'budgeting') {
+                    const lim = item.limitAmount || item.monthlyLimit || 0;
+                    return (
+                      <button
+                        key={item.id || idx}
+                        type="button"
+                        onClick={() => handleApplyDuplicate(item)}
+                        className="w-full p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition flex items-center justify-between gap-3 group cursor-pointer shadow-3xs"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <span className="text-xs font-black text-slate-900 dark:text-white block truncate mb-1">
+                            Bulan {item.month || 'Periode'}
+                          </span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                            {item.categoryIds?.includes('all') ? 'Semua Kategori' : `${item.categoryIds?.length || 1} Kategori Terpilih`}
+                          </span>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="text-xs font-black font-mono text-purple-600 dark:text-purple-400">
+                            {formatIDR(lim)}
+                          </span>
+                          <span className="block text-[10px] font-bold text-purple-600 dark:text-purple-400 group-hover:underline">
+                            Salin ➜
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  }
+
+                  if (activeForm === 'tabungan') {
+                    return (
+                      <button
+                        key={item.id || idx}
+                        type="button"
+                        onClick={() => handleApplyDuplicate(item)}
+                        className="w-full p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition flex items-center justify-between gap-3 group cursor-pointer shadow-3xs"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <span className="text-xs font-black text-slate-900 dark:text-white block truncate mb-1">
+                            {item.name}
+                          </span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                            Deadline: {item.deadline || '-'}
+                          </span>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="text-xs font-black font-mono text-amber-600 dark:text-amber-400">
+                            {formatIDR(item.targetAmount)}
+                          </span>
+                          <span className="block text-[10px] font-bold text-purple-600 dark:text-purple-400 group-hover:underline">
+                            Salin ➜
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  }
+
+                  if (activeForm === 'aktivitas') {
+                    return (
+                      <button
+                        key={item.id || idx}
+                        type="button"
+                        onClick={() => handleApplyDuplicate(item)}
+                        className="w-full p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition flex items-center justify-between gap-3 group cursor-pointer shadow-3xs"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <span className="text-xs font-black text-slate-900 dark:text-white block truncate mb-1">
+                            {item.title}
+                          </span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 line-clamp-1">
+                            {item.description || 'Tidak ada deskripsi'}
+                          </span>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 group-hover:underline">
+                            Salin ➜
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  }
+
+                  if (activeForm === 'wishlist') {
+                    return (
+                      <button
+                        key={item.id || idx}
+                        type="button"
+                        onClick={() => handleApplyDuplicate(item)}
+                        className="w-full p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-800/60 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition flex items-center justify-between gap-3 group cursor-pointer shadow-3xs"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <span className="text-xs font-black text-slate-900 dark:text-white block truncate mb-1">
+                            {item.title}
+                          </span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 line-clamp-1">
+                            {item.notes || `Bulan ${item.month}`}
+                          </span>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 group-hover:underline">
+                            Salin ➜
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  }
+
+                  return null;
+                })
+              )}
+            </div>
+
+            {/* Footer with Tutup Button */}
+            <div className="shrink-0 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowDuplicateModal(false)}
+                className="w-full py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white text-xs font-black transition cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
