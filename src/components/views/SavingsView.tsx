@@ -38,6 +38,378 @@ interface SavingsViewProps {
   settings?: any;
 }
 
+const RING_COLORS = [
+  { stroke: '#3b82f6', text: 'text-blue-600 dark:text-blue-400' },
+  { stroke: '#10b981', text: 'text-emerald-600 dark:text-emerald-400' },
+  { stroke: '#8b5cf6', text: 'text-purple-600 dark:text-purple-400' },
+  { stroke: '#f59e0b', text: 'text-amber-600 dark:text-amber-400' },
+  { stroke: '#06b6d4', text: 'text-cyan-600 dark:text-cyan-400' },
+  { stroke: '#ec4899', text: 'text-pink-600 dark:text-pink-400' },
+  { stroke: '#f97316', text: 'text-orange-600 dark:text-orange-400' },
+];
+
+const SPEEDO_COLORS = [
+  { stroke: '#ffffff', fill: '#eab308', text: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-500' },
+  { stroke: '#ffffff', fill: '#22c55e', text: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500' },
+  { stroke: '#ffffff', fill: '#ec4899', text: 'text-pink-600 dark:text-pink-400', bg: 'bg-pink-500' },
+  { stroke: '#ffffff', fill: '#f59e0b', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-500' },
+  { stroke: '#ffffff', fill: '#06b6d4', text: 'text-cyan-600 dark:text-cyan-400', bg: 'bg-cyan-500' },
+];
+
+// 1. Exact Half-Donut Speedometer Chart Component (Matching Screenshot image.png)
+interface SavingsSpeedometerChartProps {
+  savings: Saving[];
+  getCardClasses: () => string;
+}
+
+const SavingsSpeedometerChart: React.FC<SavingsSpeedometerChartProps> = ({ savings, getCardClasses }) => {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  if (!savings || savings.length === 0) return null;
+
+  const displaySavings = savings.slice(0, 5);
+  const totalItems = displaySavings.length;
+
+  const sizeWidth = 240;
+  const sizeHeight = 135;
+  const cx = 120;
+  const cy = 110;
+  const R_outer = 85;
+  const R_inner = 50;
+
+  const selectedSaving = selectedIndex !== null ? displaySavings[selectedIndex] : null;
+
+  const totalTarget = savings.reduce((s, x) => s + x.targetAmount, 0);
+  const totalCurrent = savings.reduce((s, x) => s + x.currentAmount, 0);
+  const overallPct = totalTarget > 0 ? Math.min(100, Math.round((totalCurrent / totalTarget) * 100)) : 0;
+
+  // Active percentage to show for the selected item (or overall if none selected)
+  const activePct = selectedSaving 
+    ? (selectedSaving.targetAmount > 0 ? Math.round((selectedSaving.currentAmount / selectedSaving.targetAmount) * 100) : 0)
+    : overallPct;
+
+  // Generate annular sector for half-donut slice
+  const getAnnularSectorPath = (startPct: number, endPct: number, R: number, r: number) => {
+    const startAngle = Math.PI - (startPct / 100) * Math.PI;
+    const endAngle = Math.PI - (endPct / 100) * Math.PI;
+
+    const xOut1 = cx + R * Math.cos(startAngle);
+    const yOut1 = cy - R * Math.sin(startAngle);
+    const xOut2 = cx + R * Math.cos(endAngle);
+    const yOut2 = cy - R * Math.sin(endAngle);
+
+    const xIn2 = cx + r * Math.cos(endAngle);
+    const yIn2 = cy - r * Math.sin(endAngle);
+    const xIn1 = cx + r * Math.cos(startAngle);
+    const yIn1 = cy - r * Math.sin(startAngle);
+
+    return `M ${xOut1.toFixed(2)} ${yOut1.toFixed(2)} A ${R} ${R} 0 0 1 ${xOut2.toFixed(2)} ${yOut2.toFixed(2)} L ${xIn2.toFixed(2)} ${yIn2.toFixed(2)} A ${r} ${r} 0 0 0 ${xIn1.toFixed(2)} ${yIn1.toFixed(2)} Z`;
+  };
+
+  // When an item is selected, the needle points directly into that item's color slice!
+  // If no item is selected, it points according to overall percentage.
+  const needleGaugePct = selectedIndex !== null
+    ? ((selectedIndex + 0.5) / totalItems) * 100
+    : Math.min(100, Math.max(0, overallPct));
+
+  const needleAngleRad = Math.PI - (needleGaugePct / 100) * Math.PI;
+  const needleTipX = cx + (R_outer + 8) * Math.cos(needleAngleRad);
+  const needleTipY = cy - (R_outer + 8) * Math.sin(needleAngleRad);
+
+  return (
+    <div className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+          <span className="text-xs font-extrabold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
+            GRAFIK TARGET TABUNGAN
+          </span>
+        </div>
+        {selectedIndex !== null && (
+          <button
+            type="button"
+            onClick={() => setSelectedIndex(null)}
+            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center gap-5 my-2">
+        {/* Speedometer Gauge Canvas */}
+        <div className="relative w-[210px] h-[125px] sm:w-[230px] sm:h-[135px] flex items-center justify-center shrink-0">
+          <svg width="100%" height="100%" viewBox={`0 0 ${sizeWidth} ${sizeHeight}`} className="overflow-visible">
+            {/* Multi-Colored Annular Slices (Exact Half-Donut from image.png) */}
+            {displaySavings.map((s, idx) => {
+              const startPct = (idx / totalItems) * 100;
+              const endPct = ((idx + 1) / totalItems) * 100;
+              const palette = SPEEDO_COLORS[idx % SPEEDO_COLORS.length];
+              const isSelected = selectedIndex === idx;
+
+              return (
+                <path
+                  key={s.id}
+                  d={getAnnularSectorPath(startPct, endPct, R_outer, R_inner)}
+                  fill={palette.fill}
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  className="cursor-pointer transition-all duration-300 hover:opacity-90"
+                  style={{
+                    opacity: selectedIndex !== null && !isSelected ? 0.4 : 1,
+                    filter: isSelected ? 'drop-shadow(0 2px 8px rgba(0,0,0,0.25))' : 'none',
+                  }}
+                  onClick={() => setSelectedIndex(isSelected ? null : idx)}
+                />
+              );
+            })}
+
+            {/* Flat Bottom Baseline Axis Line */}
+            <line
+              x1={cx - R_outer}
+              y1={cy}
+              x2={cx + R_outer}
+              y2={cy}
+              stroke="currentColor"
+              strokeWidth="1.5"
+              className="text-slate-300 dark:text-slate-700"
+            />
+
+            {/* Needle (Black pointer line originating from flat bottom center) */}
+            <line
+              x1={cx}
+              y1={cy}
+              x2={needleTipX}
+              y2={needleTipY}
+              stroke="#0f172a"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              className="dark:stroke-slate-100 transition-all duration-500"
+            />
+
+            {/* Center Pivot Hub Cap */}
+            <circle cx={cx} cy={cy} r="7" fill="#0f172a" className="dark:fill-slate-100" />
+            <circle cx={cx} cy={cy} r="3" fill="#ffffff" className="dark:fill-slate-900" />
+
+            {/* Prominent Active Percentage Display at Needle Point / Top Corner */}
+            <text
+              x={cx + (R_outer + 20) * Math.cos(needleAngleRad)}
+              y={Math.min(cy - 10, cy - (R_outer + 12) * Math.sin(needleAngleRad))}
+              textAnchor={needleAngleRad < Math.PI / 2 ? "start" : "end"}
+              className="text-sm font-black font-mono fill-slate-900 dark:fill-white"
+            >
+              {activePct}%
+            </text>
+          </svg>
+        </div>
+
+        {/* Legend / Keterangan Di Bawah Samping */}
+        <div className="flex-1 w-full grid grid-cols-1 gap-1.5">
+          {displaySavings.map((s, idx) => {
+            const palette = SPEEDO_COLORS[idx % SPEEDO_COLORS.length];
+            const pct = s.targetAmount > 0 ? Math.min(100, (s.currentAmount / s.targetAmount) * 100) : 0;
+            const isSelected = selectedIndex === idx;
+
+            return (
+              <div
+                key={s.id}
+                onClick={() => setSelectedIndex(isSelected ? null : idx)}
+                className={`p-1.5 px-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between text-xs ${
+                  isSelected
+                    ? 'bg-slate-100 dark:bg-slate-800 border-indigo-300 dark:border-indigo-600 shadow-xs scale-[1.01]'
+                    : 'bg-slate-50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-800 hover:bg-slate-100/60 dark:hover:bg-slate-800/70'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className={`w-2.5 h-2.5 rounded-full shrink-0 ${palette.bg}`}
+                  />
+                  <span className="font-bold text-slate-800 dark:text-slate-200 truncate max-w-[120px] sm:max-w-[150px]">
+                    {s.name}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 font-mono shrink-0 pl-2">
+                  <span className="font-extrabold text-slate-900 dark:text-slate-100">
+                    {formatIDR(s.currentAmount)}
+                  </span>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${palette.text}`}>
+                    {pct.toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Detail Label Note when selected */}
+      {selectedSaving ? (
+        <div className="mt-1 p-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between">
+          <span>Target: <strong>{selectedSaving.name}</strong></span>
+          <span className="font-mono text-indigo-600 dark:text-indigo-400">
+            {formatIDR(selectedSaving.currentAmount)} / {formatIDR(selectedSaving.targetAmount)} ({selectedSaving.targetAmount > 0 ? Math.round((selectedSaving.currentAmount / selectedSaving.targetAmount) * 100) : 0}%)
+          </span>
+        </div>
+      ) : (
+        <div className="mt-1 p-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/60 text-center text-[11px] font-medium text-slate-400 dark:text-slate-500">
+          Klik Untuk Melihat Detail
+        </div>
+      )}
+    </div>
+  );
+};
+
+// 2. Pyramid / Funnel Tier Hierarchy Chart
+interface SavingsPyramidChartProps {
+  totalTarget: number;
+  runningTarget: number;
+  totalCollected: number;
+  runningCollected: number;
+  remainingNeeded: number;
+  getCardClasses: () => string;
+}
+
+const SavingsPyramidChart: React.FC<SavingsPyramidChartProps> = ({
+  totalTarget,
+  runningTarget,
+  totalCollected,
+  runningCollected,
+  remainingNeeded,
+  getCardClasses,
+}) => {
+  const [selectedTier, setSelectedTier] = useState<number | null>(null);
+
+  const pct1 = 100;
+  const pct2 = totalTarget > 0 ? Math.min(100, Math.round((runningTarget / totalTarget) * 100)) : 0;
+  const pct3 = totalTarget > 0 ? Math.min(100, Math.round((totalCollected / totalTarget) * 100)) : 0;
+  const pct4 = totalTarget > 0 ? Math.min(100, Math.round((runningCollected / totalTarget) * 100)) : 0;
+  const pct5 = totalTarget > 0 ? Math.min(100, Math.round((remainingNeeded / totalTarget) * 100)) : 0;
+
+  // Colors requested: 1. Biru, 2. Orange, 3. Ungu, 4. Hijau, 5. Kuning
+  const tiers = [
+    {
+      id: 1,
+      label: 'Total Target Tabungan',
+      pct: pct1,
+      amount: totalTarget,
+      gradient: 'from-blue-600 to-blue-500',
+      widthTop: '100%',
+    },
+    {
+      id: 2,
+      label: 'Target Berjalan (Aktif)',
+      pct: pct2,
+      amount: runningTarget,
+      gradient: 'from-orange-500 to-amber-500',
+      widthTop: '84%',
+    },
+    {
+      id: 3,
+      label: 'Total Semua Terkumpul',
+      pct: pct3,
+      amount: totalCollected,
+      gradient: 'from-purple-600 to-indigo-600',
+      widthTop: '68%',
+    },
+    {
+      id: 4,
+      label: 'Terkumpul (Target Berjalan)',
+      pct: pct4,
+      amount: runningCollected,
+      gradient: 'from-emerald-500 to-teal-500',
+      widthTop: '52%',
+    },
+    {
+      id: 5,
+      label: 'Sisa Total Dibutuhkan',
+      pct: pct5,
+      amount: remainingNeeded,
+      gradient: 'from-rose-500 to-red-500',
+      widthTop: '36%',
+    },
+  ];
+
+  return (
+    <div className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+          <span className="text-xs font-extrabold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
+            GRAFIK NOMINAL TARGET TABUNGAN
+          </span>
+        </div>
+        {selectedTier !== null && (
+          <button
+            type="button"
+            onClick={() => setSelectedTier(null)}
+            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+
+      {/* Inverted Pyramid Stack Container */}
+      <div className="flex flex-col items-center justify-center space-y-1.5 my-2 w-full max-w-md mx-auto">
+        {tiers.map((tier) => {
+          const isSelected = selectedTier === tier.id;
+          return (
+            <div
+              key={tier.id}
+              onClick={() => setSelectedTier(isSelected ? null : tier.id)}
+              className={`relative transition-all duration-200 cursor-pointer flex items-center justify-center rounded-lg overflow-hidden shadow-2xs ${
+                isSelected ? 'scale-[1.03] ring-2 ring-indigo-400 shadow-md' : ''
+              }`}
+              style={{
+                width: tier.widthTop,
+                height: '34px',
+                clipPath: 'polygon(0% 0%, 100% 0%, 92% 100%, 8% 100%)',
+              }}
+            >
+              {/* Background gradient bar */}
+              <div
+                className={`w-full h-full bg-gradient-to-r ${tier.gradient} transition-opacity ${
+                  isSelected ? 'opacity-100' : 'opacity-90 hover:opacity-100'
+                }`}
+              />
+
+              {/* Text label ONLY inside the tier bar (No overlapping nominal/percent) */}
+              <div className="absolute inset-0 flex items-center justify-center px-4 text-white font-bold text-[11px] sm:text-xs select-none pointer-events-none text-center">
+                <span className="drop-shadow-md truncate max-w-[220px]">
+                  {tier.label}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Detail info card showing nominal & percentage on click/touch */}
+      <div className="mt-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/60 text-center min-h-[42px] flex items-center justify-center">
+        {selectedTier !== null ? (() => {
+          const t = tiers.find(x => x.id === selectedTier);
+          if (!t) return null;
+          return (
+            <div className="flex items-center justify-center gap-2 text-xs font-bold flex-wrap">
+              <span className="text-slate-600 dark:text-slate-300">{t.label}:</span>
+              <span className="font-mono text-slate-900 dark:text-white text-sm">{formatIDR(t.amount)}</span>
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 border border-indigo-200/60">
+                {t.pct}%
+              </span>
+            </div>
+          );
+        })() : (
+          <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">
+            Klik Untuk Melihat Detail
+          </span>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export const SavingsView: React.FC<SavingsViewProps> = ({
   savings,
   savingLogs = [],
@@ -281,6 +653,21 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 1. Visual Charts at the Very Top: Speedometer Chart & Pyramid Tier Chart */}
+      {savings.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <SavingsSpeedometerChart savings={savings} getCardClasses={getCardClasses} />
+          <SavingsPyramidChart
+            totalTarget={totalTargetAmount}
+            runningTarget={runningTargetAmount}
+            totalCollected={totalCurrentAmount}
+            runningCollected={runningCurrentAmount}
+            remainingNeeded={totalRemainingAmount}
+            getCardClasses={getCardClasses}
+          />
+        </div>
+      )}
 
       {/* 2. Overall Savings Summary Cards */}
       {savings.length > 0 && (

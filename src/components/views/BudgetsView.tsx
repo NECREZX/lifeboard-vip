@@ -73,6 +73,208 @@ const getBudgetStatus = (spend: number, limit: number) => {
   };
 };
 
+// Vertical Temperature / Thermometer Gauge Chart Component for Budgeting (Unified Seamless Glass SVG)
+interface BudgetThermometerChartProps {
+  limit: number;
+  spend: number;
+  status: ReturnType<typeof getBudgetStatus>;
+  isEn?: boolean;
+}
+
+const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, spend, status, isEn }) => {
+  const isOver = status.isOver;
+  const pctValue = status.pctValue; // 0 to 100+
+  const clampedPct = Math.min(Math.max(pctValue, 0), 100);
+
+  // Active vertical stem range: y=108 (0%) to y=34 (100%) -> total height 74px
+  const stemBottomY = 108;
+  const stemHeight = 74;
+  const spendY = stemBottomY - (clampedPct / 100) * stemHeight;
+  const limitY = stemBottomY - stemHeight; // y = 34
+
+  // Colors requested: Kuning (Batas Total), Hijau (Terpakai), Biru (Sisa)
+  const spendColor = isOver ? '#ef4444' : '#22c55e'; // Hijau (or Merah if over)
+  const remainingColor = '#3b82f6'; // Biru
+  const limitColor = '#eab308'; // Kuning
+
+  return (
+    <div className="flex flex-col items-center justify-center w-full py-1">
+      {/* Centered Thermometer SVG */}
+      <div className="relative flex items-center justify-center w-full">
+        <svg width="170" height="145" viewBox="0 0 170 145" className="overflow-visible">
+          <defs>
+            {/* Seamless Thermometer Clip Path */}
+            <clipPath id="thermometerClip">
+              <path d="M 72,20 A 8,8 0 0,1 88,20 L 88,106 A 16,16 0 1,1 72,106 Z" />
+            </clipPath>
+          </defs>
+
+          {/* Scale Ticks along Left Side (0%, 25%, 50%, 75%, 100%) */}
+          {[0, 25, 50, 75, 100].map((tPct) => {
+            const tickY = stemBottomY - (tPct / 100) * stemHeight;
+            return (
+              <g key={tPct}>
+                <line
+                  x1="60"
+                  y1={tickY}
+                  x2="68"
+                  y2={tickY}
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className={tPct === 100 ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600'}
+                />
+                <text
+                  x="56"
+                  y={tickY + 3}
+                  textAnchor="end"
+                  className={`text-[9px] font-mono font-bold ${
+                    tPct === 100 ? 'fill-yellow-600 dark:fill-yellow-400 font-extrabold' : 'fill-slate-400 dark:fill-slate-500'
+                  }`}
+                >
+                  {tPct}%
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Background Glass Tube (Batas Total / Capacity) */}
+          <path
+            d="M 72,20 A 8,8 0 0,1 88,20 L 88,106 A 16,16 0 1,1 72,106 Z"
+            fill="currentColor"
+            className="text-slate-100 dark:text-slate-800"
+          />
+
+          {/* Liquid Contents Clipped Inside the Thermometer */}
+          <g clipPath="url(#thermometerClip)">
+            {/* 1. Bulb Base Liquid (Always filled with Terpakai Fluid) */}
+            <circle cx="80" cy="118" r="18" fill={spendColor} />
+
+            {/* 2. Terpakai Liquid Column (from stemBottomY up to spendY) */}
+            <rect
+              x="70"
+              y={spendY}
+              width="20"
+              height={Math.max(0, stemBottomY - spendY + 5)}
+              fill={spendColor}
+            />
+
+            {/* 3. Sisa Budget Column (from spendY up to 100% Limit Line y=34) - Only if within limit */}
+            {!isOver && clampedPct < 100 && (
+              <rect
+                x="70"
+                y={limitY}
+                width="20"
+                height={Math.max(0, spendY - limitY)}
+                fill={remainingColor}
+              />
+            )}
+
+            {/* 4. Kelebihan Column (above 100% Limit Line y=34 up to top) - Only if over budget */}
+            {isOver && (
+              <rect
+                x="70"
+                y="10"
+                width="20"
+                height={Math.max(0, limitY - 10 + 2)}
+                fill="#dc2626"
+              />
+            )}
+          </g>
+
+          {/* Seamless Glass Tube Outer Border */}
+          <path
+            d="M 72,20 A 8,8 0 0,1 88,20 L 88,106 A 16,16 0 1,1 72,106 Z"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            className="text-slate-300 dark:text-slate-700"
+          />
+
+          {/* Gloss highlight on bottom bulb */}
+          <circle cx="76" cy="115" r="4" fill="#ffffff" opacity="0.6" />
+
+          {/* Batas Total 100% Horizontal Marker Line Across Tube */}
+          <line
+            x1="68"
+            y1={limitY}
+            x2="92"
+            y2={limitY}
+            stroke={limitColor}
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+
+          {/* Pointer callout label for Batas Total at 100% */}
+          <text
+            x="98"
+            y={limitY + 3}
+            className="text-[9px] font-black fill-yellow-600 dark:fill-yellow-400 font-mono"
+          >
+            100% (Limit)
+          </text>
+        </svg>
+      </div>
+
+      {/* Small, Compact Badge Rows Underneath (Same style as Savings Speedometer) */}
+      <div className="w-full grid grid-cols-1 gap-1.5 mt-3">
+        {/* 1. Batas Total (Kuning) */}
+        <div className="p-1.5 px-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-yellow-500" />
+            <span className="font-bold text-slate-800 dark:text-slate-200 truncate">
+              {isEn ? 'Total Limit' : 'Batas Total'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 font-mono shrink-0 pl-2">
+            <span className="font-extrabold text-slate-900 dark:text-slate-100">
+              {formatIDR(limit)}
+            </span>
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md text-yellow-600 dark:text-yellow-400">
+              100%
+            </span>
+          </div>
+        </div>
+
+        {/* 2. Terpakai (Hijau / Merah) */}
+        <div className="p-1.5 px-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isOver ? 'bg-rose-500' : 'bg-emerald-500'}`} />
+            <span className="font-bold text-slate-800 dark:text-slate-200 truncate">
+              {isEn ? 'Spent' : 'Terpakai'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 font-mono shrink-0 pl-2">
+            <span className="font-extrabold text-slate-900 dark:text-slate-100">
+              {formatIDR(spend)}
+            </span>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${isOver ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+              {status.pctText}
+            </span>
+          </div>
+        </div>
+
+        {/* 3. Sisa Budget (Biru) / Kelebihan (Merah) */}
+        <div className="p-1.5 px-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isOver ? 'bg-rose-600' : 'bg-blue-500'}`} />
+            <span className="font-bold text-slate-800 dark:text-slate-200 truncate">
+              {isOver ? (isEn ? 'Over Budget' : 'Kelebihan Anggaran') : (isEn ? 'Remaining' : 'Sisa Budget')}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 font-mono shrink-0 pl-2">
+            <span className={`font-extrabold ${isOver ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-slate-100'}`}>
+              {isOver ? `-${formatIDR(Math.abs(status.remaining))}` : formatIDR(status.remaining)}
+            </span>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${isOver ? 'text-rose-600 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400'}`}>
+              {isOver ? 'Over' : `${Math.max(0, 100 - clampedPct)}%`}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const BudgetsView: React.FC<BudgetsViewProps> = ({
   budgets,
   categories,
@@ -342,60 +544,20 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
               ) : currStatus.status === 'yellow' ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/40 shrink-0">
                   <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
-                  <span>{currStatus.pctText} {isEn ? 'used' : 'terpakai'}</span>
+                  <span>{currStatus.pctText} {isEn ? 'Used' : 'Terpakai'}</span>
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40 shrink-0">
                   <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                  <span>{currStatus.pctText} {isEn ? 'used' : 'terpakai'}</span>
+                  <span>{currStatus.pctText} {isEn ? 'Used' : 'Terpakai'}</span>
                 </span>
               )}
             </div>
 
-            {/* Content: Limit + Terpakai & Sisa (Kanan Kiri) */}
-            <div className="space-y-3 mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
-              {/* Total Limit */}
-              <div>
-                <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 block">
-                  {isEn ? 'Total Limit' : 'Batas Total'}
-                </span>
-                <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white mt-0.5 truncate tracking-tight">
-                  {formatIDR(currLimit)}
-                </div>
-              </div>
-
-              {/* Terpakai & Sisa (Sebelahan Kanan Kiri / 2 Kolom) */}
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-                {/* Terpakai */}
-                <div className="flex flex-col justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 min-w-0 border border-slate-100 dark:border-slate-800/60">
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                    {isEn ? 'Spent' : 'Terpakai'}
-                  </span>
-                  <span className="text-xs xs:text-sm sm:text-base font-bold font-mono text-blue-600 dark:text-blue-400 mt-1 truncate">
-                    {formatIDR(currSpend)}
-                  </span>
-                </div>
-
-                {/* Sisa */}
-                <div className="flex flex-col justify-between p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 min-w-0 border border-slate-100 dark:border-slate-800/60">
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                    {currStatus.isOver ? (isEn ? 'Overspent' : 'Kelebihan') : (isEn ? 'Remaining' : 'Sisa')}
-                  </span>
-                  <span className={`text-xs xs:text-sm sm:text-base font-bold font-mono mt-1 truncate ${currStatus.isOver ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
-                    {currStatus.isOver ? `-${formatIDR(Math.abs(currStatus.remaining))}` : formatIDR(currStatus.remaining)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Mini Progress Bar */}
-            <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden mt-3.5">
-              <div
-                className={`h-full rounded-full transition-all duration-300 ${
-                  currStatus.status === 'red' ? 'bg-rose-500' : currStatus.status === 'yellow' ? 'bg-amber-500' : 'bg-emerald-500'
-                }`}
-                style={{ width: `${currStatus.pctValue}%` }}
-              />
+            {/* Content: Grafik Termometer Suhu Ditengah */}
+            <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-col items-center justify-center">
+              {/* Grafik Termometer Suhu (Temperature Gauge Chart) */}
+              <BudgetThermometerChart limit={currLimit} spend={currSpend} status={currStatus} isEn={isEn} />
             </div>
 
             {/* Action Row: Rincian Transaksi */}
