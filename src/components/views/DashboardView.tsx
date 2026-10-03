@@ -25,7 +25,8 @@ import {
   BarChart3,
   Printer,
   Bell,
-  Wallet as WalletIcon
+  Wallet as WalletIcon,
+  Bot
 } from 'lucide-react';
 import { IconRenderer } from '../IconRenderer';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
@@ -271,15 +272,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               )}
             </div>
 
-            {/* Eye toggle placed at the far right edge */}
-            <button
-              type="button"
-              onClick={toggleHideBalance}
-              title={showHideBalance ? (currentLang === 'en' ? "Show Main Balance" : "Tampilkan Saldo Utama") : (currentLang === 'en' ? "Hide Main Balance" : "Sembunyikan Saldo Utama")}
-              className={`p-2 sm:p-2.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-xl'} transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md shrink-0 ml-auto`}
-            >
-              {showHideBalance ? <EyeOff className="w-4 h-4 sm:w-4.5 sm:h-4.5" /> : <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5" />}
-            </button>
+            {/* Control Row: Admin Toggle on Left, Eye Toggle on Right */}
+            <div className="flex items-center gap-2 ml-auto shrink-0">
+              {/* Admin Fee Toggle placed to the left of Eye icon */}
+              <button
+                type="button"
+                onClick={() => setIncludeAdminFee(prev => !prev)}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 sm:py-2 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-xl'} bg-white/20 hover:bg-white/30 border border-white/30 text-white backdrop-blur-md cursor-pointer transition-all active:scale-95 text-[10px] sm:text-xs font-bold shadow-xs select-none`}
+                title={includeAdminFee ? "Biaya admin transfer: Aktif (dipotong) • Klik untuk ubah" : "Biaya admin transfer: Nonaktif • Klik untuk ubah"}
+              >
+                <div className={`w-2 h-2 rounded-full ${includeAdminFee ? 'bg-emerald-300' : 'bg-white/40'}`} />
+                <span>Admin</span>
+              </button>
+
+              {/* Eye toggle placed at the far right edge */}
+              <button
+                type="button"
+                onClick={toggleHideBalance}
+                title={showHideBalance ? (currentLang === 'en' ? "Show Main Balance" : "Tampilkan Saldo Utama") : (currentLang === 'en' ? "Hide Main Balance" : "Sembunyikan Saldo Utama")}
+                className={`p-2 sm:p-2.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-xl'} transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-md shrink-0`}
+              >
+                {showHideBalance ? <EyeOff className="w-4 h-4 sm:w-4.5 sm:h-4.5" /> : <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5" />}
+              </button>
+            </div>
           </div>
 
           {/* GoPay-Style Monthly Expense & Income Report Bar */}
@@ -351,7 +366,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-20 sm:-mt-22 lg:-mt-24 -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-6 sm:space-y-8 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[81.6px] sm:-mt-[89.6px] lg:-mt-[97.6px] -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-6 sm:space-y-8 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan [Kiri], Admin Transfer [Tengah], Pengeluaran [Kanan]) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan (Kiri) */}
@@ -425,24 +440,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </span>
               </button>
 
-              {/* Button 2: Toggle Admin */}
+              {/* Button 2: Lifeboard AI (Tanpa card pembungkus, ukuran lebih besar, warna #FF7777) */}
               <button
                 type="button"
-                onClick={() => setIncludeAdminFee(prev => !prev)}
-                className={`group flex flex-col items-center justify-center p-2.5 sm:p-3 gap-1.5 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-sky-300 dark:hover:border-sky-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-center`}
-                title={includeAdminFee ? "Biaya admin transfer: Aktif (dipotong) • Klik untuk ubah" : "Biaya admin transfer: Nonaktif • Klik untuk ubah"}
+                onClick={() => setActiveTab('lifeboard_ai')}
+                className="group flex flex-col items-center justify-center p-1.5 sm:p-2 gap-1.5 cursor-pointer select-none active:scale-95 transition-all text-center w-full my-auto"
+                title="Buka Lifeboard AI"
               >
-                <div className="h-7 sm:h-8 flex items-center justify-center shrink-0">
-                  <div className={`w-8 h-4.5 sm:w-9 sm:h-5 rounded-full p-0.5 transition-colors duration-200 flex items-center shrink-0 ${
-                    includeAdminFee ? 'bg-sky-500' : 'bg-slate-300 dark:bg-slate-700'
-                  }`}>
-                    <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full bg-white transition-transform duration-200 shadow-xs ${
-                      includeAdminFee ? 'translate-x-3.5 sm:translate-x-4' : 'translate-x-0'
-                    }`} />
-                  </div>
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FF7777]/15 hover:bg-[#FF7777]/25 text-[#FF7777] flex items-center justify-center shrink-0 shadow-sm shadow-[#FF7777]/20 group-hover:scale-110 transition-transform">
+                  <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF7777]" />
                 </div>
-                <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 truncate group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
-                  Admin
+                <span className="text-[11px] sm:text-xs font-black tracking-wider text-slate-800 dark:text-slate-100 group-hover:text-[#FF7777] transition-colors uppercase">
+                  AI
                 </span>
               </button>
 

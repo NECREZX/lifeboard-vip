@@ -106,6 +106,7 @@ import { NotificationsView } from './components/views/NotificationsView';
 import { SplashView } from './components/views/SplashView';
 import { AuthView } from './components/views/AuthView';
 import { TambahDataView } from './components/views/TambahDataView';
+import { LifeboardAIView } from './components/views/LifeboardAIView';
 
 export default function App() {
   const [appState, setAppState] = useState<'splash' | 'auth' | 'main'>('splash');
@@ -2354,15 +2355,16 @@ export default function App() {
             {activeTab === 'laporan' && t('rep_title', settings.language || 'id')}
             {activeTab === 'notifikasi' && t('notif_title', settings.language || 'id')}
             {activeTab === 'tambah_data' && 'Tambah Data'}
+            {activeTab === 'lifeboard_ai' && ''}
           </h1>
         </div>
       </header>
 
       {/* 2. MAIN CONTAINER CONTENT */}
       <main 
-        className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' || activeTab === 'kelola' || activeTab === 'tambah_data' ? 'pt-0' : 'pt-6'} no-print relative z-10`}
+        className={`max-w-2xl mx-auto px-4 sm:px-6 ${activeTab === 'dashboard' || activeTab === 'kelola' || activeTab === 'tambah_data' || activeTab === 'lifeboard_ai' ? 'pt-0' : 'pt-6'} no-print relative z-10`}
         style={{
-          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 120px)'
+          paddingBottom: activeTab === 'lifeboard_ai' ? 'calc(env(safe-area-inset-bottom, 0px) + 24px)' : 'calc(env(safe-area-inset-bottom, 0px) + 120px)'
         }}
       >
         
@@ -2655,6 +2657,22 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'lifeboard_ai' && (
+          <LifeboardAIView
+            transactions={transactions}
+            budgets={budgets}
+            savings={savings}
+            savingLogs={savingLogs}
+            activities={activities}
+            wishlists={wishlists}
+            categories={categories}
+            sources={sources}
+            settings={settings}
+            getCardClasses={getCardClasses}
+            onBackToDashboard={() => setActiveTab('dashboard')}
+          />
+        )}
+
       </main>
 
       {/* =======================================================
@@ -2750,29 +2768,31 @@ export default function App() {
       {/* =======================================================
           6. STICKY BOTTOM TAB NAVIGATION (SEAMLESS FLUID INTEGRATION)
          ======================================================= */}
-      <BottomNav
-        activeTab={activeTab}
-        setActiveTab={(tab) => {
-          setActiveTab(tab);
-          if (tab === 'kelola') {
-            setKelolaSubPage('menu');
-          }
-        }}
-        accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
-        uiStyle={settings.uiStyle}
-        isDarkMode={settings.isDarkMode}
-        language={settings.language || 'id'}
-        onAddClick={() => {
-          if (activeTab === 'aktivitas') {
-            if (activeActivitiesSubTab === 'agenda') openAddModal('aktivitas');
-            else openAddModal('wishlist');
-          }
-          else if (activeTab === 'tabungan') openAddModal('tabungan');
-          else if (activeTab === 'anggaran' || activeTab === 'budgeting') openAddModal('budgeting');
-          else if (activeTab === 'transaksi') openAddModal('pengeluaran');
-          else openAddModal('pengeluaran');
-        }}
-      />
+      {activeTab !== 'lifeboard_ai' && (
+        <BottomNav
+          activeTab={activeTab}
+          setActiveTab={(tab) => {
+            setActiveTab(tab);
+            if (tab === 'kelola') {
+              setKelolaSubPage('menu');
+            }
+          }}
+          accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
+          uiStyle={settings.uiStyle}
+          isDarkMode={settings.isDarkMode}
+          language={settings.language || 'id'}
+          onAddClick={() => {
+            if (activeTab === 'aktivitas') {
+              if (activeActivitiesSubTab === 'agenda') openAddModal('aktivitas');
+              else openAddModal('wishlist');
+            }
+            else if (activeTab === 'tabungan') openAddModal('tabungan');
+            else if (activeTab === 'anggaran' || activeTab === 'budgeting') openAddModal('budgeting');
+            else if (activeTab === 'transaksi') openAddModal('pengeluaran');
+            else openAddModal('pengeluaran');
+          }}
+        />
+      )}
 
       {/* =======================================================
           7. HIGH-QUALITY FULL PRINTABLE PDF STATEMENT LAYOUT
