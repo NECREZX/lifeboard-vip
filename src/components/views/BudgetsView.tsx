@@ -86,26 +86,33 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
   const pctValue = status.pctValue; // 0 to 100+
   const clampedPct = Math.min(Math.max(pctValue, 0), 100);
 
-  // Active vertical stem range: y=108 (0%) to y=34 (100%) -> total height 74px
-  const stemBottomY = 108;
+  // Active vertical stem range: y=106 (0%) to y=32 (100%) -> total height 74px
+  const stemBottomY = 106;
   const stemHeight = 74;
   const spendY = stemBottomY - (clampedPct / 100) * stemHeight;
-  const limitY = stemBottomY - stemHeight; // y = 34
+  const limitY = stemBottomY - stemHeight; // y = 32
+
+  // Rounded percentages to avoid long floating point strings like 73.49907999999999%
+  const remainingPct = Math.max(0, Math.round(100 - clampedPct));
+  const overPct = Math.max(0, Math.round(pctValue - 100));
 
   // Colors requested: Kuning (Batas Total), Hijau (Terpakai), Biru (Sisa)
   const spendColor = isOver ? '#ef4444' : '#22c55e'; // Hijau (or Merah if over)
   const remainingColor = '#3b82f6'; // Biru
   const limitColor = '#eab308'; // Kuning
 
+  // Dead-center X coordinates: SVG width = 200, center = 100
+  const cx = 100;
+
   return (
     <div className="flex flex-col items-center justify-center w-full py-1">
-      {/* Centered Thermometer SVG */}
+      {/* Centered Thermometer SVG - Perfectly centered at cx = 100 */}
       <div className="relative flex items-center justify-center w-full">
-        <svg width="170" height="145" viewBox="0 0 170 145" className="overflow-visible">
+        <svg width="200" height="145" viewBox="0 0 200 145" className="overflow-visible">
           <defs>
-            {/* Seamless Thermometer Clip Path */}
+            {/* Seamless Thermometer Clip Path centered at cx = 100 */}
             <clipPath id="thermometerClip">
-              <path d="M 72,20 A 8,8 0 0,1 88,20 L 88,106 A 16,16 0 1,1 72,106 Z" />
+              <path d="M 92,20 A 8,8 0 0,1 108,20 L 108,106 A 16,16 0 1,1 92,106 Z" />
             </clipPath>
           </defs>
 
@@ -115,16 +122,16 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
             return (
               <g key={tPct}>
                 <line
-                  x1="60"
+                  x1={cx - 20}
                   y1={tickY}
-                  x2="68"
+                  x2={cx - 12}
                   y2={tickY}
                   stroke="currentColor"
                   strokeWidth="1.5"
                   className={tPct === 100 ? 'text-yellow-500' : 'text-slate-300 dark:text-slate-600'}
                 />
                 <text
-                  x="56"
+                  x={cx - 24}
                   y={tickY + 3}
                   textAnchor="end"
                   className={`text-[9px] font-mono font-bold ${
@@ -139,7 +146,7 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
 
           {/* Background Glass Tube (Batas Total / Capacity) */}
           <path
-            d="M 72,20 A 8,8 0 0,1 88,20 L 88,106 A 16,16 0 1,1 72,106 Z"
+            d="M 92,20 A 8,8 0 0,1 108,20 L 108,106 A 16,16 0 1,1 92,106 Z"
             fill="currentColor"
             className="text-slate-100 dark:text-slate-800"
           />
@@ -147,21 +154,21 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
           {/* Liquid Contents Clipped Inside the Thermometer */}
           <g clipPath="url(#thermometerClip)">
             {/* 1. Bulb Base Liquid (Always filled with Terpakai Fluid) */}
-            <circle cx="80" cy="118" r="18" fill={spendColor} />
+            <circle cx={cx} cy="116" r="18" fill={spendColor} />
 
             {/* 2. Terpakai Liquid Column (from stemBottomY up to spendY) */}
             <rect
-              x="70"
+              x={cx - 10}
               y={spendY}
               width="20"
               height={Math.max(0, stemBottomY - spendY + 5)}
               fill={spendColor}
             />
 
-            {/* 3. Sisa Budget Column (from spendY up to 100% Limit Line y=34) - Only if within limit */}
+            {/* 3. Sisa Budget Column (from spendY up to 100% Limit Line y=32) - Only if within limit */}
             {!isOver && clampedPct < 100 && (
               <rect
-                x="70"
+                x={cx - 10}
                 y={limitY}
                 width="20"
                 height={Math.max(0, spendY - limitY)}
@@ -169,10 +176,10 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
               />
             )}
 
-            {/* 4. Kelebihan Column (above 100% Limit Line y=34 up to top) - Only if over budget */}
+            {/* 4. Kelebihan Column (above 100% Limit Line y=32 up to top) - Only if over budget */}
             {isOver && (
               <rect
-                x="70"
+                x={cx - 10}
                 y="10"
                 width="20"
                 height={Math.max(0, limitY - 10 + 2)}
@@ -183,7 +190,7 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
 
           {/* Seamless Glass Tube Outer Border */}
           <path
-            d="M 72,20 A 8,8 0 0,1 88,20 L 88,106 A 16,16 0 1,1 72,106 Z"
+            d="M 92,20 A 8,8 0 0,1 108,20 L 108,106 A 16,16 0 1,1 92,106 Z"
             fill="none"
             stroke="currentColor"
             strokeWidth="2.5"
@@ -191,13 +198,13 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
           />
 
           {/* Gloss highlight on bottom bulb */}
-          <circle cx="76" cy="115" r="4" fill="#ffffff" opacity="0.6" />
+          <circle cx={cx - 4} cy="113" r="4" fill="#ffffff" opacity="0.6" />
 
           {/* Batas Total 100% Horizontal Marker Line Across Tube */}
           <line
-            x1="68"
+            x1={cx - 12}
             y1={limitY}
-            x2="92"
+            x2={cx + 12}
             y2={limitY}
             stroke={limitColor}
             strokeWidth="3"
@@ -206,8 +213,9 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
 
           {/* Pointer callout label for Batas Total at 100% */}
           <text
-            x="98"
+            x={cx + 18}
             y={limitY + 3}
+            textAnchor="start"
             className="text-[9px] font-black fill-yellow-600 dark:fill-yellow-400 font-mono"
           >
             100% (Limit)
@@ -266,7 +274,7 @@ const BudgetThermometerChart: React.FC<BudgetThermometerChartProps> = ({ limit, 
               {isOver ? `-${formatIDR(Math.abs(status.remaining))}` : formatIDR(status.remaining)}
             </span>
             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${isOver ? 'text-rose-600 dark:text-rose-400' : 'text-blue-600 dark:text-blue-400'}`}>
-              {isOver ? 'Over' : `${Math.max(0, 100 - clampedPct)}%`}
+              {isOver ? `${overPct}% Over` : `${remainingPct}%`}
             </span>
           </div>
         </div>
