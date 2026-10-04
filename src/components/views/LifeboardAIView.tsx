@@ -921,8 +921,8 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
               )}
             </div>
 
-            {/* Modal Footer: Tombol Tutup di Kanan Bawah */}
-            <div className="px-5 py-3 sm:py-3.5 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0 bg-white dark:bg-slate-900">
+            {/* Modal Footer: Tombol Tutup di Kanan Bawah Tanpa Garis Pembatas */}
+            <div className="px-6 pt-1 pb-5 flex justify-end shrink-0 bg-white dark:bg-slate-900">
               <button
                 type="button"
                 onClick={() => setIsHistoryModalOpen(false)}
