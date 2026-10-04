@@ -855,7 +855,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
          ======================================================= */}
       {isHistoryModalOpen && createPortal(
         <div className="fixed inset-0 z-[100] backdrop-blur-md bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[32px] sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 dark:border-slate-800 max-h-[85vh] flex flex-col">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-t-[32px] sm:rounded-3xl overflow-hidden shadow-2xl border-t border-x sm:border-b-0 border-slate-200/80 dark:border-slate-800 max-h-[85vh] flex flex-col">
             {/* Pull Handle */}
             <div className="pt-3 pb-1 flex justify-center">
               <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700" />
