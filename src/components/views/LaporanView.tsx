@@ -214,15 +214,15 @@ export function LaporanView({
       
       {/* 1. Top Main Control Card */}
       {/* Wraps: Month Ruler/Slider, Pengeluaran/Pendapatan Tabs, and Total Summary */}
-      <div className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 shadow-md p-4 sm:p-6 space-y-4`}>
+      <div className={`${getCardClasses()} p-4 sm:p-6 space-y-4`}>
         
         {/* Month Selector Ruler Tape */}
-        <div className={`flex items-center justify-between gap-2 bg-slate-50 dark:bg-slate-800/60 p-2 sm:p-2.5 ${innerCardRadius} border border-slate-200/70 dark:border-slate-700/60 select-none`}>
+        <div className={`flex items-center justify-between gap-2 bg-white dark:bg-slate-900 p-2 sm:p-2.5 ${innerCardRadius} border border-slate-200/80 dark:border-slate-800 select-none`}>
           {/* Left button */}
           <button
             type="button"
             onClick={handlePrevMonth}
-            className={`w-8 h-8 sm:w-9 sm:h-9 ${btnRadius} bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-95 transition-colors cursor-pointer shrink-0`}
+            className={`w-8 h-8 sm:w-9 sm:h-9 ${btnRadius} bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-colors cursor-pointer shrink-0`}
             title="Bulan Sebelumnya"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -271,7 +271,7 @@ export function LaporanView({
           <button
             type="button"
             onClick={handleNextMonth}
-            className={`w-8 h-8 sm:w-9 sm:h-9 ${btnRadius} bg-white dark:bg-slate-700 border border-slate-200/80 dark:border-slate-600/80 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600 active:scale-95 transition-colors cursor-pointer shrink-0`}
+            className={`w-8 h-8 sm:w-9 sm:h-9 ${btnRadius} bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-xs flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-colors cursor-pointer shrink-0`}
             title="Bulan Berikutnya"
           >
             <ChevronRight className="w-4 h-4" />
@@ -279,7 +279,7 @@ export function LaporanView({
         </div>
 
         {/* Segmented Control Tabs: Pengeluaran / Pendapatan */}
-        <div className={`grid grid-cols-2 p-1 ${innerCardRadius} bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 select-none`}>
+        <div className={`grid grid-cols-2 p-1 ${innerCardRadius} bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 select-none`}>
           <button
             type="button"
             onClick={() => {
@@ -290,14 +290,14 @@ export function LaporanView({
             }}
             className={`flex items-center justify-center gap-2 py-2.5 px-3 ${btnRadius} font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
               selectedType === 'pengeluaran'
-                ? 'bg-white dark:bg-slate-900 text-rose-600 dark:text-rose-400 shadow-xs border-slate-200/90 dark:border-slate-700'
-                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 shadow-xs border-rose-200/80 dark:border-rose-900/50'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'
             }`}
           >
             <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
               selectedType === 'pengeluaran' 
                 ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400' 
-                : 'bg-slate-200/80 dark:bg-slate-700 text-slate-500'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
             }`}>
               <ArrowUpCircle className="w-3.5 h-3.5" />
             </div>
@@ -314,14 +314,14 @@ export function LaporanView({
             }}
             className={`flex items-center justify-center gap-2 py-2.5 px-3 ${btnRadius} font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
               selectedType === 'pemasukan'
-                ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs border-slate-200/90 dark:border-slate-700'
-                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 shadow-xs border-emerald-200/80 dark:border-emerald-900/50'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'
             }`}
           >
             <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
               selectedType === 'pemasukan' 
                 ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400' 
-                : 'bg-slate-200/80 dark:bg-slate-700 text-slate-500'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
             }`}>
               <ArrowDownCircle className="w-3.5 h-3.5" />
             </div>
@@ -350,7 +350,7 @@ export function LaporanView({
       </div>
 
       {/* 2. Card Simpel Total Saldo Akhir */}
-      <div className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 shadow-xs flex items-center justify-between gap-4`}>
+      <div className={`${getCardClasses()} p-4 sm:p-5 flex items-center justify-between gap-4`}>
         <div className="flex items-center gap-3 min-w-0">
           <div className={`w-10 h-10 sm:w-11 sm:h-11 ${btnRadius} flex items-center justify-center shrink-0 shadow-xs ${
             monthNetBalance > 0 
@@ -396,7 +396,7 @@ export function LaporanView({
       </div>
 
       {/* 3. Visualisasi Grafik Chart Bulanan (Sesuai Bulan & Tipe yang Dipilih) */}
-      <div className={`${getCardClasses()} p-4 sm:p-6 border border-slate-200/90 dark:border-slate-800 space-y-4`}>
+      <div className={`${getCardClasses()} p-4 sm:p-6 space-y-4`}>
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-3">
           <div className="flex items-center gap-2.5">
             <div className={`w-8 h-8 ${btnRadius} flex items-center justify-center ${
@@ -457,7 +457,7 @@ export function LaporanView({
 
         {/* Card Table of Top Categories/Sources */}
         {rankedItems.length === 0 ? (
-          <div key={`empty-${selectedType}`} className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 p-8 text-center shadow-xs space-y-3`}>
+          <div key={`empty-${selectedType}`} className={`${getCardClasses()} p-8 text-center space-y-3`}>
             <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
               <PieChart className="w-6 h-6" />
             </div>
@@ -479,7 +479,7 @@ export function LaporanView({
             </button>
           </div>
         ) : (
-          <div key={`rankings-${selectedType}`} className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
+          <div key={`rankings-${selectedType}`} className={`${getCardClasses()} divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
             {displayedRankings.map((item, idx) => {
               const isSelected = selectedCategoryFilter === item.id;
               
@@ -596,7 +596,7 @@ export function LaporanView({
             </div>
           </div>
 
-          <div key={`tx-list-${selectedType}`} className={`${getCardClasses()} border border-slate-200/90 dark:border-slate-800 shadow-xs divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
+          <div key={`tx-list-${selectedType}`} className={`${getCardClasses()} divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
             {displayedTransactions.map((tx) => {
               const cat = categories.find(c => c.id === tx.categoryId);
               const src = sources.find(s => s.id === tx.sourceId);

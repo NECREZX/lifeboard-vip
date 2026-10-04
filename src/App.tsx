@@ -2117,11 +2117,11 @@ export default function App() {
     // 3. Apply Card Borders & Shadows for non-glass styles
     if (settings.uiStyle !== 'minimal' && settings.uiStyle !== 'glass') {
       if (settings.cardStyle === 'flat') {
-        cls += "border border-slate-200 dark:border-slate-800/60 shadow-none ";
+        cls += "border border-slate-200/90 dark:border-slate-800/80 shadow-none ";
       } else if (settings.cardStyle === 'bordered') {
         cls += "border-2 border-slate-300 dark:border-slate-700 shadow-none ";
       } else if (settings.cardStyle === 'shadowed') {
-        cls += "border border-slate-200/90 dark:border-slate-800 shadow-none ";
+        cls += "border border-slate-200/80 dark:border-slate-800/80 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)] ";
       }
     }
     

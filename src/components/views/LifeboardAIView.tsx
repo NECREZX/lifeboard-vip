@@ -292,6 +292,9 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
   const remainingQuota = selectedMonth ? getRemainingQuota(selectedMonth) : 3;
 
+  const cardRadiusClass = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-3xl' : 'rounded-2xl';
+  const smallRadiusClass = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+
   return (
     <div className="flex flex-col relative w-full min-h-screen bg-white dark:bg-slate-950" id="view-lifeboard-ai">
       {/* =======================================================
@@ -378,8 +381,8 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             
             {/* 1. ICON & TULISAN LIFEBOARD AI PAS NIMPA SETENGAH BANNER */}
             <div className="-mt-10 sm:-mt-12 flex flex-col items-center justify-center text-center select-none z-20">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white dark:bg-slate-900 border-4 border-[#FF7777]/30 shadow-xl shadow-black/10 flex items-center justify-center text-[#FF7777] transition-transform duration-300 hover:scale-105">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#FF7777]/15 dark:bg-[#FF7777]/25 flex items-center justify-center">
+              <div className={`w-20 h-20 sm:w-24 sm:h-24 ${cardRadiusClass} bg-white dark:bg-slate-900 border-4 border-[#FF7777]/30 shadow-xl shadow-black/10 flex items-center justify-center text-[#FF7777] transition-transform duration-300 hover:scale-105`}>
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 ${smallRadiusClass} bg-[#FF7777]/15 dark:bg-[#FF7777]/25 flex items-center justify-center`}>
                   <Bot className="w-8 h-8 sm:w-10 sm:h-10 text-[#FF7777]" />
                 </div>
               </div>
@@ -393,9 +396,9 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             <div className="w-full max-w-md mx-auto px-1">
               <div className="grid grid-cols-3 gap-2">
                 {/* Card 1: Sebenarnya Insight Apa */}
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
+                <div className={`${getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
                   <div>
-                    <div className="w-6 h-6 rounded-lg bg-[#FF7777]/15 text-[#FF7777] flex items-center justify-center mb-1.5">
+                    <div className={`w-6 h-6 ${smallRadiusClass} bg-[#FF7777]/15 text-[#FF7777] flex items-center justify-center mb-1.5`}>
                       <Sparkles className="w-3.5 h-3.5" />
                     </div>
                     <span className="text-[9px] font-extrabold text-[#FF7777] uppercase tracking-wider block mb-0.5">
@@ -411,9 +414,9 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 </div>
 
                 {/* Card 2: Seberapa Akurat */}
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
+                <div className={`${getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
                   <div>
-                    <div className="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1.5">
+                    <div className={`w-6 h-6 ${smallRadiusClass} bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1.5`}>
                       <Target className="w-3.5 h-3.5" />
                     </div>
                     <span className="text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-0.5">
@@ -429,9 +432,9 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 </div>
 
                 {/* Card 3: Kekurangannya Apa (Berkaitan Langsung dengan AI) */}
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
+                <div className={`${getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
                   <div>
-                    <div className="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1.5">
+                    <div className={`w-6 h-6 ${smallRadiusClass} bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1.5`}>
                       <AlertTriangle className="w-3.5 h-3.5" />
                     </div>
                     <span className="text-[9px] font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wider block mb-0.5">
@@ -450,15 +453,21 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
             {/* 3. MODUL KONTROL UTAMA: DIBUNGKUS CARD PUTIH BERSIH UNTUK MENYATU DENGAN NAVIGASI HP */}
             <div className="w-full max-w-md mx-auto pt-1">
-              <div className="bg-white dark:bg-slate-900 rounded-[26px] p-4 sm:p-4.5 shadow-[0_12px_32px_-6px_rgba(0,0,0,0.06)] border border-slate-100/90 dark:border-slate-800/80 space-y-3">
+              <div className={`${getCardClasses()} p-4 sm:p-4.5 space-y-3`}>
                 {/* Baris 1: Tombol Cek Riwayat Insight Bulanan */}
                 <button
                   type="button"
                   onClick={() => setIsHistoryModalOpen(true)}
-                  className="w-full flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800/80 text-slate-800 dark:text-slate-100 transition-all active:scale-[0.99] border border-slate-200/90 dark:border-slate-700/80 group cursor-pointer shadow-xs"
+                  className={`w-full flex items-center justify-between p-3 sm:p-3.5 ${smallRadiusClass} bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800/80 text-slate-800 dark:text-slate-100 transition-all active:scale-[0.99] ${
+                    settings?.cardStyle === 'bordered'
+                      ? 'border-2 border-slate-300 dark:border-slate-700 shadow-none'
+                      : settings?.cardStyle === 'shadowed'
+                      ? 'border border-slate-200/80 dark:border-slate-800 shadow-xs'
+                      : 'border border-slate-200/90 dark:border-slate-800 shadow-none'
+                  } group cursor-pointer`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0">
+                    <div className={`w-8 h-8 ${smallRadiusClass} bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0`}>
                       <History className="w-4 h-4" />
                     </div>
                     <div className="text-left">
@@ -483,7 +492,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                       type="button"
                       onClick={() => loadInsightForMonth(currentMonthStr)}
                       disabled={isLoading}
-                      className="w-full py-3.5 px-5 rounded-2xl bg-[#FF7777] hover:bg-[#ff6161] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-[#FF7777]/25 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer select-none"
+                      className={`w-full py-3.5 px-5 ${smallRadiusClass} bg-[#FF7777] hover:bg-[#ff6161] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-[#FF7777]/25 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer select-none`}
                     >
                       {isLoading ? (
                         <>
@@ -498,9 +507,15 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                       )}
                     </button>
                   ) : (
-                    <div className="p-3 sm:p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-xs flex items-center justify-between gap-3 text-left">
+                    <div className={`p-3 sm:p-3.5 ${smallRadiusClass} bg-white dark:bg-slate-900 ${
+                      settings?.cardStyle === 'bordered'
+                        ? 'border-2 border-slate-300 dark:border-slate-700 shadow-none'
+                        : settings?.cardStyle === 'shadowed'
+                        ? 'border border-slate-200/80 dark:border-slate-800 shadow-xs'
+                        : 'border border-slate-200/90 dark:border-slate-800 shadow-none'
+                    } flex items-center justify-between gap-3 text-left`}>
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0">
+                        <div className={`w-8 h-8 ${smallRadiusClass} bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0`}>
                           <Lock className="w-4 h-4" />
                         </div>
                         <div className="min-w-0">
@@ -607,8 +622,8 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 </div>
               </div>
 
-              {/* Kolom Kanan: Rekomendasi Bulan Berikutnya */}
-              <div className={`${getCardClasses()} p-5 sm:p-6 border border-slate-200/90 dark:border-slate-800 flex flex-col justify-between relative`}>
+              {/* Kolom Kanan: Rekomendasi Bulan Berikutnya (Samakan Gradasi Pink & Border) */}
+              <div className={`${getCardClasses()} p-5 sm:p-6 bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border border-[#FF7777]/30 flex flex-col justify-between relative`}>
                 {isGeneratingAI && (
                   <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs rounded-3xl flex items-center justify-center z-10">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
@@ -619,14 +634,19 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 )}
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                      Rekomendasi Bulan Berikutnya
-                    </h4>
-                    <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-lg bg-[#FF7777]/20 text-[#FF7777] flex items-center justify-center">
+                        <Target className="w-3.5 h-3.5" />
+                      </div>
+                      <h4 className="text-xs font-black tracking-wider uppercase text-slate-800 dark:text-slate-200">
+                        Rekomendasi Bulan Berikutnya
+                      </h4>
+                    </div>
+                    <span className="text-[10px] font-bold text-[#FF7777] bg-[#FF7777]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
                       Taktis
                     </span>
                   </div>
-                  <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400 list-disc list-inside">
+                  <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-200 list-disc list-inside font-medium">
                     {insightData.strategicRecommendations.slice(0, 3).map((rec, i) => (
                       <li key={i} className="leading-relaxed">
                         {rec}
@@ -640,7 +660,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             {/* Arus Kas Finansial (Pendapatan, Pengeluaran, Total Saldo Akhir) */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {/* Pendapatan */}
-              <div className={`${getCardClasses()} p-5 flex flex-col justify-between border border-slate-200/90 dark:border-slate-800`}>
+              <div className={`${getCardClasses()} p-5 flex flex-col justify-between`}>
                 <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                   <span className="text-[11px] font-extrabold uppercase tracking-wider">Pendapatan</span>
                   <TrendingUp className="w-4 h-4 text-emerald-500" />
@@ -658,7 +678,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
               </div>
 
               {/* Pengeluaran */}
-              <div className={`${getCardClasses()} p-5 flex flex-col justify-between border border-slate-200/90 dark:border-slate-800`}>
+              <div className={`${getCardClasses()} p-5 flex flex-col justify-between`}>
                 <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                   <span className="text-[11px] font-extrabold uppercase tracking-wider">Pengeluaran</span>
                   <TrendingDown className="w-4 h-4 text-rose-500" />
@@ -676,7 +696,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
               </div>
 
               {/* Total Saldo Akhir */}
-              <div className={`${getCardClasses()} p-5 flex flex-col justify-between border border-slate-200/90 dark:border-slate-800`}>
+              <div className={`${getCardClasses()} p-5 flex flex-col justify-between`}>
                 <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
                   <span className="text-[11px] font-extrabold uppercase tracking-wider">Total Saldo Akhir</span>
                   <DollarSign className="w-4 h-4 text-blue-500" />
@@ -696,7 +716,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
             {/* Top 3 Kategori Pengeluaran */}
             {insightData.topExpenseCategories.length > 0 && (
-              <div className={`${getCardClasses()} p-5 sm:p-6 border border-slate-200/90 dark:border-slate-800`}>
+              <div className={`${getCardClasses()} p-5 sm:p-6`}>
                 <h4 className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-3.5">
                   Top 3 Kategori Pengeluaran
                 </h4>
@@ -726,7 +746,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
             {/* Pola Hari Transaksi & Biaya Admin Transfer */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className={`${getCardClasses()} p-5 flex flex-col justify-between border border-slate-200/90 dark:border-slate-800`}>
+              <div className={`${getCardClasses()} p-5 flex flex-col justify-between`}>
                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 mb-3">
                   <Calendar className="w-4 h-4 text-indigo-500" />
                   <span className="text-xs font-black uppercase tracking-wider">Pola Hari Transaksi</span>
@@ -753,7 +773,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 </div>
               </div>
 
-              <div className={`${getCardClasses()} p-5 flex flex-col justify-between border border-slate-200/90 dark:border-slate-800`}>
+              <div className={`${getCardClasses()} p-5 flex flex-col justify-between`}>
                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 mb-3">
                   <ArrowRightLeft className="w-4 h-4 text-sky-500" />
                   <span className="text-xs font-black uppercase tracking-wider">Transfer & Biaya Admin</span>
@@ -783,7 +803,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
             {/* Kondisi Budget & Tabungan */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className={`${getCardClasses()} p-5 border border-slate-200/90 dark:border-slate-800`}>
+              <div className={`${getCardClasses()} p-5`}>
                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 mb-3">
                   <Sliders className="w-4 h-4 text-yellow-500" />
                   <span className="text-xs font-black uppercase tracking-wider">Kondisi Budget</span>
@@ -804,7 +824,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 </div>
               </div>
 
-              <div className={`${getCardClasses()} p-5 border border-slate-200/90 dark:border-slate-800`}>
+              <div className={`${getCardClasses()} p-5`}>
                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 mb-3">
                   <PiggyBank className="w-4 h-4 text-emerald-500" />
                   <span className="text-xs font-black uppercase tracking-wider">Tabungan & Wishlist</span>
@@ -827,7 +847,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             </div>
 
             {/* Disiplin Aktivitas */}
-            <div className={`${getCardClasses()} p-5 flex items-center justify-between gap-3 border border-slate-200/90 dark:border-slate-800`}>
+            <div className={`${getCardClasses()} p-5 flex items-center justify-between gap-3`}>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
                   <CheckCircle2 className="w-5 h-5" />

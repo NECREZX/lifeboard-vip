@@ -358,11 +358,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           enclosingCardBgClass = "bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200 dark:border-slate-800 shadow-none";
         }
 
-        let metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/80 shadow-xs";
+        let metricCardBgClass = "bg-white dark:bg-slate-900 ";
         if (settings?.uiStyle === 'glass') {
           metricCardBgClass = "bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm border border-slate-200/70 dark:border-slate-800/70 shadow-xs";
         } else if (settings?.uiStyle === 'minimal') {
           metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-none";
+        } else {
+          if (settings?.cardStyle === 'bordered') {
+            metricCardBgClass += "border-2 border-slate-300 dark:border-slate-700 shadow-none";
+          } else if (settings?.cardStyle === 'shadowed') {
+            metricCardBgClass += "border border-slate-200/80 dark:border-slate-800/80 shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)]";
+          } else {
+            metricCardBgClass += "border border-slate-200/90 dark:border-slate-800/80 shadow-none";
+          }
         }
 
         return (

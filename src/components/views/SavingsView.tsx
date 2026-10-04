@@ -608,13 +608,25 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
 
   const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
 
+  const filterBtnClass = useMemo(() => {
+    let cls = `relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 `;
+    if (settings?.cardStyle === 'bordered') {
+      cls += 'border-2 border-slate-300 dark:border-slate-700 shadow-none';
+    } else if (settings?.cardStyle === 'shadowed') {
+      cls += 'border border-slate-200/80 dark:border-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]';
+    } else {
+      cls += 'border border-slate-200/90 dark:border-slate-800 shadow-none';
+    }
+    return cls;
+  }, [settings?.cardStyle, btnRadius]);
+
   return (
     <div className="flex flex-col gap-6" id="view-savings">
       {/* Filter Selectors (Matching Budgeting Concept Exactly) */}
       <div className="flex items-center justify-end w-full">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Status Selector Dropdown Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs`}>
+          <div className={filterBtnClass}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
               Status:
             </span>
@@ -633,7 +645,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
           </div>
 
           {/* Wallet Selector Dropdown Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs`}>
+          <div className={filterBtnClass}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
               Dompet:
             </span>
@@ -1421,7 +1433,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
             </div>
 
             {/* Footer Summary with Centered Scroll Down Arrow & Close Button */}
-            <div className="relative px-4 sm:px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] sm:pb-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs shrink-0 bg-slate-50/70 dark:bg-slate-900/70">
+            <div className="relative px-4 sm:px-5 pt-2 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] sm:pb-3.5 flex items-center justify-between text-xs shrink-0 bg-white dark:bg-slate-900">
               <div>
                 <span className="text-[10px] text-slate-400 dark:text-slate-500 block">
                   Total Terkumpul di Target
@@ -1440,7 +1452,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                       modalListRef.current.scrollBy({ top: 180, behavior: 'smooth' });
                     }
                   }}
-                  className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-slate-200/90 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300/60 dark:border-slate-700 shadow-2xs transition cursor-pointer"
+                  className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 shadow-2xs transition cursor-pointer"
                   title="Masih ada transaksi di bawah"
                   aria-label="Scroll ke bawah"
                 >
@@ -1454,7 +1466,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                   setInspectingSaving(null);
                   setInspectingSearchQuery('');
                 }}
-                className="px-5 py-2 text-xs font-bold rounded-xl bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition shadow-xs cursor-pointer"
+                className={`px-5 py-2 text-xs font-bold ${btnRadius} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition shadow-2xs cursor-pointer`}
               >
                 Tutup
               </button>

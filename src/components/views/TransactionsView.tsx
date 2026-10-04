@@ -226,6 +226,34 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
     return 'Semua';
   }, [txCategoryFilter, categories, sources]);
 
+  // Dynamic Theme Styling
+  const cardRadiusClass = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-3xl' : 'rounded-2xl';
+  const smallRadiusClass = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+
+  const filterCardClass = useMemo(() => {
+    let cls = `bg-white dark:bg-slate-900 ${cardRadiusClass} `;
+    if (settings?.cardStyle === 'bordered') {
+      cls += 'border-2 border-slate-300 dark:border-slate-700 shadow-none ';
+    } else if (settings?.cardStyle === 'shadowed') {
+      cls += 'border border-slate-200/80 dark:border-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)] ';
+    } else {
+      cls += 'border border-slate-200/90 dark:border-slate-800 shadow-none ';
+    }
+    return cls;
+  }, [settings?.cardStyle, cardRadiusClass]);
+
+  const buttonStyleClass = useMemo(() => {
+    let cls = `${smallRadiusClass} `;
+    if (settings?.cardStyle === 'bordered') {
+      cls += 'border-2 border-slate-300 dark:border-slate-700 shadow-none ';
+    } else if (settings?.cardStyle === 'shadowed') {
+      cls += 'border border-slate-200/80 dark:border-slate-800 shadow-xs ';
+    } else {
+      cls += 'border border-slate-200/90 dark:border-slate-800 shadow-none ';
+    }
+    return cls;
+  }, [settings?.cardStyle, smallRadiusClass]);
+
   return (
     <div className="flex flex-col gap-4 sm:gap-5 pb-32 sm:pb-36" id="view-transactions">
       {/* ========================================================
@@ -239,10 +267,10 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
             placeholder="Cari transaksi berdasarkan judul..."
             value={txSearch}
             onChange={(e) => setTxSearch(e.target.value)}
-            className={`w-full pl-10 pr-9 py-2.5 text-xs font-medium rounded-2xl transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 shadow-2xs ${
+            className={`w-full pl-10 pr-9 py-2.5 text-xs font-medium ${cardRadiusClass} transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 ${
               uiStyle === 'glass' 
                 ? 'glass-input text-slate-800 dark:text-slate-100' 
-                : 'border border-slate-100 dark:border-slate-800/80 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100'
+                : `${filterCardClass} text-slate-800 dark:text-slate-100`
             }`}
           />
           {txSearch && (
@@ -261,7 +289,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           <button
             type="button"
             onClick={handleResetAllFilters}
-            className="flex items-center gap-1.5 px-3 py-2.5 rounded-2xl text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/50 shadow-2xs hover:scale-[1.02] active:scale-95 transition-all duration-200 shrink-0 cursor-pointer whitespace-nowrap animate-in fade-in zoom-in-95"
+            className={`flex items-center gap-1.5 px-3 py-2.5 ${cardRadiusClass} text-xs font-bold text-rose-500 hover:text-rose-600 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/60 dark:border-rose-900/50 hover:scale-[1.02] active:scale-95 transition-all duration-200 shrink-0 cursor-pointer whitespace-nowrap animate-in fade-in zoom-in-95`}
             title="Reset Filter Aktif"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -274,11 +302,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           2. TYPE FILTER TABS (Semua, Pendapatan, Pengeluaran, Transfer)
           Latar Belakang Putih Sesuai Permintaan
           ======================================================== */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-1.5 rounded-2xl flex items-center justify-between gap-1 w-full shadow-2xs">
+      <div className={`${filterCardClass} p-1.5 flex items-center justify-between gap-1 w-full`}>
         <button
           type="button"
           onClick={() => setTxTypeFilter('semua')}
-          className={`flex-1 py-2 px-1 text-xs text-center rounded-xl transition-all duration-200 cursor-pointer ${
+          className={`flex-1 py-2 px-1 text-xs text-center ${smallRadiusClass} transition-all duration-200 cursor-pointer ${
             txTypeFilter === 'semua'
               ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold shadow-xs'
               : 'text-slate-600 dark:text-slate-400 font-semibold hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/50'
@@ -289,7 +317,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
         <button
           type="button"
           onClick={() => setTxTypeFilter('pemasukan')}
-          className={`flex-1 py-2 px-1 text-xs text-center rounded-xl transition-all duration-200 cursor-pointer ${
+          className={`flex-1 py-2 px-1 text-xs text-center ${smallRadiusClass} transition-all duration-200 cursor-pointer ${
             txTypeFilter === 'pemasukan'
               ? 'bg-emerald-600 text-white font-bold shadow-xs'
               : 'text-slate-600 dark:text-slate-400 font-semibold hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
@@ -300,7 +328,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
         <button
           type="button"
           onClick={() => setTxTypeFilter('pengeluaran')}
-          className={`flex-1 py-2 px-1 text-xs text-center rounded-xl transition-all duration-200 cursor-pointer ${
+          className={`flex-1 py-2 px-1 text-xs text-center ${smallRadiusClass} transition-all duration-200 cursor-pointer ${
             txTypeFilter === 'pengeluaran'
               ? 'bg-rose-500 text-white font-bold shadow-xs'
               : 'text-slate-600 dark:text-slate-400 font-semibold hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
@@ -311,7 +339,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
         <button
           type="button"
           onClick={() => setTxTypeFilter('transfer')}
-          className={`flex-1 py-2 px-1 text-xs text-center rounded-xl transition-all duration-200 cursor-pointer ${
+          className={`flex-1 py-2 px-1 text-xs text-center ${smallRadiusClass} transition-all duration-200 cursor-pointer ${
             txTypeFilter === 'transfer'
               ? 'bg-blue-600 text-white font-bold shadow-xs'
               : 'text-slate-600 dark:text-slate-400 font-semibold hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
@@ -326,9 +354,9 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           ======================================================== */}
       <div className="grid grid-cols-3 gap-2.5 sm:gap-3 w-full">
         {/* Card 1: DOMPET */}
-        <div className="relative bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-100 dark:border-slate-800/80 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between">
+        <div className={`relative ${filterCardClass} p-3 transition-all flex flex-col justify-between`}>
           <div className="flex items-center justify-between">
-            <div className="w-6 h-6 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center">
+            <div className={`w-6 h-6 ${smallRadiusClass} bg-rose-50 dark:bg-rose-950/40 text-rose-500 flex items-center justify-center`}>
               <WalletIcon className="w-3.5 h-3.5" />
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
@@ -352,9 +380,9 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
         </div>
 
         {/* Card 2: TANGGAL */}
-        <div className="relative bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-100 dark:border-slate-800/80 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between">
+        <div className={`relative ${filterCardClass} p-3 transition-all flex flex-col justify-between`}>
           <div className="flex items-center justify-between">
-            <div className="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500 flex items-center justify-center">
+            <div className={`w-6 h-6 ${smallRadiusClass} bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500 flex items-center justify-center`}>
               <Calendar className="w-3.5 h-3.5" />
             </div>
             {txDateFilter ? (
@@ -399,9 +427,9 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
         </div>
 
         {/* Card 3: KATEGORI */}
-        <div className="relative bg-white dark:bg-slate-900 rounded-2xl p-3 border border-slate-100 dark:border-slate-800/80 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between">
+        <div className={`relative ${filterCardClass} p-3 transition-all flex flex-col justify-between`}>
           <div className="flex items-center justify-between">
-            <div className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500 flex items-center justify-center">
+            <div className={`w-6 h-6 ${smallRadiusClass} bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500 flex items-center justify-center`}>
               <Tag className="w-3.5 h-3.5" />
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
@@ -434,15 +462,14 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
 
       {/* ========================================================
           4. PERIODE (BULAN & TAHUN) KAPSUL
-          (Pill filter ekstra di bawahnya sudah ditiadakan sesuai instruksi)
           ======================================================== */}
       <div className="w-full relative">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-2.5 border border-slate-100 dark:border-slate-800/80 shadow-2xs flex items-center justify-between">
+        <div className={`${filterCardClass} p-2 sm:p-2.5 flex items-center justify-between`}>
           {/* Tombol Bulan Sebelumnya */}
           <button
             type="button"
             onClick={handlePrevMonth}
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95 cursor-pointer shrink-0"
+            className={`w-9 h-9 ${smallRadiusClass} flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition active:scale-95 cursor-pointer shrink-0`}
             title="Bulan Sebelumnya"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -582,7 +609,13 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                 setShowAllTransactions(true);
               }
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/80 shadow-2xs transition active:scale-95 cursor-pointer"
+            className={`flex items-center gap-1.5 px-3 py-1.5 ${smallRadiusClass} bg-white dark:bg-slate-900 ${
+              settings?.cardStyle === 'bordered'
+                ? 'border-2 border-slate-300 dark:border-slate-700 shadow-none'
+                : settings?.cardStyle === 'shadowed'
+                ? 'border border-slate-200/80 dark:border-slate-800 shadow-xs'
+                : 'border border-slate-200/90 dark:border-slate-800 shadow-none'
+            } text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition active:scale-95 cursor-pointer`}
           >
             <span>{showAllTransactions ? 'Ringkaskan' : 'Lihat Semua'}</span>
             {showAllTransactions ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -624,12 +657,12 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
               <div
                 key={t.id}
                 onClick={() => setSelectedTxDetail(t)}
-                className="bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 dark:border-slate-800/80 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between gap-3 cursor-pointer group relative"
+                className={`${getCardClasses()} p-3.5 sm:p-4 transition-all flex items-center justify-between gap-3 cursor-pointer group relative`}
               >
                 {/* Sisi Kiri: Ikon Tipe & Info Transaksi */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   {/* Ikon Tipe Transaksi */}
-                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${
+                  <div className={`w-11 h-11 ${smallRadiusClass} flex items-center justify-center shrink-0 ${
                     isIncome 
                       ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400' 
                       : isTransfer 
@@ -831,9 +864,9 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       Keterangan
                     </span>
 
-                    <div className="space-y-2.5">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
                       {/* Baris Tanggal & Waktu */}
-                      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex items-center justify-between gap-3 py-2.5">
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-slate-500 dark:text-slate-400">
                             <Calendar className="w-3.5 h-3.5" />
@@ -846,7 +879,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       </div>
 
                       {/* Baris Jenis / Kategori */}
-                      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex items-center justify-between gap-3 py-2.5">
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-slate-500 dark:text-slate-400">
                             <Tag className="w-3.5 h-3.5" />
@@ -861,7 +894,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       </div>
 
                       {/* Baris Dompet Sumber */}
-                      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                      <div className="flex items-center justify-between gap-3 py-2.5">
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-slate-500 dark:text-slate-400">
                             <WalletIcon className="w-3.5 h-3.5" />
@@ -878,7 +911,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       {/* Baris Khusus Transfer: Dompet Tujuan & Admin Fee */}
                       {isTransfer && (
                         <>
-                          <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                          <div className="flex items-center justify-between gap-3 py-2.5">
                             <div className="flex items-center gap-2.5 min-w-0">
                               <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center shrink-0 text-blue-500">
                                 <ArrowRight className="w-3.5 h-3.5" />
@@ -891,7 +924,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                           </div>
 
                           {selectedTxDetail.adminFee && selectedTxDetail.adminFee > 0 ? (
-                            <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                            <div className="flex items-center justify-between gap-3 py-2.5">
                               <span className="text-xs text-slate-500 dark:text-slate-400 pl-1">Biaya Layanan/Admin</span>
                               <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300">
                                 {formatIDR(selectedTxDetail.adminFee)}
@@ -899,7 +932,7 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                             </div>
                           ) : null}
 
-                          <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                          <div className="flex items-center justify-between gap-3 py-2.5">
                             <span className="text-xs font-bold text-slate-800 dark:text-slate-200 pl-1">Total Pengurangan</span>
                             <span className="font-mono font-black text-slate-900 dark:text-white text-sm">
                               {formatIDR(selectedTxDetail.amount + (selectedTxDetail.adminFee || 0))}
@@ -912,11 +945,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                 </div>
 
                 {/* BOTTOM ACTION BAR - BUTTON TUTUP DI SEBELAH KANAN BAWAH */}
-                <div className="px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] sm:pb-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end shrink-0 bg-white dark:bg-slate-900">
+                <div className="px-5 pt-1 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] sm:pb-3.5 flex items-center justify-end shrink-0 bg-white dark:bg-slate-900">
                   <button
                     type="button"
                     onClick={() => setSelectedTxDetail(null)}
-                    className="px-6 py-2.5 text-xs font-bold rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition shadow-2xs cursor-pointer active:scale-95 text-center"
+                    className={`px-6 py-2.5 text-xs font-bold ${smallRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 transition shadow-2xs cursor-pointer active:scale-95 text-center`}
                   >
                     Tutup
                   </button>

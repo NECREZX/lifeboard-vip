@@ -1606,7 +1606,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
           setShowEditProfileModal(true);
         }}
-        className={`relative z-10 -mt-20 sm:-mt-22 lg:-mt-24 p-4 sm:p-5 pt-8 sm:pt-9 ${getCardClasses()} !overflow-visible border border-slate-200/90 dark:border-slate-800 shadow-none flex items-center justify-center max-w-2xl mx-auto w-full cursor-pointer group hover:border-slate-300 dark:hover:border-slate-700`}
+        className={`relative z-10 -mt-20 sm:-mt-22 lg:-mt-24 p-4 sm:p-5 pt-8 sm:pt-9 ${getCardClasses()} !overflow-visible flex items-center justify-center max-w-2xl mx-auto w-full cursor-pointer group hover:border-slate-300 dark:hover:border-slate-700`}
         title="Klik untuk mengubah nama, email, dan avatar profil"
       >
         {/* Ornamen Motif Batik Kawung di Sisi Kiri Card */}
@@ -1674,7 +1674,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
       {/* 3. Card 2: Daftar Sub Menu Pengaturan */}
       <div 
-        className={`relative z-10 p-4 sm:p-5 ${getCardClasses()} border border-slate-200/90 dark:border-slate-800 shadow-none flex flex-col gap-2 max-w-2xl mx-auto w-full mb-6`}
+        className={`relative z-10 p-4 sm:p-5 ${getCardClasses()} flex flex-col gap-2 max-w-2xl mx-auto w-full mb-6`}
       >
         {menuItems.map((item) => {
           const IconComp = item.icon;

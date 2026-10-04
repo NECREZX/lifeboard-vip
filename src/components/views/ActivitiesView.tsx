@@ -42,6 +42,18 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
 
   const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
 
+  const filterBtnClass = useMemo(() => {
+    let cls = `relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 `;
+    if (settings?.cardStyle === 'bordered') {
+      cls += 'border-2 border-slate-300 dark:border-slate-700 shadow-none';
+    } else if (settings?.cardStyle === 'shadowed') {
+      cls += 'border border-slate-200/80 dark:border-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]';
+    } else {
+      cls += 'border border-slate-200/90 dark:border-slate-800 shadow-none';
+    }
+    return cls;
+  }, [settings?.cardStyle, btnRadius]);
+
   const filteredActivities = useMemo(() => {
     return activities.filter((a) => {
       if (statusFilter === 'pending') return a.status !== 'completed';
@@ -64,7 +76,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
       <div className="flex items-center justify-end w-full">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Tipe / SubTab Selector Dropdown Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs`}>
+          <div className={filterBtnClass}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
               Tipe:
             </span>
@@ -85,7 +97,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
           </div>
 
           {/* Status Selector Dropdown Card */}
-          <div className={`relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-xs`}>
+          <div className={filterBtnClass}>
             <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
               Status:
             </span>
