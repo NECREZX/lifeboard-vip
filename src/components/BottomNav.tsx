@@ -126,25 +126,24 @@ export default function BottomNav({
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none shadow-[0_-4px_25px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_30px_rgba(0,0,0,0.45)]"
+      className="fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none"
       id="bottom-dock-nav"
       style={{
         paddingBottom: 'env(safe-area-inset-bottom, 0px)'
       }}
     >
       {/* BACKGROUND DOCK CONTAINER:
-          Left wing (pure horizontal border-t) + Right wing (pure horizontal border-t)
-          + Seamless Round Center Notch SVG (ultra smooth continuous curve matching reference exactly)
+          Left wing + Right wing + Seamless Round Center Notch SVG (without any border/outline)
       */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         
-        {/* Left Wing Box: 100% straight border-t from left edge to notch with 2px overlap to eliminate subpixel gap */}
+        {/* Left Wing Box */}
         <div 
-          className={`absolute left-0 top-0 bottom-0 ${wingBgClass} border-t border-slate-200 dark:border-slate-800`}
+          className={`absolute left-0 top-0 bottom-0 ${wingBgClass}`}
           style={{ right: 'calc(50% + 54px)' }}
         />
 
-        {/* Center Cradle Notch SVG: 112px wide with generous breathing space around circular button */}
+        {/* Center Cradle Notch SVG */}
         <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[112px] h-[140px]">
           <svg className="w-full h-full block" viewBox="0 0 112 140" fill="none">
             {/* Background Fill */}
@@ -152,19 +151,12 @@ export default function BottomNav({
               d="M 0,0 L 6,0 C 14,0 20,2 24,7 C 28,13 36,44 56,44 C 76,44 84,13 88,7 C 92,2 98,0 106,0 L 112,0 L 112,140 L 0,140 Z" 
               className={svgFillClass}
             />
-            {/* Top Border Line: 100% continuous and seamless with wing border-t */}
-            <path 
-              d="M 0,0.5 L 6,0.5 C 14,0.5 20,2.5 24,7.5 C 28,13.5 36,44.5 56,44.5 C 76,44.5 84,13.5 88,7.5 C 92,2.5 98,0.5 106,0.5 L 112,0.5" 
-              fill="none" 
-              stroke={outlineStroke}
-              strokeWidth="1"
-            />
           </svg>
         </div>
 
-        {/* Right Wing Box: 100% straight border-t from notch to right edge with 2px overlap to eliminate subpixel gap */}
+        {/* Right Wing Box */}
         <div 
-          className={`absolute right-0 top-0 bottom-0 ${wingBgClass} border-t border-slate-200 dark:border-slate-800`}
+          className={`absolute right-0 top-0 bottom-0 ${wingBgClass}`}
           style={{ left: 'calc(50% + 54px)' }}
         />
 
