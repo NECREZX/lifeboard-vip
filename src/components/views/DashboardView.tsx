@@ -333,7 +333,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Main Enclosing Card (GoPay style Sheet Card: -mt-20.1 sm:-mt-22.1 lg:-mt-24.1 -> -mt-[80.4px] sm:-mt-[88.4px] lg:-mt-[96.4px]) */}
+      {/* 2. Main Enclosing Card (GoPay style Sheet Card: -mt-20 sm:-mt-22 lg:-mt-24 -> -mt-[80px] sm:-mt-[88px] lg:-mt-[96px]) */}
       {/* Overlaps the top banner halfway and wraps: */}
       {/* - Card persegi panjang (Pendapatan, Admin Transfer, Pengeluaran) */}
       {/* - Saldo Dompet */}
@@ -366,7 +366,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[80.4px] sm:-mt-[88.4px] lg:-mt-[96.4px] -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-6 sm:space-y-8 transition-all duration-300`}>
+          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[80px] sm:-mt-[88px] lg:-mt-[96px] -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-6 sm:space-y-8 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan [Kiri], Admin Transfer [Tengah], Pengeluaran [Kanan]) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan (Kiri) */}
