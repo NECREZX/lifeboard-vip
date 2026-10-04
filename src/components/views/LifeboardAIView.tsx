@@ -130,7 +130,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
     }
   });
 
-  // Regenerate Quota per month (Maksimal 3x refresh per bulan)
+  // Regenerate Quota per month (Maksimal 5x refresh per bulan)
   const [refreshQuotas, setRefreshQuotas] = useState<Record<string, number>>(() => {
     try {
       const raw = localStorage.getItem('lifeboard_gemini_quota_v1');
@@ -144,7 +144,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
     if (typeof refreshQuotas[mStr] === 'number') {
       return refreshQuotas[mStr];
     }
-    return 3; // Default 3x kesempatan regenerasi
+    return 5; // Default 5x kesempatan regenerasi
   };
 
   // Kalkulasi data analitik riil
@@ -162,10 +162,21 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
         sources
       );
 
-      // Jika sudah ada review Gemini AI tersimpan di cache, gunakan itu
+      // Sync cached Gemini review with live data numbers
       if (geminiReviews[mStr]) {
-        baseData.executiveSummary = geminiReviews[mStr].executiveSummary;
-        baseData.strategicRecommendations = geminiReviews[mStr].strategicRecommendations;
+        const cachedSummary = geminiReviews[mStr].executiveSummary;
+        // Check if cached text conflicts with current real-time budget count
+        const mentionsWrongOverCount = /([0-9]+)\s*(pos|kategori|anggaran)?\s*(over|melebihi)/i.exec(cachedSummary);
+        if (mentionsWrongOverCount && parseInt(mentionsWrongOverCount[1], 10) !== baseData.overBudgetsCount) {
+          // Invalidate stale cache if budget count changed
+          delete geminiReviews[mStr];
+          try {
+            localStorage.setItem('lifeboard_gemini_reviews_v1', JSON.stringify(geminiReviews));
+          } catch {}
+        } else {
+          baseData.executiveSummary = cachedSummary;
+          baseData.strategicRecommendations = geminiReviews[mStr].strategicRecommendations;
+        }
       }
 
       return baseData;
@@ -582,9 +593,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                   <span>
                     {isGeneratingAI
                       ? 'Menganalisis...'
-                      : remainingQuota > 0
-                      ? `Regenerasi AI (${remainingQuota}/3)`
-                      : 'Batas 3x Habis'}
+                      : `Regenerate (${5 - remainingQuota}/5)`}
                   </span>
                 </button>
               </div>

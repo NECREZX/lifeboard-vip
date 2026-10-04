@@ -6,6 +6,7 @@
 import { Transaction, Budget, Saving, SavingLog, Activity, Wishlist, Category, IncomeSource } from '../types';
 import { formatIDR } from './formatters';
 import { formatMonthLabel } from './jakartaTime';
+import { isCategoryMatch, isWalletMatch } from './budgetUtils';
 
 export interface MonthlyInsightData {
   monthStr: string; // YYYY-MM
@@ -185,13 +186,9 @@ export const generateMonthlyInsight = async (
   let remainingPctSum = 0;
 
   monthBudgets.forEach((b) => {
-    // Calculate spend for this budget
-    const budgetCategories = b.categoryIds && b.categoryIds.length > 0 ? b.categoryIds : [b.categoryId];
-    const isAll = budgetCategories.includes('all');
-
+    // Calculate spend for this budget matching BudgetsView logic
     const spend = monthTxs
-      .filter((t) => t.type === 'pengeluaran')
-      .filter((t) => isAll || (t.categoryId && budgetCategories.includes(t.categoryId)))
+      .filter((t) => t.type === 'pengeluaran' && isCategoryMatch(b, t.categoryId) && isWalletMatch(b, t.walletId))
       .reduce((sum, t) => sum + t.amount, 0);
 
     if (spend > b.limitAmount) {
