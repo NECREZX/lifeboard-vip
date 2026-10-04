@@ -114,7 +114,15 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
 }) => {
   const [selectedTxDetail, setSelectedTxDetail] = useState<Transaction | null>(null);
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
-  const [activeMenuTxId, setActiveMenuTxId] = useState<string | null>(null);
+  const [activeMenu, setActiveMenu] = useState<{ id: string; rect: DOMRect } | null>(null);
+
+  // Close popup menu when user scrolls the page
+  useEffect(() => {
+    if (!activeMenu) return;
+    const handleScroll = () => setActiveMenu(null);
+    window.addEventListener('scroll', handleScroll, true);
+    return () => window.removeEventListener('scroll', handleScroll, true);
+  }, [activeMenu]);
 
   const now = useMemo(() => new Date(), []);
   const currentRealYear = now.getFullYear();
@@ -636,22 +644,11 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-2.5 relative">
-          {/* Backdrop untuk menutup menu titik 3 saat klik di luar */}
-          {activeMenuTxId && (
-            <div 
-              className="fixed inset-0 z-20 cursor-default" 
-              onClick={(e) => {
-                e.stopPropagation();
-                setActiveMenuTxId(null);
-              }} 
-            />
-          )}
-
+        <div className="flex flex-col gap-2.5 relative overflow-visible">
           {displayedTransactions.map((t) => {
             const isIncome = t.type === 'pemasukan';
             const isTransfer = t.type === 'transfer';
-            const isMenuOpen = activeMenuTxId === t.id;
+            const isMenuOpen = activeMenu?.id === t.id;
 
             return (
               <div
@@ -718,54 +715,68 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setActiveMenuTxId(isMenuOpen ? null : t.id);
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setActiveMenu(activeMenu?.id === t.id ? null : { id: t.id, rect });
                       }}
                       className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                       title="Menu Aksi"
                     >
                       <MoreVertical className="w-4 h-4" />
                     </button>
-
-                    {/* Popover Menu: Edit & Hapus (Konsisten terbuka ke bawah untuk semua card) */}
-                    {isMenuOpen && (
-                      <div 
-                        className="absolute right-0 top-full mt-1.5 z-30 w-36 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/80 rounded-2xl p-1.5 shadow-xl animate-in fade-in zoom-in-95 duration-100"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {/* Tombol Edit */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveMenuTxId(null);
-                            onEdit(t);
-                          }}
-                          className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 rounded-xl transition cursor-pointer"
-                        >
-                          <Pencil className="w-3.5 h-3.5 text-slate-500" />
-                          <span>Edit</span>
-                        </button>
-
-                        {/* Tombol Hapus */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveMenuTxId(null);
-                            handleDeleteTransaction(t.id);
-                          }}
-                          className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 text-rose-500" />
-                          <span>Hapus</span>
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
             );
           })}
+
+          {/* Portal Popover Menu for Edit & Delete */}
+          {activeMenu && typeof document !== 'undefined' && createPortal(
+            <>
+              <div 
+                className="fixed inset-0 z-[9998] bg-transparent"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveMenu(null);
+                }}
+              />
+              <div 
+                className="fixed z-[9999] w-36 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-1.5 shadow-2xl animate-in fade-in zoom-in-95 duration-100"
+                style={{
+                  top: `${Math.max(10, activeMenu.rect.top - 90)}px`,
+                  right: `${Math.max(10, window.innerWidth - activeMenu.rect.right)}px`,
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const txToEdit = filteredTransactions.find(x => x.id === activeMenu.id) || transactions.find(x => x.id === activeMenu.id);
+                    setActiveMenu(null);
+                    if (txToEdit) onEdit(txToEdit);
+                  }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 rounded-xl transition cursor-pointer"
+                >
+                  <Pencil className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Edit</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const idDel = activeMenu.id;
+                    setActiveMenu(null);
+                    handleDeleteTransaction(idDel);
+                  }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                  <span>Hapus</span>
+                </button>
+              </div>
+            </>,
+            document.body
+          )}
         </div>
       )}
 

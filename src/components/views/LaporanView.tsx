@@ -5,7 +5,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { 
-  ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle, 
+  ChevronLeft, ChevronRight, ArrowUpCircle, ArrowDownCircle, ArrowRightLeft,
   TrendingDown, TrendingUp, Tag, PlusCircle, ArrowRight, Filter, 
   Calendar, CheckCircle2, ChevronDown, ChevronUp, Sparkles, PieChart, Home, BarChart3, Wallet as WalletIcon
 } from 'lucide-react';
@@ -13,7 +13,7 @@ import { Transaction, Category, IncomeSource, Wallet, UserSettings } from '../..
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR } from '../../lib/formatters';
 import { Breadcrumb } from '../Breadcrumb';
-import { CategoryBarChart, SourceBarChart } from '../InteractiveCharts';
+import { CategoryBarChart, SourceBarChart, TransferBarChart } from '../InteractiveCharts';
 
 interface LaporanViewProps {
   transactions: Transaction[];
@@ -52,7 +52,7 @@ export function LaporanView({
   const now = new Date();
   const [selectedYear, setSelectedYear] = useState<number>(now.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(now.getMonth() + 1); // 1-12
-  const [selectedType, setSelectedType] = useState<'pengeluaran' | 'pemasukan'>('pengeluaran');
+  const [selectedType, setSelectedType] = useState<'pengeluaran' | 'pemasukan' | 'transfer'>('pengeluaran');
   const [showAllRankings, setShowAllRankings] = useState<boolean>(false);
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | null>(null);
   const [showAllMonthTx, setShowAllMonthTx] = useState<boolean>(false);
@@ -106,6 +106,12 @@ export function LaporanView({
     return monthTransactions.reduce((sum, t) => sum + t.amount, 0);
   }, [monthTransactions]);
 
+  const totalMonthAdminFees = useMemo(() => {
+    return transactions
+      .filter(t => t.date && t.date.startsWith(monthKey) && t.type === 'transfer' && t.adminFee)
+      .reduce((sum, t) => sum + (t.adminFee || 0), 0);
+  }, [transactions, monthKey]);
+
   // Total Income & Expense for the selected month to compute net balance
   const monthTotalIncome = useMemo(() => {
     return transactions
@@ -121,7 +127,7 @@ export function LaporanView({
 
   const monthNetBalance = monthTotalIncome - monthTotalExpense;
 
-  // Group by category (if pengeluaran) or by source (if pemasukan)
+  // Group by category (pengeluaran), source (pemasukan), or transfer route (transfer)
   const rankedItems = useMemo(() => {
     if (selectedType === 'pengeluaran') {
       const grouped: { [key: string]: { id: string; amount: number; count: number } } = {};
@@ -149,8 +155,7 @@ export function LaporanView({
           };
         })
         .sort((a, b) => b.amount - a.amount);
-    } else {
-      // pemasukan
+    } else if (selectedType === 'pemasukan') {
       const grouped: { [key: string]: { id: string; amount: number; count: number } } = {};
       monthTransactions.forEach(t => {
         const srcId = t.sourceId || 'unknown';
@@ -176,17 +181,54 @@ export function LaporanView({
           };
         })
         .sort((a, b) => b.amount - a.amount);
-    }
-  }, [monthTransactions, selectedType, categories, sources, totalAmount]);
+    } else {
+      // transfer
+      const grouped: { [key: string]: { id: string; amount: number; count: number; adminFee: number } } = {};
+      monthTransactions.forEach(t => {
+        const key = `${t.walletId || 'unknown'}:::${t.toWalletId || 'unknown'}`;
+        if (!grouped[key]) {
+          grouped[key] = { id: key, amount: 0, count: 0, adminFee: 0 };
+        }
+        grouped[key].amount += t.amount;
+        grouped[key].count += 1;
+        if (t.adminFee) grouped[key].adminFee += t.adminFee;
+      });
 
-  // Filtered detailed transactions if user clicked a specific category
+      return Object.values(grouped)
+        .map(g => {
+          const [fromId, toId] = g.id.split(':::');
+          const fromW = wallets.find(w => w.id === fromId || w.name.toLowerCase() === String(fromId).toLowerCase());
+          const toW = wallets.find(w => w.id === toId || w.name.toLowerCase() === String(toId).toLowerCase());
+          const fromName = fromW ? fromW.name : (fromId !== 'unknown' ? fromId : (wallets[0]?.name || 'Dompet Utama'));
+          const toName = toW ? toW.name : (toId !== 'unknown' ? toId : (wallets[1]?.name || 'Livin Mandiri'));
+          const name = `${fromName} ➜ ${toName}`;
+          const percentage = totalAmount > 0 ? Math.round((g.amount / totalAmount) * 100) : 0;
+          return {
+            id: g.id,
+            name,
+            icon: 'ArrowRightLeft',
+            color: '#0284c7',
+            amount: g.amount,
+            count: g.count,
+            percentage,
+            adminFee: g.adminFee
+          };
+        })
+        .sort((a, b) => b.amount - a.amount);
+    }
+  }, [monthTransactions, selectedType, categories, sources, wallets, totalAmount]);
+
+  // Filtered detailed transactions if user clicked a specific category/source/transfer route
   const detailedTransactions = useMemo(() => {
     if (!selectedCategoryFilter) return monthTransactions;
     return monthTransactions.filter(t => {
       if (selectedType === 'pengeluaran') {
         return t.categoryId === selectedCategoryFilter;
-      } else {
+      } else if (selectedType === 'pemasukan') {
         return t.sourceId === selectedCategoryFilter;
+      } else {
+        const key = `${t.walletId}-${t.toWalletId || 'unknown'}`;
+        return key === selectedCategoryFilter;
       }
     });
   }, [monthTransactions, selectedCategoryFilter, selectedType]);
@@ -278,8 +320,8 @@ export function LaporanView({
           </button>
         </div>
 
-        {/* Segmented Control Tabs: Pengeluaran / Pendapatan */}
-        <div className={`grid grid-cols-2 p-1 ${innerCardRadius} bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 select-none`}>
+        {/* Segmented Control Tabs: Pengeluaran / Transfer / Pendapatan */}
+        <div className={`grid grid-cols-3 p-1 ${innerCardRadius} bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 select-none`}>
           <button
             type="button"
             onClick={() => {
@@ -288,20 +330,44 @@ export function LaporanView({
               setSelectedCategoryFilter(null);
               setShowAllMonthTx(false);
             }}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 ${btnRadius} font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-2 ${btnRadius} font-bold text-xs border transition-colors duration-150 cursor-pointer ${
               selectedType === 'pengeluaran'
                 ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 shadow-xs border-rose-200/80 dark:border-rose-900/50'
                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'
             }`}
           >
-            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
+            <div className={`w-4 h-4 rounded-full flex items-center justify-center transition-colors shrink-0 ${
               selectedType === 'pengeluaran' 
                 ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400' 
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
             }`}>
-              <ArrowUpCircle className="w-3.5 h-3.5" />
+              <ArrowUpCircle className="w-3 h-3" />
             </div>
-            <span>Pengeluaran</span>
+            <span className="truncate">Pengeluaran</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (selectedType === 'transfer') return;
+              setSelectedType('transfer');
+              setSelectedCategoryFilter(null);
+              setShowAllMonthTx(false);
+            }}
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-2 ${btnRadius} font-bold text-xs border transition-colors duration-150 cursor-pointer ${
+              selectedType === 'transfer'
+                ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400 shadow-xs border-sky-200/80 dark:border-sky-900/50'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'
+            }`}
+          >
+            <div className={`w-4 h-4 rounded-full flex items-center justify-center transition-colors shrink-0 ${
+              selectedType === 'transfer' 
+                ? 'bg-sky-100 dark:bg-sky-950/70 text-sky-600 dark:text-sky-400' 
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+            }`}>
+              <ArrowRightLeft className="w-3 h-3" />
+            </div>
+            <span className="truncate">Transfer</span>
           </button>
 
           <button
@@ -312,36 +378,44 @@ export function LaporanView({
               setSelectedCategoryFilter(null);
               setShowAllMonthTx(false);
             }}
-            className={`flex items-center justify-center gap-2 py-2.5 px-3 ${btnRadius} font-bold text-xs sm:text-sm border transition-colors duration-150 cursor-pointer ${
+            className={`flex items-center justify-center gap-1.5 py-2.5 px-2 ${btnRadius} font-bold text-xs border transition-colors duration-150 cursor-pointer ${
               selectedType === 'pemasukan'
                 ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 shadow-xs border-emerald-200/80 dark:border-emerald-900/50'
                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800/40'
             }`}
           >
-            <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${
+            <div className={`w-4 h-4 rounded-full flex items-center justify-center transition-colors shrink-0 ${
               selectedType === 'pemasukan' 
                 ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400' 
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
             }`}>
-              <ArrowDownCircle className="w-3.5 h-3.5" />
+              <ArrowDownCircle className="w-3 h-3" />
             </div>
-            <span>Pendapatan</span>
+            <span className="truncate">Pendapatan</span>
           </button>
         </div>
 
-        {/* Summary Row: "Total Pengeluaran / Total Pendapatan" */}
+        {/* Summary Row */}
         <div className="pt-2 flex items-center justify-between gap-3 border-t border-slate-100 dark:border-slate-800/80">
           <div>
             <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 block">
-              {selectedType === 'pengeluaran' ? 'Total Pengeluaran' : 'Total Pendapatan'}
+              {selectedType === 'pengeluaran' ? 'Total Pengeluaran' : selectedType === 'pemasukan' ? 'Total Pendapatan' : 'Total Transfer'}
             </span>
             <span className="text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500">
-              {monthTransactions.length} transaksi di {currentMonthName} {selectedYear}
+              {monthTransactions.length} transaksi {selectedType === 'transfer' ? (
+                <span className="text-amber-500 dark:text-amber-400 font-bold ml-1">• Admin {formatIDR(totalMonthAdminFees || 0)}</span>
+              ) : ` di ${currentMonthName} ${selectedYear}`}
             </span>
           </div>
 
           <div className="text-right">
-            <span className="font-mono font-black text-xl sm:text-2xl text-slate-950 dark:text-white tracking-tight block">
+            <span className={`font-mono font-black text-xl sm:text-2xl tracking-tight block ${
+              selectedType === 'pengeluaran' 
+                ? 'text-rose-600 dark:text-rose-400' 
+                : selectedType === 'pemasukan' 
+                  ? 'text-emerald-600 dark:text-emerald-400' 
+                  : 'text-sky-600 dark:text-sky-400'
+            }`}>
               {formatIDR(totalAmount)}
             </span>
           </div>
@@ -402,13 +476,15 @@ export function LaporanView({
             <div className={`w-8 h-8 ${btnRadius} flex items-center justify-center ${
               selectedType === 'pengeluaran' 
                 ? 'bg-rose-100 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400' 
-                : 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400'
+                : selectedType === 'pemasukan'
+                ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400'
+                : 'bg-sky-100 dark:bg-sky-950/70 text-sky-600 dark:text-sky-400'
             }`}>
               <BarChart3 className="w-4 h-4" />
             </div>
             <div>
               <h4 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base tracking-tight">
-                {selectedType === 'pengeluaran' ? 'Grafik Alokasi Pengeluaran' : 'Grafik Sumber Pendapatan'}
+                {selectedType === 'pengeluaran' ? 'Grafik Alokasi Pengeluaran' : selectedType === 'pemasukan' ? 'Grafik Sumber Pendapatan' : 'Grafik Transfer & Biaya Admin'}
               </h4>
               <p className="text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium">
                 Periode {currentMonthName} {selectedYear}
@@ -422,7 +498,7 @@ export function LaporanView({
             <div className={`p-8 text-center ${innerCardRadius} border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col items-center justify-center gap-2`}>
               <PieChart className="w-8 h-8 text-slate-300 dark:text-slate-600" />
               <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">
-                Belum ada transaksi {selectedType === 'pengeluaran' ? 'pengeluaran' : 'pendapatan'} di bulan {currentMonthName} {selectedYear}
+                Belum ada transaksi {selectedType === 'pengeluaran' ? 'pengeluaran' : selectedType === 'pemasukan' ? 'pendapatan' : 'transfer'} di bulan {currentMonthName} {selectedYear}
               </p>
             </div>
           ) : (
@@ -434,10 +510,16 @@ export function LaporanView({
                   month={selectedMonth} 
                   year={selectedYear} 
                 />
-              ) : (
+              ) : selectedType === 'pemasukan' ? (
                 <SourceBarChart 
                   transactions={transactions} 
                   sources={sources} 
+                  month={selectedMonth} 
+                  year={selectedYear} 
+                />
+              ) : (
+                <TransferBarChart 
+                  transactions={transactions} 
                   month={selectedMonth} 
                   year={selectedYear} 
                 />
@@ -447,15 +529,15 @@ export function LaporanView({
         </div>
       </div>
 
-      {/* 3. Top 3 Categories / Sources Section */}
+      {/* 3. Top 3 Categories / Sources / Transfer Routes Section */}
       <div className="space-y-3 pt-6 sm:pt-8">
         <div className="flex items-center justify-between px-1">
           <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg tracking-tight">
-            {selectedType === 'pengeluaran' ? 'Kategori Pengeluaran Tertinggi' : 'Kategori Pendapatan Tertinggi'}
+            {selectedType === 'pengeluaran' ? 'Kategori Pengeluaran Tertinggi' : selectedType === 'pemasukan' ? 'Sumber Pendapatan Tertinggi' : 'Rute Transfer Antar Dompet'}
           </h3>
         </div>
 
-        {/* Card Table of Top Categories/Sources */}
+        {/* Card Table of Top Categories/Sources/Transfers */}
         {rankedItems.length === 0 ? (
           <div key={`empty-${selectedType}`} className={`${getCardClasses()} p-8 text-center space-y-3`}>
             <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
@@ -463,20 +545,22 @@ export function LaporanView({
             </div>
             <div>
               <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm sm:text-base">
-                Belum ada {selectedType === 'pengeluaran' ? 'pengeluaran' : 'pendapatan'} di bulan {currentMonthName} {selectedYear}
+                Belum ada transaksi {selectedType === 'pengeluaran' ? 'pengeluaran' : selectedType === 'pemasukan' ? 'pendapatan' : 'transfer'} di bulan {currentMonthName} {selectedYear}
               </h4>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-sm mx-auto">
                 Transaksi yang Anda catat pada menu transaksi untuk bulan ini akan otomatis dianalisis dan diranking di sini.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => onAddTransaction(selectedType)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-colors cursor-pointer"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Catat {selectedType === 'pengeluaran' ? 'Pengeluaran' : 'Pendapatan'} Sekarang</span>
-            </button>
+            {selectedType !== 'transfer' && (
+              <button
+                type="button"
+                onClick={() => onAddTransaction(selectedType)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-colors cursor-pointer"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>Catat {selectedType === 'pengeluaran' ? 'Pengeluaran' : 'Pendapatan'} Sekarang</span>
+              </button>
+            )}
           </div>
         ) : (
           <div key={`rankings-${selectedType}`} className={`${getCardClasses()} divide-y divide-slate-100 dark:divide-slate-800/80 overflow-hidden`}>
@@ -522,7 +606,13 @@ export function LaporanView({
                         <h4 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base leading-snug truncate">
                           {item.name}
                         </h4>
-                        <span className="text-slate-950 dark:text-white font-mono font-black text-sm sm:text-base block">
+                        <span className={`font-mono font-black text-sm sm:text-base block ${
+                          selectedType === 'pengeluaran' 
+                            ? 'text-rose-600 dark:text-rose-400' 
+                            : selectedType === 'pemasukan' 
+                              ? 'text-emerald-600 dark:text-emerald-400' 
+                              : 'text-sky-600 dark:text-sky-400'
+                        }`}>
                           {formatIDR(item.amount)}
                         </span>
                       </div>
@@ -566,7 +656,7 @@ export function LaporanView({
         <div className="space-y-3 pt-6 sm:pt-8">
           <div className="flex items-center justify-between px-1">
             <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg tracking-tight">
-              Rincian Transaksi {selectedType === 'pengeluaran' ? 'Pengeluaran' : 'Pendapatan'}
+              Rincian Transaksi {selectedType === 'pengeluaran' ? 'Pengeluaran' : selectedType === 'pemasukan' ? 'Pendapatan' : 'Transfer'}
             </h3>
 
             <div className="flex items-center gap-2">
@@ -601,9 +691,11 @@ export function LaporanView({
               const cat = categories.find(c => c.id === tx.categoryId);
               const src = sources.find(s => s.id === tx.sourceId);
               const wallet = wallets.find(w => w.id === tx.walletId);
-              const itemColor = selectedType === 'pengeluaran' ? (cat?.color || '#ef4444') : (src?.color || '#10b981');
-              const itemIcon = selectedType === 'pengeluaran' ? (cat?.icon || 'Tag') : (src?.icon || 'Briefcase');
-              const itemName = selectedType === 'pengeluaran' ? (cat?.name || 'Tanpa Kategori') : (src?.name || 'Tanpa Sumber');
+              const toWallet = wallets.find(w => w.id === tx.toWalletId);
+
+              const itemColor = selectedType === 'pengeluaran' ? (cat?.color || '#ef4444') : selectedType === 'pemasukan' ? (src?.color || '#10b981') : '#0284c7';
+              const itemIcon = selectedType === 'pengeluaran' ? (cat?.icon || 'Tag') : selectedType === 'pemasukan' ? (src?.icon || 'Briefcase') : 'ArrowRightLeft';
+              const itemName = selectedType === 'pengeluaran' ? (cat?.name || 'Tanpa Kategori') : selectedType === 'pemasukan' ? (src?.name || 'Tanpa Sumber') : `${wallet?.name || 'Dompet'} → ${toWallet?.name || 'Dompet'}`;
 
               return (
                 <div key={tx.id} className="p-3.5 sm:p-4 flex items-center justify-between gap-3 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
@@ -618,16 +710,22 @@ export function LaporanView({
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm truncate">
-                          {tx.description || itemName}
+                          {tx.description || (selectedType === 'transfer' ? itemName : (cat?.name || src?.name))}
                         </span>
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                          {itemName}
+                          {selectedType === 'transfer' ? 'Transfer' : itemName}
                         </span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-slate-400 mt-0.5">
                         <span>{tx.date}</span>
-                        {wallet && (
+                        {selectedType === 'transfer' ? (
+                          <>
+                            <span>•</span>
+                            <span className="text-sky-600 dark:text-sky-400 font-semibold">{itemName}</span>
+                            <span className="text-amber-600 dark:text-amber-400 font-mono font-bold">(Admin {formatIDR(tx.adminFee || 0)})</span>
+                          </>
+                        ) : wallet && (
                           <>
                             <span>•</span>
                             <span>{wallet.name}</span>
@@ -639,9 +737,9 @@ export function LaporanView({
 
                   <div className="text-right shrink-0">
                     <span className={`font-mono font-bold text-xs sm:text-sm ${
-                      selectedType === 'pengeluaran' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'
+                      selectedType === 'pengeluaran' ? 'text-rose-600 dark:text-rose-400' : selectedType === 'pemasukan' ? 'text-emerald-600 dark:text-emerald-400' : 'text-sky-600 dark:text-sky-400'
                     }`}>
-                      {selectedType === 'pengeluaran' ? '-' : '+'} {formatIDR(tx.amount)}
+                      {selectedType === 'pengeluaran' ? '-' : selectedType === 'pemasukan' ? '+' : ''} {formatIDR(tx.amount)}
                     </span>
                   </div>
                 </div>

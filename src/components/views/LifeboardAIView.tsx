@@ -761,7 +761,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500">Hari Paling Sering:</span>
                     <span className="font-bold text-slate-800 dark:text-slate-200">
-                      {insightData.busiestDayName} ({insightData.busiestDayCount} tx)
+                      {insightData.busiestDayName} ({insightData.busiestDayCount} trx)
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -811,14 +811,14 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 <div className="text-xs space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500">Status Anggaran:</span>
-                    <span className={`font-bold ${insightData.overBudgetsCount > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                      {insightData.overBudgetsCount > 0 ? `${insightData.overBudgetsCount} Pos Over Limit` : 'Semua Aman Terkendali'}
+                    <span className={`font-bold ${insightData.totalBudgetsCount === 0 ? 'text-slate-400' : insightData.overBudgetsCount > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                      {insightData.totalBudgetsCount === 0 ? 'Belum ada anggaran' : insightData.overBudgetsCount > 0 ? `${insightData.overBudgetsCount} Pos Over Limit` : 'Semua Aman Terkendali'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500">Rata-rata Sisa:</span>
                     <span className="font-mono font-black text-slate-900 dark:text-slate-100">
-                      {insightData.averageRemainingBudgetPct}%
+                      {insightData.totalBudgetsCount === 0 ? 'Tidak ada' : `${insightData.averageRemainingBudgetPct}%`}
                     </span>
                   </div>
                 </div>
@@ -855,13 +855,13 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 <div>
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Disiplin Agenda</span>
                   <h5 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200">
-                    {insightData.activitiesCompletedCount} Selesai • {insightData.activitiesPendingCount} Tertunda
+                    {insightData.activitiesCompletedCount + insightData.activitiesPendingCount === 0 ? 'Belum ada agenda di bulan ini' : `${insightData.activitiesCompletedCount} Selesai • ${insightData.activitiesPendingCount} Tertunda`}
                   </h5>
                 </div>
               </div>
               <div className="text-right">
                 <span className="text-lg sm:text-xl font-black font-mono text-purple-600 dark:text-purple-400">
-                  {insightData.activityCompletionRate}%
+                  {insightData.activitiesCompletedCount + insightData.activitiesPendingCount === 0 ? '-' : `${insightData.activityCompletionRate}%`}
                 </span>
                 <p className="text-[10px] text-slate-400 uppercase font-semibold">Tingkat Tuntas</p>
               </div>

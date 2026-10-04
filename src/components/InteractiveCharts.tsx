@@ -778,3 +778,30 @@ export function SourceBarChart({ transactions, sources, month, year }: SourcePie
     </ResponsiveContainer>
   );
 }
+
+// 6. BAR CHART FOR TRANSFERS & ADMIN FEES
+export function TransferBarChart({ transactions, month, year }: { transactions: Transaction[]; month: number; year: number }) {
+  const filtered = transactions.filter(t => t.type === 'transfer' && new Date(t.date).getMonth() + 1 === month && new Date(t.date).getFullYear() === year);
+  const totalTransfer = filtered.reduce((sum, t) => sum + t.amount, 0);
+  const totalAdmin = filtered.reduce((sum, t) => sum + (t.adminFee || 0), 0);
+
+  const data = [
+    { name: 'Total Transfer', amount: totalTransfer, fill: '#0284c7' }, // Blue
+    { name: 'Biaya Admin', amount: totalAdmin, fill: '#eab308' }, // Yellow
+  ];
+
+  return (
+    <ResponsiveContainer width="100%" height={240}>
+      <BarChart data={data}>
+        <XAxis dataKey="name" fontSize={11} stroke="currentColor" tick={{ fill: 'currentColor' }} />
+        <YAxis fontSize={10} stroke="currentColor" tick={{ fill: 'currentColor' }} />
+        <Tooltip formatter={(value: number) => formatIDR(value)} />
+        <Bar dataKey="amount" radius={[6, 6, 0, 0]}>
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.fill} />
+          ))}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}

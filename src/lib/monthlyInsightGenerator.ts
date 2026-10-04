@@ -179,7 +179,7 @@ export const generateMonthlyInsight = async (
   }
 
   // 4. Budgeting Calculations
-  const monthBudgets = budgets.filter((b) => !b.month || b.month === monthStr);
+  const monthBudgets = budgets.filter((b) => b.month === monthStr);
   let safeBudgetsCount = 0;
   let overBudgetsCount = 0;
   let remainingPctSum = 0;
@@ -206,10 +206,12 @@ export const generateMonthlyInsight = async (
 
   const totalBudgetsCount = monthBudgets.length;
   const averageRemainingBudgetPct =
-    safeBudgetsCount > 0 ? Math.round(remainingPctSum / safeBudgetsCount) : overBudgetsCount > 0 ? 0 : 100;
+    totalBudgetsCount === 0 ? 0 : safeBudgetsCount > 0 ? Math.round(remainingPctSum / safeBudgetsCount) : overBudgetsCount > 0 ? 0 : 100;
 
   const budgetStatusSummary =
-    overBudgetsCount === 0
+    totalBudgetsCount === 0
+      ? 'Belum ada anggaran yang dicatat di bulan ini.'
+      : overBudgetsCount === 0
       ? `Seluruh ${totalBudgetsCount} anggaran terkendali aman.`
       : `${overBudgetsCount} dari ${totalBudgetsCount} pos anggaran melebihi limit.`;
 
@@ -239,7 +241,7 @@ export const generateMonthlyInsight = async (
   const activitiesCompletedCount = monthActivities.filter((a) => a.status === 'completed').length;
   const activitiesPendingCount = monthActivities.filter((a) => a.status === 'pending').length;
   const totalActivities = monthActivities.length;
-  const activityCompletionRate = totalActivities > 0 ? Math.round((activitiesCompletedCount / totalActivities) * 100) : 100;
+  const activityCompletionRate = totalActivities > 0 ? Math.round((activitiesCompletedCount / totalActivities) * 100) : 0;
 
   // 7. Executive Health Grade & Highlights
   let financialHealthGrade: 'A+' | 'A' | 'B' | 'C' | 'D' = 'B';

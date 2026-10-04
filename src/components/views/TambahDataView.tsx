@@ -1488,13 +1488,20 @@ export function TambahDataView({
 
         </div>
 
-        {/* SINGLE THEMED SUBMIT BUTTON (Simpan) */}
-        <div className="pt-2">
+        {/* SUBMIT & BATAL ACTION BUTTONS */}
+        <div className="pt-2 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex-1 py-4 px-4 rounded-2xl font-black text-sm border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-98 cursor-pointer text-center"
+          >
+            Batal
+          </button>
           <button
             type="button"
             onClick={handleSave}
             style={settings.themeColor === 'custom' ? { backgroundColor: resolvedAccent, color: '#ffffff' } : undefined}
-            className={`w-full py-4 px-6 rounded-2xl font-black text-sm shadow-md hover:shadow-lg transition active:scale-98 cursor-pointer text-center ${getAccentBg()}`}
+            className={`flex-1 py-4 px-6 rounded-2xl font-black text-sm shadow-md hover:shadow-lg transition active:scale-98 cursor-pointer text-center ${getAccentBg()}`}
           >
             {isEdit ? 'Simpan Perubahan' : 'Simpan'}
           </button>
