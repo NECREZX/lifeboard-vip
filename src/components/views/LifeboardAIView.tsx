@@ -293,7 +293,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
   const remainingQuota = selectedMonth ? getRemainingQuota(selectedMonth) : 3;
 
   return (
-    <div className="flex flex-col relative w-full" id="view-lifeboard-ai">
+    <div className="flex flex-col relative w-full min-h-screen bg-white dark:bg-slate-950" id="view-lifeboard-ai">
       {/* =======================================================
           1. HERO BANNER PERSIS DASHBOARD & TAMBAH DATA (DIPANJANGKAN KE BAWAH)
          ======================================================= */}
@@ -393,7 +393,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             <div className="w-full max-w-md mx-auto px-1">
               <div className="grid grid-cols-3 gap-2">
                 {/* Card 1: Sebenarnya Insight Apa */}
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/95 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
+                <div className="p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
                   <div>
                     <div className="w-6 h-6 rounded-lg bg-[#FF7777]/15 text-[#FF7777] flex items-center justify-center mb-1.5">
                       <Sparkles className="w-3.5 h-3.5" />
@@ -411,7 +411,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 </div>
 
                 {/* Card 2: Seberapa Akurat */}
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/95 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
+                <div className="p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
                   <div>
                     <div className="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1.5">
                       <Target className="w-3.5 h-3.5" />
@@ -429,7 +429,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 </div>
 
                 {/* Card 3: Kekurangannya Apa (Berkaitan Langsung dengan AI) */}
-                <div className="p-2.5 sm:p-3 rounded-2xl bg-white/95 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
+                <div className="p-2.5 sm:p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col justify-between text-left">
                   <div>
                     <div className="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1.5">
                       <AlertTriangle className="w-3.5 h-3.5" />
@@ -869,7 +869,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             </div>
 
             {/* List of Months: Scrollable ke bawah, Tidak Terpotong Cardnya */}
-            <div className="px-6 py-4 overflow-y-auto space-y-3 flex-1 max-h-[60vh]">
+            <div className="px-6 py-4 overflow-y-auto space-y-3 flex-1 max-h-[60vh] bg-white dark:bg-slate-900">
               {pastMonthsList.length === 0 ? (
                 <div className="text-center py-10 text-xs text-slate-400">
                   Belum ada riwayat insight bulan sebelumnya.
@@ -887,7 +887,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                       className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between gap-3 transition-all cursor-pointer select-none active:scale-[0.98] ${
                         isSelected
                           ? 'bg-[#FF7777]/10 border-[#FF7777] text-slate-900 dark:text-white shadow-xs'
-                          : 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200/70 dark:border-slate-700/60 hover:border-[#FF7777]/50 hover:bg-rose-50/30 text-slate-800 dark:text-slate-200'
+                          : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-700/60 hover:border-[#FF7777]/50 hover:bg-rose-50/20 text-slate-800 dark:text-slate-200 shadow-3xs'
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
@@ -922,7 +922,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             </div>
 
             {/* Modal Footer: Tombol Tutup di Kanan Bawah Tanpa Garis Pembatas */}
-            <div className="px-6 pt-1 pb-5 flex justify-end shrink-0 bg-white dark:bg-slate-900">
+            <div className="px-6 pt-1 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] flex justify-end shrink-0 bg-white dark:bg-slate-900">
               <button
                 type="button"
                 onClick={() => setIsHistoryModalOpen(false)}

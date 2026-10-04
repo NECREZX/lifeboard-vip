@@ -571,7 +571,7 @@ export default function FormsModal({
 
         {/* Tab Selection Navigation */}
         {!editData && (
-          <div className="px-4 sm:px-5 pt-2.5 pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-slate-50/60 dark:bg-slate-900/60">
+          <div className="px-4 sm:px-5 pt-2.5 pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5">
               {(['pengeluaran', 'pemasukan', 'transfer', 'budgeting', 'tabungan', 'aktivitas', 'wishlist'] as FormType[]).map((tab) => {
                 const isActive = activeForm === tab;
@@ -1300,7 +1300,7 @@ export default function FormsModal({
         </div>
 
         {/* Footer Summary with Action Buttons (Matching Rincian Transaksi Footer) */}
-        <div className="relative px-4 sm:px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] sm:pb-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 text-xs shrink-0 bg-slate-50/70 dark:bg-slate-900/70">
+        <div className="relative px-4 sm:px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom,20px))] sm:pb-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 text-xs shrink-0 bg-white dark:bg-slate-900">
           <button
             type="button"
             onClick={() => {

@@ -2090,8 +2090,8 @@ export default function App() {
       if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-slate-950 via-slate-900/90 to-slate-950 text-slate-100 ';
       return 'bg-slate-950 ';
     }
-    if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-teal-50/25 via-slate-50/70 to-sky-50/25 text-slate-900 ';
-    return 'bg-slate-50 ';
+    if (settings.uiStyle === 'glass') return 'bg-white text-slate-900 ';
+    return 'bg-white ';
   }, [settings.isDarkMode, settings.uiStyle]);
 
   const getCardClasses = React.useCallback(() => {
@@ -2121,7 +2121,7 @@ export default function App() {
       } else if (settings.cardStyle === 'bordered') {
         cls += "border-2 border-slate-300 dark:border-slate-700 shadow-none ";
       } else if (settings.cardStyle === 'shadowed') {
-        cls += "border border-slate-100 dark:border-slate-800/30 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_30px_rgba(0,0,0,0.25)] ";
+        cls += "border border-slate-200/90 dark:border-slate-800 shadow-none ";
       }
     }
     
@@ -3197,7 +3197,7 @@ export default function App() {
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t border-slate-100 dark:border-slate-900 flex justify-end bg-slate-50/50 dark:bg-slate-950/20">
+            <div className="p-4 border-t border-slate-100 dark:border-slate-900 flex justify-end bg-white dark:bg-slate-950">
               <button
                 onClick={() => setShowSettingsModal(false)}
                 className={`w-full py-2.5 text-xs font-bold text-white rounded-xl transition ${getAccentBg()}`}

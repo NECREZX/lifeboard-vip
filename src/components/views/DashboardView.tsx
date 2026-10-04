@@ -351,11 +351,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           metricCardRadiusClass = "rounded-3xl sm:rounded-[32px]";
         }
 
-        let enclosingCardBgClass = "bg-slate-50 dark:bg-slate-950 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_-16px_36px_rgba(0,0,0,0.45)]";
+        let enclosingCardBgClass = "bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_-16px_36px_rgba(0,0,0,0.45)]";
         if (settings?.uiStyle === 'glass') {
-          enclosingCardBgClass = "bg-slate-50 dark:bg-slate-950 border-t border-b-0 border-slate-200/60 dark:border-slate-800/80 shadow-[0_-16px_36px_rgba(0,0,0,0.15)]";
+          enclosingCardBgClass = "bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200/60 dark:border-slate-800/80 shadow-[0_-16px_36px_rgba(0,0,0,0.15)]";
         } else if (settings?.uiStyle === 'minimal') {
-          enclosingCardBgClass = "bg-slate-50 dark:bg-slate-950 border-t border-b-0 border-slate-200 dark:border-slate-800 shadow-none";
+          enclosingCardBgClass = "bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200 dark:border-slate-800 shadow-none";
         }
 
         let metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/80 shadow-xs";

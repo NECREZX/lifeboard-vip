@@ -1606,7 +1606,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
           setShowEditProfileModal(true);
         }}
-        className={`relative z-10 -mt-20 sm:-mt-22 lg:-mt-24 p-4 sm:p-5 pt-8 sm:pt-9 ${getCardClasses()} !overflow-visible border border-slate-200/80 dark:border-slate-800 shadow-xl flex items-center justify-center max-w-2xl mx-auto w-full cursor-pointer group hover:border-slate-300 dark:hover:border-slate-700`}
+        className={`relative z-10 -mt-20 sm:-mt-22 lg:-mt-24 p-4 sm:p-5 pt-8 sm:pt-9 ${getCardClasses()} !overflow-visible border border-slate-200/90 dark:border-slate-800 shadow-none flex items-center justify-center max-w-2xl mx-auto w-full cursor-pointer group hover:border-slate-300 dark:hover:border-slate-700`}
         title="Klik untuk mengubah nama, email, dan avatar profil"
       >
         {/* Ornamen Motif Batik Kawung di Sisi Kiri Card */}
@@ -1644,7 +1644,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
         {/* Foto Profil Dikeluarkan dan Terletak di Tengah Mengambang (di Bagian Banner) dengan Icon Pensil */}
         <div className="absolute -top-8 sm:-top-9 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
           <div className="relative group/avatar">
-            <div className={`w-16 h-16 sm:w-18 sm:h-18 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} overflow-hidden border-4 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-lg group-hover/avatar:scale-105 transition-transform`}>
+            <div className={`w-16 h-16 sm:w-18 sm:h-18 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} overflow-hidden border-4 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover/avatar:scale-105 transition-transform`}>
               <img 
                 src={profile?.avatar || '/male_avatar.jpg'} 
                 alt="Avatar Profil" 
@@ -1655,7 +1655,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               />
             </div>
             {/* Icon Pensil di Foto Profil */}
-            <div className={`absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-6.5 sm:h-6.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} bg-[#FF7777] text-white border-2 border-white dark:border-slate-800 flex items-center justify-center shadow-md group-hover/avatar:scale-110 transition-transform`}>
+            <div className={`absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-6.5 sm:h-6.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} bg-[#FF7777] text-white border-2 border-white dark:border-slate-800 flex items-center justify-center group-hover/avatar:scale-110 transition-transform`}>
               <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
             </div>
           </div>
@@ -1674,7 +1674,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
       {/* 3. Card 2: Daftar Sub Menu Pengaturan */}
       <div 
-        className={`relative z-10 p-4 sm:p-5 ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-xl flex flex-col gap-2 max-w-2xl mx-auto w-full mb-6`}
+        className={`relative z-10 p-4 sm:p-5 ${getCardClasses()} border border-slate-200/90 dark:border-slate-800 shadow-none flex flex-col gap-2 max-w-2xl mx-auto w-full mb-6`}
       >
         {menuItems.map((item) => {
           const IconComp = item.icon;
@@ -1683,7 +1683,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               key={item.id}
               type="button"
               onClick={item.action}
-              className={`w-full flex items-center justify-between p-3 sm:p-3.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl'} bg-slate-50/90 hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-800/90 border border-slate-200/70 hover:border-slate-300 dark:border-slate-700/60 dark:hover:border-slate-600 transition-all cursor-pointer group active:scale-[0.99] text-left shadow-xs`}
+              className={`w-full flex items-center justify-between p-3 sm:p-3.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl'} bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800/80 border border-slate-200/80 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700 transition-all cursor-pointer group active:scale-[0.99] text-left shadow-none`}
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div className={`w-8 h-8 sm:w-9 sm:h-9 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg'} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${item.iconColor}`}>
