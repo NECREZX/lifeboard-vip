@@ -23,15 +23,6 @@ export default function BottomNav({
   isDarkMode, 
   language = 'id' 
 }: BottomNavProps) {
-  const tabs = [
-    { id: 'dashboard', label: t('nav_dashboard', language), icon: DashboardNavIcon },
-    { id: 'transaksi', label: t('nav_transactions', language), icon: TransaksiIcon },
-    { id: 'tabungan', label: t('nav_savings', language), icon: TabunganIcon },
-    { id: 'anggaran', label: t('nav_budgeting', language), icon: PieChart },
-    { id: 'aktivitas', label: t('nav_activities', language), icon: Calendar },
-    { id: 'kelola', label: t('nav_manage', language), icon: SlidersHorizontal },
-  ];
-
   const isHex = accentColor.startsWith('#');
 
   const getAccentColor = () => {
@@ -49,161 +40,97 @@ export default function BottomNav({
   const getFabGradient = () => {
     if (isHex) return '';
     switch (accentColor) {
-      case 'emerald': return 'from-emerald-500 via-emerald-600 to-teal-700';
-      case 'amber': return 'from-amber-400 via-amber-500 to-orange-600';
-      case 'rose': return 'from-rose-500 via-rose-600 to-pink-600';
-      case 'classic': return 'from-slate-700 via-slate-800 to-slate-950';
+      case 'emerald': return 'from-emerald-500 to-teal-600';
+      case 'amber': return 'from-amber-400 to-orange-500';
+      case 'rose': return 'from-rose-500 to-pink-600';
+      case 'classic': return 'from-slate-700 to-slate-900';
       case 'indigo':
-      default: return 'from-[#FF7B7B] via-[#FF5E5E] to-[#FF4747]';
-    }
-  };
-
-  const getFabShadowColor = () => {
-    if (isHex) return `0 4px 16px ${accentColor}40`;
-    switch (accentColor) {
-      case 'emerald': return '0 4px 16px rgba(16, 185, 129, 0.35)';
-      case 'amber': return '0 4px 16px rgba(245, 158, 11, 0.35)';
-      case 'rose': return '0 4px 16px rgba(244, 63, 94, 0.35)';
-      case 'classic': return '0 4px 16px rgba(15, 23, 42, 0.25)';
-      case 'indigo':
-      default: return '0 4px 16px rgba(255, 94, 94, 0.35)';
+      default: return 'from-[#FF7777] to-[#FF4E4E]';
     }
   };
 
   const resolvedAccent = getAccentColor();
 
-  const svgFillClass = isDarkMode ? 'fill-slate-950' : 'fill-white';
-  const wingBgClass = isDarkMode ? 'bg-slate-950' : 'bg-white';
-  
-  // Clean border matching across all elements
-  const outlineStroke = isDarkMode ? '#1e293b' : '#e2e8f0';
-
-  const renderNavTab = (tab: typeof tabs[0]) => {
-    const isActive = activeTab === tab.id;
-    const Icon = tab.icon;
-
-    return (
-      <button
-        key={tab.id}
-        type="button"
-        onClick={() => setActiveTab(tab.id)}
-        aria-label={tab.label}
-        title={tab.label}
-        className="group relative flex flex-col items-center justify-center focus:outline-none select-none touch-manipulation cursor-pointer shrink-0"
-        id={`nav-tab-${tab.id}`}
-      >
-        {/* Compact Unified Capsule: Precision aligned with identical height & width */}
-        <div 
-          className={`flex flex-col items-center justify-center w-[46px] xs:w-[50px] py-1.5 rounded-2xl transition-all duration-150 ${
-            isActive 
-              ? 'shadow-xs font-bold' 
-              : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-          }`}
-          style={isActive ? { 
-            backgroundColor: `${resolvedAccent}18`,
-            color: resolvedAccent,
-          } : undefined}
-        >
-          <div className="w-5 h-5 flex items-center justify-center shrink-0">
-            <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9]'}`} />
-          </div>
-
-          {/* Navigation Label: Precision aligned text baseline */}
-          <span 
-            className={`text-[9.5px] xs:text-[10px] tracking-tight leading-none whitespace-nowrap text-center mt-1 transition-colors ${
-              isActive 
-                ? 'font-extrabold' 
-                : 'font-semibold text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-200'
-            }`}
-            style={isActive ? { color: resolvedAccent } : undefined}
-          >
-            {tab.label}
-          </span>
-        </div>
-      </button>
-    );
-  };
+  const allTabs = [
+    { id: 'dashboard', label: t('nav_dashboard', language), icon: DashboardNavIcon },
+    { id: 'transaksi', label: t('nav_transactions', language), icon: TransaksiIcon },
+    { id: 'tabungan', label: t('nav_savings', language), icon: TabunganIcon },
+    { id: 'tambah', label: language === 'en' ? 'Tambah' : 'Tambah', icon: Plus, isAction: true },
+    { id: 'anggaran', label: t('nav_budgeting', language), icon: PieChart },
+    { id: 'aktivitas', label: t('nav_activities', language), icon: Calendar },
+    { id: 'kelola', label: t('nav_manage', language), icon: SlidersHorizontal },
+  ];
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none"
+      className="fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800/90 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.35)]"
       id="bottom-dock-nav"
       style={{
         paddingBottom: 'env(safe-area-inset-bottom, 0px)'
       }}
     >
-      {/* BACKGROUND DOCK CONTAINER:
-          Left wing + Right wing + Seamless Round Center Notch SVG (without any border/outline)
-      */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        
-        {/* Left Wing Box */}
-        <div 
-          className={`absolute left-0 top-0 bottom-0 ${wingBgClass}`}
-          style={{ right: 'calc(50% + 54px)' }}
-        />
+      <div className="w-full max-w-lg mx-auto h-[62px] sm:h-[66px] px-1 sm:px-2 grid grid-cols-7 items-center justify-items-center">
+        {allTabs.map((tab) => {
+          if (tab.isAction) {
+            return (
+              <button
+                key="nav-action-add"
+                type="button"
+                onClick={onAddClick}
+                aria-label="Catat Baru"
+                title="Catat Baru"
+                className="group relative flex flex-col items-center justify-center focus:outline-none select-none touch-manipulation cursor-pointer w-full h-full py-1"
+                id="center-nav-add"
+              >
+                <div 
+                  className={`w-10 h-10 xs:w-11 xs:h-11 rounded-full flex items-center justify-center text-white bg-gradient-to-tr ${getFabGradient()} shadow-sm hover:shadow-md group-hover:scale-105 group-active:scale-95 transition-all duration-150`}
+                  style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none' } : undefined}
+                >
+                  <Plus className="w-5.5 h-5.5 xs:w-6 xs:h-6 stroke-[2.8]" />
+                </div>
+              </button>
+            );
+          }
 
-        {/* Center Cradle Notch SVG */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[112px] h-[140px]">
-          <svg className="w-full h-full block" viewBox="0 0 112 140" fill="none">
-            {/* Background Fill */}
-            <path 
-              d="M 0,0 L 6,0 C 14,0 20,2 24,7 C 28,13 36,44 56,44 C 76,44 84,13 88,7 C 92,2 98,0 106,0 L 112,0 L 112,140 L 0,140 Z" 
-              className={svgFillClass}
-            />
-          </svg>
-        </div>
+          const isActive = activeTab === tab.id;
+          const Icon = tab.icon;
 
-        {/* Right Wing Box */}
-        <div 
-          className={`absolute right-0 top-0 bottom-0 ${wingBgClass}`}
-          style={{ left: 'calc(50% + 54px)' }}
-        />
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              aria-label={tab.label}
+              title={tab.label}
+              className="group relative flex flex-col items-center justify-center focus:outline-none select-none touch-manipulation cursor-pointer w-full py-1"
+              id={`nav-tab-${tab.id}`}
+            >
+              <div 
+                className="w-7.5 h-7.5 xs:w-8 xs:h-8 flex items-center justify-center shrink-0 rounded-xl transition-all duration-150"
+                style={isActive ? { 
+                  backgroundColor: `${resolvedAccent}18`,
+                  color: resolvedAccent,
+                } : undefined}
+              >
+                <Icon 
+                  className={`w-5 h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9] text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'}`} 
+                  style={isActive ? { color: resolvedAccent } : undefined} 
+                />
+              </div>
 
-        {/* Solid Base Fill below safe area */}
-        <div className={`absolute left-0 right-0 top-[68px] -bottom-20 ${wingBgClass}`} />
-      </div>
-
-      {/* COMPACT & PRECISE CARD CONTENT CONTAINER (H-70PX) & FLOATING CENTER FAB */}
-      <div className="relative z-10 w-full max-w-lg mx-auto h-[70px]">
-        
-        {/* Left Wing Tabs: Compact, clustered tightly towards center, perfectly leveled */}
-        <div 
-          className="absolute top-0 bottom-0 flex items-center justify-end gap-1 xs:gap-2 pb-1"
-          style={{ 
-            right: 'calc(50% + 40px)',
-          }}
-        >
-          {tabs.slice(0, 3).map((tab) => renderNavTab(tab))}
-        </div>
-
-        {/* Center Floating FAB Button: 48px circle nested precisely with balanced margins */}
-        <div className="absolute left-1/2 -translate-x-1/2 -top-3.5 flex items-center justify-center z-30">
-          <button
-            type="button"
-            onClick={onAddClick}
-            className={`group relative w-[48px] h-[48px] xs:w-[50px] xs:h-[50px] rounded-full flex items-center justify-center focus:outline-none cursor-pointer bg-gradient-to-tr ${getFabGradient()} transition-transform active:scale-95`}
-            style={{
-              boxShadow: getFabShadowColor(),
-              ...(isHex ? { backgroundColor: accentColor, backgroundImage: 'none' } : {})
-            }}
-            title="Catat Baru"
-            id="center-fab-add"
-          >
-            <Plus className="w-5.5 h-5.5 xs:w-6 xs:h-6 text-white stroke-[2.8]" />
-          </button>
-        </div>
-
-        {/* Right Wing Tabs: Compact, clustered tightly towards center, perfectly leveled */}
-        <div 
-          className="absolute top-0 bottom-0 flex items-center justify-start gap-1 xs:gap-2 pb-1"
-          style={{ 
-            left: 'calc(50% + 40px)',
-          }}
-        >
-          {tabs.slice(3, 6).map((tab) => renderNavTab(tab))}
-        </div>
-
+              <span 
+                className={`text-[8.5px] xs:text-[9.5px] tracking-tight leading-none whitespace-nowrap text-center mt-1 transition-colors ${
+                  isActive 
+                    ? 'font-extrabold' 
+                    : 'font-semibold text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                }`}
+                style={isActive ? { color: resolvedAccent } : undefined}
+              >
+                {tab.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </nav>
   );
