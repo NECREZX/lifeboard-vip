@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Transaction, Wallet, Category, IncomeSource } from '../../types';
 import { formatIDR } from '../../lib/formatters';
+import { TrendChart } from '../InteractiveCharts';
 
 interface TransactionsViewProps {
   transactions: Transaction[];
@@ -517,6 +518,17 @@ export const TransactionsView: React.FC<TransactionsViewProps> = React.memo(({
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
+      </div>
+
+      {/* ========================================================
+          GRAFIK TREND KEUANGAN (DIPINDAHKAN DARI DASHBOARD)
+          Diletakkan tepat di bawah periode bulan sesuai permintaan
+          ======================================================== */}
+      <div className={`${getCardClasses()} p-5 lg:p-6 w-full transition-all`}>
+        <TrendChart 
+          transactions={filteredTransactions.length > 0 ? filteredTransactions : transactions} 
+          themeColor={settings?.themeColor || 'indigo'} 
+        />
       </div>
 
       {/* ========================================================

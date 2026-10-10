@@ -7,7 +7,7 @@ import {
   EyeOff, 
   ShieldCheck, 
   WifiOff, 
-  Database 
+  Bot 
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 
@@ -59,7 +59,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
     });
   };
 
-  // 3 Badge Fitur Unggulan Keamanan & Data (Ala Quick Action Livin' Mandiri)
+  // 3 Badge Fitur Unggulan Keamanan & Fitur Pintar (Ala Quick Action Livin' Mandiri)
   const securityFeatures = [
     {
       id: 'keamanan',
@@ -76,11 +76,11 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
       bg: 'bg-sky-500/10 text-sky-600 border border-sky-500/20'
     },
     {
-      id: 'backup',
-      name: 'Backup Data',
-      desc: 'Dukungan ekspor & impor file cadangan JSON mandiri yang dapat Anda simpan kapan saja.',
-      icon: Database,
-      bg: 'bg-amber-500/10 text-amber-600 border border-amber-500/20'
+      id: 'ai',
+      name: 'Terintegrasi AI',
+      desc: 'Didukung kecerdasan buatan Lifeboard AI untuk analisis finansial bulanan dan rekomendasi otomatis.',
+      icon: Bot,
+      bg: 'bg-purple-500/10 text-purple-600 border border-purple-500/20'
     }
   ];
 
@@ -215,8 +215,8 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
         >
           <div className="max-w-sm mx-auto flex flex-col gap-5">
-            {/* 3 Quick Action Badges: Data Aman, 100% Offline, Backup Data */}
-            <div className="grid grid-cols-3 gap-3 justify-items-center max-w-[290px] mx-auto w-full">
+            {/* 3 Quick Action Badges: Data Aman, 100% Offline, Terintegrasi AI */}
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-3 justify-items-center max-w-[320px] mx-auto w-full">
               {securityFeatures.map((f) => {
                 const Icon = f.icon;
                 return (
@@ -229,7 +229,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
                     <div className={`w-13 h-13 rounded-full flex items-center justify-center shadow-xs transition-transform group-hover:scale-105 group-active:scale-95 ${f.bg}`}>
                       <Icon className="w-5.5 h-5.5 stroke-[2.2]" />
                     </div>
-                    <span className="text-[11px] font-bold text-slate-700 tracking-tight text-center truncate w-full">
+                    <span className="text-[10.5px] sm:text-[11px] font-bold text-slate-700 tracking-tight text-center leading-tight w-full">
                       {f.name}
                     </span>
                   </button>

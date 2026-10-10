@@ -211,7 +211,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [prevTabBeforeAdd, setPrevTabBeforeAdd] = useState<string>('dashboard');
   const [kelolaSubPage, setKelolaSubPage] = useState<KelolaSubPage>('menu');
-  const [activeActivitiesSubTab, setActiveActivitiesSubTab] = useState<'agenda' | 'wishlist'>('agenda');
+  const [activeActivitiesSubTab, setActiveActivitiesSubTab] = useState<'all' | 'agenda' | 'wishlist'>('all');
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);

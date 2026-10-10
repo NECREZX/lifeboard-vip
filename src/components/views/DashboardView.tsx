@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 import { IconRenderer } from '../IconRenderer';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
-import { TrendChart, CategoryPieChart, SourcePieChart } from '../InteractiveCharts';
+import { CategoryPieChart, SourcePieChart } from '../InteractiveCharts';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
 import { isCategoryMatch, isWalletMatch, getBudgetCategoryLabel } from '../../lib/budgetUtils';
@@ -547,11 +547,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               )}
             </div>
 
-              {/* 3. Charts Section: Seluruh visualisasi chart di menu dashboard */}
+              {/* 3. Charts Section: Visualisasi alokasi & sumber di menu dashboard */}
               <div id="dashboard-charts" className="grid grid-cols-1 lg:grid-cols-2 gap-6 scroll-mt-20">
-                <div className={`${getCardClasses()} p-5 lg:p-6 col-span-1 lg:col-span-2`}>
-                  <TrendChart transactions={transactions} themeColor="indigo" />
-                </div>
                 <div className={`${getCardClasses()} p-5 lg:p-6`}>
                   <div className="flex items-center justify-between mb-6">
                     <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Alokasi Pengeluaran Keseluruhan</h4>
