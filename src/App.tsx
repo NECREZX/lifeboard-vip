@@ -2779,6 +2779,8 @@ export default function App() {
           }}
           accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
           uiStyle={settings.uiStyle}
+          cardRadius={settings.cardRadius}
+          cardStyle={settings.cardStyle}
           isDarkMode={settings.isDarkMode}
           language={settings.language || 'id'}
           onAddClick={() => {

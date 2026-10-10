@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, PieChart, SlidersHorizontal, Calendar } from 'lucide-react';
 import { DashboardNavIcon, TransaksiIcon, TabunganIcon } from './CustomIcons';
-import { UIStyle, Language } from '../types';
+import { UIStyle, Language, CardRadius } from '../types';
 import { t } from '../lib/i18n';
 
 interface BottomNavProps {
@@ -10,6 +10,8 @@ interface BottomNavProps {
   accentColor: string;
   onAddClick: () => void;
   uiStyle?: UIStyle;
+  cardRadius?: CardRadius;
+  cardStyle?: 'flat' | 'bordered' | 'shadowed';
   isDarkMode?: boolean;
   language?: Language;
 }
@@ -20,6 +22,8 @@ export default function BottomNav({
   accentColor, 
   onAddClick, 
   uiStyle, 
+  cardRadius = 'rounded',
+  cardStyle = 'shadowed',
   isDarkMode, 
   language = 'id' 
 }: BottomNavProps) {
@@ -51,6 +55,48 @@ export default function BottomNav({
 
   const resolvedAccent = getAccentColor();
 
+  const isSharp = cardRadius === 'sharp';
+  const isExtra = cardRadius === 'extra';
+  const isBordered = cardStyle === 'bordered';
+
+  // Warna abu-abu persis seperti garis tepi di card aplikasi (border-slate-200 / dark:border-slate-800)
+  const borderClasses = isBordered
+    ? 'border-slate-300 dark:border-slate-700'
+    : 'border-slate-200 dark:border-slate-800';
+
+  const borderWidthTop = isBordered ? 'border-t-2' : 'border-t';
+  const borderWidthX = isBordered ? 'border-x-2' : 'border-x';
+
+  const getNavContainerClasses = () => {
+    if (isSharp) {
+      return `w-full rounded-none ${borderWidthTop} ${borderClasses} shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.45)]`;
+    }
+    if (isExtra) {
+      return `w-full rounded-t-[32px] sm:rounded-t-[36px] ${borderWidthTop} ${borderWidthX} ${borderClasses} shadow-[0_-8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_-8px_32px_rgba(0,0,0,0.5)]`;
+    }
+    // Default rounded
+    return `w-full rounded-t-2xl sm:rounded-t-3xl ${borderWidthTop} ${borderWidthX} ${borderClasses} shadow-[0_-6px_25px_rgba(0,0,0,0.08)] dark:shadow-[0_-6px_25px_rgba(0,0,0,0.45)]`;
+  };
+
+  const getNavBgClasses = () => {
+    if (uiStyle === 'glass') {
+      return 'backdrop-blur-xl bg-white/90 dark:bg-slate-950/90';
+    }
+    return 'bg-white/95 dark:bg-slate-950/95 backdrop-blur-md';
+  };
+
+  const getItemRadiusClass = () => {
+    switch (cardRadius) {
+      case 'sharp':
+        return 'rounded-none';
+      case 'extra':
+        return 'rounded-full';
+      case 'rounded':
+      default:
+        return 'rounded-xl';
+    }
+  };
+
   const allTabs = [
     { id: 'dashboard', label: t('nav_dashboard', language), icon: DashboardNavIcon },
     { id: 'transaksi', label: t('nav_transactions', language), icon: TransaksiIcon },
@@ -63,7 +109,7 @@ export default function BottomNav({
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-t border-slate-200/90 dark:border-slate-800/90 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.35)]"
+      className={`fixed bottom-0 left-0 right-0 z-40 no-print select-none transition-all duration-200 ${getNavBgClasses()} ${getNavContainerClasses()}`}
       id="bottom-dock-nav"
       style={{
         paddingBottom: 'env(safe-area-inset-bottom, 0px)'
@@ -79,7 +125,7 @@ export default function BottomNav({
                 onClick={onAddClick}
                 aria-label="Catat Baru"
                 title="Catat Baru"
-                className="group relative flex flex-col items-center justify-center focus:outline-none select-none touch-manipulation cursor-pointer w-full h-full py-1"
+                className="group relative -translate-y-1.5 sm:-translate-y-2 flex flex-col items-center justify-center focus:outline-none select-none touch-manipulation cursor-pointer w-full h-full py-1"
                 id="center-nav-add"
               >
                 <div 
@@ -106,7 +152,7 @@ export default function BottomNav({
               id={`nav-tab-${tab.id}`}
             >
               <div 
-                className="w-7.5 h-7.5 xs:w-8 xs:h-8 flex items-center justify-center shrink-0 rounded-xl transition-all duration-150"
+                className={`w-7.5 h-7.5 xs:w-8 xs:h-8 flex items-center justify-center shrink-0 ${getItemRadiusClass()} transition-all duration-150`}
                 style={isActive ? { 
                   backgroundColor: `${resolvedAccent}18`,
                   color: resolvedAccent,
