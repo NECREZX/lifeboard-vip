@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const CACHE_NAME = 'fin-act-pwa-v2';
+const CACHE_NAME = 'fin-act-pwa-v6';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

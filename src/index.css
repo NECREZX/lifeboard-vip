@@ -60,6 +60,8 @@
 @layer base {
   html {
     background-color: #ffffff; /* Pure white to blend seamlessly with Android navigation gesture bar */
+    overflow-x: hidden;
+    max-width: 100%;
   }
   
   html.dark {
@@ -71,6 +73,8 @@
     padding: 0;
     min-height: 100%;
     min-height: 100dvh;
+    overflow-x: hidden;
+    max-width: 100%;
     background-color: #ffffff;
     -webkit-tap-highlight-color: transparent;
     font-family: "Instagram Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

@@ -360,7 +360,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         let metricCardBgClass = "bg-white dark:bg-slate-900 ";
         if (settings?.uiStyle === 'glass') {
-          metricCardBgClass = "bg-white/80 dark:bg-slate-900/60 backdrop-blur-sm border border-slate-200/70 dark:border-slate-800/70 shadow-xs";
+          metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xs";
         } else if (settings?.uiStyle === 'minimal') {
           metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-none";
         } else {

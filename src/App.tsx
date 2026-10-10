@@ -2087,12 +2087,10 @@ export default function App() {
 
   const getThemeBackground = React.useCallback(() => {
     if (settings.isDarkMode) {
-      if (settings.uiStyle === 'glass') return 'bg-gradient-to-br from-slate-950 via-slate-900/90 to-slate-950 text-slate-100 ';
-      return 'bg-slate-950 ';
+      return 'bg-slate-950 text-slate-100 ';
     }
-    if (settings.uiStyle === 'glass') return 'bg-white text-slate-900 ';
-    return 'bg-white ';
-  }, [settings.isDarkMode, settings.uiStyle]);
+    return 'bg-white text-slate-900 ';
+  }, [settings.isDarkMode]);
 
   const getCardClasses = React.useCallback(() => {
     let cls = "overflow-hidden ";
@@ -2310,25 +2308,7 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-[100dvh] pb-0 ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 relative`}>
-      
-      {/* AMBIENT BACKGROUND BLOBS FOR LIQUID GLASS UI */}
-      {settings.uiStyle === 'glass' && activeTab !== 'dashboard' && (
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden no-print transform-gpu">
-          {/* Fluid Cyan & Sky Blue Orb */}
-          <div className="absolute top-[-10%] left-[-15%] w-[65vw] h-[65vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-br from-cyan-400/20 via-sky-400/15 to-blue-500/10 dark:from-cyan-700/15 dark:via-sky-800/10 dark:to-blue-900/10 blur-[60px] transform-gpu" />
-          
-          {/* Fluid Ocean Blue & Cyan Orb */}
-          <div className="absolute top-[25%] right-[-15%] w-[60vw] h-[60vw] max-w-[550px] max-h-[550px] rounded-full bg-gradient-to-br from-cyan-400/15 via-sky-500/10 to-blue-600/10 dark:from-cyan-900/10 dark:via-sky-950/10 dark:to-blue-950/10 blur-[60px] transform-gpu" />
-          
-          {/* Fluid Mint & Teal Orb */}
-          <div className="absolute bottom-[-10%] left-[10%] w-[70vw] h-[70vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-teal-300/20 via-emerald-400/15 to-cyan-300/10 dark:from-teal-700/15 dark:via-emerald-800/10 dark:to-cyan-900/10 blur-[60px] transform-gpu" />
-          
-          {/* Fluid Soft Azure Blue Orb */}
-          <div className="absolute top-[60%] right-[15%] w-[45vw] h-[45vw] max-w-[450px] max-h-[450px] rounded-full bg-gradient-to-br from-blue-400/15 via-sky-300/10 to-indigo-400/10 dark:from-blue-800/10 dark:via-sky-900/10 dark:to-indigo-950/10 blur-[60px] transform-gpu" />
-        </div>
-      )}
-
+    <div className={`min-h-[100dvh] pb-0 overflow-x-hidden w-full max-w-full ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 relative`}>
       {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#FF7777) */}
       <header 
         className="sticky top-0 z-50 w-full no-print bg-[#FF7777] text-white border-none shadow-none relative"

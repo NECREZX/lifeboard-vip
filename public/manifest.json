@@ -25,7 +25,7 @@
     }
   ],
   "start_url": "/",
-  "background_color": "#f8fafc",
+  "background_color": "#ffffff",
   "theme_color": "#FF7777",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui", "browser"],
