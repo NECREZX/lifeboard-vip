@@ -57,8 +57,21 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
-            .then((reg) => console.log('Service Worker terdaftar dengan sukses:', reg.scope))
+            .then((reg) => {
+              console.log('Service Worker terdaftar dengan sukses:', reg.scope);
+              // Paksa cek pembaruan file ke server setiap aplikasi dibuka
+              reg.update();
+            })
             .catch((err) => console.error('Service Worker gagal didaftarkan:', err));
+
+          // Otomatis refresh jika ada update baru yang aktif
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) {
+              refreshing = true;
+              window.location.reload();
+            }
+          });
         });
       }
     </script>
