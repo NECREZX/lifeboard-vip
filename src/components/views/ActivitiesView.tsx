@@ -428,29 +428,17 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                   return (
                     <g 
                       key={node.id} 
-                      className="cursor-pointer transition-transform duration-200"
+                      className="cursor-pointer"
                       onMouseEnter={() => setHoveredAxis(node.id)}
                       onMouseLeave={() => setHoveredAxis(null)}
                     >
-                      {/* Outer pulse circle when hovered */}
-                      {isHovered && (
-                        <circle
-                          cx={node.x}
-                          cy={node.y}
-                          r="10"
-                          fill={node.color}
-                          fillOpacity="0.25"
-                          className="animate-ping"
-                        />
-                      )}
                       <circle
                         cx={node.x}
                         cy={node.y}
-                        r={isHovered ? 6 : 4.5}
+                        r={isHovered ? 5.5 : 4.5}
                         fill={node.color}
                         stroke="#ffffff"
                         strokeWidth="1.5"
-                        className="transition-all duration-200"
                       />
                     </g>
                   );
