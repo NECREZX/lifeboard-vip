@@ -242,6 +242,7 @@ export default function App() {
 
   // Scroll to top state
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const showConfirm = (title: string, message: string, onConfirm: () => void, type: 'danger' | 'warning' | 'info' = 'warning') => {
     const isDark = settings.isDarkMode;
@@ -414,6 +415,7 @@ export default function App() {
   // Scroll to top effect and scroll handler
   useEffect(() => {
     const handleScroll = () => {
+      setIsScrolled(window.scrollY > 8);
       if (window.scrollY > 400) {
         setShowScrollTop(true);
       } else {
@@ -2309,9 +2311,11 @@ export default function App() {
 
   return (
     <div className={`min-h-[100dvh] pb-0 overflow-x-hidden w-full max-w-full ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 relative`}>
-      {/* 1. STICKY TOP BAR - Seamlessly fused with Status Bar (#FF7777) */}
+      {/* 1. FIXED TOP BAR - Tetap diam di atas saat seluruh halaman di-scroll persis seperti bottom nav (#FF7777) */}
       <header 
-        className="sticky top-0 z-50 w-full no-print bg-[#FF7777] text-white border-none shadow-none relative"
+        className={`fixed top-0 left-0 right-0 z-50 w-full no-print bg-[#FF7777] text-white border-none select-none transition-shadow duration-200 ${
+          isScrolled ? 'shadow-md shadow-rose-950/15' : 'shadow-none'
+        }`}
         style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
       >
         <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
@@ -2335,10 +2339,19 @@ export default function App() {
             {activeTab === 'laporan' && t('rep_title', settings.language || 'id')}
             {activeTab === 'notifikasi' && t('notif_title', settings.language || 'id')}
             {activeTab === 'tambah_data' && 'Tambah Data'}
-            {activeTab === 'lifeboard_ai' && ''}
+            {activeTab === 'lifeboard_ai' && 'Lifeboard AI'}
           </h1>
         </div>
       </header>
+
+      {/* Spacer penahan tata letak agar posisi konten seluruh menu tetap presisi di bawah fixed top bar */}
+      <div 
+        className="w-full invisible pointer-events-none select-none no-print"
+        aria-hidden="true"
+        style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
+      >
+        <div className="h-14" />
+      </div>
 
       {/* 2. MAIN CONTAINER CONTENT */}
       <main 
