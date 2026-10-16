@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, 
   Edit2, 
@@ -51,8 +51,78 @@ import {
   Language
 } from '../../types';
 import { IconRenderer } from '../IconRenderer';
+import { BRAND_WALLETS, BRAND_LOGOS_MAP, detectBrandFromWalletName } from '../BankLogos';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
+
+// Ikon Dompet Klasik
+const CLASSIC_WALLET_ICONS = [
+  { id: 'Wallet', label: 'Dompet Fisik' },
+  { id: 'CreditCard', label: 'Kartu Kredit' },
+  { id: 'Banknote', label: 'Uang Tunai' },
+  { id: 'PiggyBank', label: 'Celengan' },
+  { id: 'Landmark', label: 'Bank Umum' },
+  { id: 'Smartphone', label: 'M-Banking' },
+  { id: 'Coins', label: 'Koin' },
+  { id: 'CircleDollarSign', label: 'Finansial' }
+];
+
+// Ikon Lengkap & Berbeda untuk Kategori Pengeluaran (Bebas Duplikasi)
+const EXPENSE_CATEGORY_ICONS = [
+  { id: 'Utensils', label: 'Makanan' },
+  { id: 'Coffee', label: 'Kopi & Kafe' },
+  { id: 'Pizza', label: 'Camilan' },
+  { id: 'Apple', label: 'Buah & Sehat' },
+  { id: 'Car', label: 'Mobil' },
+  { id: 'Bus', label: 'Angkutan' },
+  { id: 'Fuel', label: 'Bensin' },
+  { id: 'Bike', label: 'Motor' },
+  { id: 'Plane', label: 'Tiket/Travel' },
+  { id: 'ShoppingBag', label: 'Belanja' },
+  { id: 'ShoppingCart', label: 'Supermarket' },
+  { id: 'Shirt', label: 'Pakaian' },
+  { id: 'Tag', label: 'Diskon' },
+  { id: 'Package', label: 'Paket' },
+  { id: 'Zap', label: 'Listrik' },
+  { id: 'Home', label: 'Sewa Rumah' },
+  { id: 'Droplets', label: 'Air PDAM' },
+  { id: 'Wifi', label: 'Internet' },
+  { id: 'Tv', label: 'TV & Streaming' },
+  { id: 'Flame', label: 'Gas LPG' },
+  { id: 'HeartPulse', label: 'Kesehatan' },
+  { id: 'Pill', label: 'Obat & Vitamin' },
+  { id: 'GraduationCap', label: 'Pendidikan' },
+  { id: 'BookOpen', label: 'Buku Kursus' },
+  { id: 'Gamepad2', label: 'Game & Topup' },
+  { id: 'Film', label: 'Bioskop' },
+  { id: 'Music', label: 'Konser Musik' },
+  { id: 'Dumbbell', label: 'Gym & Fitness' },
+  { id: 'Gift', label: 'Kado & Hadiah' },
+  { id: 'HelpCircle', label: 'Lainnya' }
+];
+
+// Ikon Lengkap & Berbeda untuk Sumber Pendapatan (Bebas Duplikasi)
+const INCOME_SOURCE_ICONS = [
+  { id: 'Briefcase', label: 'Gaji Bulanan' },
+  { id: 'Building', label: 'Kantor/PT' },
+  { id: 'Building2', label: 'Bisnis/Usaha' },
+  { id: 'Laptop', label: 'Freelance' },
+  { id: 'Award', label: 'Bonus/Insentif' },
+  { id: 'Banknote', label: 'Uang Tunai' },
+  { id: 'Coins', label: 'Dividen/Koin' },
+  { id: 'TrendingUp', label: 'Investasi' },
+  { id: 'DollarSign', label: 'Dolar/Valas' },
+  { id: 'CircleDollarSign', label: 'Penghasilan' },
+  { id: 'BadgeDollarSign', label: 'Komisi Sales' },
+  { id: 'Percent', label: 'Bunga Simpanan' },
+  { id: 'Gift', label: 'Hadiah/THR' },
+  { id: 'Trophy', label: 'Juara/Lomba' },
+  { id: 'Sparkles', label: 'Rezeki Kaget' },
+  { id: 'Smile', label: 'Uang Saku/Tip' },
+  { id: 'Landmark', label: 'Perbankan' },
+  { id: 'Gem', label: 'Royalti/Aset' },
+  { id: 'PiggyBank', label: 'Buka Tabungan' }
+];
 
 const PRESET_COLORS = [
   '#ef4444', // Red
@@ -192,6 +262,21 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   const [tempProfileName, setTempProfileName] = useState(profile?.name || '');
   const [tempProfileAvatar, setTempProfileAvatar] = useState(profile?.avatar || '/male_avatar.jpg');
   const [tempProfileEmail, setTempProfileEmail] = useState(profile?.email || 'rifqithoohaa12@gmail.com');
+
+  // Wallet Icon Picker Tab State ('bank' | 'ewallet' | 'investasi' | 'klasik')
+  const [walletIconTab, setWalletIconTab] = useState<'bank' | 'ewallet' | 'investasi' | 'klasik'>('bank');
+
+  // Auto-switch tab if current walletFormIcon belongs to a specific category
+  useEffect(() => {
+    if (walletFormIcon) {
+      const match = BRAND_WALLETS.find(b => b.id === walletFormIcon);
+      if (match) {
+        setWalletIconTab(match.category);
+      } else if (CLASSIC_WALLET_ICONS.some(c => c.id === walletFormIcon)) {
+        setWalletIconTab('klasik');
+      }
+    }
+  }, [walletFormIcon]);
 
   // Drag & Drop State for Wallet Reordering
   const [draggedWalletIdx, setDraggedWalletIdx] = useState<number | null>(null);
@@ -338,14 +423,63 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               {walletEditId ? 'Edit Dompet' : 'Tambah Dompet Baru'}
             </h3>
             <form onSubmit={handleSaveWallet} className="flex flex-col gap-4">
-              <input 
-                type="text" 
-                placeholder="Nama Dompet (cth: BCA, Jago, Tunai)" 
-                value={walletFormName} 
-                onChange={e => setWalletFormName(e.target.value)} 
-                required 
-                className={getInputClass("px-4")} 
-              />
+              {/* Wallet Name input with auto-detection */}
+              <div className="flex flex-col gap-1.5">
+                <input 
+                  type="text" 
+                  placeholder="Nama Dompet (cth: Livin Mandiri, BCA, GoPay, Tunai)" 
+                  value={walletFormName} 
+                  onChange={e => {
+                    const val = e.target.value;
+                    setWalletFormName(val);
+                    const detected = detectBrandFromWalletName(val);
+                    if (detected && !walletEditId) {
+                      setWalletFormIcon(detected.icon);
+                      setWalletFormColor(detected.color);
+                      if (['GoPay', 'OVO', 'DANA', 'ShopeePay', 'LinkAja', 'AstraPay', 'ISaku', 'PayPal'].includes(detected.icon)) {
+                        setWalletIconTab('ewallet');
+                      } else if (['Bibit', 'Stockbit', 'Ajaib', 'Crypto'].includes(detected.icon)) {
+                        setWalletIconTab('investasi');
+                      } else if (['Banknote', 'Wallet', 'CreditCard', 'PiggyBank'].includes(detected.icon)) {
+                        setWalletIconTab('klasik');
+                      } else {
+                        setWalletIconTab('bank');
+                      }
+                    }
+                  }} 
+                  required 
+                  className={getInputClass("px-4")} 
+                />
+
+                {/* Clean Auto-Detect Banner (Tanpa icon lampu/AI) */}
+                {(() => {
+                  const detected = detectBrandFromWalletName(walletFormName);
+                  if (!detected) return null;
+                  return (
+                    <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-[11px] animate-in fade-in duration-150">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                          <IconRenderer name={detected.icon} className="w-6 h-6" />
+                        </div>
+                        <span className="text-slate-600 dark:text-slate-300 truncate">
+                          Terdeteksi: <strong className="text-slate-900 dark:text-white font-bold">{detected.label}</strong>
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setWalletFormIcon(detected.icon);
+                          setWalletFormColor(detected.color);
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-[10px] tracking-wide shrink-0 transition cursor-pointer shadow-xs"
+                      >
+                        Terapkan
+                      </button>
+                    </div>
+                  );
+                })()}
+              </div>
+
               <div className="relative">
                 <input 
                   type="number" 
@@ -363,19 +497,109 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   +000
                 </button>
               </div>
+
+              {/* Segmented Real-Brand and Classic Icon Picker */}
               <div className="flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon</span>
-                <div className="flex flex-wrap gap-2">
-                  {['Wallet', 'CreditCard', 'Banknote', 'PiggyBank', 'Briefcase', 'Smartphone'].map(icon => (
-                    <button 
-                      key={icon} 
-                      type="button" 
-                      onClick={() => setWalletFormIcon(icon)} 
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center border cursor-pointer ${walletFormIcon === icon ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-950 shadow-md' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 text-slate-400'}`}
-                    >
-                      <IconRenderer name={icon} className="w-5 h-5" />
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon Dompet</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-slate-400">Aktif:</span>
+                    <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                      <IconRenderer name={walletFormIcon} className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Segmented Category Tabs */}
+                <div className="grid grid-cols-4 gap-1 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => setWalletIconTab('bank')}
+                    className={`py-1.5 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all cursor-pointer text-center ${
+                      walletIconTab === 'bank'
+                        ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    Bank
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWalletIconTab('ewallet')}
+                    className={`py-1.5 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all cursor-pointer text-center ${
+                      walletIconTab === 'ewallet'
+                        ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    E-Wallet
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWalletIconTab('investasi')}
+                    className={`py-1.5 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all cursor-pointer text-center ${
+                      walletIconTab === 'investasi'
+                        ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    Investasi
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWalletIconTab('klasik')}
+                    className={`py-1.5 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all cursor-pointer text-center ${
+                      walletIconTab === 'klasik'
+                        ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    Klasik
+                  </button>
+                </div>
+
+                {/* Grid of Icons for selected tab */}
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto p-1.5 border border-slate-100 dark:border-slate-800/80 rounded-2xl bg-slate-50/50 dark:bg-slate-900/30">
+                  {walletIconTab === 'klasik' ? (
+                    CLASSIC_WALLET_ICONS.map(item => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setWalletFormIcon(item.id)}
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer gap-1.5 ${
+                          walletFormIcon === item.id
+                            ? 'border-indigo-600 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm ring-1 ring-indigo-500/30 font-bold'
+                            : 'border-slate-200/60 dark:border-slate-800 bg-white/70 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                          <IconRenderer name={item.id} className="w-6 h-6" />
+                        </div>
+                        <span className="text-[10px] font-bold truncate max-w-full">{item.label}</span>
+                      </button>
+                    ))
+                  ) : (
+                    BRAND_WALLETS.filter(b => b.category === walletIconTab).map(b => (
+                      <button
+                        key={b.id}
+                        type="button"
+                        onClick={() => {
+                          setWalletFormIcon(b.id);
+                          setWalletFormColor(b.defaultColor);
+                        }}
+                        className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer gap-1.5 ${
+                          walletFormIcon === b.id
+                            ? 'border-indigo-600 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm ring-1 ring-indigo-500/30 font-bold'
+                            : 'border-slate-200/60 dark:border-slate-800 bg-white/70 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                          <IconRenderer name={b.id} className="w-8 h-8 rounded-xl" />
+                        </div>
+                        <span className="text-[10px] font-bold truncate max-w-full">{b.name}</span>
+                      </button>
+                    ))
+                  )}
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -531,12 +755,17 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                           </span>
                         </div>
 
-                        {/* Wallet Icon */}
+                        {/* Wallet Icon (Besar & Jelas) */}
                         <div 
-                          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-xs shadow-xs shrink-0"
-                          style={{ backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
+                          className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-xs shrink-0 overflow-hidden"
+                          style={BRAND_LOGOS_MAP[w.icon] ? undefined : { backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
                         >
-                          {w.icon && <IconRenderer name={w.icon} className="w-4 h-4 sm:w-5 sm:h-5" />}
+                          {w.icon && (
+                            <IconRenderer 
+                              name={w.icon} 
+                              className={BRAND_LOGOS_MAP[w.icon] ? "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl" : "w-6 h-6 text-current"} 
+                            />
+                          )}
                         </div>
 
                         {/* Wallet Name & Balance */}
@@ -643,16 +872,30 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon Kategori</span>
-                <div className="flex flex-wrap gap-2">
-                  {['Utensils', 'Car', 'ShoppingBag', 'Tv', 'Zap', 'HeartPulse', 'GraduationCap', 'Home', 'Plane', 'Coffee', 'Gift', 'HelpCircle'].map(icon => (
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon Kategori</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-slate-400">Aktif:</span>
+                    <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                      <IconRenderer name={categoryFormIcon} className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 max-h-48 overflow-y-auto p-1.5 border border-slate-100 dark:border-slate-800/80 rounded-2xl bg-slate-50/50 dark:bg-slate-900/30">
+                  {EXPENSE_CATEGORY_ICONS.map(item => (
                     <button 
-                      key={icon} 
+                      key={item.id} 
                       type="button" 
-                      onClick={() => setCategoryFormIcon(icon)} 
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center border cursor-pointer ${categoryFormIcon === icon ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-950 shadow-md' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 text-slate-400'}`}
+                      onClick={() => setCategoryFormIcon(item.id)} 
+                      title={item.label}
+                      className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer gap-1 ${
+                        categoryFormIcon === item.id 
+                          ? 'border-indigo-600 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm ring-1 ring-indigo-500/30 font-bold' 
+                          : 'border-slate-200/60 dark:border-slate-800 bg-white/70 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-400'
+                      }`}
                     >
-                      <IconRenderer name={icon} className="w-5 h-5" />
+                      <IconRenderer name={item.id} className="w-5 h-5" />
+                      <span className="text-[9px] font-medium truncate max-w-full">{item.label}</span>
                     </button>
                   ))}
                 </div>
@@ -774,16 +1017,30 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon Sumber Dana</span>
-                <div className="flex flex-wrap gap-2">
-                  {['Banknote', 'Briefcase', 'TrendingUp', 'Gift', 'DollarSign', 'Coins', 'Building', 'Smile'].map(icon => (
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Pilih Icon Sumber Dana</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-slate-400">Aktif:</span>
+                    <div className="w-5 h-5 flex items-center justify-center shrink-0">
+                      <IconRenderer name={sourceFormIcon} className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 max-h-48 overflow-y-auto p-1.5 border border-slate-100 dark:border-slate-800/80 rounded-2xl bg-slate-50/50 dark:bg-slate-900/30">
+                  {INCOME_SOURCE_ICONS.map(item => (
                     <button 
-                      key={icon} 
+                      key={item.id} 
                       type="button" 
-                      onClick={() => setSourceFormIcon(icon)} 
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center border cursor-pointer ${sourceFormIcon === icon ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-950 shadow-md' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 text-slate-400'}`}
+                      onClick={() => setSourceFormIcon(item.id)} 
+                      title={item.label}
+                      className={`flex flex-col items-center justify-center p-2 rounded-xl border text-center transition cursor-pointer gap-1 ${
+                        sourceFormIcon === item.id 
+                          ? 'border-indigo-600 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm ring-1 ring-indigo-500/30 font-bold' 
+                          : 'border-slate-200/60 dark:border-slate-800 bg-white/70 dark:bg-slate-800/40 hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-400'
+                      }`}
                     >
-                      <IconRenderer name={icon} className="w-5 h-5" />
+                      <IconRenderer name={item.id} className="w-5 h-5" />
+                      <span className="text-[9px] font-medium truncate max-w-full">{item.label}</span>
                     </button>
                   ))}
                 </div>

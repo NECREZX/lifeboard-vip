@@ -1,0 +1,8 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="22" fill="#003D79" />
+  <!-- Golden ribbon arc -->
+  <path d="M22 42C32 28 50 28 62 36C70 42 76 52 78 62" fill="none" stroke="#FFB81C" stroke-width="8" stroke-linecap="round" />
+  <circle cx="78" cy="62" r="4" fill="#FFB81C" />
+  <!-- Mandiri bold white text -->
+  <text x="50" y="76" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" letter-spacing="0.2">mandiri</text>
+</svg>

@@ -978,10 +978,10 @@ export default function FormsModal({
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <div
-                              className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-2xs"
+                              className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-2xs overflow-hidden"
                               style={{ backgroundColor: `${w.color || '#3b82f6'}20` }}
                             >
-                              <IconRenderer name={w.icon || 'Wallet'} className="w-4 h-4" style={{ color: w.color || '#3b82f6' }} />
+                              <IconRenderer name={w.icon || 'Wallet'} className="w-6 h-6" style={{ color: w.color || '#3b82f6' }} />
                             </div>
                             <div className="min-w-0">
                               <span className="text-xs font-bold block truncate">{w.name}</span>

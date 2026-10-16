@@ -1,0 +1,5 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="22" fill="#FF5722" />
+  <path d="M28 54C32 44 44 38 54 42C64 46 68 56 62 64C56 72 36 70 32 62" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" />
+  <text x="50" y="36" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="14" fill="#FFFFFF" letter-spacing="0.5">SeaBank</text>
+</svg>

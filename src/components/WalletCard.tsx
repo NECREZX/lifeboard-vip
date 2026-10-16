@@ -40,8 +40,8 @@ export default function WalletCard({ wallet, onEdit, onDelete, cardStyle, isDark
       {/* Top Section: Icon, Name and Actions */}
       <div className="flex items-start justify-between relative pl-1.5">
         <div className="flex items-center gap-2.5">
-          <div className="text-slate-600 dark:text-slate-300 shrink-0">
-            <IconRenderer name={wallet.icon} className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 overflow-hidden text-slate-600 dark:text-slate-300">
+            <IconRenderer name={wallet.icon} className="w-8 h-8 rounded-xl" />
           </div>
           <div>
             <h4 className="font-bold text-xs tracking-tight text-slate-900 dark:text-slate-100">

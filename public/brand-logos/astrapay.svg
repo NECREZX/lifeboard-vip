@@ -1,0 +1,23 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="22" fill="#004098" />
+  <!-- Astra faceted star symbol -->
+  <g fill="#FFFFFF" transform="translate(50, 42)">
+    <!-- Top point -->
+    <polygon points="0,-24 5,-7 0,-10 -5,-7" />
+    <!-- Bottom point -->
+    <polygon points="0,24 5,7 0,10 -5,7" />
+    <!-- Right point -->
+    <polygon points="24,0 7,5 10,0 7,-5" />
+    <!-- Left point -->
+    <polygon points="-24,0 -7,5 -10,0 -7,-5" />
+    <!-- Diagonals -->
+    <polygon points="17,-17 3,-6 8,-8 6,-3" />
+    <polygon points="-17,-17 -3,-6 -8,-8 -6,-3" />
+    <polygon points="17,17 3,6 8,8 6,3" />
+    <polygon points="-17,17 -3,6 -8,8 -6,3" />
+    <!-- Center core -->
+    <circle cx="0" cy="0" r="4.5" fill="#FFFFFF" />
+  </g>
+  <!-- AstraPay clean white text -->
+  <text x="50" y="82" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="13" fill="#FFFFFF" letter-spacing="-0.5">astrapay</text>
+</svg>

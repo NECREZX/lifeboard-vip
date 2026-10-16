@@ -29,6 +29,7 @@ import {
   Bot
 } from 'lucide-react';
 import { IconRenderer } from '../IconRenderer';
+import { BRAND_LOGOS_MAP } from '../BankLogos';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
 import { CategoryPieChart, SourcePieChart } from '../InteractiveCharts';
 import { formatIDR } from '../../lib/formatters';
@@ -517,13 +518,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         className="group flex items-center justify-between p-3.5 sm:p-4 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors cursor-pointer select-none"
                         title="Klik untuk kelola dompet ini"
                       >
-                        {/* Left: Colored Icon & Wallet Name */}
+                        {/* Left: Colored Icon & Wallet Name (Besar & Jelas) */}
                         <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
                           <div 
-                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105"
-                            style={{ backgroundColor: cardColor }}
+                            className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105 overflow-hidden"
+                            style={BRAND_LOGOS_MAP[w.icon] ? undefined : { backgroundColor: cardColor }}
                           >
-                            <IconRenderer name={w.icon || 'Wallet'} className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-white" />
+                            <IconRenderer 
+                              name={w.icon || 'Wallet'} 
+                              className={BRAND_LOGOS_MAP[w.icon] ? "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl" : "w-6 h-6 text-white"} 
+                            />
                           </div>
 
                           <div className="min-w-0">

@@ -919,7 +919,7 @@ export function TambahDataView({
                                 : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                             }`}
                           >
-                            <IconRenderer name={w.icon || 'Wallet'} className="w-4 h-4 shrink-0" />
+                            <IconRenderer name={w.icon || 'Wallet'} className="w-6 h-6 shrink-0" />
                             <span className="truncate">{w.name}</span>
                           </button>
                         );
@@ -1229,10 +1229,10 @@ export function TambahDataView({
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <div 
-                              className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
                               style={{ backgroundColor: `${w.color || '#6366f1'}20`, color: w.color || '#6366f1' }}
                             >
-                              <IconRenderer name={w.icon || 'Wallet'} className="w-4 h-4" />
+                              <IconRenderer name={w.icon || 'Wallet'} className="w-7 h-7" />
                             </div>
                             <span className="text-xs font-bold truncate">{w.name}</span>
                           </div>
