@@ -127,11 +127,21 @@ export const CryptoLogo: React.FC<LogoProps> = (props) => (
   <BrandBadge src="/brand-logos/crypto.png" alt="Bitcoin / Crypto" {...props} />
 );
 
+// 22. Cash (Uang Tunai)
+export const CashLogo: React.FC<LogoProps> = (props) => (
+  <BrandBadge src="/brand-logos/cash.svg" alt="Cash Tunai" {...props} />
+);
+
+// 23. Sedekah (Amal / Donasi)
+export const SedekahLogo: React.FC<LogoProps> = (props) => (
+  <BrandBadge src="/brand-logos/sedekah.svg" alt="Sedekah Donasi" {...props} />
+);
+
 // Brand definition registry for picker and auto-detect
 export interface BrandWalletItem {
   id: string;
   name: string;
-  category: 'bank' | 'ewallet' | 'investasi' | 'klasik';
+  category: 'bank' | 'ewallet' | 'investasi' | 'klasik' | 'lainnya';
   defaultColor: string;
   keywords: string[];
 }
@@ -160,6 +170,10 @@ export const BRAND_WALLETS: BrandWalletItem[] = [
   { id: 'AstraPay', name: 'AstraPay', category: 'ewallet', defaultColor: '#004098', keywords: ['astrapay', 'astra pay', 'astra'] },
   { id: 'PayPal', name: 'PayPal', category: 'ewallet', defaultColor: '#003087', keywords: ['paypal', 'pay pal'] },
 
+  // Lainnya (Cash & Sedekah)
+  { id: 'Cash', name: 'Cash / Tunai', category: 'lainnya', defaultColor: '#10B981', keywords: ['cash', 'tunai', 'uang tunai', 'dompet tunai', 'uang fisik', 'uang kertas'] },
+  { id: 'Sedekah', name: 'Sedekah / Amal', category: 'lainnya', defaultColor: '#D97706', keywords: ['sedekah', 'amal', 'donasi', 'infak', 'infaq', 'zakat', 'kotak amal', 'masjid', 'wakaf'] },
+
   // Investasi & Crypto
   { id: 'Bibit', name: 'Bibit Reksadana', category: 'investasi', defaultColor: '#10B981', keywords: ['bibit', 'reksadana bibit'] },
   { id: 'Crypto', name: 'Crypto / Bitcoin', category: 'investasi', defaultColor: '#F59E0B', keywords: ['crypto', 'kripto', 'bitcoin', 'btc', 'indodax', 'tokocrypto', 'binance', 'pintu'] }
@@ -185,6 +199,10 @@ export const BRAND_LOGOS_MAP: Record<string, React.FC<LogoProps>> = {
   LinkAja: LinkAjaLogo,
   AstraPay: AstraPayLogo,
   PayPal: PayPalLogo,
+  Cash: CashLogo,
+  cash: CashLogo,
+  Sedekah: SedekahLogo,
+  sedekah: SedekahLogo,
   Bibit: BibitLogo,
   Crypto: CryptoLogo
 };
@@ -205,7 +223,10 @@ export function detectBrandFromWalletName(name: string): { icon: string; color: 
 
   // Common cash / physical wallet keywords
   if (clean.includes('tunai') || clean.includes('cash') || clean.includes('uang tunai')) {
-    return { icon: 'Banknote', color: '#10b981', label: 'Uang Tunai (Cash)' };
+    return { icon: 'Cash', color: '#10b981', label: 'Uang Tunai (Cash)' };
+  }
+  if (clean.includes('sedekah') || clean.includes('amal') || clean.includes('donasi') || clean.includes('infak') || clean.includes('zakat') || clean.includes('kotak amal')) {
+    return { icon: 'Sedekah', color: '#D97706', label: 'Sedekah / Amal' };
   }
   if (clean.includes('dompet') || clean.includes('fisik') || clean.includes('kantong')) {
     return { icon: 'Wallet', color: '#6366f1', label: 'Dompet Fisik' };

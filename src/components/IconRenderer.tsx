@@ -16,6 +16,8 @@ import {
   BadgeDollarSign,
   Smartphone,
   Banknote,
+  HandCoins,
+  HeartHandshake,
   // Additional icons for complete category & income support
   Tv,
   HeartPulse,
@@ -81,6 +83,8 @@ export const IconRenderer: React.FC<IconRendererProps> = ({ name, className, sty
     Wallet,
     CreditCard,
     Banknote,
+    HandCoins,
+    HeartHandshake,
     PiggyBank,
     Landmark,
     Smartphone,

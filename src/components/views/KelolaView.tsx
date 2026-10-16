@@ -59,7 +59,6 @@ import { t } from '../../lib/i18n';
 const CLASSIC_WALLET_ICONS = [
   { id: 'Wallet', label: 'Dompet Fisik' },
   { id: 'CreditCard', label: 'Kartu Kredit' },
-  { id: 'Banknote', label: 'Uang Tunai' },
   { id: 'PiggyBank', label: 'Celengan' },
   { id: 'Landmark', label: 'Bank Umum' },
   { id: 'Smartphone', label: 'M-Banking' },
@@ -263,8 +262,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   const [tempProfileAvatar, setTempProfileAvatar] = useState(profile?.avatar || '/male_avatar.jpg');
   const [tempProfileEmail, setTempProfileEmail] = useState(profile?.email || 'rifqithoohaa12@gmail.com');
 
-  // Wallet Icon Picker Tab State ('bank' | 'ewallet' | 'investasi' | 'klasik')
-  const [walletIconTab, setWalletIconTab] = useState<'bank' | 'ewallet' | 'investasi' | 'klasik'>('bank');
+  // Wallet Icon Picker Tab State ('bank' | 'ewallet' | 'investasi' | 'klasik' | 'lainnya')
+  const [walletIconTab, setWalletIconTab] = useState<'bank' | 'ewallet' | 'investasi' | 'klasik' | 'lainnya'>('bank');
 
   // Auto-switch tab if current walletFormIcon belongs to a specific category
   useEffect(() => {
@@ -510,12 +509,12 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   </div>
                 </div>
 
-                {/* Segmented Category Tabs */}
-                <div className="grid grid-cols-4 gap-1 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl">
+                {/* Segmented Category Tabs (5 Tabs) */}
+                <div className="grid grid-cols-5 gap-1 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl">
                   <button
                     type="button"
                     onClick={() => setWalletIconTab('bank')}
-                    className={`py-1.5 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all cursor-pointer text-center ${
+                    className={`py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
                       walletIconTab === 'bank'
                         ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
                         : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -526,7 +525,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setWalletIconTab('ewallet')}
-                    className={`py-1.5 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all cursor-pointer text-center ${
+                    className={`py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
                       walletIconTab === 'ewallet'
                         ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
                         : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -537,7 +536,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setWalletIconTab('investasi')}
-                    className={`py-1.5 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all cursor-pointer text-center ${
+                    className={`py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
                       walletIconTab === 'investasi'
                         ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
                         : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
@@ -548,13 +547,24 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setWalletIconTab('klasik')}
-                    className={`py-1.5 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all cursor-pointer text-center ${
+                    className={`py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
                       walletIconTab === 'klasik'
                         ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
                         : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                     }`}
                   >
                     Klasik
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWalletIconTab('lainnya')}
+                    className={`py-1.5 text-[10px] font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
+                      walletIconTab === 'lainnya'
+                        ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    Lainnya
                   </button>
                 </div>
 

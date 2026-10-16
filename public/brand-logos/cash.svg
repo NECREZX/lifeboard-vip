@@ -1,0 +1,121 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Gradient: Deep Emerald to Rich Forest Green -->
+    <linearGradient id="cashBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="45%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#064E3B"/>
+    </linearGradient>
+
+    <!-- Ambient Center Radial Glow -->
+    <radialGradient id="cashGlow" cx="50%" cy="46%" r="55%">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.3"/>
+      <stop offset="70%" stop-color="#10B981" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#047857" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Banknote Gradients for realistic depth -->
+    <linearGradient id="billGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ADE80"/>
+      <stop offset="100%" stop-color="#22C55E"/>
+    </linearGradient>
+    <linearGradient id="billGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#86EFAC"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+    <linearGradient id="billGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6EE7B7"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+
+    <!-- Golden Coin Gradient -->
+    <linearGradient id="goldCoin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <!-- Shadow filter for overlapping 3D banknotes -->
+    <filter id="billShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="-0.5" dy="2.5" stdDeviation="2" flood-color="#022C22" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle App Badge Container -->
+  <rect width="100" height="100" rx="22" fill="url(#cashBg)" />
+  <rect width="100" height="100" rx="22" fill="url(#cashGlow)" />
+
+  <!-- Subtle background geometric security wave -->
+  <circle cx="50" cy="50" r="42" fill="none" stroke="#6EE7B7" stroke-width="0.7" opacity="0.12" stroke-dasharray="3,3" />
+
+  <!-- ==================== 1. BOTTOM BANKNOTE (Tilted -8 deg) ==================== -->
+  <g transform="translate(48, 65) rotate(-8)" filter="url(#billShadow)">
+    <!-- Base Bill -->
+    <rect x="-26" y="-13.5" width="52" height="27" rx="3.5" fill="url(#billGrad1)" stroke="#14532D" stroke-width="1.2" />
+    <!-- Inner Guilloche Border -->
+    <rect x="-23" y="-10.5" width="46" height="21" rx="2" fill="none" stroke="#166534" stroke-width="0.8" opacity="0.75" />
+    <!-- Corner Accents -->
+    <circle cx="-19" cy="-7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="19" cy="-7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="-19" cy="7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="19" cy="7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <!-- Side Watermark Circles -->
+    <circle cx="-15" cy="0" r="3" fill="#15803D" opacity="0.25" />
+    <circle cx="15" cy="0" r="3" fill="#15803D" opacity="0.25" />
+    <!-- Center Medallion -->
+    <circle cx="0" cy="0" r="7.5" fill="#DCFCE7" stroke="#15803D" stroke-width="1" />
+    <!-- Currency Symbol -->
+    <text x="0" y="3.5" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="9" fill="#14532D">$</text>
+  </g>
+
+  <!-- ==================== 2. MIDDLE BANKNOTE (Tilted +18 deg) ==================== -->
+  <g transform="translate(48, 51) rotate(18)" filter="url(#billShadow)">
+    <!-- Base Bill -->
+    <rect x="-26" y="-13.5" width="52" height="27" rx="3.5" fill="url(#billGrad2)" stroke="#14532D" stroke-width="1.2" />
+    <!-- Inner Guilloche Border -->
+    <rect x="-23" y="-10.5" width="46" height="21" rx="2" fill="none" stroke="#15803D" stroke-width="0.8" opacity="0.8" />
+    <!-- Corner Accents -->
+    <circle cx="-19" cy="-7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="19" cy="-7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="-19" cy="7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="19" cy="7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <!-- Side Watermark Circles -->
+    <circle cx="-15" cy="0" r="3" fill="#166534" opacity="0.25" />
+    <circle cx="15" cy="0" r="3" fill="#166534" opacity="0.25" />
+    <!-- Center Medallion -->
+    <circle cx="0" cy="0" r="7.5" fill="#F0FDF4" stroke="#15803D" stroke-width="1" />
+    <!-- Currency Symbol: Rp -->
+    <text x="0" y="3.2" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="7.5" fill="#14532D">Rp</text>
+  </g>
+
+  <!-- ==================== 3. TOP BANKNOTE (Tilted +44 deg) ==================== -->
+  <g transform="translate(52, 38) rotate(44)" filter="url(#billShadow)">
+    <!-- Base Bill -->
+    <rect x="-26" y="-13.5" width="52" height="27" rx="3.5" fill="url(#billGrad1)" stroke="#14532D" stroke-width="1.2" />
+    <!-- Inner Guilloche Border -->
+    <rect x="-23" y="-10.5" width="46" height="21" rx="2" fill="none" stroke="#15803D" stroke-width="0.8" opacity="0.85" />
+    <!-- Corner Accents -->
+    <circle cx="-19" cy="-7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="19" cy="-7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="-19" cy="7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <circle cx="19" cy="7" r="1.2" fill="#14532D" opacity="0.6"/>
+    <!-- Side Watermark Circles -->
+    <circle cx="-15" cy="0" r="3" fill="#166534" opacity="0.25" />
+    <circle cx="15" cy="0" r="3" fill="#166534" opacity="0.25" />
+    <!-- Center Medallion -->
+    <circle cx="0" cy="0" r="7.5" fill="#DCFCE7" stroke="#15803D" stroke-width="1" />
+    <!-- Currency Symbol -->
+    <text x="0" y="3.5" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="9" fill="#14532D">$</text>
+  </g>
+
+  <!-- Sparkling Golden Coins in foreground -->
+  <g transform="translate(23, 76)" filter="url(#billShadow)">
+    <circle cx="0" cy="0" r="7" fill="url(#goldCoin)" stroke="#B45309" stroke-width="1"/>
+    <circle cx="0" cy="0" r="5" fill="none" stroke="#FEF08A" stroke-width="0.7"/>
+    <text x="0" y="2.5" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="5.5" fill="#78350F">Rp</text>
+  </g>
+
+  <!-- Subtle shine sparkles -->
+  <path d="M78 20L79 23L82 24L79 25L78 28L77 25L74 24L77 23Z" fill="#FEF08A" opacity="0.85"/>
+  <path d="M18 36L18.8 38L21 38.8L18.8 39.6L18 42L17.2 39.6L15 38.8L17.2 38Z" fill="#A7F3D0" opacity="0.75"/>
+</svg>

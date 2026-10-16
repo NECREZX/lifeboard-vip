@@ -1,0 +1,124 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Gradient: Warm Radiant Amber to Deep Mahogany -->
+    <linearGradient id="sedekahBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="45%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+
+    <!-- Warm Radial Highlight -->
+    <radialGradient id="sedekahGlow" cx="50%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.35"/>
+      <stop offset="70%" stop-color="#F59E0B" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#78350F" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Wooden Kotak Amal Body Gradients -->
+    <linearGradient id="woodBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#92400E"/>
+      <stop offset="30%" stop-color="#854D0E"/>
+      <stop offset="100%" stop-color="#582604"/>
+    </linearGradient>
+
+    <linearGradient id="woodLid" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#B45309"/>
+      <stop offset="50%" stop-color="#9A3412"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+
+    <!-- Banknote Gradient -->
+    <linearGradient id="sedekahBill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ADE80"/>
+      <stop offset="60%" stop-color="#22C55E"/>
+      <stop offset="100%" stop-color="#16A34A"/>
+    </linearGradient>
+
+    <!-- Golden Coin & Brass Latch Gradient -->
+    <linearGradient id="goldDonation" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047"/>
+      <stop offset="40%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <!-- Deep Drop Shadow -->
+    <filter id="boxShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3.5" stdDeviation="3" flood-color="#2E1102" flood-opacity="0.55"/>
+    </filter>
+
+    <filter id="billShadowSedekah" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="-1" dy="2" stdDeviation="1.8" flood-color="#361703" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Squircle App Badge Container -->
+  <rect width="100" height="100" rx="22" fill="url(#sedekahBg)" />
+  <rect width="100" height="100" rx="22" fill="url(#sedekahGlow)" />
+
+  <!-- Background decorative light rays (sedekah blessing aura) -->
+  <circle cx="50" cy="50" r="42" fill="none" stroke="#FDE68A" stroke-width="0.8" opacity="0.25" stroke-dasharray="4,4" />
+
+  <!-- ==================== GREEN BANKNOTE (Entering Slot) ==================== -->
+  <!-- Tilted banknote slipping down into the top slot -->
+  <g transform="translate(46, 38) rotate(-22)" filter="url(#billShadowSedekah)">
+    <!-- Banknote Body -->
+    <rect x="-19" y="-15" width="38" height="23" rx="2.5" fill="url(#sedekahBill)" stroke="#14532D" stroke-width="1.1" />
+    <!-- Inner Border -->
+    <rect x="-16.5" y="-12.5" width="33" height="18" rx="1.5" fill="none" stroke="#15803D" stroke-width="0.7" opacity="0.85" />
+    <!-- Side Watermarks -->
+    <circle cx="-11.5" cy="-3.5" r="2" fill="#166534" opacity="0.3" />
+    <circle cx="11.5" cy="-3.5" r="2" fill="#166534" opacity="0.3" />
+    <!-- Center Medallion -->
+    <circle cx="0" cy="-3.5" r="5.2" fill="#DCFCE7" stroke="#15803D" stroke-width="0.9" />
+    <!-- Currency Mark -->
+    <text x="0" y="-1.2" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="5.5" fill="#14532D">Rp</text>
+  </g>
+
+  <!-- ==================== KOTAK AMAL (Donation Box) ==================== -->
+  <g filter="url(#boxShadow)">
+    <!-- Box Body Front Panel -->
+    <rect x="21" y="53" width="58" height="35" rx="3.5" fill="url(#woodBody)" stroke="#3B1802" stroke-width="1.2" />
+
+    <!-- Inset Carved Wooden Panel (Classic Indonesian Kotak Amal) -->
+    <rect x="25" y="60" width="50" height="23" rx="2.5" fill="#451A03" opacity="0.45" stroke="#A16207" stroke-width="0.8" />
+    
+    <!-- Text "KOTAK AMAL" / "SEDEKAH" embossed -->
+    <text x="50" y="74.5" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="6.5" fill="#FDE68A" letter-spacing="1.2">KOTAK AMAL</text>
+
+    <!-- Metal Padlock / Lock Latch (Hasp) -->
+    <rect x="46" y="52" width="8" height="11" rx="1.5" fill="url(#goldDonation)" stroke="#78350F" stroke-width="0.8" />
+    <circle cx="50" cy="56" r="1.2" fill="#451A03" />
+    <rect x="49.3" y="56" width="1.4" height="3.2" fill="#451A03" />
+
+    <!-- Shadow under the lid -->
+    <rect x="21" y="53" width="58" height="3.5" fill="#240D01" opacity="0.7" />
+
+    <!-- Lid (Overhanging Top) -->
+    <rect x="16" y="44" width="68" height="10.5" rx="2.5" fill="url(#woodLid)" stroke="#3B1802" stroke-width="1.2" />
+    <!-- Top Highlight Line on Lid -->
+    <line x1="18" y1="45" x2="82" y2="45" stroke="#FDE047" stroke-width="0.9" opacity="0.5" />
+
+    <!-- Slot (Lubang Uang Kotak Amal) -->
+    <rect x="31" y="47.5" width="38" height="4" rx="2" fill="#1A0A02" stroke="#451A03" stroke-width="0.7" />
+    <!-- Front lip of slot covering lower bill entry -->
+    <path d="M31 49.5 C31 51 69 51 69 49.5" stroke="#582604" stroke-width="1" fill="none" />
+  </g>
+
+  <!-- ==================== GOLDEN COINS (Rp Donasi) ==================== -->
+  <!-- Main dropping gold coin -->
+  <g transform="translate(73, 27) rotate(14)" filter="url(#billShadowSedekah)">
+    <circle cx="0" cy="0" r="7.5" fill="url(#goldDonation)" stroke="#92400E" stroke-width="1"/>
+    <circle cx="0" cy="0" r="5.6" fill="none" stroke="#FEF08A" stroke-width="0.8"/>
+    <text x="0" y="2.5" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="5.5" fill="#78350F">Rp</text>
+  </g>
+
+  <!-- Secondary stacked gold coin -->
+  <g transform="translate(80, 36) rotate(-12)" filter="url(#billShadowSedekah)">
+    <circle cx="0" cy="0" r="5.5" fill="url(#goldDonation)" stroke="#92400E" stroke-width="0.9"/>
+    <circle cx="0" cy="0" r="4" fill="none" stroke="#FEF08A" stroke-width="0.6"/>
+  </g>
+
+  <!-- Sparkles / Barakah light -->
+  <path d="M22 28L23 31L26 32L23 33L22 36L21 33L18 32L21 31Z" fill="#FEF08A" opacity="0.9"/>
+  <path d="M78 12L78.8 14L81 14.8L78.8 15.6L78 18L77.2 15.6L75 14.8L77.2 14Z" fill="#FDE047" opacity="0.8"/>
+</svg>
