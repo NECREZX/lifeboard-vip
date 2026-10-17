@@ -32,6 +32,7 @@ import { IconRenderer } from '../IconRenderer';
 import { BRAND_LOGOS_MAP } from '../BankLogos';
 import { Transaction, Wallet, Saving, Budget, Activity, Wishlist } from '../../types';
 import { CategoryPieChart, SourcePieChart } from '../InteractiveCharts';
+import { FinancialHealthCard } from '../FinancialHealthCard';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
 import { isCategoryMatch, isWalletMatch, getBudgetCategoryLabel } from '../../lib/budgetUtils';
@@ -551,8 +552,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               )}
             </div>
 
-              {/* 3. Charts Section: Visualisasi alokasi & sumber di menu dashboard */}
-              <div id="dashboard-charts" className="grid grid-cols-1 lg:grid-cols-2 gap-6 scroll-mt-20">
+            {/* Kondisi Finansial / Kesehatan Keuangan (Modern, Simpel, Colorfull & Dinamis) */}
+            <div id="dashboard-financial-health" className="scroll-mt-20">
+              <FinancialHealthCard
+                transactions={transactions}
+                budgets={budgets}
+                activeDisplaySaldo={activeDisplaySaldo}
+                currentMonthIncomes={currentMonthIncomes}
+                currentMonthExpenses={currentMonthExpenses}
+                currentMonthName={currentMonthName}
+                showHideBalance={showHideBalance}
+                formatIDR={formatIDR}
+                currentLang={currentLang}
+                getCardClasses={getCardClasses}
+                onNavigateToBudgets={() => setActiveTab('anggaran')}
+                onNavigateToLaporan={() => setActiveTab('laporan')}
+              />
+            </div>
+
+            {/* 3. Charts Section: Visualisasi alokasi & sumber di menu dashboard */}
+            <div id="dashboard-charts" className="grid grid-cols-1 lg:grid-cols-2 gap-6 scroll-mt-20">
                 <div className={`${getCardClasses()} p-5 lg:p-6`}>
                   <div className="flex items-center justify-between mb-6">
                     <h4 className="text-sm font-semibold tracking-tight text-slate-700 dark:text-slate-300">Alokasi Pengeluaran Keseluruhan</h4>
