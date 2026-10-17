@@ -249,11 +249,7 @@ export const FinancialHealthCard: React.FC<FinancialHealthCardProps> = ({
       </div>
 
       {/* 1. BAGIAN ATAS: Tulisan Angka Skor di Tengah, Indikator Bar, lalu Badge Kondisi & per 100 di Bawahnya */}
-      <div 
-        onClick={onNavigateToLaporan}
-        className="pt-2 pb-5 cursor-pointer space-y-4"
-        title={isEn ? "Click to view mutation report" : "Klik untuk buka laporan mutasi"}
-      >
+      <div className="pt-2 pb-5 space-y-4">
         {/* Tulisan Angka Skor Tetap di Tengah */}
         <div className="flex flex-col items-center justify-center text-center pt-2 pb-1">
           <span className="font-mono font-black text-4xl sm:text-5xl text-slate-800 dark:text-white tracking-tight">
