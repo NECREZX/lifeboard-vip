@@ -40,6 +40,7 @@ import {
 } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR, getLocalDateString } from '../../lib/formatters';
+import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 
 export type FormType = 'pengeluaran' | 'pemasukan' | 'transfer' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist';
 
@@ -115,15 +116,12 @@ export function TambahDataView({
 
   // Resolve user accent color
   const resolvedAccent = useMemo(() => {
-    if (settings.themeColor === 'custom') return settings.customAccentColor || '#8b5cf6';
-    switch (settings.themeColor) {
-      case 'emerald': return '#10b981';
-      case 'amber': return '#f59e0b';
-      case 'rose': return '#f43f5e';
-      case 'classic': return isDarkMode ? '#f8fafc' : '#0f172a';
-      case 'indigo': default: return '#6366f1';
-    }
-  }, [settings.themeColor, settings.customAccentColor, isDarkMode]);
+    return getEffectiveThemeColor(settings);
+  }, [settings]);
+
+  const contrastColor = useMemo(() => {
+    return getThemeContrastColor(resolvedAccent);
+  }, [resolvedAccent]);
 
   // Radius for Enclosing Card exactly matching DashboardView
   const enclosingCardRadiusClass = useMemo(() => {
@@ -660,7 +658,13 @@ export function TambahDataView({
       {/* =======================================================
           1. HERO BANNER BACKGROUND LAYER
          ======================================================= */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-7 sm:pt-9 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
+      <div 
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-7 sm:pt-9 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32 transition-colors duration-200"
+        style={{
+          backgroundColor: resolvedAccent,
+          color: contrastColor
+        }}
+      >
         {/* Authentic Indonesian Songket Weave Vector Motif */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -692,9 +696,15 @@ export function TambahDataView({
             <rect width="100%" height="100%" fill="url(#tambah-songket-pattern-v18)" />
           </svg>
 
-          {/* Luminous soft atmospheric glow */}
-          <div className="absolute right-0 bottom-0 w-72 h-40 bg-rose-500/25 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute left-10 bottom-0 w-64 h-32 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
+          {/* Luminous soft atmospheric glow matching resolvedAccent */}
+          <div 
+            className="absolute right-0 bottom-0 w-72 h-40 rounded-full blur-3xl pointer-events-none" 
+            style={{ backgroundColor: `${resolvedAccent}40` }}
+          />
+          <div 
+            className="absolute left-10 bottom-0 w-64 h-32 rounded-full blur-3xl pointer-events-none" 
+            style={{ backgroundColor: `${resolvedAccent}30` }}
+          />
         </div>
 
         {/* Foreground in Banner: Tabs + Scroll Dots + Centered Histori Data Button */}
@@ -766,7 +776,7 @@ export function TambahDataView({
       {/* =======================================================
           2. MAIN ENCLOSING SHEET CARD (-mt-20.4 sm:-mt-22.4 lg:-mt-24.4 -> -mt-[81.6px] sm:-mt-[89.6px] lg:-mt-[97.6px])
          ======================================================= */}
-      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[81.6px] sm:-mt-[89.6px] lg:-mt-[97.6px] -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-4 sm:space-y-5`}>
+      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[80px] sm:-mt-[88px] lg:-mt-[96px] -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-4 sm:space-y-5`}>
 
         {/* DATE SELECTOR BAR (Black Vector Calendar with < > navigation) */}
         {(activeForm === 'pengeluaran' || activeForm === 'pemasukan' || activeForm === 'transfer') && (

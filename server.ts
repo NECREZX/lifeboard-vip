@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
@@ -9,6 +10,26 @@ const app = express();
 const port = Number(process.env.PORT) || 3000;
 
 app.use(express.json({ limit: '10mb' }));
+
+// Dedicated handler for Service Worker to guarantee correct MIME type and headers
+app.get('/sw.js', (_req, res) => {
+  res.setHeader('Content-Type', 'text/javascript; charset=utf-8');
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  const swPath = path.resolve(process.cwd(), 'public/sw.js');
+  res.sendFile(swPath);
+});
+
+// Dedicated handler for Web App Manifest
+app.get('/manifest.json', (_req, res) => {
+  res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  const manifestPath = path.resolve(process.cwd(), 'public/manifest.json');
+  res.sendFile(manifestPath);
+});
+
+// Serve static assets from public directory
+app.use(express.static(path.resolve(process.cwd(), 'public')));
 
 // Helper formatting for currency
 const formatIDR = (val: number) => {

@@ -3,6 +3,7 @@ import { Plus, PieChart, SlidersHorizontal, Calendar } from 'lucide-react';
 import { DashboardNavIcon, TransaksiIcon, TabunganIcon } from './CustomIcons';
 import { UIStyle, Language, CardRadius } from '../types';
 import { t } from '../lib/i18n';
+import { getThemeContrastColor } from '../lib/theme';
 
 interface BottomNavProps {
   activeTab: string;
@@ -163,9 +164,9 @@ export default function BottomNav({
                 >
                   <div 
                     className={`w-10 h-10 xs:w-11 xs:h-11 rounded-full flex items-center justify-center text-white bg-gradient-to-tr ${getFabGradient()} shadow-sm hover:shadow-md group-hover:scale-105 group-active:scale-95 transition-all duration-150`}
-                    style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none' } : undefined}
+                    style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none', color: getThemeContrastColor(accentColor) } : undefined}
                   >
-                    <Plus className="w-5.5 h-5.5 xs:w-6 xs:h-6 stroke-[2.8]" />
+                    <Plus className="w-5.5 h-5.5 xs:w-6 xs:h-6 stroke-[2.8]" style={isHex ? { color: getThemeContrastColor(accentColor) } : undefined} />
                   </div>
                 </button>
               );

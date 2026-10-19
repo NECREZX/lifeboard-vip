@@ -10,13 +10,34 @@ import {
   Bot 
 } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { UserSettings } from '../../types';
+import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 
-export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
+interface AuthViewProps {
+  onLogin: () => void;
+  settings?: UserSettings;
+}
+
+export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const activeThemeColor = getEffectiveThemeColor(settings);
+  const contrastColor = getThemeContrastColor(activeThemeColor);
+
   useEffect(() => {
+    // Pastikan status bar HP menyatu seketika dengan warna tema form login
+    const metaTheme = document.querySelector("meta[name=theme-color]");
+    if (metaTheme) {
+      metaTheme.setAttribute("content", activeThemeColor);
+    }
+    const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
+    if (msMeta) {
+      msMeta.setAttribute("content", activeThemeColor);
+    }
+    document.documentElement.style.backgroundColor = activeThemeColor;
+
     // Cek jika sudah pernah login sebelumnya
     const savedAuth = localStorage.getItem('fin_auth');
     if (savedAuth) {
@@ -30,7 +51,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
         // Abaikan
       }
     }
-  }, []);
+  }, [activeThemeColor]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +59,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
       Swal.fire({
         title: 'Input Tidak Lengkap',
         text: 'Harap isi Username dan Password terlebih dahulu.',
-        confirmButtonColor: '#FF7777'
+        confirmButtonColor: activeThemeColor
       });
       return;
     }
@@ -54,7 +75,7 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
     Swal.fire({
       title: title,
       text: desc,
-      confirmButtonColor: '#FF7777',
+      confirmButtonColor: activeThemeColor,
       confirmButtonText: 'Tutup'
     });
   };
@@ -86,17 +107,22 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none bg-[#FF7777]"
+      className="fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none transition-colors duration-200"
+      style={{ backgroundColor: activeThemeColor }}
     >
       <form onSubmit={handleSubmit} className="min-h-[100dvh] flex flex-col justify-between relative z-10 w-full">
         {/* ========================================================
             BAGIAN ATAS: HERO BANNER LOGIN
             Persis Identik 100% dengan Banner Menu Dashboard & Menu Pengaturan
-            (Warna #FF7777, Mask Gradasi Pudar, Pattern Songket, Mix-blend & Glow)
+            (Warna Tema Kustom, Mask Gradasi Pudar, Pattern Songket, Mix-blend & Glow)
             ======================================================== */}
         <div 
-          className="relative z-0 overflow-hidden bg-[#FF7777] text-white flex-1 flex flex-col justify-center items-center px-6 pt-10 sm:pt-14 pb-8 w-full"
-          style={{ paddingTop: 'max(env(safe-area-inset-top), 24px)' }}
+          className="relative z-0 overflow-hidden text-white flex-1 flex flex-col justify-center items-center px-6 pt-10 sm:pt-14 pb-8 w-full transition-colors duration-200"
+          style={{ 
+            backgroundColor: activeThemeColor,
+            color: contrastColor,
+            paddingTop: 'max(env(safe-area-inset-top), 24px)' 
+          }}
         >
           {/* Authentic Indonesian Songket Weave Vector Motif (Identik 100% dengan Banner Dashboard & Kelola) */}
           <div 
@@ -240,7 +266,12 @@ export const AuthView = ({ onLogin }: { onLogin: () => void }) => {
             {/* Tombol Aksi Utama: Masuk (Langsung Masuk Tanpa Delay) */}
             <button
               type="submit"
-              className="w-full py-4 rounded-2xl bg-[#FF7777] hover:bg-[#ff6666] active:bg-[#ff5555] text-white font-extrabold text-sm uppercase tracking-wider shadow-[0_8px_20px_rgba(255,119,119,0.32)] flex items-center justify-center gap-2 cursor-pointer transition-colors"
+              style={{
+                backgroundColor: activeThemeColor,
+                color: contrastColor,
+                boxShadow: `0 8px 24px ${activeThemeColor}50`
+              }}
+              className="w-full py-4 rounded-2xl font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-[0.99]"
             >
               <LogIn className="w-4 h-4 stroke-[2.5]" />
               <span>Masuk</span>

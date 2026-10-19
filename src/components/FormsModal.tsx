@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { Wallet, Category, IncomeSource } from '../types';
 import { formatIDR, getLocalDateString, getLocalMonthString } from '../lib/formatters';
 import { IconRenderer } from './IconRenderer';
+import { getThemeContrastColor } from '../lib/theme';
 
 export const parseAmountInput = (val: string | number): number => {
   if (typeof val === 'number') return Math.round(val);
@@ -585,7 +586,7 @@ export default function FormsModal({
                         ? 'shadow-xs text-white' 
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 bg-slate-200/50 hover:bg-slate-200/80 dark:bg-slate-800/60 dark:hover:bg-slate-800'
                     }`}
-                    style={isActive ? { backgroundColor: resolvedAccent } : undefined}
+                    style={isActive ? { backgroundColor: resolvedAccent, color: getThemeContrastColor(resolvedAccent) } : undefined}
                   >
                     {tab === 'pengeluaran' ? 'Pengeluaran' : 
                      tab === 'pemasukan' ? 'Pendapatan' : 
@@ -1315,7 +1316,7 @@ export default function FormsModal({
             type="submit"
             form="forms-modal-form"
             className={`px-6 py-2.5 text-xs font-bold text-white rounded-xl shadow-xs transition active:scale-95 cursor-pointer ${getAccentBg()}`}
-            style={isHex ? { backgroundColor: accentColor } : undefined}
+            style={isHex ? { backgroundColor: accentColor, color: getThemeContrastColor(accentColor) } : undefined}
           >
             {editData ? 'Simpan Perubahan' : 'Simpan Catatan'}
           </button>

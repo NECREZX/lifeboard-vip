@@ -36,6 +36,7 @@ import { FinancialHealthCard } from '../FinancialHealthCard';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
 import { isCategoryMatch, isWalletMatch, getBudgetCategoryLabel } from '../../lib/budgetUtils';
+import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 
 // ... (DashboardView component remains largely the same)
 
@@ -116,17 +117,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   const currentLang = settings?.language || 'id';
 
-  const activeThemeColor = settings?.themeColor === 'custom'
-    ? (settings?.customAccentColor || '#8b5cf6')
-    : (settings?.themeColor === 'emerald'
-        ? '#10b981'
-        : settings?.themeColor === 'amber'
-          ? '#f59e0b'
-          : settings?.themeColor === 'rose'
-            ? '#f43f5e'
-            : settings?.themeColor === 'classic'
-              ? '#0f172a'
-              : '#6366f1');
+  const activeThemeColor = getEffectiveThemeColor(settings);
+  const contrastColor = getThemeContrastColor(activeThemeColor);
 
   const toggleHideBalance = () => {
     setShowHideBalance(prev => {
@@ -193,8 +185,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="flex flex-col" id="view-dashboard">
-      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar #FF7777) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32">
+      {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar) */}
+      <div 
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32 transition-colors duration-200"
+        style={{
+          backgroundColor: activeThemeColor,
+          color: contrastColor
+        }}
+      >
         {/* Authentic Indonesian Songket Weave Vector Motif (Pure Songket geometric diamond-grid without circular ring lines) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -236,9 +234,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <rect width="100%" height="100%" fill="url(#banner-songket-motif)" />
           </svg>
           
-          {/* Subtle luminous rose-wine atmospheric glow in the lower corners (pure soft blur, no rings) */}
-          <div className="absolute right-0 bottom-0 w-72 h-40 bg-rose-500/25 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute left-10 bottom-0 w-64 h-32 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
+          {/* Subtle luminous atmospheric glow in the lower corners matching activeThemeColor */}
+          <div 
+            className="absolute right-0 bottom-0 w-72 h-40 rounded-full blur-3xl pointer-events-none"
+            style={{ backgroundColor: `${activeThemeColor}40` }}
+          />
+          <div 
+            className="absolute left-10 bottom-0 w-64 h-32 rounded-full blur-3xl pointer-events-none"
+            style={{ backgroundColor: `${activeThemeColor}30` }}
+          />
         </div>
 
         {/* Foreground Content: Total Saldo Utama */}
@@ -450,17 +454,27 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </span>
               </button>
 
-              {/* Button 2: Lifeboard AI (Tanpa card pembungkus, ukuran lebih besar, warna #FF7777) */}
+              {/* Button 2: Lifeboard AI (Tanpa card pembungkus, ukuran lebih besar, warna tema dinamis) */}
               <button
                 type="button"
                 onClick={() => setActiveTab('lifeboard_ai')}
                 className="group flex flex-col items-center justify-center p-1.5 sm:p-2 gap-1.5 cursor-pointer select-none active:scale-95 transition-all text-center w-full my-auto"
                 title="Buka Lifeboard AI"
               >
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#FF7777]/15 hover:bg-[#FF7777]/25 text-[#FF7777] flex items-center justify-center shrink-0 shadow-sm shadow-[#FF7777]/20 group-hover:scale-110 transition-transform">
-                  <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF7777]" />
+                <div 
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform"
+                  style={{
+                    backgroundColor: `${activeThemeColor}20`,
+                    color: activeThemeColor,
+                    boxShadow: `0 4px 12px ${activeThemeColor}25`
+                  }}
+                >
+                  <Bot className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: activeThemeColor }} />
                 </div>
-                <span className="text-[11px] sm:text-xs font-black tracking-wider text-slate-800 dark:text-slate-100 group-hover:text-[#FF7777] transition-colors uppercase">
+                <span 
+                  className="text-[11px] sm:text-xs font-black tracking-wider transition-colors uppercase"
+                  style={{ color: activeThemeColor }}
+                >
                   AI
                 </span>
               </button>

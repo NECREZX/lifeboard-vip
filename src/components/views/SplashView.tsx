@@ -1,23 +1,46 @@
 import React, { useEffect } from 'react';
+import { UserSettings } from '../../types';
+import { getEffectiveThemeColor } from '../../lib/theme';
 
-export const SplashView = ({ onFinish }: { onFinish: () => void }) => {
+interface SplashViewProps {
+  onFinish: () => void;
+  settings?: UserSettings;
+}
+
+export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
+  const activeThemeColor = getEffectiveThemeColor(settings);
+
   useEffect(() => {
+    // Pastikan status bar HP menyatu seketika dengan warna tema
+    const metaTheme = document.querySelector("meta[name=theme-color]");
+    if (metaTheme) {
+      metaTheme.setAttribute("content", activeThemeColor);
+    }
+    const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
+    if (msMeta) {
+      msMeta.setAttribute("content", activeThemeColor);
+    }
+    document.documentElement.style.backgroundColor = activeThemeColor;
+
     // Selesai loading langsung tampilkan form login seketika tanpa jeda/delay kosong
     const timer = setTimeout(() => {
       onFinish();
     }, 1500);
     return () => clearTimeout(timer);
-  }, [onFinish]);
+  }, [onFinish, activeThemeColor]);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden select-none">
       {/* ========================================================
           LATAR BELAKANG DUA WARNA DENGAN PEMISAH GARIS LURUS BIASA
-          Atas (50%): #FF7777 (Menyatu dengan status bar HP)
+          Atas (50%): Warna Tema (Menyatu dengan status bar HP)
           Bawah (50%): Putih #FFFFFF (Menyatu dengan navigasi sistem HP)
           ======================================================== */}
-      {/* Bagian Atas: #FF7777 */}
-      <div className="absolute inset-x-0 top-0 h-[50%] bg-[#FF7777]" />
+      {/* Bagian Atas: activeThemeColor */}
+      <div 
+        className="absolute inset-x-0 top-0 h-[50%] transition-colors duration-200" 
+        style={{ backgroundColor: activeThemeColor }}
+      />
 
       {/* Bagian Bawah: Putih #FFFFFF */}
       <div className="absolute inset-x-0 bottom-0 h-[50%] bg-white" />
@@ -56,7 +79,10 @@ export const SplashView = ({ onFinish }: { onFinish: () => void }) => {
           {/* Tulisan Lifeboard & Ornamen Songket Horizontal Lurus */}
           <div className="relative flex flex-col items-center -mt-2">
             {/* Teks Lifeboard */}
-            <h1 className="text-3xl sm:text-4xl font-black text-[#FF7777] tracking-wider z-10 drop-shadow-xs px-3 select-none">
+            <h1 
+              className="text-3xl sm:text-4xl font-black tracking-wider z-10 drop-shadow-xs px-3 select-none transition-colors duration-200"
+              style={{ color: activeThemeColor }}
+            >
               Lifeboard
             </h1>
 
@@ -64,7 +90,8 @@ export const SplashView = ({ onFinish }: { onFinish: () => void }) => {
             <div className="w-[260px] sm:w-[290px] mt-2.5 sm:mt-3 pointer-events-none">
               <svg 
                 viewBox="0 0 280 28" 
-                className="w-full h-auto text-[#FF7777]" 
+                className="w-full h-auto transition-colors duration-200" 
+                style={{ color: activeThemeColor }}
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
@@ -121,7 +148,13 @@ export const SplashView = ({ onFinish }: { onFinish: () => void }) => {
           className="absolute bottom-8 sm:bottom-10 flex flex-col items-center"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 16px)' }}
         >
-          <div className="w-7 h-7 border-3 border-[#FF7777]/25 border-t-[#FF7777] rounded-full animate-spin" />
+          <div 
+            className="w-7 h-7 border-3 rounded-full animate-spin transition-colors duration-200" 
+            style={{ 
+              borderColor: `${activeThemeColor}35`, 
+              borderTopColor: activeThemeColor 
+            }}
+          />
         </div>
       </div>
     </div>

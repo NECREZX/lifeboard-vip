@@ -93,6 +93,7 @@ import { TrendChart, CategoryPieChart, SourcePieChart } from './components/Inter
 
 import { formatIDR } from './lib/formatters';
 import { t } from './lib/i18n';
+import { getEffectiveThemeColor, getThemeContrastColor, THEME_PRESETS, normalizeHexColor } from './lib/theme';
 
 import { DashboardView } from './components/views/DashboardView';
 import { TransactionsView } from './components/views/TransactionsView';
@@ -328,31 +329,36 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
-    // Match mobile status bar & gesture bar with system top bar color (#FF7777)
-    const topBarColor = "#FF7777";
+    // Match mobile status bar & gesture bar with system top bar color
+    const effectiveThemeColor = getEffectiveThemeColor(settings);
+    const contrastColor = getThemeContrastColor(effectiveThemeColor);
+
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {
       const meta = document.createElement("meta");
       meta.name = "theme-color";
-      meta.content = topBarColor;
+      meta.content = effectiveThemeColor;
       document.head.appendChild(meta);
     } else {
       metaThemeColors.forEach((meta) => {
-        meta.setAttribute("content", topBarColor);
+        meta.setAttribute("content", effectiveThemeColor);
       });
     }
+
+    const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
+    if (msMeta) msMeta.setAttribute("content", effectiveThemeColor);
 
     const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
     if (settings.isDarkMode) {
       document.documentElement.classList.add('dark');
       document.documentElement.style.colorScheme = 'dark';
-      document.documentElement.style.backgroundColor = topBarColor;
+      document.documentElement.style.backgroundColor = effectiveThemeColor;
       document.body.style.backgroundColor = "#020617";
       if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.colorScheme = 'light';
-      document.documentElement.style.backgroundColor = topBarColor;
+      document.documentElement.style.backgroundColor = effectiveThemeColor;
       document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc";
       if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'light');
     }
@@ -396,20 +402,10 @@ export default function App() {
       document.body.style.fontWeight = '';
     }
 
-    // Apply accent color CSS variable
-    let accentHex = '#6366f1';
-    if (settings.themeColor === 'custom') {
-      accentHex = settings.customAccentColor || '#8b5cf6';
-    } else {
-      switch (settings.themeColor) {
-        case 'emerald': accentHex = '#10b981'; break;
-        case 'amber': accentHex = '#f59e0b'; break;
-        case 'rose': accentHex = '#f43f5e'; break;
-        case 'classic': accentHex = '#0f172a'; break;
-        case 'indigo': default: accentHex = '#6366f1'; break;
-      }
-    }
-    document.documentElement.style.setProperty('--accent-color', accentHex);
+    // Apply accent color CSS variables
+    document.documentElement.style.setProperty('--app-accent', effectiveThemeColor);
+    document.documentElement.style.setProperty('--app-accent-contrast', contrastColor);
+    document.documentElement.style.setProperty('--accent-color', effectiveThemeColor);
   }, [settings]);
 
   // Scroll to top effect and scroll handler
@@ -2153,15 +2149,8 @@ export default function App() {
   }, [settings.tableStyle]);
 
   const getAccentColorHex = React.useCallback(() => {
-    if (settings.themeColor === 'custom') return settings.customAccentColor || '#8b5cf6';
-    switch (settings.themeColor) {
-      case 'emerald': return '#10b981';
-      case 'amber': return '#f59e0b';
-      case 'rose': return '#f43f5e';
-      case 'classic': return '#0f172a';
-      case 'indigo': default: return '#6366f1';
-    }
-  }, [settings.themeColor, settings.customAccentColor]);
+    return getEffectiveThemeColor(settings);
+  }, [settings]);
 
   const getAccentGradient = React.useCallback(() => {
     switch (settings.themeColor) {
@@ -2302,24 +2291,36 @@ export default function App() {
   }, [transactions, txTypeFilter, txWalletFilter, txCategoryFilter, txSearch, txDateFilter, txMonthFilter, txYearFilter]);
 
   if (appState === 'splash') {
-    return <SplashView onFinish={() => setAppState('auth')} />;
+    return <SplashView onFinish={() => setAppState('auth')} settings={settings} />;
   }
 
   if (appState === 'auth') {
-    return <AuthView onLogin={() => setAppState('main')} />;
+    return <AuthView onLogin={() => setAppState('main')} settings={settings} />;
   }
+
+  const effectiveThemeColor = getEffectiveThemeColor(settings);
+  const effectiveContrastColor = getThemeContrastColor(effectiveThemeColor);
 
   return (
     <div className={`min-h-[100dvh] pb-0 overflow-x-hidden w-full max-w-full ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 relative`}>
-      {/* 1. FIXED TOP BAR - Tetap diam di atas saat seluruh halaman di-scroll persis seperti bottom nav (#FF7777) */}
+      {/* 1. FIXED TOP BAR - Menyatu dengan status bar HP & tema warna */}
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 w-full no-print bg-[#FF7777] text-white border-none select-none transition-shadow duration-200 ${
-          isScrolled ? 'shadow-md shadow-rose-950/15' : 'shadow-none'
+        className={`fixed -top-1 inset-x-0 w-full z-50 no-print border-none select-none transition-colors duration-200 ${
+          isScrolled ? 'shadow-md shadow-black/15' : 'shadow-none'
         }`}
-        style={{ paddingTop: 'max(env(safe-area-inset-top), 8px)' }}
+        style={{ 
+          backgroundColor: effectiveThemeColor,
+          color: effectiveContrastColor,
+          paddingTop: 'calc(max(env(safe-area-inset-top), 8px) + 4px)',
+          transform: 'translateZ(0)',
+          willChange: 'transform'
+        }}
       >
         <div className="max-w-2xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-center relative z-10">
-          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-none drop-shadow-xs text-center">
+          <h1 
+            className="text-xl sm:text-2xl font-black tracking-tight leading-none drop-shadow-xs text-center"
+            style={{ color: effectiveContrastColor }}
+          >
             {activeTab === 'dashboard' && t('nav_dashboard', settings.language || 'id')}
             {activeTab === 'transaksi' && t('nav_transactions', settings.language || 'id')}
             {activeTab === 'tabungan' && t('nav_savings', settings.language || 'id')}
@@ -2568,6 +2569,8 @@ export default function App() {
             triggerNotification={triggerNotification}
             activeSubPage={kelolaSubPage}
             setActiveSubPage={setKelolaSubPage}
+            onLockScreen={() => setAppState('auth')}
+            onViewSplash={() => setAppState('splash')}
           />
         )}
 
@@ -2742,7 +2745,7 @@ export default function App() {
         categories={categories}
         sources={sources}
         uiStyle={settings.uiStyle}
-        accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
+        accentColor={effectiveThemeColor}
         initialTab={modalFormTab}
         editData={modalEditData}
         onAddTransaction={handleAddTransaction}
@@ -2770,7 +2773,7 @@ export default function App() {
               setKelolaSubPage('menu');
             }
           }}
-          accentColor={settings.themeColor === 'custom' ? (settings.customAccentColor || '#8b5cf6') : settings.themeColor}
+          accentColor={effectiveThemeColor}
           uiStyle={settings.uiStyle}
           cardRadius={settings.cardRadius}
           cardStyle={settings.cardStyle}
@@ -2959,96 +2962,98 @@ export default function App() {
               
               {/* Theme palettes 10% accent selection */}
               <div>
-                <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-400 block mb-2 uppercase tracking-widest">1. Warna Aksen</span>
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                  {[
-                    { id: 'indigo', label: 'Indigo', colorClass: 'bg-indigo-600' },
-                    { id: 'emerald', label: 'Emerald', colorClass: 'bg-emerald-500' },
-                    { id: 'amber', label: 'Amber', colorClass: 'bg-amber-500' },
-                    { id: 'rose', label: 'Rose', colorClass: 'bg-rose-500' }
-                  ].map((p) => {
-                    const isActive = settings.themeColor === p.id;
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-400 block uppercase tracking-widest">
+                    1. Warna Aksen & Tema Terpadu
+                  </span>
+                  <span 
+                    className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-md border"
+                    style={{ 
+                      backgroundColor: `${effectiveThemeColor}18`,
+                      color: effectiveThemeColor,
+                      borderColor: `${effectiveThemeColor}40`
+                    }}
+                  >
+                    {effectiveThemeColor.toUpperCase()}
+                  </span>
+                </div>
+
+                {/* Preset Palettes */}
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-3">
+                  {THEME_PRESETS.map((p) => {
+                    const isSelected = effectiveThemeColor.toLowerCase() === p.hex.toLowerCase();
                     return (
                       <button
                         key={p.id}
                         type="button"
-                        onClick={() => setSettings({ ...settings, themeColor: p.id as ThemeColor })}
-                        className={`p-2.5 rounded-xl border text-center transition flex flex-col items-center gap-1.5 select-none focus:outline-none ${
-                          isActive 
-                            ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-sm' 
+                        onClick={() => setSettings({ ...settings, themeColor: 'custom', customAccentColor: p.hex })}
+                        className={`p-2 rounded-xl border text-center transition flex flex-col items-center gap-1 select-none focus:outline-none cursor-pointer ${
+                          isSelected 
+                            ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-xs scale-102' 
                             : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
                         }`}
+                        title={p.label}
                       >
-                        <span className={`w-5 h-5 rounded-full shadow-sm block relative ${p.colorClass}`}>
-                          {isActive && (
-                            <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-[10px]">✓</span>
+                        <span 
+                          className="w-5 h-5 rounded-full shadow-xs block relative border border-black/10 shrink-0"
+                          style={{ backgroundColor: p.hex }}
+                        >
+                          {isSelected && (
+                            <span 
+                              className="absolute inset-0 flex items-center justify-center font-black text-[10px]"
+                              style={{ color: getThemeContrastColor(p.hex) }}
+                            >
+                              ✓
+                            </span>
                           )}
                         </span>
-                        <span className="text-[10px] text-slate-800 dark:text-slate-200 font-semibold">{p.label}</span>
+                        <span className="text-[9.5px] text-slate-800 dark:text-slate-200 font-medium truncate w-full">
+                          {p.label}
+                        </span>
                       </button>
                     );
                   })}
-
-                  {/* Custom Color Option */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (settings.themeColor !== 'custom') {
-                        setSettings({ ...settings, themeColor: 'custom', customAccentColor: settings.customAccentColor || '#8b5cf6' });
-                      }
-                    }}
-                    className={`p-2.5 rounded-xl border text-center transition flex flex-col items-center gap-1.5 select-none focus:outline-none ${
-                      settings.themeColor === 'custom' 
-                        ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-sm' 
-                        : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
-                    }`}
-                  >
-                    <span 
-                      className="w-5 h-5 rounded-full shadow-sm block relative border border-black/10 shrink-0"
-                      style={{ backgroundColor: settings.customAccentColor || '#8b5cf6' }}
-                    >
-                      {settings.themeColor === 'custom' && (
-                        <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-[10px]">✓</span>
-                      )}
-                    </span>
-                    <span className="text-[10px] text-slate-800 dark:text-slate-200 font-semibold">Bebas</span>
-                  </button>
                 </div>
 
-                {/* Custom Color Picker Tool */}
-                {settings.themeColor === 'custom' && (
-                  <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 animate-in fade-in duration-200">
-                    <div className="flex items-center gap-2.5">
-                      <div className="relative w-8 h-8 rounded-lg overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm shrink-0">
-                        <input 
-                          type="color" 
-                          value={settings.customAccentColor || '#8b5cf6'}
-                          onChange={(e) => setSettings({ ...settings, themeColor: 'custom', customAccentColor: e.target.value })}
-                          className="absolute -top-2 -left-2 w-12 h-12 cursor-pointer border-0 p-0"
-                          title="Pilih Warna Aksen Kustom"
-                        />
-                      </div>
-                      <div>
-                        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block">Pilih Warna Bebas</span>
-                        <span className="text-[9px] text-slate-400 dark:text-slate-500 block">Klik ikon untuk pilih via color picker</span>
+                {/* Color Picker & Hex Input */}
+                <div className="p-3 bg-slate-50 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div 
+                      className="relative w-9 h-9 rounded-xl overflow-hidden border-2 border-white dark:border-slate-700 shadow-xs shrink-0 cursor-pointer group"
+                      style={{ backgroundColor: effectiveThemeColor }}
+                      title="Klik untuk memilih warna via Color Picker"
+                    >
+                      <input 
+                        type="color" 
+                        value={effectiveThemeColor}
+                        onChange={(e) => setSettings({ ...settings, themeColor: 'custom', customAccentColor: e.target.value })}
+                        className="absolute -top-3 -left-3 w-16 h-16 cursor-pointer opacity-0"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:scale-110 transition-transform">
+                        <Palette className="w-4 h-4" style={{ color: effectiveContrastColor }} />
                       </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs font-mono font-bold text-slate-400">#</span>
-                      <input 
-                        type="text" 
-                        value={(settings.customAccentColor || '#8b5cf6').replace('#', '')}
-                        onChange={(e) => {
-                          const val = e.target.value.trim();
-                          setSettings({ ...settings, themeColor: 'custom', customAccentColor: `#${val}` });
-                        }}
-                        className="w-20 px-2 py-1 text-xs font-mono font-bold uppercase rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                        placeholder="8B5CF6"
-                        maxLength={6}
-                      />
+                    <div>
+                      <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block">Pilih Sendiri / Kode Warna</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500 block">Klik palet atau ketik kode HEX</span>
                     </div>
                   </div>
-                )}
+                  <div className="flex items-center gap-1.5 self-end sm:self-center">
+                    <span className="text-xs font-mono font-black text-slate-400">#</span>
+                    <input 
+                      type="text" 
+                      value={effectiveThemeColor.replace('#', '')}
+                      onChange={(e) => {
+                        const raw = e.target.value.trim().replace(/[^0-9a-fA-F]/g, '');
+                        const hex = raw ? `#${raw}` : '#FF7777';
+                        setSettings({ ...settings, themeColor: 'custom', customAccentColor: hex });
+                      }}
+                      className="w-24 px-2.5 py-1.5 text-xs font-mono font-bold uppercase rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-center"
+                      placeholder="FF7777"
+                      maxLength={6}
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Font Style Scheme */}

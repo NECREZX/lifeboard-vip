@@ -45,6 +45,7 @@ import {
   MonthlyInsightData,
   generateGeminiExecutiveReview
 } from '../../lib/monthlyInsightGenerator';
+import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 
 interface LifeboardAIViewProps {
   transactions: Transaction[];
@@ -306,12 +307,18 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
   const cardRadiusClass = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-3xl' : 'rounded-2xl';
   const smallRadiusClass = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
 
+  const activeThemeColor = getEffectiveThemeColor(settings);
+  const contrastColor = getThemeContrastColor(activeThemeColor);
+
   return (
     <div className="flex flex-col relative w-full min-h-screen bg-white dark:bg-slate-950" id="view-lifeboard-ai">
       {/* =======================================================
           1. HERO BANNER PERSIS DASHBOARD & TAMBAH DATA (DIPANJANGKAN KE BAWAH)
          ======================================================= */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-6 px-4 sm:px-6 pb-28 sm:pb-36 shadow-sm">
+      <div 
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-6 px-4 sm:px-6 pb-28 sm:pb-36 shadow-sm transition-colors duration-200"
+        style={{ backgroundColor: activeThemeColor, color: contrastColor }}
+      >
         {/* Authentic Indonesian Songket Weave Vector Motif */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -392,9 +399,15 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             
             {/* 1. ICON & TULISAN LIFEBOARD AI PAS NIMPA SETENGAH BANNER */}
             <div className="-mt-10 sm:-mt-12 flex flex-col items-center justify-center text-center select-none z-20">
-              <div className={`w-20 h-20 sm:w-24 sm:h-24 ${cardRadiusClass} bg-white dark:bg-slate-900 border-4 border-[#FF7777]/30 shadow-xl shadow-black/10 flex items-center justify-center text-[#FF7777] transition-transform duration-300 hover:scale-105`}>
-                <div className={`w-14 h-14 sm:w-16 sm:h-16 ${smallRadiusClass} bg-[#FF7777]/15 dark:bg-[#FF7777]/25 flex items-center justify-center`}>
-                  <Bot className="w-8 h-8 sm:w-10 sm:h-10 text-[#FF7777]" />
+              <div 
+                className={`w-20 h-20 sm:w-24 sm:h-24 ${cardRadiusClass} bg-white dark:bg-slate-900 border-4 shadow-xl shadow-black/10 flex items-center justify-center transition-transform duration-300 hover:scale-105`}
+                style={{ borderColor: `${activeThemeColor}40`, color: activeThemeColor }}
+              >
+                <div 
+                  className={`w-14 h-14 sm:w-16 sm:h-16 ${smallRadiusClass} flex items-center justify-center`}
+                  style={{ backgroundColor: `${activeThemeColor}20` }}
+                >
+                  <Bot className="w-8 h-8 sm:w-10 sm:h-10" style={{ color: activeThemeColor }} />
                 </div>
               </div>
 
@@ -409,10 +422,16 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 {/* Card 1: Sebenarnya Insight Apa */}
                 <div className={`${getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
                   <div>
-                    <div className={`w-6 h-6 ${smallRadiusClass} bg-[#FF7777]/15 text-[#FF7777] flex items-center justify-center mb-1.5`}>
+                    <div 
+                      className={`w-6 h-6 ${smallRadiusClass} flex items-center justify-center mb-1.5`}
+                      style={{ backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
+                    >
                       <Sparkles className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-[9px] font-extrabold text-[#FF7777] uppercase tracking-wider block mb-0.5">
+                    <span 
+                      className="text-[9px] font-extrabold uppercase tracking-wider block mb-0.5"
+                      style={{ color: activeThemeColor }}
+                    >
                       Cakupan
                     </span>
                     <h4 className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-100 mb-1 leading-tight">
@@ -503,7 +522,8 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                       type="button"
                       onClick={() => loadInsightForMonth(currentMonthStr)}
                       disabled={isLoading}
-                      className={`w-full py-3.5 px-5 ${smallRadiusClass} bg-[#FF7777] hover:bg-[#ff6161] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-[#FF7777]/25 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer select-none`}
+                      className={`w-full py-3.5 px-5 ${smallRadiusClass} text-white font-bold text-xs sm:text-sm tracking-wide shadow-md active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer select-none`}
+                      style={{ backgroundColor: activeThemeColor, color: contrastColor }}
                     >
                       {isLoading ? (
                         <>
@@ -539,7 +559,10 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                         </div>
                       </div>
 
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#FF7777]/10 text-[#FF7777] border border-[#FF7777]/20 shrink-0">
+                      <span 
+                        className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border shrink-0"
+                        style={{ backgroundColor: `${activeThemeColor}15`, borderColor: `${activeThemeColor}30`, color: activeThemeColor }}
+                      >
                         {wibInfo.daysRemainingInMonth} hari lagi
                       </span>
                     </div>
@@ -564,7 +587,10 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
               {/* Status Skor & Tombol Regenerasi AI (Batas 3x per bulan) */}
               <div className="flex items-center gap-2 shrink-0">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FF7777]/15 border border-[#FF7777]/30 text-[#FF7777] font-mono font-black text-xs sm:text-sm shadow-xs shrink-0">
+                <div 
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-mono font-black text-xs sm:text-sm shadow-xs shrink-0 border"
+                  style={{ backgroundColor: `${activeThemeColor}15`, borderColor: `${activeThemeColor}30`, color: activeThemeColor }}
+                >
                   <Award className="w-4 h-4" />
                   <span>Skor {insightData.financialHealthGrade}</span>
                 </div>
@@ -574,7 +600,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             {/* BAR PEMBERITAHUAN REGENERASI GEMINI AI & SISA KUOTA (MAKSIMAL 3X) */}
             <div className="flex items-center justify-between px-2 py-1 text-xs">
               <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                <Sparkles className="w-3.5 h-3.5 text-[#FF7777]" />
+                <Sparkles className="w-3.5 h-3.5" style={{ color: activeThemeColor }} />
                 <span className="font-semibold">Didukung Google Gemini AI</span>
               </div>
 
@@ -585,11 +611,11 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                   disabled={isGeneratingAI || remainingQuota <= 0}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all select-none ${
                     remainingQuota > 0 && !isGeneratingAI
-                      ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:border-[#FF7777] shadow-xs active:scale-95 cursor-pointer'
+                      ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-xs active:scale-95 cursor-pointer'
                       : 'bg-slate-100 dark:bg-slate-800/60 text-slate-400 border border-slate-200/50 dark:border-slate-800 cursor-not-allowed'
                   }`}
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isGeneratingAI ? 'animate-spin text-[#FF7777]' : ''}`} />
+                  <RefreshCw className={`w-3.5 h-3.5 ${isGeneratingAI ? 'animate-spin' : ''}`} style={isGeneratingAI ? { color: activeThemeColor } : undefined} />
                   <span>
                     {isGeneratingAI
                       ? 'Menganalisis...'
@@ -602,10 +628,13 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             {/* SEBELAHAN KANAN KIRI: Hasil Evaluasi & Rekomendasi Bulan Berikutnya */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
               {/* Kolom Kiri: Hasil Evaluasi */}
-              <div className={`${getCardClasses()} p-5 sm:p-6 bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border border-[#FF7777]/30 flex flex-col justify-between relative`}>
+              <div 
+                className={`${getCardClasses()} p-5 sm:p-6 bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border flex flex-col justify-between relative`}
+                style={{ borderColor: `${activeThemeColor}30` }}
+              >
                 {isGeneratingAI && (
                   <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs rounded-3xl flex items-center justify-center z-10">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#FF7777]">
+                    <div className="flex items-center gap-2 text-xs font-bold" style={{ color: activeThemeColor }}>
                       <RefreshCw className="w-4 h-4 animate-spin" />
                       <span>Gemini AI sedang menyusun evaluasi...</span>
                     </div>
@@ -614,14 +643,20 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-[#FF7777]/20 text-[#FF7777] flex items-center justify-center">
+                      <div 
+                        className="w-6 h-6 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
+                      >
                         <Award className="w-3.5 h-3.5" />
                       </div>
                       <h4 className="text-xs font-black tracking-wider uppercase text-slate-800 dark:text-slate-200">
                         Hasil Evaluasi
                       </h4>
                     </div>
-                    <span className="text-[10px] font-bold text-[#FF7777] bg-[#FF7777]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span 
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                      style={{ backgroundColor: `${activeThemeColor}15`, color: activeThemeColor }}
+                    >
                       <Sparkles className="w-2.5 h-2.5" /> Gemini AI
                     </span>
                   </div>
@@ -631,12 +666,15 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 </div>
               </div>
 
-              {/* Kolom Kanan: Rekomendasi Bulan Berikutnya (Samakan Gradasi Pink & Border) */}
-              <div className={`${getCardClasses()} p-5 sm:p-6 bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border border-[#FF7777]/30 flex flex-col justify-between relative`}>
+              {/* Kolom Kanan: Rekomendasi Bulan Berikutnya */}
+              <div 
+                className={`${getCardClasses()} p-5 sm:p-6 bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border flex flex-col justify-between relative`}
+                style={{ borderColor: `${activeThemeColor}30` }}
+              >
                 {isGeneratingAI && (
                   <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs rounded-3xl flex items-center justify-center z-10">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                      <RefreshCw className="w-4 h-4 animate-spin text-[#FF7777]" />
+                      <RefreshCw className="w-4 h-4 animate-spin" style={{ color: activeThemeColor }} />
                       <span>Menyusun rekomendasi taktis...</span>
                     </div>
                   </div>
@@ -644,14 +682,20 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-[#FF7777]/20 text-[#FF7777] flex items-center justify-center">
+                      <div 
+                        className="w-6 h-6 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
+                      >
                         <Target className="w-3.5 h-3.5" />
                       </div>
                       <h4 className="text-xs font-black tracking-wider uppercase text-slate-800 dark:text-slate-200">
                         Rekomendasi Bulan Berikutnya
                       </h4>
                     </div>
-                    <span className="text-[10px] font-bold text-[#FF7777] bg-[#FF7777]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <span 
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                      style={{ backgroundColor: `${activeThemeColor}15`, color: activeThemeColor }}
+                    >
                       Taktis
                     </span>
                   </div>
@@ -915,14 +959,24 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                       onClick={() => loadInsightForMonth(mStr)}
                       className={`w-full p-4 rounded-2xl border text-left flex items-center justify-between gap-3 transition-all cursor-pointer select-none active:scale-[0.98] ${
                         isSelected
-                          ? 'bg-[#FF7777]/10 border-[#FF7777] text-slate-900 dark:text-white shadow-xs'
-                          : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-700/60 hover:border-[#FF7777]/50 hover:bg-rose-50/20 text-slate-800 dark:text-slate-200 shadow-3xs'
+                          ? 'text-slate-900 dark:text-white shadow-xs'
+                          : 'bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-700/60 text-slate-800 dark:text-slate-200 shadow-3xs'
                       }`}
+                      style={
+                        isSelected 
+                          ? { backgroundColor: `${activeThemeColor}15`, borderColor: activeThemeColor }
+                          : undefined
+                      }
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                          isSelected ? 'bg-[#FF7777] text-white' : 'bg-[#FF7777]/15 text-[#FF7777]'
-                        }`}>
+                        <div 
+                          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                          style={
+                            isSelected 
+                              ? { backgroundColor: activeThemeColor, color: contrastColor }
+                              : { backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }
+                          }
+                        >
                           <Calendar className="w-5 h-5" />
                         </div>
                         <div className="min-w-0">
@@ -937,7 +991,10 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
                       <div className="flex items-center gap-1.5 shrink-0">
                         {isSelected ? (
-                          <div className="w-6 h-6 rounded-full bg-[#FF7777] text-white flex items-center justify-center">
+                          <div 
+                            className="w-6 h-6 rounded-full flex items-center justify-center"
+                            style={{ backgroundColor: activeThemeColor, color: contrastColor }}
+                          >
                             <Check className="w-3.5 h-3.5" />
                           </div>
                         ) : (

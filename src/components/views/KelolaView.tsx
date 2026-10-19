@@ -32,7 +32,9 @@ import {
   AlertOctagon,
   X,
   UserCheck,
-  Settings
+  Settings,
+  Lock,
+  Sparkles
 } from 'lucide-react';
 import { Breadcrumb } from '../Breadcrumb';
 import { 
@@ -54,6 +56,7 @@ import { IconRenderer } from '../IconRenderer';
 import { BRAND_WALLETS, BRAND_LOGOS_MAP, detectBrandFromWalletName } from '../BankLogos';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
+import { getEffectiveThemeColor, getThemeContrastColor, THEME_PRESETS, normalizeHexColor } from '../../lib/theme';
 
 // Ikon Dompet Klasik
 const CLASSIC_WALLET_ICONS = [
@@ -191,6 +194,8 @@ interface KelolaViewProps {
   triggerNotification?: (title: string, message: string, type?: 'info' | 'success' | 'warning' | 'alert') => void;
   activeSubPage?: KelolaSubPage;
   setActiveSubPage?: (subPage: KelolaSubPage) => void;
+  onLockScreen?: () => void;
+  onViewSplash?: () => void;
 }
 
 export const KelolaView: React.FC<KelolaViewProps> = ({
@@ -247,7 +252,9 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   onOpenNotifications,
   triggerNotification,
   activeSubPage: propSubPage,
-  setActiveSubPage: propSetSubPage
+  setActiveSubPage: propSetSubPage,
+  onLockScreen,
+  onViewSplash
 }) => {
   // Navigation state for SeaBank-like menu list
   const [internalSubPage, setInternalSubPage] = useState<KelolaSubPage>('menu');
@@ -255,6 +262,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   const setActiveSubPage = propSetSubPage || setInternalSubPage;
 
   const currentLang: Language = settings?.language || 'id';
+  const activeThemeColor = getEffectiveThemeColor(settings);
+  const contrastColor = getThemeContrastColor(activeThemeColor);
 
   // Profile Edit Modal State
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
@@ -1317,102 +1326,122 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
         <div className={`p-5 rounded-2xl ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 flex flex-col gap-6`}>
           
-          {/* 1. Warna Aksen */}
+          {/* 1. Warna Aksen & Tema Banner Terpadu */}
           <div>
-            <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-400 block mb-2.5 uppercase tracking-widest">
-              1. Warna Aksen
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-              {[
-                { id: 'indigo', label: 'Indigo', colorClass: 'bg-indigo-600' },
-                { id: 'emerald', label: 'Emerald', colorClass: 'bg-emerald-500' },
-                { id: 'amber', label: 'Amber', colorClass: 'bg-amber-500' },
-                { id: 'rose', label: 'Rose', colorClass: 'bg-rose-500' }
-              ].map((p) => {
-                const isActive = settings.themeColor === p.id;
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-400 block uppercase tracking-widest">
+                1. Warna Aksen & Tema Banner Terpadu
+              </span>
+              <span 
+                className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-md border"
+                style={{ 
+                  backgroundColor: `${activeThemeColor}18`,
+                  color: activeThemeColor,
+                  borderColor: `${activeThemeColor}40`
+                }}
+              >
+                {activeThemeColor.toUpperCase()}
+              </span>
+            </div>
+
+            {/* Palet Pilihan Cepat */}
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-3">
+              {THEME_PRESETS.map((p) => {
+                const isSelected = activeThemeColor.toLowerCase() === p.hex.toLowerCase();
                 return (
                   <button
                     key={p.id}
                     type="button"
-                    onClick={() => setSettings && setSettings({ ...settings, themeColor: p.id as ThemeColor })}
-                    className={`p-2.5 rounded-xl border text-center flex flex-col items-center gap-1.5 select-none focus:outline-none cursor-pointer ${
-                      isActive 
-                        ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-xs' 
-                        : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
+                    onClick={() => {
+                      if (setSettings) {
+                        setSettings({ 
+                          ...settings, 
+                          themeColor: 'custom', 
+                          customAccentColor: p.hex 
+                        });
+                      }
+                    }}
+                    className={`p-2 rounded-xl border text-center flex flex-col items-center gap-1 select-none focus:outline-none cursor-pointer transition-all ${
+                      isSelected 
+                        ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/80 font-bold shadow-xs scale-102' 
+                        : 'border-slate-100 dark:border-slate-900 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
                     }`}
+                    title={p.description || p.label}
                   >
-                    <span className={`w-5 h-5 rounded-full shadow-xs block relative ${p.colorClass}`}>
-                      {isActive && (
-                        <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-[10px]">✓</span>
+                    <span 
+                      className="w-5 h-5 rounded-full shadow-xs block relative shrink-0 border border-black/10"
+                      style={{ backgroundColor: p.hex }}
+                    >
+                      {isSelected && (
+                        <span 
+                          className="absolute inset-0 flex items-center justify-center font-black text-[10px]"
+                          style={{ color: getThemeContrastColor(p.hex) }}
+                        >
+                          ✓
+                        </span>
                       )}
                     </span>
-                    <span className="text-[10px] text-slate-800 dark:text-slate-200 font-semibold">{p.label}</span>
+                    <span className="text-[9.5px] text-slate-800 dark:text-slate-200 font-medium truncate w-full">
+                      {p.label}
+                    </span>
                   </button>
                 );
               })}
-
-              {/* Custom Color Option */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (setSettings && settings.themeColor !== 'custom') {
-                    setSettings({ ...settings, themeColor: 'custom', customAccentColor: settings.customAccentColor || '#8b5cf6' });
-                  }
-                }}
-                className={`p-2.5 rounded-xl border text-center flex flex-col items-center gap-1.5 select-none focus:outline-none cursor-pointer ${
-                  settings.themeColor === 'custom' 
-                    ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-xs' 
-                    : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
-                }`}
-              >
-                <span 
-                  className="w-5 h-5 rounded-full shadow-xs block relative border border-black/10 shrink-0"
-                  style={{ backgroundColor: settings.customAccentColor || '#8b5cf6' }}
-                >
-                  {settings.themeColor === 'custom' && (
-                    <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-[10px]">✓</span>
-                  )}
-                </span>
-                <span className="text-[10px] text-slate-800 dark:text-slate-200 font-semibold">Bebas</span>
-              </button>
             </div>
 
-            {/* Custom Color Picker Tool */}
-            {settings.themeColor === 'custom' && (
-              <div className="mt-3 p-3 bg-slate-50 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="relative w-8 h-8 rounded-lg overflow-hidden border-2 border-white dark:border-slate-800 shadow-xs shrink-0">
-                    <input 
-                      type="color" 
-                      value={settings.customAccentColor || '#8b5cf6'}
-                      onChange={(e) => setSettings && setSettings({ ...settings, themeColor: 'custom', customAccentColor: e.target.value })}
-                      className="absolute -top-2 -left-2 w-12 h-12 cursor-pointer border-0 p-0"
-                      title="Pilih Warna Aksen Kustom"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block">Pilih Warna Bebas</span>
-                    <span className="text-[9px] text-slate-400 dark:text-slate-500 block">Klik ikon untuk pilih via color picker</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-xs font-mono font-bold text-slate-400">#</span>
+            {/* Custom Color Picker & Direct Hex Input */}
+            <div className="p-3 bg-slate-50 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div 
+                  className="relative w-9 h-9 rounded-xl overflow-hidden border-2 border-white dark:border-slate-700 shadow-xs shrink-0 cursor-pointer group"
+                  style={{ backgroundColor: activeThemeColor }}
+                  title="Klik untuk memilih warna bebas via Color Picker"
+                >
                   <input 
-                    type="text" 
-                    value={(settings.customAccentColor || '#8b5cf6').replace('#', '')}
+                    type="color" 
+                    value={activeThemeColor}
                     onChange={(e) => {
-                      const val = e.target.value.trim();
                       if (setSettings) {
-                        setSettings({ ...settings, themeColor: 'custom', customAccentColor: `#${val}` });
+                        setSettings({ ...settings, themeColor: 'custom', customAccentColor: e.target.value });
                       }
                     }}
-                    className="w-20 px-2 py-1 text-xs font-mono font-bold uppercase rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                    placeholder="8B5CF6"
-                    maxLength={6}
+                    className="absolute -top-3 -left-3 w-16 h-16 cursor-pointer opacity-0"
+                    title="Pilih Warna Bebas"
                   />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:scale-110 transition-transform">
+                    <Palette className="w-4 h-4" style={{ color: contrastColor }} />
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block">
+                    Pilih Sendiri / Kode Warna
+                  </span>
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 block">
+                    Klik palet untuk Color Picker atau ketik kode HEX
+                  </span>
                 </div>
               </div>
-            )}
+
+              {/* Direct Hex Code Input */}
+              <div className="flex items-center gap-1.5 self-end sm:self-center">
+                <span className="text-xs font-mono font-black text-slate-400">#</span>
+                <input 
+                  type="text" 
+                  value={activeThemeColor.replace('#', '')}
+                  onChange={(e) => {
+                    const raw = e.target.value.trim().replace(/[^0-9a-fA-F]/g, '');
+                    if (setSettings) {
+                      const hex = raw ? `#${raw}` : '#FF7777';
+                      setSettings({ ...settings, themeColor: 'custom', customAccentColor: hex });
+                    }
+                  }}
+                  className="w-24 px-2.5 py-1.5 text-xs font-mono font-bold uppercase rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-center"
+                  placeholder="FF7777"
+                  maxLength={6}
+                />
+              </div>
+            </div>
+
           </div>
 
           {/* 2. Tipografi Utama */}
@@ -1810,6 +1839,17 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
       icon: Trash2,
       iconColor: 'bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400',
       action: () => setActiveSubPage('bahaya')
+    },
+    {
+      id: 'kunci_layar',
+      title: 'Kunci Layar & Form Login',
+      icon: Lock,
+      iconColor: 'bg-slate-500/10 border border-slate-500/20 text-slate-700 dark:text-slate-300',
+      action: () => {
+        if (onLockScreen) {
+          onLockScreen();
+        }
+      }
     }
   ];
 
@@ -1817,7 +1857,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
     <div className="flex flex-col gap-3.5 sm:gap-4" id="view-manage">
       
       {/* 1. Backdrop Banner Atas (Persis Identik & Selaras dengan Dashboard Hero Banner) */}
-      <div className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden bg-[#FF7777] text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[162px] sm:h-[172px] lg:h-[182px]">
+      <div 
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[162px] sm:h-[172px] lg:h-[182px] transition-colors duration-200"
+        style={{ backgroundColor: activeThemeColor, color: contrastColor }}
+      >
         {/* Authentic Indonesian Songket Weave Vector Motif (Identik 100% dengan Banner Dashboard) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
@@ -1859,9 +1902,15 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             <rect width="100%" height="100%" fill="url(#banner-songket-motif-kelola)" />
           </svg>
 
-          {/* Subtle luminous rose-wine atmospheric glow in the lower corners */}
-          <div className="absolute right-0 bottom-0 w-72 h-40 bg-rose-500/25 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute left-10 bottom-0 w-64 h-32 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
+          {/* Subtle luminous atmospheric glow in the lower corners matching activeThemeColor */}
+          <div 
+            className="absolute right-0 bottom-0 w-72 h-40 rounded-full blur-3xl pointer-events-none" 
+            style={{ backgroundColor: `${activeThemeColor}40` }}
+          />
+          <div 
+            className="absolute left-10 bottom-0 w-64 h-32 rounded-full blur-3xl pointer-events-none" 
+            style={{ backgroundColor: `${activeThemeColor}30` }}
+          />
         </div>
       </div>
 
@@ -1877,7 +1926,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
         title="Klik untuk mengubah nama, email, dan avatar profil"
       >
         {/* Ornamen Motif Batik Kawung di Sisi Kiri Card */}
-        <div className="absolute left-2.5 sm:left-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 dark:opacity-25 text-[#FF7777] dark:text-rose-400 group-hover:opacity-50 transition-opacity">
+        <div 
+          className="absolute left-2.5 sm:left-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 dark:opacity-35 group-hover:opacity-60 transition-opacity"
+          style={{ color: activeThemeColor }}
+        >
           <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 sm:w-8.5 sm:h-8.5">
             {/* Authentic Indonesian Batik Kawung Motif */}
             <path d="M 19 19 C 14 13, 14 5, 19 2 C 24 5, 24 13, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
@@ -1893,7 +1945,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
         </div>
 
         {/* Ornamen Motif Batik Kawung di Sisi Kanan Card */}
-        <div className="absolute right-2.5 sm:right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 dark:opacity-25 text-[#FF7777] dark:text-rose-400 group-hover:opacity-50 transition-opacity">
+        <div 
+          className="absolute right-2.5 sm:right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 dark:opacity-35 group-hover:opacity-60 transition-opacity"
+          style={{ color: activeThemeColor }}
+        >
           <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 sm:w-8.5 sm:h-8.5">
             {/* Authentic Indonesian Batik Kawung Motif */}
             <path d="M 19 19 C 14 13, 14 5, 19 2 C 24 5, 24 13, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
@@ -1922,7 +1977,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               />
             </div>
             {/* Icon Pensil di Foto Profil */}
-            <div className={`absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-6.5 sm:h-6.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} bg-[#FF7777] text-white border-2 border-white dark:border-slate-800 flex items-center justify-center group-hover/avatar:scale-110 transition-transform`}>
+            <div 
+              className={`absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-6.5 sm:h-6.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} text-white border-2 border-white dark:border-slate-800 flex items-center justify-center group-hover/avatar:scale-110 transition-transform`}
+              style={{ backgroundColor: activeThemeColor }}
+            >
               <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
             </div>
           </div>
