@@ -10,7 +10,7 @@ interface SplashViewProps {
 export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
   const rawThemeColor = getEffectiveThemeColor(settings);
   const activeThemeColor = rawThemeColor;
-  const bottomBgColor = settings?.isDarkMode ? '#000000' : '#ffffff';
+  const bottomBgColor = settings?.isDarkMode ? '#121212' : '#ffffff';
 
   useEffect(() => {
     // Pastikan status bar HP menyatu seketika dengan warna tema

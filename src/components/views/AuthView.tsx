@@ -24,20 +24,20 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const rawThemeColor = getEffectiveThemeColor(settings);
-  const activeThemeColor = settings?.isDarkMode ? '#020617' : rawThemeColor;
+  const activeThemeColor = rawThemeColor;
   const contrastColor = getThemeContrastColor(rawThemeColor);
 
   useEffect(() => {
     // Pastikan status bar HP menyatu seketika dengan warna tema form login
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", activeThemeColor);
+      metaTheme.setAttribute("content", settings?.isDarkMode ? '#121212' : activeThemeColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", activeThemeColor);
+      msMeta.setAttribute("content", settings?.isDarkMode ? '#121212' : activeThemeColor);
     }
-    document.documentElement.style.backgroundColor = activeThemeColor;
+    document.documentElement.style.backgroundColor = settings?.isDarkMode ? '#121212' : activeThemeColor;
 
     // Cek jika sudah pernah login sebelumnya
     const savedAuth = localStorage.getItem('fin_auth');
@@ -52,7 +52,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
         // Abaikan
       }
     }
-  }, [activeThemeColor]);
+  }, [activeThemeColor, settings?.isDarkMode]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +109,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   return (
     <div 
       className="fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none transition-colors duration-200"
-      style={{ backgroundColor: activeThemeColor }}
+      style={{ backgroundColor: settings?.isDarkMode ? '#121212' : activeThemeColor }}
     >
       <form onSubmit={handleSubmit} className="min-h-[100dvh] flex flex-col justify-between relative z-10 w-full">
         {/* ========================================================
@@ -238,7 +238,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
             Warna Putih Navigasi Sistem HP (3 Badge Fitur + Button Masuk)
             ======================================================== */}
         <div 
-          className="bg-white dark:bg-slate-900 rounded-t-[32px] sm:rounded-t-[36px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
+          className="relative z-20 -mt-8 sm:-mt-10 bg-white dark:bg-[#121212] rounded-t-[32px] sm:rounded-t-[36px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
         >
           <div className="max-w-sm mx-auto flex flex-col gap-5">
@@ -268,9 +268,9 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
             <button
               type="submit"
               style={{
-                backgroundColor: rawThemeColor,
-                color: contrastColor,
-                boxShadow: `0 8px 24px ${rawThemeColor}50`
+                backgroundColor: settings?.isDarkMode && (rawThemeColor === '#0F172A' || rawThemeColor === '#020617') ? '#ffffff' : rawThemeColor,
+                color: settings?.isDarkMode && (rawThemeColor === '#0F172A' || rawThemeColor === '#020617') ? '#0f172a' : contrastColor,
+                boxShadow: `0 8px 24px ${settings?.isDarkMode && (rawThemeColor === '#0F172A' || rawThemeColor === '#020617') ? 'rgba(255,255,255,0.25)' : `${rawThemeColor}50`}`
               }}
               className="w-full py-4 rounded-2xl font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-[0.99]"
             >

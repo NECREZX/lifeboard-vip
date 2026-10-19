@@ -331,7 +331,7 @@ export default function App() {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
     // Match mobile status bar & gesture bar with system top bar color
     const rawThemeColor = getEffectiveThemeColor(settings);
-    const effectiveThemeColor = settings.isDarkMode ? '#020617' : rawThemeColor;
+    const effectiveThemeColor = settings.isDarkMode ? '#121212' : rawThemeColor;
     const contrastColor = getThemeContrastColor(rawThemeColor);
 
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
@@ -354,7 +354,7 @@ export default function App() {
       document.documentElement.classList.add('dark');
       document.documentElement.style.colorScheme = 'dark';
       document.documentElement.style.backgroundColor = effectiveThemeColor;
-      document.body.style.backgroundColor = "#020617";
+      document.body.style.backgroundColor = "#121212";
       if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -2963,9 +2963,9 @@ export default function App() {
               
               {/* Theme palettes 10% accent selection */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-400 block uppercase tracking-widest">
-                    1. Warna Aksen & Tema Terpadu
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span className="text-[9.5px] font-extrabold text-slate-400 dark:text-slate-400 uppercase tracking-wider truncate flex-1 min-w-0">
+                    1. Warna Aksen & Tema Banner Terpadu
                   </span>
                   <span 
                     className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-md border"
@@ -3036,7 +3036,6 @@ export default function App() {
                     </div>
                     <div>
                       <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block">Pilih Sendiri / Kode Warna</span>
-                      <span className="text-[9px] text-slate-400 dark:text-slate-500 block">Klik palet atau ketik kode HEX</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 self-end sm:self-center">

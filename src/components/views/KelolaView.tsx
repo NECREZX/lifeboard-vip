@@ -1328,8 +1328,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           
           {/* 1. Warna Aksen & Tema Banner Terpadu */}
           <div>
-            <div className="flex items-center justify-between mb-2.5">
-              <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-400 block uppercase tracking-widest">
+            <div className="flex items-center justify-between gap-2 mb-2.5">
+              <span className="text-[9.5px] font-extrabold text-slate-400 dark:text-slate-400 uppercase tracking-wider truncate flex-1 min-w-0">
                 1. Warna Aksen & Tema Banner Terpadu
               </span>
               <span 
@@ -1415,9 +1415,6 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 <div>
                   <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 block">
                     Pilih Sendiri / Kode Warna
-                  </span>
-                  <span className="text-[9px] text-slate-400 dark:text-slate-500 block">
-                    Klik palet untuk Color Picker atau ketik kode HEX
                   </span>
                 </div>
               </div>
