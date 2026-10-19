@@ -23,8 +23,9 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const activeThemeColor = getEffectiveThemeColor(settings);
-  const contrastColor = getThemeContrastColor(activeThemeColor);
+  const rawThemeColor = getEffectiveThemeColor(settings);
+  const activeThemeColor = settings?.isDarkMode ? '#020617' : rawThemeColor;
+  const contrastColor = getThemeContrastColor(rawThemeColor);
 
   useEffect(() => {
     // Pastikan status bar HP menyatu seketika dengan warna tema form login
@@ -237,7 +238,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
             Warna Putih Navigasi Sistem HP (3 Badge Fitur + Button Masuk)
             ======================================================== */}
         <div 
-          className="bg-white rounded-t-[32px] sm:rounded-t-[36px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60"
+          className="bg-white dark:bg-slate-900 rounded-t-[32px] sm:rounded-t-[36px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
         >
           <div className="max-w-sm mx-auto flex flex-col gap-5">
@@ -255,7 +256,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
                     <div className={`w-13 h-13 rounded-full flex items-center justify-center shadow-xs transition-transform group-hover:scale-105 group-active:scale-95 ${f.bg}`}>
                       <Icon className="w-5.5 h-5.5 stroke-[2.2]" />
                     </div>
-                    <span className="text-[10.5px] sm:text-[11px] font-bold text-slate-700 tracking-tight text-center leading-tight w-full">
+                    <span className="text-[10.5px] sm:text-[11px] font-bold text-slate-700 dark:text-slate-200 tracking-tight text-center leading-tight w-full">
                       {f.name}
                     </span>
                   </button>
@@ -267,9 +268,9 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
             <button
               type="submit"
               style={{
-                backgroundColor: activeThemeColor,
+                backgroundColor: rawThemeColor,
                 color: contrastColor,
-                boxShadow: `0 8px 24px ${activeThemeColor}50`
+                boxShadow: `0 8px 24px ${rawThemeColor}50`
               }}
               className="w-full py-4 rounded-2xl font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all hover:brightness-105 active:scale-[0.99]"
             >

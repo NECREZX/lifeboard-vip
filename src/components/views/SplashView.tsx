@@ -8,42 +8,47 @@ interface SplashViewProps {
 }
 
 export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
-  const activeThemeColor = getEffectiveThemeColor(settings);
+  const rawThemeColor = getEffectiveThemeColor(settings);
+  const activeThemeColor = rawThemeColor;
+  const bottomBgColor = settings?.isDarkMode ? '#000000' : '#ffffff';
 
   useEffect(() => {
     // Pastikan status bar HP menyatu seketika dengan warna tema
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", activeThemeColor);
+      metaTheme.setAttribute("content", rawThemeColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", activeThemeColor);
+      msMeta.setAttribute("content", rawThemeColor);
     }
-    document.documentElement.style.backgroundColor = activeThemeColor;
+    document.documentElement.style.backgroundColor = rawThemeColor;
 
     // Selesai loading langsung tampilkan form login seketika tanpa jeda/delay kosong
     const timer = setTimeout(() => {
       onFinish();
     }, 1500);
     return () => clearTimeout(timer);
-  }, [onFinish, activeThemeColor]);
+  }, [onFinish, rawThemeColor]);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden select-none">
       {/* ========================================================
           LATAR BELAKANG DUA WARNA DENGAN PEMISAH GARIS LURUS BIASA
-          Atas (50%): Warna Tema (Menyatu dengan status bar HP)
-          Bawah (50%): Putih #FFFFFF (Menyatu dengan navigasi sistem HP)
+          Atas (50%): Warna Tema Kustomisasi (rawThemeColor)
+          Bawah (50%): Putih #FFFFFF (terang) / #000000 (gelap menyatu dengan navigasi sistem HP)
           ======================================================== */}
-      {/* Bagian Atas: activeThemeColor */}
+      {/* Bagian Atas: rawThemeColor */}
       <div 
         className="absolute inset-x-0 top-0 h-[50%] transition-colors duration-200" 
-        style={{ backgroundColor: activeThemeColor }}
+        style={{ backgroundColor: rawThemeColor }}
       />
 
-      {/* Bagian Bawah: Putih #FFFFFF */}
-      <div className="absolute inset-x-0 bottom-0 h-[50%] bg-white" />
+      {/* Bagian Bawah: Putih #FFFFFF / Dark #000000 */}
+      <div 
+        className="absolute inset-x-0 bottom-0 h-[50%] transition-colors duration-200"
+        style={{ backgroundColor: bottomBgColor }}
+      />
 
       {/* ========================================================
           KONTEN UTAMA:
@@ -66,7 +71,7 @@ export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
             Setengah atas di #FF7777, setengah bawah di Putih.
           */}
           <div className="-translate-y-1/2 flex flex-col items-center">
-            <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-3xl p-1 bg-white border-4 border-black shadow-[0_12px_32px_rgba(0,0,0,0.18)] flex items-center justify-center">
+            <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-3xl p-1 bg-white dark:bg-slate-900 border-4 border-black dark:border-slate-800 shadow-[0_12px_32px_rgba(0,0,0,0.18)] flex items-center justify-center">
               <img 
                 src="/icon.svg" 
                 className="w-full h-full object-cover scale-[1.15]" 
@@ -81,7 +86,7 @@ export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
             {/* Teks Lifeboard */}
             <h1 
               className="text-3xl sm:text-4xl font-black tracking-wider z-10 drop-shadow-xs px-3 select-none transition-colors duration-200"
-              style={{ color: activeThemeColor }}
+              style={{ color: settings?.isDarkMode ? '#ffffff' : activeThemeColor }}
             >
               Lifeboard
             </h1>

@@ -330,8 +330,9 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
     // Match mobile status bar & gesture bar with system top bar color
-    const effectiveThemeColor = getEffectiveThemeColor(settings);
-    const contrastColor = getThemeContrastColor(effectiveThemeColor);
+    const rawThemeColor = getEffectiveThemeColor(settings);
+    const effectiveThemeColor = settings.isDarkMode ? '#020617' : rawThemeColor;
+    const contrastColor = getThemeContrastColor(rawThemeColor);
 
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {

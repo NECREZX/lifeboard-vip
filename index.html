@@ -32,9 +32,10 @@
               teal: '#14b8a6',
               indigo: '#6366f1'
             };
-            var color = (p.themeColor === 'custom' && p.customAccentColor) 
+            var isDark = p.isDarkMode;
+            var color = isDark ? '#000000' : ((p.themeColor === 'custom' && p.customAccentColor) 
               ? p.customAccentColor 
-              : (map[p.themeColor] || '#FF7777');
+              : (map[p.themeColor] || '#FF7777'));
             if (color) {
               var meta = document.getElementById('meta-theme-color');
               if (meta) meta.setAttribute('content', color);

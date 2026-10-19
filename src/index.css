@@ -65,7 +65,7 @@
   }
   
   html.dark {
-    background-color: #020617; /* Matches slate-950 background for dark mode */
+    background-color: #000000; /* Pure black to match phone system navigation bar */
   }
   
   body {
@@ -84,8 +84,39 @@
   }
   
   html.dark body, body.dark {
-    background-color: #020617; /* slate-950 */
+    background-color: #000000; /* Pure black */
     color: #f8fafc; /* slate-50 */
+  }
+
+  /* Force all slate dark backgrounds to pure black / true neutral dark black (no blue tint) */
+  html.dark .dark\:bg-slate-950,
+  body.dark .dark\:bg-slate-950,
+  .dark .dark\:bg-slate-950 {
+    background-color: #000000 !important;
+  }
+
+  html.dark .dark\:bg-slate-900,
+  body.dark .dark\:bg-slate-900,
+  .dark .dark\:bg-slate-900 {
+    background-color: #0a0a0a !important;
+  }
+
+  html.dark .dark\:bg-slate-950\/80,
+  body.dark .dark\:bg-slate-950\/80,
+  .dark .dark\:bg-slate-950\/80 {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+  }
+
+  html.dark .dark\:bg-slate-900\/40,
+  body.dark .dark\:bg-slate-900\/40,
+  .dark .dark\:bg-slate-900\/40 {
+    background-color: rgba(10, 10, 10, 0.4) !important;
+  }
+
+  html.dark .dark\:bg-slate-900\/80,
+  body.dark .dark\:bg-slate-900\/80,
+  .dark .dark\:bg-slate-900\/80 {
+    background-color: rgba(10, 10, 10, 0.8) !important;
   }
 
   .dark ::selection {
