@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   Plus, 
   Edit2, 
@@ -262,8 +262,25 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   const setActiveSubPage = propSetSubPage || setInternalSubPage;
 
   const currentLang: Language = settings?.language || 'id';
-  const activeThemeColor = getEffectiveThemeColor(settings);
-  const contrastColor = getThemeContrastColor(activeThemeColor);
+  const isDark = !!settings?.isDarkMode;
+  const rawThemeColor = getEffectiveThemeColor(settings);
+  const activeThemeColor = isDark ? '#1e1e1e' : rawThemeColor;
+  const contrastColor = isDark ? '#ffffff' : getThemeContrastColor(rawThemeColor);
+
+  const enclosingCardRadiusClass = useMemo(() => {
+    if (settings?.cardRadius === 'sharp') return 'rounded-none';
+    if (settings?.cardRadius === 'extra') return 'rounded-t-[48px] sm:rounded-t-[56px] rounded-b-none';
+    return 'rounded-t-[40px] sm:rounded-t-[40px] rounded-b-none';
+  }, [settings?.cardRadius]);
+
+  const enclosingCardBgClass = useMemo(() => {
+    if (settings?.uiStyle === 'glass') {
+      return 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none';
+    } else if (settings?.uiStyle === 'minimal') {
+      return 'bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 shadow-none';
+    }
+    return 'bg-white dark:bg-slate-900 border-t sm:border border-slate-200/90 dark:border-slate-800 shadow-none';
+  }, [settings?.uiStyle]);
 
   // Profile Edit Modal State
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
@@ -358,8 +375,12 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
     setSettings({ ...settings, isDarkMode: isDark });
     if (isDark) {
       document.documentElement.classList.add('dark');
+      document.documentElement.style.backgroundColor = '#121212';
+      document.body.style.backgroundColor = '#121212';
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.style.backgroundColor = '#ffffff';
+      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? '#f1f5f9' : '#f8fafc';
     }
   };
 
@@ -1851,11 +1872,11 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   ];
 
   return (
-    <div className="flex flex-col gap-3.5 sm:gap-4" id="view-manage">
+    <div className="flex flex-col" id="view-manage">
       
       {/* 1. Backdrop Banner Atas (Persis Identik & Selaras dengan Dashboard Hero Banner) */}
       <div 
-        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[162px] sm:h-[172px] lg:h-[182px] transition-colors duration-200"
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[200px] sm:h-[215px] lg:h-[230px] transition-colors duration-200"
         style={{ backgroundColor: activeThemeColor, color: contrastColor }}
       >
         {/* Authentic Indonesian Songket Weave Vector Motif (Identik 100% dengan Banner Dashboard) */}
@@ -1902,26 +1923,28 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           {/* Subtle luminous atmospheric glow in the lower corners matching activeThemeColor */}
           <div 
             className="absolute right-0 bottom-0 w-72 h-40 rounded-full blur-3xl pointer-events-none" 
-            style={{ backgroundColor: `${activeThemeColor}40` }}
+            style={{ backgroundColor: isDark ? `${rawThemeColor}20` : `${activeThemeColor}40` }}
           />
           <div 
             className="absolute left-10 bottom-0 w-64 h-32 rounded-full blur-3xl pointer-events-none" 
-            style={{ backgroundColor: `${activeThemeColor}30` }}
+            style={{ backgroundColor: isDark ? `${rawThemeColor}15` : `${activeThemeColor}30` }}
           />
         </div>
       </div>
 
-      {/* 2. Card 1: Profil (Menimpa Banner Lebih Tinggi, Foto Profil Mengambang di Atas dengan Icon Pensil, Ukiran Songket Batik di Kiri & Kanan) */}
-      <div 
-        onClick={() => {
-          setTempProfileName(profile?.name || '');
-          setTempProfileEmail(profile?.email || 'rifqithoohaa12@gmail.com');
-          setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
-          setShowEditProfileModal(true);
-        }}
-        className={`relative z-10 -mt-20 sm:-mt-22 lg:-mt-24 p-4 sm:p-5 pt-8 sm:pt-9 ${getCardClasses()} !overflow-visible flex items-center justify-center max-w-2xl mx-auto w-full cursor-pointer group hover:border-slate-300 dark:hover:border-slate-700`}
-        title="Klik untuk mengubah nama, email, dan avatar profil"
-      >
+      {/* 2. Main Enclosing Sheet Card wrapping Profile & Menu Items (Consistent with Dashboard, Lifeboard AI & Tambah Data) */}
+      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-28 space-y-6 transition-all duration-300`}>
+        {/* 2. Card 1: Profil */}
+        <div 
+          onClick={() => {
+            setTempProfileName(profile?.name || '');
+            setTempProfileEmail(profile?.email || 'rifqithoohaa12@gmail.com');
+            setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
+            setShowEditProfileModal(true);
+          }}
+          className={`p-4 sm:p-5 pt-8 sm:pt-9 ${getCardClasses()} !overflow-visible flex items-center justify-center w-full cursor-pointer group hover:border-slate-300 dark:hover:border-slate-700 relative`}
+          title="Klik untuk mengubah nama, email, dan avatar profil"
+        >
         {/* Ornamen Motif Batik Kawung di Sisi Kiri Card */}
         <div 
           className="absolute left-2.5 sm:left-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 dark:opacity-35 group-hover:opacity-60 transition-opacity"
@@ -2019,6 +2042,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </button>
           );
         })}
+      </div>
       </div>
 
       {/* Modal Edit Profil (Nama, Email, dan Foto Profil) */}

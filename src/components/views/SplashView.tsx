@@ -8,43 +8,46 @@ interface SplashViewProps {
 }
 
 export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
+  const isDark = !!settings?.isDarkMode;
   const rawThemeColor = getEffectiveThemeColor(settings);
   const activeThemeColor = rawThemeColor;
-  const bottomBgColor = settings?.isDarkMode ? '#121212' : '#ffffff';
+  const topBgColor = isDark ? '#1e1e1e' : rawThemeColor;
+  const bottomBgColor = isDark ? '#121212' : '#ffffff';
 
   useEffect(() => {
     // Pastikan status bar HP menyatu seketika dengan warna tema
+    const metaColor = isDark ? '#1e1e1e' : rawThemeColor;
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", rawThemeColor);
+      metaTheme.setAttribute("content", metaColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", rawThemeColor);
+      msMeta.setAttribute("content", metaColor);
     }
-    document.documentElement.style.backgroundColor = rawThemeColor;
+    document.documentElement.style.backgroundColor = isDark ? '#121212' : rawThemeColor;
 
     // Selesai loading langsung tampilkan form login seketika tanpa jeda/delay kosong
     const timer = setTimeout(() => {
       onFinish();
     }, 1500);
     return () => clearTimeout(timer);
-  }, [onFinish, rawThemeColor]);
+  }, [onFinish, rawThemeColor, isDark]);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden select-none">
+    <div className={`fixed inset-0 z-50 overflow-hidden select-none ${isDark ? 'dark bg-[#121212]' : 'bg-white'}`}>
       {/* ========================================================
           LATAR BELAKANG DUA WARNA DENGAN PEMISAH GARIS LURUS BIASA
-          Atas (50%): Warna Tema Kustomisasi (rawThemeColor)
-          Bawah (50%): Putih #FFFFFF (terang) / #000000 (gelap menyatu dengan navigasi sistem HP)
+          Atas (50%): Warna Tema Kustomisasi (rawThemeColor) / #1e1e1e (dark)
+          Bawah (50%): Putih #FFFFFF (terang) / #121212 (dark)
           ======================================================== */}
-      {/* Bagian Atas: rawThemeColor */}
+      {/* Bagian Atas: rawThemeColor / #1e1e1e */}
       <div 
         className="absolute inset-x-0 top-0 h-[50%] transition-colors duration-200" 
-        style={{ backgroundColor: rawThemeColor }}
+        style={{ backgroundColor: topBgColor }}
       />
 
-      {/* Bagian Bawah: Putih #FFFFFF / Dark #000000 */}
+      {/* Bagian Bawah: Putih #FFFFFF / Dark #121212 */}
       <div 
         className="absolute inset-x-0 bottom-0 h-[50%] transition-colors duration-200"
         style={{ backgroundColor: bottomBgColor }}

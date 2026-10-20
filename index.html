@@ -32,8 +32,13 @@
               teal: '#14b8a6',
               indigo: '#6366f1'
             };
-            var isDark = p.isDarkMode;
-            var color = isDark ? '#000000' : ((p.themeColor === 'custom' && p.customAccentColor) 
+            var isDark = !!p.isDarkMode;
+            if (isDark) {
+              document.documentElement.classList.add('dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+            }
+            var color = isDark ? '#1e1e1e' : ((p.themeColor === 'custom' && p.customAccentColor) 
               ? p.customAccentColor 
               : (map[p.themeColor] || '#FF7777'));
             if (color) {
@@ -41,7 +46,7 @@
               if (meta) meta.setAttribute('content', color);
               var ms = document.querySelector('meta[name=msapplication-navbutton-color]');
               if (ms) ms.setAttribute('content', color);
-              document.documentElement.style.backgroundColor = color;
+              document.documentElement.style.backgroundColor = isDark ? '#121212' : '#ffffff';
             }
           }
         } catch(e) {}

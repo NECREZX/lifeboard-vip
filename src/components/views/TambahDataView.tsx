@@ -112,31 +112,35 @@ export function TambahDataView({
   triggerNotification
 }: TambahDataViewProps) {
   const isEdit = !!editData;
-  const isDarkMode = settings?.isDarkMode || false;
+  const isDarkMode = !!settings?.isDarkMode;
 
   // Resolve user accent color
-  const resolvedAccent = useMemo(() => {
+  const rawThemeColor = useMemo(() => {
     return getEffectiveThemeColor(settings);
   }, [settings]);
 
+  const resolvedAccent = useMemo(() => {
+    return isDarkMode ? '#1e1e1e' : rawThemeColor;
+  }, [isDarkMode, rawThemeColor]);
+
   const contrastColor = useMemo(() => {
-    return getThemeContrastColor(resolvedAccent);
-  }, [resolvedAccent]);
+    return isDarkMode ? '#ffffff' : getThemeContrastColor(rawThemeColor);
+  }, [isDarkMode, rawThemeColor]);
 
   // Radius for Enclosing Card exactly matching DashboardView
   const enclosingCardRadiusClass = useMemo(() => {
     if (settings?.cardRadius === 'sharp') return 'rounded-none';
-    if (settings?.cardRadius === 'extra') return 'rounded-t-[40px] sm:rounded-t-[48px] rounded-b-none';
-    return 'rounded-t-[32px] sm:rounded-t-[40px] rounded-b-none';
+    if (settings?.cardRadius === 'extra') return 'rounded-t-[48px] sm:rounded-t-[56px] rounded-b-none';
+    return 'rounded-t-[40px] sm:rounded-t-[40px] rounded-b-none';
   }, [settings?.cardRadius]);
 
   const enclosingCardBgClass = useMemo(() => {
     if (settings?.uiStyle === 'glass') {
-      return 'bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200/60 dark:border-slate-800/80 shadow-[0_-16px_36px_rgba(0,0,0,0.15)]';
+      return 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none';
     } else if (settings?.uiStyle === 'minimal') {
-      return 'bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200 dark:border-slate-800 shadow-none';
+      return 'bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 shadow-none';
     }
-    return 'bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_-16px_36px_rgba(0,0,0,0.45)]';
+    return 'bg-white dark:bg-slate-900 border-t sm:border border-slate-200/90 dark:border-slate-800 shadow-none';
   }, [settings?.uiStyle]);
 
   // Active form tab
@@ -656,26 +660,26 @@ export function TambahDataView({
     <div className="flex flex-col" id="view-tambah-data">
       
       {/* =======================================================
-          1. HERO BANNER BACKGROUND LAYER
+          1. HERO BANNER BACKGROUND LAYER (HD & CRISP IDENTIK DASHBOARD)
          ======================================================= */}
       <div 
-        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-7 sm:pt-9 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32 transition-colors duration-200"
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[200px] sm:h-[215px] lg:h-[230px] transition-colors duration-200 shadow-none"
         style={{
           backgroundColor: resolvedAccent,
           color: contrastColor
         }}
       >
-        {/* Authentic Indonesian Songket Weave Vector Motif */}
+        {/* Authentic Indonesian Songket Weave Vector Motif (Crisp & Jelas HD Persis Dashboard) */}
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
           style={{
-            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
+            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)'
           }}
         >
           <svg className="w-full h-full opacity-35 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern id="tambah-songket-pattern-v18" width="48" height="48" patternUnits="userSpaceOnUse">
+              <pattern id="tambah-songket-pattern-v19" width="48" height="48" patternUnits="userSpaceOnUse">
                 <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
                 <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
@@ -693,22 +697,18 @@ export function TambahDataView({
                 <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
               </pattern>
             </defs>
-            <rect width="100%" height="100%" fill="url(#tambah-songket-pattern-v18)" />
+            <rect width="100%" height="100%" fill="url(#tambah-songket-pattern-v19)" />
           </svg>
 
-          {/* Luminous soft atmospheric glow matching resolvedAccent */}
+          {/* Luminous soft atmospheric glow matching resolvedAccent (Bersih tanpa bayangan gelap berkabut) */}
           <div 
             className="absolute right-0 bottom-0 w-72 h-40 rounded-full blur-3xl pointer-events-none" 
-            style={{ backgroundColor: `${resolvedAccent}40` }}
-          />
-          <div 
-            className="absolute left-10 bottom-0 w-64 h-32 rounded-full blur-3xl pointer-events-none" 
-            style={{ backgroundColor: `${resolvedAccent}30` }}
+            style={{ backgroundColor: isDarkMode ? `${rawThemeColor}20` : `${resolvedAccent}35` }}
           />
         </div>
 
         {/* Foreground in Banner: Tabs + Scroll Dots + Centered Histori Data Button */}
-        <div className="relative z-10 pt-3 sm:pt-4 pb-1">
+        <div className="relative z-10 pt-0.5 sm:pt-1 pb-1">
           {/* Tabs Container */}
           <div 
             ref={tabsContainerRef}
@@ -726,9 +726,10 @@ export function TambahDataView({
                       onClick={() => setActiveForm(tab.id)}
                       className={`w-full py-2.5 px-2 rounded-2xl text-xs font-black text-center truncate transition-all duration-150 cursor-pointer ${
                         isActive 
-                          ? 'bg-white text-[#FF5555] shadow-lg font-black scale-100' 
+                          ? 'bg-white text-slate-900 shadow-md font-black scale-100 ring-2 ring-white/50' 
                           : 'text-white hover:bg-white/20 bg-white/10 backdrop-blur-xs border border-white/20'
                       }`}
+                      style={isActive ? { color: resolvedAccent } : undefined}
                     >
                       {tab.label}
                     </button>
@@ -740,14 +741,14 @@ export function TambahDataView({
 
           {/* Clickable Pagination Dots for Tabs */}
           {tabPages.length > 1 && (
-            <div className="flex items-center justify-center gap-1.5 pt-2 pb-1">
+            <div className="flex items-center justify-center gap-1.5 pt-1.5 pb-0.5">
               {tabPages.map((_, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => scrollToTabPage(idx)}
                   className={`h-1.5 rounded-full transition-all duration-200 cursor-pointer ${
-                    activeTabPageIndex === idx ? 'w-5 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                    activeTabPageIndex === idx ? 'w-5 bg-white shadow-xs' : 'w-1.5 bg-white/40 hover:bg-white/70'
                   }`}
                   aria-label={`Slide ${idx + 1}`}
                 />
@@ -755,8 +756,8 @@ export function TambahDataView({
             </div>
           )}
 
-          {/* Tombol Histori Data: Diturunkan sedikit lagi */}
-          <div className="flex items-center justify-center pt-5 sm:pt-6 pb-0.5">
+          {/* Tombol Histori Data */}
+          <div className="flex items-center justify-center pt-2 sm:pt-2.5 pb-0.5">
             <button
               type="button"
               onClick={() => {
@@ -764,9 +765,9 @@ export function TambahDataView({
                 setShowDuplicateModal(true);
               }}
               title="Histori Data yang Lalu"
-              className="flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/20 hover:bg-white/30 active:scale-95 text-white border border-white/30 backdrop-blur-md text-xs font-black shadow-xs transition duration-150 cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/20 hover:bg-white/30 active:scale-95 text-white border border-white/30 backdrop-blur-md text-xs font-black shadow-xs transition duration-150 cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5 text-rose-100" />
+              <Download className="w-3.5 h-3.5 text-white" />
               <span>Histori Data</span>
             </button>
           </div>
@@ -774,9 +775,9 @@ export function TambahDataView({
       </div>
 
       {/* =======================================================
-          2. MAIN ENCLOSING SHEET CARD (-mt-20.4 sm:-mt-22.4 lg:-mt-24.4 -> -mt-[81.6px] sm:-mt-[89.6px] lg:-mt-[97.6px])
+          2. MAIN ENCLOSING SHEET CARD (100% SEJAJAR & KONSISTEN DENGAN DASHBOARD)
          ======================================================= */}
-      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[80px] sm:-mt-[88px] lg:-mt-[96px] -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-4 sm:space-y-5`}>
+      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-36 space-y-5 transition-all duration-300`}>
 
         {/* DATE SELECTOR BAR (Black Vector Calendar with < > navigation) */}
         {(activeForm === 'pengeluaran' || activeForm === 'pemasukan' || activeForm === 'transfer') && (

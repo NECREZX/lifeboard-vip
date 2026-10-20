@@ -331,7 +331,7 @@ export default function App() {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
     // Match mobile status bar & gesture bar with system top bar color
     const rawThemeColor = getEffectiveThemeColor(settings);
-    const effectiveThemeColor = settings.isDarkMode ? '#121212' : rawThemeColor;
+    const effectiveThemeColor = settings.isDarkMode ? '#1e1e1e' : rawThemeColor;
     const contrastColor = getThemeContrastColor(rawThemeColor);
 
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
@@ -353,7 +353,7 @@ export default function App() {
     if (settings.isDarkMode) {
       document.documentElement.classList.add('dark');
       document.documentElement.style.colorScheme = 'dark';
-      document.documentElement.style.backgroundColor = effectiveThemeColor;
+      document.documentElement.style.backgroundColor = '#121212';
       document.body.style.backgroundColor = "#121212";
       if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'dark');
     } else {
@@ -2086,7 +2086,7 @@ export default function App() {
 
   const getThemeBackground = React.useCallback(() => {
     if (settings.isDarkMode) {
-      return 'bg-slate-950 text-slate-100 ';
+      return 'bg-[#121212] text-slate-100 ';
     }
     return 'bg-white text-slate-900 ';
   }, [settings.isDarkMode]);
@@ -2299,8 +2299,9 @@ export default function App() {
     return <AuthView onLogin={() => setAppState('main')} settings={settings} />;
   }
 
-  const effectiveThemeColor = getEffectiveThemeColor(settings);
-  const effectiveContrastColor = getThemeContrastColor(effectiveThemeColor);
+  const rawThemeColor = getEffectiveThemeColor(settings);
+  const effectiveThemeColor = settings.isDarkMode ? '#1e1e1e' : rawThemeColor;
+  const effectiveContrastColor = settings.isDarkMode ? '#ffffff' : getThemeContrastColor(rawThemeColor);
 
   return (
     <div className={`min-h-[100dvh] pb-0 overflow-x-hidden w-full max-w-full ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 relative`}>

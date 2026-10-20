@@ -117,8 +117,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   const currentLang = settings?.language || 'id';
 
-  const activeThemeColor = getEffectiveThemeColor(settings);
-  const contrastColor = getThemeContrastColor(activeThemeColor);
+  const isDark = !!settings?.isDarkMode;
+  const rawThemeColor = getEffectiveThemeColor(settings);
+  const activeThemeColor = isDark ? '#1e1e1e' : rawThemeColor;
+  const contrastColor = isDark ? '#ffffff' : getThemeContrastColor(rawThemeColor);
 
   const toggleHideBalance = () => {
     setShowHideBalance(prev => {
@@ -187,7 +189,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     <div className="flex flex-col" id="view-dashboard">
       {/* 1. Hero Banner: Total Saldo Utama (Seamlessly fused with Top Bar) */}
       <div 
-        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 pb-24 sm:pb-28 lg:pb-32 transition-colors duration-200"
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[200px] sm:h-[215px] lg:h-[230px] transition-colors duration-200"
         style={{
           backgroundColor: activeThemeColor,
           color: contrastColor
@@ -197,8 +199,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div 
           className="absolute inset-0 w-full h-full pointer-events-none"
           style={{
-            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
+            maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)'
           }}
         >
           <svg className="w-full h-full opacity-35 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
@@ -346,22 +348,22 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* - Card Aktivitas, Wishlist, Tabungan, Anggaran */}
       {/* - Seluruh visualisasi chart di dashboard */}
       {(() => {
-        let enclosingCardRadiusClass = "rounded-t-[32px] sm:rounded-t-[40px] rounded-b-none";
+        let enclosingCardRadiusClass = "rounded-t-[40px] sm:rounded-t-[40px] rounded-b-none";
         let metricCardRadiusClass = "rounded-2xl sm:rounded-3xl";
 
         if (settings?.cardRadius === 'sharp') {
           enclosingCardRadiusClass = "rounded-none";
           metricCardRadiusClass = "rounded-none";
         } else if (settings?.cardRadius === 'extra') {
-          enclosingCardRadiusClass = "rounded-t-[40px] sm:rounded-t-[48px] rounded-b-none";
+          enclosingCardRadiusClass = "rounded-t-[48px] sm:rounded-t-[56px] rounded-b-none";
           metricCardRadiusClass = "rounded-3xl sm:rounded-[32px]";
         }
 
-        let enclosingCardBgClass = "bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200/90 dark:border-slate-800 shadow-[0_-16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_-16px_36px_rgba(0,0,0,0.45)]";
+        let enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t sm:border border-slate-200/90 dark:border-slate-800 shadow-none";
         if (settings?.uiStyle === 'glass') {
-          enclosingCardBgClass = "bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200/60 dark:border-slate-800/80 shadow-[0_-16px_36px_rgba(0,0,0,0.15)]";
+          enclosingCardBgClass = "bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none";
         } else if (settings?.uiStyle === 'minimal') {
-          enclosingCardBgClass = "bg-white dark:bg-slate-950 border-t border-b-0 border-slate-200 dark:border-slate-800 shadow-none";
+          enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 shadow-none";
         }
 
         let metricCardBgClass = "bg-white dark:bg-slate-900 ";
@@ -380,7 +382,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         return (
-          <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[80px] sm:-mt-[88px] lg:-mt-[96px] -mb-28 min-h-[calc(100vh-180px)] ${enclosingCardRadiusClass} ${enclosingCardBgClass} p-4 sm:p-6 lg:p-8 pt-6 sm:pt-8 pb-36 sm:pb-40 space-y-6 sm:space-y-8 transition-all duration-300`}>
+          <div 
+            className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-20 space-y-6 sm:space-y-8 transition-all duration-300`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan [Kiri], Admin Transfer [Tengah], Pengeluaran [Kanan]) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan (Kiri) */}

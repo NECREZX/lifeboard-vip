@@ -23,21 +23,23 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const isDark = !!settings?.isDarkMode;
   const rawThemeColor = getEffectiveThemeColor(settings);
-  const activeThemeColor = rawThemeColor;
-  const contrastColor = getThemeContrastColor(rawThemeColor);
+  const activeThemeColor = isDark ? '#1e1e1e' : rawThemeColor;
+  const contrastColor = isDark ? '#ffffff' : getThemeContrastColor(rawThemeColor);
 
   useEffect(() => {
     // Pastikan status bar HP menyatu seketika dengan warna tema form login
+    const metaColor = isDark ? '#1e1e1e' : rawThemeColor;
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", settings?.isDarkMode ? '#121212' : activeThemeColor);
+      metaTheme.setAttribute("content", metaColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", settings?.isDarkMode ? '#121212' : activeThemeColor);
+      msMeta.setAttribute("content", metaColor);
     }
-    document.documentElement.style.backgroundColor = settings?.isDarkMode ? '#121212' : activeThemeColor;
+    document.documentElement.style.backgroundColor = isDark ? '#121212' : rawThemeColor;
 
     // Cek jika sudah pernah login sebelumnya
     const savedAuth = localStorage.getItem('fin_auth');
@@ -52,7 +54,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
         // Abaikan
       }
     }
-  }, [activeThemeColor, settings?.isDarkMode]);
+  }, [rawThemeColor, isDark]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,14 +110,14 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none transition-colors duration-200"
-      style={{ backgroundColor: settings?.isDarkMode ? '#121212' : activeThemeColor }}
+      className={`fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none transition-colors duration-200 ${isDark ? 'dark bg-[#121212]' : ''}`}
+      style={{ backgroundColor: isDark ? '#121212' : activeThemeColor }}
     >
       <form onSubmit={handleSubmit} className="min-h-[100dvh] flex flex-col justify-between relative z-10 w-full">
         {/* ========================================================
             BAGIAN ATAS: HERO BANNER LOGIN
             Persis Identik 100% dengan Banner Menu Dashboard & Menu Pengaturan
-            (Warna Tema Kustom, Mask Gradasi Pudar, Pattern Songket, Mix-blend & Glow)
+            (Warna Tema Kustom / #1e1e1e di Dark Mode, Mask Gradasi Pudar, Pattern Songket, Mix-blend & Glow)
             ======================================================== */}
         <div 
           className="relative z-0 overflow-hidden text-white flex-1 flex flex-col justify-center items-center px-6 pt-10 sm:pt-14 pb-8 w-full transition-colors duration-200"
@@ -234,11 +236,12 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
 
         {/* ========================================================
             BAGIAN BAWAH:
-            Card Putih Ala Livin' Mandiri yang Menyatu dengan
-            Warna Putih Navigasi Sistem HP (3 Badge Fitur + Button Masuk)
+            Card Pembungkus Ala Livin' Mandiri yang Menyatu dengan
+            Warna Navigasi Sistem HP (3 Badge Fitur + Button Masuk)
+            Sudut Atas Konsisten 40px
             ======================================================== */}
         <div 
-          className="relative z-20 -mt-8 sm:-mt-10 bg-white dark:bg-[#121212] rounded-t-[32px] sm:rounded-t-[36px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
+          className="relative z-20 -mt-8 sm:-mt-10 bg-white dark:bg-[#1e1e1e] rounded-t-[40px] sm:rounded-t-[40px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
         >
           <div className="max-w-sm mx-auto flex flex-col gap-5">
