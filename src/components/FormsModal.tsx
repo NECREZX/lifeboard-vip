@@ -545,13 +545,13 @@ export default function FormsModal({
         className={`relative w-full max-w-lg mx-auto rounded-t-[40px] sm:rounded-[40px] shadow-none overflow-hidden flex flex-col border-t sm:border border-slate-200/90 dark:border-slate-800 animate-in slide-in-from-bottom duration-200 ${
         uiStyle === 'glass' 
           ? 'glass-card' 
-          : 'bg-white dark:bg-slate-900'
+          : 'bg-white dark:bg-[#121212]'
       }`}>
         {/* Mobile Sheet Drag Indicator */}
         <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
         {/* Modal Header */}
-        <div className="px-4 sm:px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 h-[48px] bg-white dark:bg-slate-900">
+        <div className="px-4 sm:px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 h-[48px] bg-white dark:bg-[#121212]">
           <div className="flex items-center gap-2">
             <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 leading-none">
               Form Input Data

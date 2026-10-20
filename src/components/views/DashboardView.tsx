@@ -359,11 +359,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           metricCardRadiusClass = "rounded-3xl sm:rounded-[32px]";
         }
 
-        let enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t sm:border border-slate-200/90 dark:border-slate-800 shadow-none";
+        let enclosingCardBgClass = "bg-white dark:bg-[#121212] border-t sm:border border-slate-200/90 dark:border-slate-800 shadow-none";
         if (settings?.uiStyle === 'glass') {
-          enclosingCardBgClass = "bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none";
+          enclosingCardBgClass = "bg-white/90 dark:bg-[#121212]/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none";
         } else if (settings?.uiStyle === 'minimal') {
-          enclosingCardBgClass = "bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 shadow-none";
+          enclosingCardBgClass = "bg-white dark:bg-[#121212] border-t sm:border border-slate-200 dark:border-slate-800 shadow-none";
         }
 
         let metricCardBgClass = "bg-white dark:bg-slate-900 ";
@@ -383,7 +383,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
         return (
           <div 
-            className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-20 space-y-6 sm:space-y-8 transition-all duration-300`}>
+            className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-20 space-y-6 sm:space-y-8`}>
             {/* 1. Secondary Metrics: 3 Direct Cards (Pendapatan [Kiri], Admin Transfer [Tengah], Pengeluaran [Kanan]) */}
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan (Kiri) */}

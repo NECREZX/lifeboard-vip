@@ -14,9 +14,10 @@ export interface BreadcrumbItem {
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
   className?: string;
+  contrastColor?: string;
 }
 
-export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
+export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '', contrastColor }) => {
   return (
     <nav 
       aria-label="Breadcrumb" 
@@ -28,18 +29,29 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' })
         return (
           <React.Fragment key={index}>
             {index > 0 && (
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0 mx-0.5" />
+              <ChevronRight 
+                className={`w-3.5 h-3.5 shrink-0 mx-0.5 ${contrastColor ? 'opacity-60' : 'text-slate-400 dark:text-slate-500'}`} 
+                style={contrastColor ? { color: contrastColor } : undefined}
+              />
             )}
 
             {isLast ? (
-              <span className="text-slate-900 dark:text-slate-100 font-bold tracking-tight truncate max-w-[220px] sm:max-w-md py-0.5 pb-1 leading-normal inline-block">
+              <span 
+                className={`font-bold tracking-tight truncate max-w-[220px] sm:max-w-md py-0.5 pb-1 leading-normal inline-block ${
+                  contrastColor ? 'opacity-100 drop-shadow-xs' : 'text-slate-900 dark:text-slate-100'
+                }`}
+                style={contrastColor ? { color: contrastColor } : undefined}
+              >
                 {item.label}
               </span>
             ) : (
               <button
                 type="button"
                 onClick={item.onClick}
-                className="text-slate-500 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-300 cursor-pointer hover:underline underline-offset-2 py-0.5 pb-1 leading-normal inline-block"
+                className={`cursor-pointer hover:underline underline-offset-2 py-0.5 pb-1 leading-normal inline-block ${
+                  contrastColor ? 'opacity-85 hover:opacity-100' : 'text-slate-500 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-300'
+                }`}
+                style={contrastColor ? { color: contrastColor } : undefined}
               >
                 {item.label}
               </button>

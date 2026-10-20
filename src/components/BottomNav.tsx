@@ -105,7 +105,7 @@ export default function BottomNav({
   };
 
   const getNavBgClasses = () => {
-    return 'bg-white dark:bg-slate-950';
+    return 'bg-white dark:bg-[#121212]';
   };
 
   const getItemRadiusClass = () => {

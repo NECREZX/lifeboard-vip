@@ -136,11 +136,11 @@ export function TambahDataView({
 
   const enclosingCardBgClass = useMemo(() => {
     if (settings?.uiStyle === 'glass') {
-      return 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none';
+      return 'bg-white/90 dark:bg-[#121212]/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none';
     } else if (settings?.uiStyle === 'minimal') {
-      return 'bg-white dark:bg-slate-900 border-t sm:border border-slate-200 dark:border-slate-800 shadow-none';
+      return 'bg-white dark:bg-[#121212] border-t sm:border border-slate-200 dark:border-slate-800 shadow-none';
     }
-    return 'bg-white dark:bg-slate-900 border-t sm:border border-slate-200/90 dark:border-slate-800 shadow-none';
+    return 'bg-white dark:bg-[#121212] border-t sm:border border-slate-200/90 dark:border-slate-800 shadow-none';
   }, [settings?.uiStyle]);
 
   // Active form tab
@@ -777,7 +777,7 @@ export function TambahDataView({
       {/* =======================================================
           2. MAIN ENCLOSING SHEET CARD (100% SEJAJAR & KONSISTEN DENGAN DASHBOARD)
          ======================================================= */}
-      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-36 space-y-5 transition-all duration-300`}>
+      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-36 space-y-5`}>
 
         {/* DATE SELECTOR BAR (Black Vector Calendar with < > navigation) */}
         {(activeForm === 'pengeluaran' || activeForm === 'pemasukan' || activeForm === 'transfer') && (
