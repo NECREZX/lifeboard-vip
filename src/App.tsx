@@ -331,23 +331,23 @@ export default function App() {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
     // Match mobile status bar & gesture bar with system top bar color
     const rawThemeColor = getEffectiveThemeColor(settings);
-    const effectiveThemeColor = settings.isDarkMode ? '#1e1e1e' : rawThemeColor;
+    const effectiveThemeColor = rawThemeColor;
     const contrastColor = getThemeContrastColor(rawThemeColor);
 
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {
       const meta = document.createElement("meta");
       meta.name = "theme-color";
-      meta.content = effectiveThemeColor;
+      meta.content = rawThemeColor;
       document.head.appendChild(meta);
     } else {
       metaThemeColors.forEach((meta) => {
-        meta.setAttribute("content", effectiveThemeColor);
+        meta.setAttribute("content", rawThemeColor);
       });
     }
 
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
-    if (msMeta) msMeta.setAttribute("content", effectiveThemeColor);
+    if (msMeta) msMeta.setAttribute("content", rawThemeColor);
 
     const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
     if (settings.isDarkMode) {
@@ -359,7 +359,7 @@ export default function App() {
     } else {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.colorScheme = 'light';
-      document.documentElement.style.backgroundColor = effectiveThemeColor;
+      document.documentElement.style.backgroundColor = rawThemeColor;
       document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc";
       if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'light');
     }
@@ -2300,8 +2300,8 @@ export default function App() {
   }
 
   const rawThemeColor = getEffectiveThemeColor(settings);
-  const effectiveThemeColor = settings.isDarkMode ? '#1e1e1e' : rawThemeColor;
-  const effectiveContrastColor = settings.isDarkMode ? '#ffffff' : getThemeContrastColor(rawThemeColor);
+  const effectiveThemeColor = rawThemeColor;
+  const effectiveContrastColor = getThemeContrastColor(rawThemeColor);
 
   return (
     <div className={`min-h-[100dvh] pb-0 overflow-x-hidden w-full max-w-full ${getThemeFontClass()} ${getThemeBackground()} selection:bg-indigo-100 relative`}>

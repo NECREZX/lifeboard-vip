@@ -38,9 +38,9 @@
             } else {
               document.documentElement.classList.remove('dark');
             }
-            var color = isDark ? '#1e1e1e' : ((p.themeColor === 'custom' && p.customAccentColor) 
+            var color = (p.themeColor === 'custom' && p.customAccentColor) 
               ? p.customAccentColor 
-              : (map[p.themeColor] || '#FF7777'));
+              : (map[p.themeColor] || '#FF7777');
             if (color) {
               var meta = document.getElementById('meta-theme-color');
               if (meta) meta.setAttribute('content', color);

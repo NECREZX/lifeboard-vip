@@ -33,20 +33,15 @@ export function getEffectiveThemeColor(settings?: Partial<UserSettings> | null):
   if (settings.themeColor === 'custom' && settings.customAccentColor) {
     return normalizeHexColor(settings.customAccentColor);
   }
-  
-  if (settings.customAccentColor && settings.themeColor !== 'indigo') {
+
+  const preset = THEME_PRESETS.find(p => p.id === settings.themeColor);
+  if (preset) return preset.hex;
+
+  if (settings.customAccentColor) {
     return normalizeHexColor(settings.customAccentColor);
   }
 
-  switch (settings.themeColor) {
-    case 'emerald': return '#10B981';
-    case 'amber': return '#F59E0B';
-    case 'rose': return '#F43F5E';
-    case 'classic': return '#0F172A';
-    case 'indigo': return '#6366F1';
-    default:
-      return settings.customAccentColor ? normalizeHexColor(settings.customAccentColor) : '#FF7777';
-  }
+  return '#FF7777';
 }
 
 /**

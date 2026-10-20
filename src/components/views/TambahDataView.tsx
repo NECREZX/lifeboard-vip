@@ -120,12 +120,12 @@ export function TambahDataView({
   }, [settings]);
 
   const resolvedAccent = useMemo(() => {
-    return isDarkMode ? '#1e1e1e' : rawThemeColor;
-  }, [isDarkMode, rawThemeColor]);
+    return rawThemeColor;
+  }, [rawThemeColor]);
 
   const contrastColor = useMemo(() => {
-    return isDarkMode ? '#ffffff' : getThemeContrastColor(rawThemeColor);
-  }, [isDarkMode, rawThemeColor]);
+    return getThemeContrastColor(rawThemeColor);
+  }, [rawThemeColor]);
 
   // Radius for Enclosing Card exactly matching DashboardView
   const enclosingCardRadiusClass = useMemo(() => {

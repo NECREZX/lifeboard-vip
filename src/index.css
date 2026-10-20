@@ -88,36 +88,9 @@
     color: #f8fafc; /* slate-50 */
   }
 
-  /* Force all slate dark backgrounds to elevated dark card grey */
-  html.dark .dark\:bg-slate-950,
-  body.dark .dark\:bg-slate-950,
-  .dark .dark\:bg-slate-950 {
-    background-color: #1e1e1e !important;
-  }
-
-  .dark .dark\:bg-slate-900,
-  html.dark .dark\:bg-slate-900,
-  body.dark .dark\:bg-slate-900,
-  .dark [class*="dark:bg-slate-900"] {
-    background-color: #1e1e1e !important;
-  }
-
-  html.dark .dark\:bg-slate-950\/80,
-  body.dark .dark\:bg-slate-950\/80,
-  .dark .dark\:bg-slate-950\/80 {
-    background-color: #1e1e1e !important;
-  }
-
-  html.dark .dark\:bg-slate-900\/40,
-  body.dark .dark\:bg-slate-900\/40,
-  .dark .dark\:bg-slate-900\/40 {
-    background-color: #1e1e1e !important;
-  }
-
-  html.dark .dark\:bg-slate-900\/80,
-  body.dark .dark\:bg-slate-900\/80,
-  .dark .dark\:bg-slate-900\/80 {
-    background-color: #1e1e1e !important;
+  .dark ::selection {
+    background-color: rgba(79, 70, 229, 0.3);
+    color: white;
   }
 
   .dark ::selection {

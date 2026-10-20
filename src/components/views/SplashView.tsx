@@ -11,12 +11,12 @@ export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
   const isDark = !!settings?.isDarkMode;
   const rawThemeColor = getEffectiveThemeColor(settings);
   const activeThemeColor = rawThemeColor;
-  const topBgColor = isDark ? '#1e1e1e' : rawThemeColor;
+  const topBgColor = rawThemeColor;
   const bottomBgColor = isDark ? '#121212' : '#ffffff';
 
   useEffect(() => {
     // Pastikan status bar HP menyatu seketika dengan warna tema
-    const metaColor = isDark ? '#1e1e1e' : rawThemeColor;
+    const metaColor = rawThemeColor;
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
       metaTheme.setAttribute("content", metaColor);

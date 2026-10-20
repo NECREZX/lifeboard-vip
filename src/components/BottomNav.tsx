@@ -188,12 +188,12 @@ export default function BottomNav({
                 <div 
                   className={`w-7.5 h-7.5 xs:w-8 xs:h-8 flex items-center justify-center shrink-0 ${getItemRadiusClass()} transition-all duration-150`}
                   style={isActive ? { 
-                    backgroundColor: `${resolvedAccent}18`,
+                    backgroundColor: isDarkMode ? `${resolvedAccent}33` : `${resolvedAccent}18`,
                     color: resolvedAccent,
                   } : undefined}
                 >
                   <Icon 
-                    className={`w-5 h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9] text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'}`} 
+                    className={`w-5 h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9] text-slate-400 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'}`} 
                     style={isActive ? { color: resolvedAccent } : undefined} 
                   />
                 </div>
@@ -202,7 +202,7 @@ export default function BottomNav({
                   className={`text-[8.5px] xs:text-[9.5px] tracking-tight leading-none whitespace-nowrap text-center mt-1 transition-colors ${
                     isActive 
                       ? 'font-extrabold' 
-                      : 'font-semibold text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                      : 'font-semibold text-slate-400 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'
                   }`}
                   style={isActive ? { color: resolvedAccent } : undefined}
                 >

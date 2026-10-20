@@ -105,8 +105,8 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
   const isDark = !!settings?.isDarkMode;
   const rawThemeColor = getEffectiveThemeColor(settings);
-  const activeThemeColor = isDark ? '#1e1e1e' : rawThemeColor;
-  const contrastColor = isDark ? '#ffffff' : getThemeContrastColor(rawThemeColor);
+  const activeThemeColor = rawThemeColor;
+  const contrastColor = getThemeContrastColor(rawThemeColor);
 
 
 
@@ -338,8 +338,9 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
       {/* =======================================================
           1. HERO BANNER PERSIS DASHBOARD & PENGATURAN
          ======================================================= */}
+      {/* 1. Backdrop Banner Atas dengan Breadcrumb, Icon, dan Tulisan Lifeboard AI */}
       <div 
-        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[200px] sm:h-[215px] lg:h-[230px] transition-colors duration-200"
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-3 sm:pt-4 px-4 sm:px-6 pb-14 sm:pb-22 transition-colors duration-200"
         style={{ backgroundColor: activeThemeColor, color: contrastColor }}
       >
         {/* Authentic Indonesian Songket Weave Vector Motif */}
@@ -383,67 +384,80 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             style={{ backgroundColor: isDark ? `${rawThemeColor}15` : `${activeThemeColor}30` }}
           />
         </div>
-      </div>
 
-      {/* =======================================================
-          2. KONTEN UTAMA DENGAN CARD PEMBUNGKUS (KONSISTEN 100% DENGAN DASHBOARD)
-         ======================================================= */}
-      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-5 pb-28 space-y-6 transition-all duration-300`}>
-        
-        {/* Breadcrumb Navigation - Posisi Pas & Sejajar di Puncak Card Pembungkus */}
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 select-none pb-1 border-b border-slate-100 dark:border-slate-800/60">
+        {/* 1. Breadcrumb Navigation di Banner (Posisi Sejajar & Pas seperti Menu Lain) */}
+        <nav 
+          aria-label="Breadcrumb"
+          className="relative z-10 flex items-center flex-wrap gap-1.5 text-xs font-semibold py-1 w-fit max-w-full select-none"
+        >
           <button
             type="button"
             onClick={onBackToDashboard}
-            className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer active:scale-95 text-slate-500 dark:text-slate-400"
+            className="cursor-pointer hover:underline underline-offset-2 opacity-85 hover:opacity-100 transition-opacity flex items-center gap-1"
+            style={{ color: contrastColor }}
           >
             Dashboard
           </button>
-          <BreadcrumbSeparator className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+          <BreadcrumbSeparator className="w-3.5 h-3.5 opacity-60 shrink-0 mx-0.5" style={{ color: contrastColor }} />
           <button
             type="button"
             onClick={() => {
               setSelectedMonth(null);
               setInsightData(null);
             }}
-            className={`transition-colors cursor-pointer active:scale-95 ${
-              selectedMonth ? 'hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-400' : 'text-slate-900 dark:text-white font-bold'
-            }`}
+            className="cursor-pointer transition-opacity"
+            style={{ color: contrastColor }}
           >
-            Lifeboard AI
+            <span className={`${selectedMonth ? 'opacity-85 hover:underline' : 'font-black opacity-100'}`}>
+              Lifeboard AI
+            </span>
           </button>
           {selectedMonth && (
             <>
-              <BreadcrumbSeparator className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-              <span className="text-slate-900 dark:text-white font-bold truncate max-w-[140px] sm:max-w-none">
+              <BreadcrumbSeparator className="w-3.5 h-3.5 opacity-60 shrink-0 mx-0.5" style={{ color: contrastColor }} />
+              <span className="font-bold truncate max-w-[140px] sm:max-w-none opacity-100 drop-shadow-xs" style={{ color: contrastColor }}>
                 {formatMonthLabel(selectedMonth)}
               </span>
             </>
           )}
-        </div>
+        </nav>
 
+        {/* 2. ICON & TULISAN LIFEBOARD AI DI BANNER (Bukan di Dalam Card Pembungkus) */}
+        <div className="relative z-10 flex flex-col items-center justify-center text-center select-none pt-4 pb-12 sm:pb-20">
+          <div 
+            className={`w-16 h-16 sm:w-20 sm:h-20 ${cardRadiusClass} bg-white dark:bg-slate-900 border-4 shadow-xl shadow-black/15 flex items-center justify-center transition-transform duration-300 hover:scale-105`}
+            style={{ borderColor: `${activeThemeColor}40`, color: activeThemeColor }}
+          >
+            <div 
+              className={`w-11 h-11 sm:w-14 sm:h-14 ${smallRadiusClass} flex items-center justify-center`}
+              style={{ backgroundColor: `${activeThemeColor}20` }}
+            >
+              <Bot className="w-7 h-7 sm:w-9 sm:h-9" style={{ color: activeThemeColor }} />
+            </div>
+          </div>
+
+          <h2 
+            className="text-2xl sm:text-3xl font-black tracking-tight drop-shadow-xs mt-2.5"
+            style={{ color: contrastColor }}
+          >
+            Lifeboard AI
+          </h2>
+          <p 
+            className="text-xs sm:text-sm font-medium opacity-90 max-w-xs mt-0.5"
+            style={{ color: contrastColor }}
+          >
+            Financial Intelligence &amp; Asisten Keuangan
+          </p>
+        </div>
+      </div>
+
+      {/* =======================================================
+          2. KONTEN UTAMA DENGAN CARD PEMBUNGKUS (KONSISTEN 100% DENGAN DASHBOARD)
+         ======================================================= */}
+      <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-28 space-y-6 transition-all duration-300`}>
         {/* A. TAMPILAN AWAL ROOM AI */}
         {!insightData ? (
           <div className="flex flex-col items-center w-full space-y-4 pb-8">
-            
-            {/* 1. ICON & TULISAN LIFEBOARD AI PAS NIMPA SETENGAH BANNER */}
-            <div className="-mt-1 sm:-mt-2 flex flex-col items-center justify-center text-center select-none z-20">
-              <div 
-                className={`w-20 h-20 sm:w-24 sm:h-24 ${cardRadiusClass} bg-white dark:bg-slate-900 border-4 shadow-xl shadow-black/10 flex items-center justify-center transition-transform duration-300 hover:scale-105`}
-                style={{ borderColor: `${activeThemeColor}40`, color: activeThemeColor }}
-              >
-                <div 
-                  className={`w-14 h-14 sm:w-16 sm:h-16 ${smallRadiusClass} flex items-center justify-center`}
-                  style={{ backgroundColor: `${activeThemeColor}20` }}
-                >
-                  <Bot className="w-8 h-8 sm:w-10 sm:h-10" style={{ color: activeThemeColor }} />
-                </div>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 dark:text-slate-100 mt-2.5">
-                Lifeboard AI
-              </h2>
-            </div>
 
             {/* 2. TIGA CARD SEJAJAR KE KANAN (RINGKAS, KECIL, PAS TANPA SCROLL) */}
             <div className="w-full max-w-md mx-auto px-1">

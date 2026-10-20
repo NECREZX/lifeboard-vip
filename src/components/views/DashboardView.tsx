@@ -119,8 +119,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   const isDark = !!settings?.isDarkMode;
   const rawThemeColor = getEffectiveThemeColor(settings);
-  const activeThemeColor = isDark ? '#1e1e1e' : rawThemeColor;
-  const contrastColor = isDark ? '#ffffff' : getThemeContrastColor(rawThemeColor);
+  const activeThemeColor = rawThemeColor;
+  const contrastColor = getThemeContrastColor(rawThemeColor);
 
   const toggleHideBalance = () => {
     setShowHideBalance(prev => {

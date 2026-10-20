@@ -25,12 +25,12 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
 
   const isDark = !!settings?.isDarkMode;
   const rawThemeColor = getEffectiveThemeColor(settings);
-  const activeThemeColor = isDark ? '#1e1e1e' : rawThemeColor;
-  const contrastColor = isDark ? '#ffffff' : getThemeContrastColor(rawThemeColor);
+  const activeThemeColor = rawThemeColor;
+  const contrastColor = getThemeContrastColor(rawThemeColor);
 
   useEffect(() => {
     // Pastikan status bar HP menyatu seketika dengan warna tema form login
-    const metaColor = isDark ? '#1e1e1e' : rawThemeColor;
+    const metaColor = rawThemeColor;
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
       metaTheme.setAttribute("content", metaColor);
@@ -241,7 +241,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
             Sudut Atas Konsisten 40px
             ======================================================== */}
         <div 
-          className="relative z-20 -mt-8 sm:-mt-10 bg-white dark:bg-[#1e1e1e] rounded-t-[40px] sm:rounded-t-[40px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
+          className="relative z-20 -mt-8 sm:-mt-10 bg-white dark:bg-[#121212] rounded-t-[40px] sm:rounded-t-[40px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
         >
           <div className="max-w-sm mx-auto flex flex-col gap-5">
