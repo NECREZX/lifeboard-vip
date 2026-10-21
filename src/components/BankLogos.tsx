@@ -77,10 +77,11 @@ export const DanamonLogo: React.FC<LogoProps> = (props) => (
   <BrandBadge src="/brand-logos/danamon.png" alt="D-Bank PRO Danamon" {...props} />
 );
 
-// 12. Bank Neo Commerce / Neobank (Official Play Store App Icon)
-export const NeoLogo: React.FC<LogoProps> = (props) => (
-  <BrandBadge src="/brand-logos/neo.png" alt="neobank Bank Neo Commerce" {...props} />
+// 12. Bank Sumsel Babel / BSB Mobile (Official Play Store App Icon)
+export const BSBLogo: React.FC<LogoProps> = (props) => (
+  <BrandBadge src="/brand-logos/bsb.png" alt="Bank Sumsel Babel Mobile (BSB)" {...props} />
 );
+export const NeoLogo = BSBLogo;
 
 // 13. GoPay (Official Play Store App Icon)
 export const GoPayLogo: React.FC<LogoProps> = (props) => (
@@ -159,7 +160,7 @@ export const BRAND_WALLETS: BrandWalletItem[] = [
   { id: 'BankCIMB', name: 'OCTO by CIMB', category: 'bank', defaultColor: '#ED1B24', keywords: ['cimb', 'octo', 'cimb niaga'] },
   { id: 'BankPermata', name: 'PermataMobile', category: 'bank', defaultColor: '#0C2340', keywords: ['permata', 'permata bank', 'permatanet'] },
   { id: 'BankDanamon', name: 'D-Bank Danamon', category: 'bank', defaultColor: '#0072CE', keywords: ['danamon', 'bank danamon', 'd-bank'] },
-  { id: 'BankNeo', name: 'neobank (BNC)', category: 'bank', defaultColor: '#FCD535', keywords: ['neo', 'bnc', 'neobank', 'bank neo'] },
+  { id: 'BankBSB', name: 'BSB (Bank Sumsel Babel)', category: 'bank', defaultColor: '#003D7C', keywords: ['bsb', 'sumsel', 'babel', 'bank sumsel', 'sumsel babel', 'bsb mobile', 'bank sumsel babel'] },
 
   // E-Wallet & Dompet Digital
   { id: 'GoPay', name: 'GoPay', category: 'ewallet', defaultColor: '#00AED6', keywords: ['gopay', 'gojek', 'go-pay'] },
@@ -191,7 +192,8 @@ export const BRAND_LOGOS_MAP: Record<string, React.FC<LogoProps>> = {
   BankCIMB: CIMBLogo,
   BankPermata: PermataLogo,
   BankDanamon: DanamonLogo,
-  BankNeo: NeoLogo,
+  BankBSB: BSBLogo,
+  BankNeo: BSBLogo,
   GoPay: GoPayLogo,
   OVO: OVOLogo,
   DANA: DANALogo,
