@@ -405,7 +405,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
         </div>
 
         {/* 2. ICON & TULISAN LIFEBOARD AI DI BANNER (Tanpa Paragraf, Rapi & Proporsional) */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center select-none pt-1 sm:pt-2">
+        <div className="relative z-10 flex flex-col items-center justify-center text-center select-none pt-6 sm:pt-8 pb-3 sm:pb-4">
           <div 
             className={`w-12 h-12 sm:w-14 sm:h-14 ${cardRadiusClass} bg-white dark:bg-[#121212] border-2 shadow-lg shadow-black/15 flex items-center justify-center transition-transform duration-200 hover:scale-105`}
             style={{ borderColor: `${activeThemeColor}50`, color: activeThemeColor }}
@@ -418,12 +418,6 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             </div>
           </div>
 
-          <h2 
-            className="text-xl sm:text-2xl font-black tracking-tight drop-shadow-xs mt-1.5"
-            style={{ color: contrastColor }}
-          >
-            Lifeboard AI
-          </h2>
         </div>
       </div>
 

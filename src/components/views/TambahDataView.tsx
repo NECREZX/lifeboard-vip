@@ -757,7 +757,7 @@ export function TambahDataView({
           )}
 
           {/* Tombol Histori Data */}
-          <div className="flex items-center justify-center pt-2 sm:pt-2.5 pb-0.5">
+          <div className="flex items-center justify-center pt-5 sm:pt-6 pb-0.5">
             <button
               type="button"
               onClick={() => {
