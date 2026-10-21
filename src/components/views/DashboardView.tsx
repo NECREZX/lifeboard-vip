@@ -510,7 +510,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </button>
             </div>
 
-            {/* 2. Card Total Saldo Dompet - Unified Account Summary Card */}
+            {/* 2. Grid Card Saldo Dompet - Masing-masing Dompet 1 Card (3 Kolom per Baris Sesuai Contoh) */}
             <div className="mt-1 sm:mt-2">
               {wallets.length === 0 ? (
                 <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
@@ -524,43 +524,42 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </button>
                 </div>
               ) : (
-                <div className={`${getCardClasses()} overflow-hidden divide-y divide-slate-100 dark:divide-slate-800/80`}>
+                <div className="grid grid-cols-3 gap-2 xs:gap-2.5 sm:gap-3.5">
                   {wallets.map((w: any) => {
                     const balanceVal = w.currentBalance ?? w.initialBalance;
                     const cardColor = w.color || '#0284c7';
+                    const isBrandLogo = !!BRAND_LOGOS_MAP[w.icon];
 
                     return (
                       <div 
                         key={w.id}
                         onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                        className="group flex items-center justify-between p-3.5 sm:p-4 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors cursor-pointer select-none"
-                        title="Klik untuk kelola dompet ini"
+                        className={`group ${getCardClasses()} p-2.5 xs:p-3 sm:p-4 flex flex-col items-center justify-between text-center hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-all cursor-pointer select-none active:scale-[0.98] min-h-[110px] xs:min-h-[120px] sm:min-h-[135px]`}
+                        title={`Klik untuk kelola dompet ${w.name}`}
                       >
-                        {/* Left: Colored Icon & Wallet Name (Besar & Jelas) */}
-                        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                          <div 
-                            className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-xs transition-transform group-hover:scale-105 overflow-hidden"
-                            style={BRAND_LOGOS_MAP[w.icon] ? undefined : { backgroundColor: cardColor }}
-                          >
-                            <IconRenderer 
-                              name={w.icon || 'Wallet'} 
-                              className={BRAND_LOGOS_MAP[w.icon] ? "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl" : "w-6 h-6 text-white"} 
-                            />
-                          </div>
-
-                          <div className="min-w-0">
-                            <h4 className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm leading-snug truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                              {w.name}
-                            </h4>
-                          </div>
+                        {/* 1. Icon Container di Atas (Tengah) */}
+                        <div 
+                          className="w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-3xs transition-transform group-hover:scale-105 overflow-hidden"
+                          style={isBrandLogo ? undefined : { backgroundColor: `${cardColor}18`, color: cardColor }}
+                        >
+                          <IconRenderer 
+                            name={w.icon || 'Wallet'} 
+                            className={isBrandLogo ? "w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-2xl object-cover" : "w-5 h-5 xs:w-6 xs:h-6"} 
+                          />
                         </div>
 
-                        {/* Right: Directly visible Nominal Balance with Chevron Arrow */}
-                        <div className="flex items-center gap-2 sm:gap-2.5 text-right shrink-0 pl-2">
-                          <span className="font-bold text-slate-900 dark:text-white text-xs sm:text-base tracking-tight font-mono">
-                            {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
+                        {/* 2. Nama Dompet di Tengah */}
+                        <div className="w-full my-auto px-0.5 pt-1.5 pb-0.5">
+                          <h4 className="font-bold text-slate-800 dark:text-slate-100 text-[11px] xs:text-xs sm:text-sm leading-tight truncate w-full group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            {w.name}
+                          </h4>
+                        </div>
+
+                        {/* 3. Saldo Dompet di Bawah */}
+                        <div className="w-full">
+                          <span className="block font-bold font-mono text-slate-900 dark:text-white text-[10px] xs:text-[11px] sm:text-xs tracking-tight truncate w-full">
+                            {showHideBalance ? '••••••' : formatIDR(balanceVal)}
                           </span>
-                          <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-slate-500 dark:group-hover:text-slate-400 group-hover:translate-x-0.5 transition-all" />
                         </div>
                       </div>
                     );
