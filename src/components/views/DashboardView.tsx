@@ -542,7 +542,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
 
             {/* 2. Section Saldo Dompet - Dikelompokkan per Kategori dengan Card Pembungkus Utama yang Rapi */}
-            <div className={`p-4 sm:p-5 ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4`}>
+            <div className={`p-4 sm:p-5 ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-none space-y-4`}>
               {wallets.length === 0 ? (
                 <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Belum ada dompet tersimpan</p>
