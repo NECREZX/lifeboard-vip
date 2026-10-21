@@ -541,8 +541,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </button>
             </div>
 
-            {/* 2. Section Saldo Dompet - Dikelompokkan per Kategori (Bank, E-Wallet, Tunai) Tanpa Garis Pemisah */}
-            <div className="space-y-4 pt-1 sm:pt-2">
+            {/* 2. Section Saldo Dompet - Dikelompokkan per Kategori dengan Card Pembungkus Utama yang Rapi */}
+            <div className={`p-4 sm:p-5 ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4`}>
               {wallets.length === 0 ? (
                 <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Belum ada dompet tersimpan</p>
@@ -557,13 +557,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               ) : (
                 groupedWallets.map(group => (
                   <div key={group.key} className="space-y-2">
-                    {/* Header Kelompok: Bersih, Minimalis, Tanpa garis */}
+                    {/* Header Kelompok: Bersih, Minimalis, Tanpa Badge Angka */}
                     <div className="flex items-center justify-between px-0.5">
                       <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         {group.label}
-                      </span>
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-mono">
-                        {group.items.length}
                       </span>
                     </div>
 
