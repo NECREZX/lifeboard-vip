@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+export type WalletCategory = 'Bank' | 'E-Wallet' | 'Tunai';
+
 export interface Wallet {
   id: string;
   name: string;
@@ -10,6 +12,8 @@ export interface Wallet {
   currentBalance?: number; // optional for backward compatibility
   icon: string;
   color: string;
+  category?: WalletCategory | string;
+  order?: number;
 }
 
 export interface Category {

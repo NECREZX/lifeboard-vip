@@ -21,6 +21,8 @@ import {
   Database,
   ShieldCheck,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   GripVertical,
   ArrowLeft,
   Wallet as WalletIcon,
@@ -148,6 +150,7 @@ interface KelolaViewProps {
   startEditWallet: (w: Wallet) => void;
   handleDeleteWallet: (id: string) => void;
   onMoveWallet?: (fromIndex: number, toIndex: number) => void;
+  onUpdateWalletCategory?: (walletId: string, category: 'Bank' | 'E-Wallet' | 'Tunai') => void;
   startEditCategory: (c: Category) => void;
   handleDeleteCategory: (id: string) => void;
   startEditSource: (s: IncomeSource) => void;
@@ -161,6 +164,8 @@ interface KelolaViewProps {
   setWalletFormIcon: (val: string) => void;
   walletFormColor: string;
   setWalletFormColor: (val: string) => void;
+  walletFormCategory?: string;
+  setWalletFormCategory?: (val: string) => void;
   handleSaveWallet: (e: React.FormEvent) => void;
   resetWalletForm: () => void;
   categoryEditId: string | null;
@@ -207,6 +212,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   startEditWallet,
   handleDeleteWallet,
   onMoveWallet,
+  onUpdateWalletCategory,
   startEditCategory,
   handleDeleteCategory,
   startEditSource,
@@ -220,6 +226,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   setWalletFormIcon,
   walletFormColor,
   setWalletFormColor,
+  walletFormCategory,
+  setWalletFormCategory,
   handleSaveWallet,
   resetWalletForm,
   categoryEditId,
@@ -290,6 +298,9 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
   // Wallet Icon Picker Tab State ('bank' | 'ewallet' | 'investasi' | 'klasik' | 'lainnya')
   const [walletIconTab, setWalletIconTab] = useState<'bank' | 'ewallet' | 'investasi' | 'klasik' | 'lainnya'>('bank');
+
+  // Wallet List Filter by Group in Kelola Dompet ('semua' | 'Bank' | 'E-Wallet' | 'Tunai')
+  const [walletListFilter, setWalletListFilter] = useState<'semua' | 'Bank' | 'E-Wallet' | 'Tunai'>('semua');
 
   // Auto-switch tab if current walletFormIcon belongs to a specific category
   useEffect(() => {
@@ -467,12 +478,16 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                       setWalletFormColor(detected.color);
                       if (['GoPay', 'OVO', 'DANA', 'ShopeePay', 'LinkAja', 'AstraPay', 'ISaku', 'PayPal'].includes(detected.icon)) {
                         setWalletIconTab('ewallet');
+                        setWalletFormCategory && setWalletFormCategory('E-Wallet');
                       } else if (['Bibit', 'Stockbit', 'Ajaib', 'Crypto'].includes(detected.icon)) {
                         setWalletIconTab('investasi');
-                      } else if (['Banknote', 'Wallet', 'CreditCard', 'PiggyBank'].includes(detected.icon)) {
-                        setWalletIconTab('klasik');
+                        setWalletFormCategory && setWalletFormCategory('Bank');
+                      } else if (['Cash', 'cash', 'Sedekah', 'sedekah'].includes(detected.icon) || val.toLowerCase().includes('tunai') || val.toLowerCase().includes('cash')) {
+                        setWalletIconTab('lainnya');
+                        setWalletFormCategory && setWalletFormCategory('Tunai');
                       } else {
                         setWalletIconTab('bank');
+                        setWalletFormCategory && setWalletFormCategory('Bank');
                       }
                     }
                   }} 
@@ -499,6 +514,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                         onClick={() => {
                           setWalletFormIcon(detected.icon);
                           setWalletFormColor(detected.color);
+                          if (['GoPay', 'OVO', 'DANA', 'ShopeePay', 'LinkAja', 'AstraPay', 'PayPal'].includes(detected.icon)) {
+                            setWalletFormCategory && setWalletFormCategory('E-Wallet');
+                          } else if (['Cash', 'cash', 'Sedekah', 'sedekah'].includes(detected.icon)) {
+                            setWalletFormCategory && setWalletFormCategory('Tunai');
+                          } else {
+                            setWalletFormCategory && setWalletFormCategory('Bank');
+                          }
                         }}
                         className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-[10px] tracking-wide shrink-0 transition cursor-pointer shadow-xs"
                       >
@@ -507,6 +529,29 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                     </div>
                   );
                 })()}
+              </div>
+
+              {/* Pilihan Kelompok Kategori Dompet (Bank, E-Wallet, Tunai) */}
+              <div className="flex flex-col gap-1.5">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">
+                  Kelompok Dompet
+                </span>
+                <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl">
+                  {(['Bank', 'E-Wallet', 'Tunai'] as const).map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setWalletFormCategory && setWalletFormCategory(cat)}
+                      className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer text-center ${
+                        (walletFormCategory || 'Bank') === cat
+                          ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="relative">
@@ -739,7 +784,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </form>
           </div>
 
-          {/* List Dompet Saat Ini */}
+          {/* List Dompet Saat Ini dengan Filter Kelompok & Pengatur Urutan */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
@@ -750,95 +795,232 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               </span>
             </div>
 
-            {walletsWithCurrentBalance.length === 0 ? (
-              <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-                <p className="text-xs text-slate-400">Belum ada dompet tersimpan.</p>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-2.5">
-                {walletsWithCurrentBalance.map((w, idx) => {
-                  const isBeingDragged = draggedWalletIdx === idx;
-                  const isDragOver = dragOverWalletIdx === idx && draggedWalletIdx !== idx;
+            {/* Filter Segmented Pills: Semua, Bank, E-Wallet, Tunai */}
+            {(() => {
+              const resolveWalletCat = (w: any): 'Bank' | 'E-Wallet' | 'Tunai' => {
+                if (w.category === 'Bank' || w.category === 'E-Wallet' || w.category === 'Tunai') return w.category;
+                const clean = ((w.name || '') + ' ' + (w.icon || '')).toLowerCase();
+                if (clean.includes('tunai') || clean.includes('cash') || w.icon === 'Cash' || w.icon === 'cash') return 'Tunai';
+                if (['gopay', 'ovo', 'dana', 'shopee', 'linkaja', 'astrapay', 'isaku', 'paypal'].some(k => clean.includes(k))) return 'E-Wallet';
+                return 'Bank';
+              };
 
-                  return (
-                    <div 
-                      key={w.id} 
-                      data-wallet-drag-idx={idx}
-                      draggable
-                      onDragStart={(e) => handleWalletDragStart(e, idx)}
-                      onDragOver={(e) => handleWalletDragOver(e, idx)}
-                      onDrop={(e) => handleWalletDrop(e, idx)}
-                      onDragEnd={handleWalletDragEnd}
-                      onTouchStart={(e) => handleWalletTouchStart(idx, e)}
-                      onTouchMove={handleWalletTouchMove}
-                      onTouchEnd={handleWalletTouchEnd}
-                      className={`${getCardClasses()} p-3 sm:p-3.5 flex items-center justify-between group relative overflow-hidden transition-all duration-150 cursor-grab active:cursor-grabbing select-none ${
-                        isBeingDragged 
-                          ? 'opacity-40 scale-[0.98] border-2 border-dashed border-indigo-400 dark:border-indigo-500 shadow-none bg-indigo-50/20' 
-                          : isDragOver
-                            ? 'ring-2 ring-indigo-500 shadow-md bg-indigo-50/60 dark:bg-indigo-950/40 translate-y-0.5'
-                            : 'hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs'
+              const bankCount = walletsWithCurrentBalance.filter(w => resolveWalletCat(w) === 'Bank').length;
+              const ewalletCount = walletsWithCurrentBalance.filter(w => resolveWalletCat(w) === 'E-Wallet').length;
+              const tunaiCount = walletsWithCurrentBalance.filter(w => resolveWalletCat(w) === 'Tunai').length;
+
+              const displayedWallets = walletListFilter === 'semua'
+                ? walletsWithCurrentBalance
+                : walletsWithCurrentBalance.filter(w => resolveWalletCat(w) === walletListFilter);
+
+              return (
+                <div className="flex flex-col gap-3">
+                  {/* Segmented Filter Bar */}
+                  <div className="grid grid-cols-4 gap-1 p-1 bg-slate-100/80 dark:bg-slate-800/60 rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setWalletListFilter('semua')}
+                      className={`py-1.5 text-[10px] sm:text-xs font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
+                        walletListFilter === 'semua'
+                          ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
                       }`}
                     >
-                      <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: w.color || '#10b981' }} />
-                      
-                      {/* Left: Drag Grip Handle, Position Badge & Wallet Info */}
-                      <div className="flex items-center gap-2.5 sm:gap-3 pl-1 min-w-0 flex-1">
-                        {/* Drag Handle & Position Badge */}
-                        <div 
-                          className="flex items-center gap-1.5 shrink-0 text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 transition-colors p-1"
-                          title="Tahan dan geser untuk mengatur urutan posisi dompet"
-                        >
-                          <GripVertical className="w-4 h-4 shrink-0" />
-                          <span className="font-mono font-bold text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                            #{idx + 1}
-                          </span>
-                        </div>
+                      Semua ({walletsWithCurrentBalance.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWalletListFilter('Bank')}
+                      className={`py-1.5 text-[10px] sm:text-xs font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
+                        walletListFilter === 'Bank'
+                          ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      Bank ({bankCount})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWalletListFilter('E-Wallet')}
+                      className={`py-1.5 text-[10px] sm:text-xs font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
+                        walletListFilter === 'E-Wallet'
+                          ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      E-Wallet ({ewalletCount})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWalletListFilter('Tunai')}
+                      className={`py-1.5 text-[10px] sm:text-xs font-bold rounded-lg transition-all cursor-pointer text-center truncate ${
+                        walletListFilter === 'Tunai'
+                          ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-xs font-black'
+                          : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      Tunai ({tunaiCount})
+                    </button>
+                  </div>
 
-                        {/* Wallet Icon (Besar & Jelas) */}
-                        <div 
-                          className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-xs shrink-0 overflow-hidden"
-                          style={BRAND_LOGOS_MAP[w.icon] ? undefined : { backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
-                        >
-                          {w.icon && (
-                            <IconRenderer 
-                              name={w.icon} 
-                              className={BRAND_LOGOS_MAP[w.icon] ? "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl" : "w-6 h-6 text-current"} 
-                            />
-                          )}
-                        </div>
-
-                        {/* Wallet Name & Balance */}
-                        <div className="min-w-0 flex-1">
-                          <h4 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-tight truncate">{w.name}</h4>
-                          <p className="text-[11px] font-mono text-indigo-500 dark:text-indigo-400 font-bold mt-0.5 truncate">{formatIDR(w.currentBalance ?? w.initialBalance)}</p>
-                        </div>
-                      </div>
-
-                      {/* Actions: Edit & Delete */}
-                      <div className="flex items-center gap-1 shrink-0 pl-2">
-                        <button 
-                          type="button" 
-                          onClick={(e) => { e.stopPropagation(); startEditWallet(w); }} 
-                          title={`Edit dompet ${w.name}`}
-                          className="p-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-slate-800 cursor-pointer"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button 
-                          type="button" 
-                          onClick={(e) => { e.stopPropagation(); handleDeleteWallet(w.id); }} 
-                          title={`Hapus dompet ${w.name}`}
-                          className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-800 cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                  {displayedWallets.length === 0 ? (
+                    <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                      <p className="text-xs text-slate-400">Tidak ada dompet dalam kategori {walletListFilter}.</p>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                  ) : (
+                    <div className="flex flex-col gap-2.5">
+                      {displayedWallets.map((w, displayedIdx) => {
+                        const globalIdx = walletsWithCurrentBalance.findIndex(item => item.id === w.id);
+                        const isBeingDragged = draggedWalletIdx === globalIdx;
+                        const isDragOver = dragOverWalletIdx === globalIdx && draggedWalletIdx !== globalIdx;
+                        const currentCat = resolveWalletCat(w);
+
+                        return (
+                          <div 
+                            key={w.id} 
+                            data-wallet-drag-idx={globalIdx}
+                            draggable
+                            onDragStart={(e) => handleWalletDragStart(e, globalIdx)}
+                            onDragOver={(e) => handleWalletDragOver(e, globalIdx)}
+                            onDrop={(e) => handleWalletDrop(e, globalIdx)}
+                            onDragEnd={handleWalletDragEnd}
+                            onTouchStart={(e) => handleWalletTouchStart(globalIdx, e)}
+                            onTouchMove={handleWalletTouchMove}
+                            onTouchEnd={handleWalletTouchEnd}
+                            className={`${getCardClasses()} p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group relative overflow-hidden transition-all duration-150 cursor-grab active:cursor-grabbing select-none ${
+                              isBeingDragged 
+                                ? 'opacity-40 scale-[0.98] border-2 border-dashed border-indigo-400 dark:border-indigo-500 shadow-none bg-indigo-50/20' 
+                                : isDragOver
+                                  ? 'ring-2 ring-indigo-500 shadow-md bg-indigo-50/60 dark:bg-indigo-950/40 translate-y-0.5'
+                                  : 'hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs'
+                            }`}
+                          >
+                            <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: w.color || '#10b981' }} />
+                            
+                            {/* Left: Drag Grip Handle, Position Badge & Wallet Info */}
+                            <div className="flex items-center gap-2.5 sm:gap-3 pl-1 min-w-0 flex-1">
+                              {/* Drag Handle & Position Badge */}
+                              <div 
+                                className="flex items-center gap-1.5 shrink-0 text-slate-400 dark:text-slate-500 group-hover:text-indigo-500 transition-colors p-1"
+                                title="Tahan dan geser untuk mengatur urutan posisi dompet"
+                              >
+                                <GripVertical className="w-4 h-4 shrink-0" />
+                                <span className="font-mono font-bold text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                  #{globalIdx + 1}
+                                </span>
+                              </div>
+
+                              {/* Wallet Icon (Besar & Jelas) */}
+                              <div 
+                                className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-xs shrink-0 overflow-hidden"
+                                style={BRAND_LOGOS_MAP[w.icon] ? undefined : { backgroundColor: `${w.color || '#10b981'}25`, color: w.color || '#10b981' }}
+                              >
+                                {w.icon && (
+                                  <IconRenderer 
+                                    name={w.icon} 
+                                    className={BRAND_LOGOS_MAP[w.icon] ? "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl" : "w-6 h-6 text-current"} 
+                                  />
+                                )}
+                              </div>
+
+                              {/* Wallet Name, Balance & Quick Category Changer */}
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <h4 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-tight truncate">{w.name}</h4>
+                                </div>
+                                <p className="text-[11px] font-mono text-indigo-500 dark:text-indigo-400 font-bold mt-0.5 truncate">{formatIDR(w.currentBalance ?? w.initialBalance)}</p>
+
+                                {/* Quick Group Switcher (Bank / E-Wallet / Tunai) */}
+                                <div className="flex items-center gap-1 mt-1.5 flex-wrap">
+                                  <span className="text-[9px] font-bold text-slate-400 mr-0.5">Kelompok:</span>
+                                  {(['Bank', 'E-Wallet', 'Tunai'] as const).map(catOption => {
+                                    const isCurrent = currentCat === catOption;
+                                    return (
+                                      <button
+                                        key={catOption}
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          onUpdateWalletCategory && onUpdateWalletCategory(w.id, catOption);
+                                        }}
+                                        className={`text-[9px] font-bold px-2 py-0.5 rounded-md transition-all cursor-pointer ${
+                                          isCurrent
+                                            ? 'bg-indigo-600 text-white shadow-2xs font-black'
+                                            : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400'
+                                        }`}
+                                        title={`Pindahkan ${w.name} ke kelompok ${catOption}`}
+                                      >
+                                        {catOption}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Actions: Reorder Buttons, Edit & Delete */}
+                            <div className="flex items-center justify-end gap-1 shrink-0 pl-1">
+                              {/* Quick Up/Down Reorder Buttons */}
+                              <div className="flex sm:flex-col gap-0.5 shrink-0">
+                                <button
+                                  type="button"
+                                  disabled={displayedIdx === 0}
+                                  onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    if (displayedIdx > 0 && onMoveWallet) {
+                                      const prevWallet = displayedWallets[displayedIdx - 1];
+                                      const targetIdx = walletsWithCurrentBalance.findIndex(item => item.id === prevWallet.id);
+                                      onMoveWallet(globalIdx, targetIdx);
+                                    }
+                                  }}
+                                  className="p-1.5 sm:p-1 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed"
+                                  title="Tampil lebih duluan di Dashboard"
+                                >
+                                  <ChevronUp className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={displayedIdx === displayedWallets.length - 1}
+                                  onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    if (displayedIdx < displayedWallets.length - 1 && onMoveWallet) {
+                                      const nextWallet = displayedWallets[displayedIdx + 1];
+                                      const targetIdx = walletsWithCurrentBalance.findIndex(item => item.id === nextWallet.id);
+                                      onMoveWallet(globalIdx, targetIdx);
+                                    }
+                                  }}
+                                  className="p-1.5 sm:p-1 rounded text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed"
+                                  title="Turunkan urutan tampil"
+                                >
+                                  <ChevronDown className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              <button 
+                                type="button" 
+                                onClick={(e) => { e.stopPropagation(); startEditWallet(w); }} 
+                                title={`Edit dompet ${w.name}`}
+                                className="p-2 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-slate-800 cursor-pointer"
+                              >
+                                <Edit2 className="w-3.5 h-3.5" />
+                              </button>
+                              <button 
+                                type="button" 
+                                onClick={(e) => { e.stopPropagation(); handleDeleteWallet(w.id); }} 
+                                title={`Hapus dompet ${w.name}`}
+                                className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-slate-800 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>

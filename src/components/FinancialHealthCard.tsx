@@ -241,8 +241,8 @@ export const FinancialHealthCard: React.FC<FinancialHealthCardProps> = ({
 
   return (
     <div className={`${getCardClasses()} p-5 lg:p-6 transition-all duration-200 select-none border border-slate-200/80 dark:border-slate-800`}>
-      {/* Header: Judul bersih 'Kondisi Finansial' dengan garis batas yang tegas */}
-      <div className="pb-4 border-b border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between">
+      {/* Header: Judul bersih 'Kondisi Finansial' tanpa garis bawah */}
+      <div className="pb-1 flex items-center justify-between">
         <h4 className="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-200">
           {isEn ? 'Financial Condition' : 'Kondisi Finansial'}
         </h4>

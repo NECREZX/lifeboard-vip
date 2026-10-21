@@ -149,6 +149,37 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     .filter(t => t.type === 'pemasukan' && t.date && t.date.startsWith(currentMonthKey))
     .reduce((sum, t) => sum + t.amount, 0);
 
+  // Grouping wallets by category (Bank, E-Wallet, Tunai) while maintaining user priority order
+  const groupedWallets = React.useMemo(() => {
+    const detectGroup = (w: any): 'Bank' | 'E-Wallet' | 'Tunai' => {
+      if (w.category === 'Bank' || w.category === 'E-Wallet' || w.category === 'Tunai') {
+        return w.category;
+      }
+      const clean = ((w.name || '') + ' ' + (w.icon || '')).toLowerCase();
+      if (clean.includes('tunai') || clean.includes('cash') || w.icon === 'Cash' || w.icon === 'cash') return 'Tunai';
+      if (['gopay', 'ovo', 'dana', 'shopee', 'linkaja', 'astrapay', 'isaku', 'paypal'].some(k => clean.includes(k))) return 'E-Wallet';
+      return 'Bank';
+    };
+
+    const groups: { key: string; label: string; items: any[] }[] = [
+      { key: 'Bank', label: 'Bank', items: [] },
+      { key: 'E-Wallet', label: 'E-Wallet', items: [] },
+      { key: 'Tunai', label: 'Tunai', items: [] }
+    ];
+
+    wallets.forEach((w: any) => {
+      const cat = detectGroup(w);
+      const grp = groups.find(g => g.key === cat);
+      if (grp) {
+        grp.items.push(w);
+      } else {
+        groups.push({ key: cat, label: cat, items: [w] });
+      }
+    });
+
+    return groups.filter(g => g.items.length > 0);
+  }, [wallets]);
+
   const handleApplyFilter = () => {
     setSelectedMonth(tempMonth);
     setSelectedYear(tempYear);
@@ -510,15 +541,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               </button>
             </div>
 
-            {/* 2. Section Saldo Dompet - Mini Account Card Grid (3 Kolom per Baris) */}
-            {/* Garis Pemisah Halus agar Tidak Menyatu dengan Baris Tombol di Atasnya */}
-            <div className="pt-1.5 pb-0.5 sm:pt-2 sm:pb-1">
-              <div className="w-full border-t border-slate-200/80 dark:border-slate-800" />
-            </div>
-
-            {/* 2. Grid Card Saldo Dompet (3 Kolom per Baris) */}
-            <div>
-
+            {/* 2. Section Saldo Dompet - Dikelompokkan per Kategori (Bank, E-Wallet, Tunai) Tanpa Garis Pemisah */}
+            <div className="space-y-4 pt-1 sm:pt-2">
               {wallets.length === 0 ? (
                 <div className="p-6 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
                   <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Belum ada dompet tersimpan</p>
@@ -531,56 +555,71 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-2 xs:gap-2.5 sm:gap-3.5">
-                  {wallets.map((w: any) => {
-                    const balanceVal = w.currentBalance ?? w.initialBalance;
-                    const cardColor = w.color || '#0284c7';
-                    const isBrandLogo = !!BRAND_LOGOS_MAP[w.icon];
-                    const cardRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+                groupedWallets.map(group => (
+                  <div key={group.key} className="space-y-2">
+                    {/* Header Kelompok: Bersih, Minimalis, Tanpa garis */}
+                    <div className="flex items-center justify-between px-0.5">
+                      <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        {group.label}
+                      </span>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 font-mono">
+                        {group.items.length}
+                      </span>
+                    </div>
 
-                    return (
-                      <div 
-                        key={w.id}
-                        onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                        className={`group relative overflow-hidden ${cardRadius} bg-white dark:bg-[#18181b] border border-slate-200/90 dark:border-slate-800 p-2.5 xs:p-3 sm:p-3.5 flex flex-col items-center justify-between text-center hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-all cursor-pointer select-none active:scale-[0.98] min-h-[118px] xs:min-h-[126px] sm:min-h-[136px]`}
-                        title={`Klik untuk kelola dompet ${w.name}`}
-                      >
-                        {/* Top Indicator Strip (Subtle brand color accent) */}
-                        <div 
-                          className="absolute top-0 inset-x-0 h-1"
-                          style={{ backgroundColor: cardColor }}
-                        />
+                    {/* Grid Card Saldo Dompet (3 Kolom per Baris, jika lebih lanjut kebawah) */}
+                    <div className="grid grid-cols-3 gap-2 xs:gap-2.5 sm:gap-3.5">
+                      {group.items.map((w: any) => {
+                        const balanceVal = w.currentBalance ?? w.initialBalance;
+                        const cardColor = w.color || '#0284c7';
+                        const isBrandLogo = !!BRAND_LOGOS_MAP[w.icon];
+                        const cardRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
 
-                        {/* 1. Icon Container di Atas */}
-                        <div className="pt-1">
+                        return (
                           <div 
-                            className="w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-3xs transition-transform group-hover:scale-105 overflow-hidden border border-slate-100 dark:border-slate-800"
-                            style={isBrandLogo ? undefined : { backgroundColor: `${cardColor}18`, color: cardColor }}
+                            key={w.id}
+                            onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
+                            className={`group relative overflow-hidden ${cardRadius} bg-white dark:bg-[#18181b] border border-slate-200/90 dark:border-slate-800 p-2.5 xs:p-3 sm:p-3.5 flex flex-col items-center justify-between text-center hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-all cursor-pointer select-none active:scale-[0.98] min-h-[118px] xs:min-h-[126px] sm:min-h-[136px]`}
+                            title={`Klik untuk kelola dompet ${w.name}`}
                           >
-                            <IconRenderer 
-                              name={w.icon || 'Wallet'} 
-                              className={isBrandLogo ? "w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-2xl object-cover" : "w-5 h-5 xs:w-6 xs:h-6"} 
+                            {/* Top Indicator Strip (Subtle brand color accent) */}
+                            <div 
+                              className="absolute top-0 inset-x-0 h-1"
+                              style={{ backgroundColor: cardColor }}
                             />
+
+                            {/* 1. Icon Container di Atas */}
+                            <div className="pt-1">
+                              <div 
+                                className="w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-3xs transition-transform group-hover:scale-105 overflow-hidden border border-slate-100 dark:border-slate-800"
+                                style={isBrandLogo ? undefined : { backgroundColor: `${cardColor}18`, color: cardColor }}
+                              >
+                                <IconRenderer 
+                                  name={w.icon || 'Wallet'} 
+                                  className={isBrandLogo ? "w-10 h-10 xs:w-11 xs:h-11 sm:w-12 sm:h-12 rounded-2xl object-cover" : "w-5 h-5 xs:w-6 xs:h-6"} 
+                                />
+                              </div>
+                            </div>
+
+                            {/* 2. Nama Dompet di Tengah */}
+                            <div className="w-full my-auto px-0.5 py-1">
+                              <h4 className="font-bold text-slate-800 dark:text-slate-100 text-[11px] xs:text-xs sm:text-sm leading-tight truncate w-full group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                {w.name}
+                              </h4>
+                            </div>
+
+                            {/* 3. Saldo Dompet di Bawah (Pill container yang rapi & khas kartu akun) */}
+                            <div className="w-full bg-slate-50 dark:bg-slate-900/80 py-1 px-1.5 rounded-lg border border-slate-200/60 dark:border-slate-800">
+                              <span className="block font-bold font-mono text-slate-900 dark:text-white text-[10px] xs:text-[11px] sm:text-xs tracking-tight truncate w-full">
+                                {showHideBalance ? '••••••' : formatIDR(balanceVal)}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-
-                        {/* 2. Nama Dompet di Tengah */}
-                        <div className="w-full my-auto px-0.5 py-1">
-                          <h4 className="font-bold text-slate-800 dark:text-slate-100 text-[11px] xs:text-xs sm:text-sm leading-tight truncate w-full group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                            {w.name}
-                          </h4>
-                        </div>
-
-                        {/* 3. Saldo Dompet di Bawah (Pill container yang rapi & khas kartu akun) */}
-                        <div className="w-full bg-slate-50 dark:bg-slate-900/80 py-1 px-1.5 rounded-lg border border-slate-200/60 dark:border-slate-800">
-                          <span className="block font-bold font-mono text-slate-900 dark:text-white text-[10px] xs:text-[11px] sm:text-xs tracking-tight truncate w-full">
-                            {showHideBalance ? '••••••' : formatIDR(balanceVal)}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))
               )}
             </div>
 

@@ -465,6 +465,14 @@ export default function App() {
   const [walletFormBalance, setWalletFormBalance] = useState<string>('');
   const [walletFormIcon, setWalletFormIcon] = useState<string>('Wallet');
   const [walletFormColor, setWalletFormColor] = useState<string>('#10b981');
+  const [walletFormCategory, setWalletFormCategory] = useState<string>('Bank');
+
+  const detectDefaultWalletCategory = (icon: string, name: string): string => {
+    const clean = ((name || '') + ' ' + (icon || '')).toLowerCase();
+    if (clean.includes('tunai') || clean.includes('cash') || icon === 'Cash' || icon === 'cash') return 'Tunai';
+    if (['gopay', 'ovo', 'dana', 'shopee', 'linkaja', 'astra', 'paypal'].some(k => clean.includes(k))) return 'E-Wallet';
+    return 'Bank';
+  };
 
   const startEditWallet = (w: Wallet) => {
     setWalletEditId(w.id);
@@ -472,6 +480,7 @@ export default function App() {
     setWalletFormBalance(w.initialBalance.toString());
     setWalletFormIcon(w.icon || 'Wallet');
     setWalletFormColor(w.color || '#10b981');
+    setWalletFormCategory(w.category || detectDefaultWalletCategory(w.icon, w.name));
   };
 
   const resetWalletForm = () => {
@@ -480,14 +489,23 @@ export default function App() {
     setWalletFormBalance('');
     setWalletFormIcon('Wallet');
     setWalletFormColor('#10b981');
+    setWalletFormCategory('Bank');
   };
 
   const handleSaveWallet = (e: React.FormEvent) => {
     e.preventDefault();
     const balance = parseFloat(walletFormBalance) || 0;
+    const cat = walletFormCategory || 'Bank';
     if (walletEditId) {
       // Editing
-      setWallets(prev => prev.map(w => w.id === walletEditId ? { ...w, name: walletFormName, initialBalance: balance, icon: walletFormIcon, color: walletFormColor } : w));
+      setWallets(prev => prev.map(w => w.id === walletEditId ? { 
+        ...w, 
+        name: walletFormName, 
+        initialBalance: balance, 
+        icon: walletFormIcon, 
+        color: walletFormColor,
+        category: cat
+      } : w));
       triggerNotification('Dompet Diperbarui', `Dompet "${walletFormName}" berhasil disimpan.`, 'info');
     } else {
       // Adding
@@ -496,7 +514,9 @@ export default function App() {
         name: walletFormName,
         initialBalance: balance,
         icon: walletFormIcon,
-        color: walletFormColor || '#10b981'
+        color: walletFormColor || '#10b981',
+        category: cat,
+        order: wallets.length
       };
       setWallets(prev => [...prev, newWallet]);
       triggerNotification('Dompet Ditambahkan', `Dompet baru "${walletFormName}" telah aktif.`, 'success');
@@ -515,6 +535,15 @@ export default function App() {
     triggerNotification(
       settings.language === 'en' ? 'Wallet Order Updated' : 'Urutan Dompet Diperbarui',
       settings.language === 'en' ? 'Wallet display order has been saved.' : 'Posisi urutan dompet berhasil disimpan.',
+      'info'
+    );
+  };
+
+  const handleUpdateWalletCategory = (walletId: string, category: 'Bank' | 'E-Wallet' | 'Tunai') => {
+    setWallets(prev => prev.map(w => w.id === walletId ? { ...w, category } : w));
+    triggerNotification(
+      settings.language === 'en' ? 'Wallet Group Updated' : 'Kelompok Dompet Diperbarui',
+      settings.language === 'en' ? `Moved to ${category}` : `Dompet dipindahkan ke kelompok ${category}`,
       'info'
     );
   };
@@ -2524,6 +2553,7 @@ export default function App() {
             startEditWallet={startEditWallet}
             handleDeleteWallet={handleDeleteWallet}
             onMoveWallet={handleMoveWallet}
+            onUpdateWalletCategory={handleUpdateWalletCategory}
             startEditCategory={startEditCategory}
             handleDeleteCategory={handleDeleteCategory}
             startEditSource={startEditSource}
@@ -2537,6 +2567,8 @@ export default function App() {
             setWalletFormIcon={setWalletFormIcon}
             walletFormColor={walletFormColor}
             setWalletFormColor={setWalletFormColor}
+            walletFormCategory={walletFormCategory}
+            setWalletFormCategory={setWalletFormCategory}
             handleSaveWallet={handleSaveWallet}
             resetWalletForm={resetWalletForm}
             categoryEditId={categoryEditId}

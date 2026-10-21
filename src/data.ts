@@ -6,7 +6,7 @@
 import { Wallet, Category, IncomeSource, Transaction, Saving, SavingLog, Budget, Activity, Wishlist, NotificationItem } from './types';
 
 export const DEFAULT_WALLETS: Wallet[] = [
-  { id: 'w-1', name: 'Dompet Utama', initialBalance: 0, icon: 'Wallet', color: '#10b981' }
+  { id: 'w-1', name: 'Dompet Utama', initialBalance: 0, icon: 'Wallet', color: '#10b981', category: 'Tunai' }
 ];
 
 export const DEFAULT_CATEGORIES: Category[] = [
