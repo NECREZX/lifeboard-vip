@@ -25,7 +25,8 @@ import {
   Copy,
   Download,
   Search,
-  RotateCcw
+  RotateCcw,
+  Delete
 } from 'lucide-react';
 import { 
   Wallet, 
@@ -269,6 +270,12 @@ export function TambahDataView({
   });
   const [wishlistNotes, setWishlistNotes] = useState<string>('');
 
+  // Active target for Transfer nominal: 'amount' | 'adminFee'
+  const [activeTransferField, setActiveTransferField] = useState<'amount' | 'adminFee'>('amount');
+
+  // Active target for Tabungan: 'target' | 'current'
+  const [activeSavingField, setActiveSavingField] = useState<'target' | 'current'>('target');
+
   // Date picker open state
   const [showDatePickerModal, setShowDatePickerModal] = useState(false);
 
@@ -384,15 +391,73 @@ export function TambahDataView({
     });
   }, [date, isToday, isYesterday]);
 
-  // Quick Amount Shortcut handlers
-  const addQuickAmount = (val: number) => {
-    const next = currentNumericAmount + val;
-    setAmount(next.toString());
+  // Unified active field resolver for all 5 forms (pengeluaran, pemasukan, transfer, budgeting, tabungan)
+  const getActiveFieldTarget = () => {
+    if (activeForm === 'pengeluaran' || activeForm === 'pemasukan') {
+      return { val: amount, setter: setAmount };
+    }
+    if (activeForm === 'transfer') {
+      return activeTransferField === 'adminFee'
+        ? { val: adminFee, setter: setAdminFee }
+        : { val: amount, setter: setAmount };
+    }
+    if (activeForm === 'budgeting') {
+      return { val: budgetLimit, setter: setBudgetLimit };
+    }
+    if (activeForm === 'tabungan') {
+      return activeSavingField === 'current'
+        ? { val: savingCurrent, setter: setSavingCurrent }
+        : { val: savingTarget, setter: setSavingTarget };
+    }
+    return { val: '', setter: () => {} };
   };
 
-  const multiplyByThousand = () => {
-    const next = currentNumericAmount > 0 ? currentNumericAmount * 1000 : 100000;
-    setAmount(next.toString());
+  const addQuickAmount = (val: number) => {
+    const { val: currentVal, setter } = getActiveFieldTarget();
+    const cur = parseAmountInput(currentVal);
+    setter((cur + val).toString());
+  };
+
+  const setQuickExactAmount = (val: string) => {
+    const { setter } = getActiveFieldTarget();
+    setter(val);
+  };
+
+  const handleNumpadPress = (char: string) => {
+    const { val: currentVal, setter } = getActiveFieldTarget();
+
+    if (char === '+000') {
+      if (!currentVal || currentVal === '0') return;
+      if (currentVal.length > 10) return;
+      setter(currentVal + '000');
+      return;
+    }
+
+    if (char === '0') {
+      if (!currentVal || currentVal === '0') {
+        setter('0');
+        return;
+      }
+      if (currentVal.length > 12) return;
+      setter(currentVal + '0');
+      return;
+    }
+
+    if (!currentVal || currentVal === '0') {
+      setter(char);
+    } else {
+      if (currentVal.length > 12) return;
+      setter(currentVal + char);
+    }
+  };
+
+  const handleNumpadBackspace = () => {
+    const { val: currentVal, setter } = getActiveFieldTarget();
+    if (!currentVal || currentVal.length <= 1) {
+      setter('');
+    } else {
+      setter(currentVal.slice(0, -1));
+    }
   };
 
   // Duplicate / Clone Data Handler
@@ -811,73 +876,262 @@ export function TambahDataView({
           </div>
         )}
 
-        {/* HERO AMOUNT DISPLAY CARD (100% Dead Center Nominal & Rp) */}
-        {(activeForm === 'pengeluaran' || activeForm === 'pemasukan' || activeForm === 'transfer') && (
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col items-center justify-center text-center relative overflow-hidden">
-            <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
-              {activeForm === 'pengeluaran' ? 'Nominal Pengeluaran' : activeForm === 'pemasukan' ? 'Nominal Pendapatan' : 'Nominal Transfer'}
-            </span>
+        {/* HERO AMOUNT DISPLAY CARD (100% Dead Center Nominal & Rp with Integrated Custom Numpad) */}
+        {/* HERO AMOUNT DISPLAY CARD (100% Dead Center Nominal & Rp with Integrated Custom Numpad for all 5 financial forms) */}
+        {(activeForm === 'pengeluaran' || activeForm === 'pemasukan' || activeForm === 'transfer' || activeForm === 'budgeting' || activeForm === 'tabungan') && (() => {
+          const isTargetAdmin = activeForm === 'transfer' && activeTransferField === 'adminFee';
+          const { val: heroValue } = getActiveFieldTarget();
+          const heroNum = parseAmountInput(heroValue);
+          const heroDisplay = heroValue ? Number(heroValue).toLocaleString('id-ID') : '0';
 
-            {/* Centered Nominal Input Container */}
-            <div className="w-full flex items-center justify-center text-center my-1">
-              <div className="inline-flex items-center justify-center gap-2 max-w-full">
-                <span className="text-2xl sm:text-3xl font-black text-slate-400 dark:text-slate-500 font-mono select-none shrink-0">
-                  Rp
+          return (
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col items-center justify-center text-center relative overflow-hidden">
+              {/* Field Switcher for Transfer (Nominal Transfer vs Biaya Admin) */}
+              {activeForm === 'transfer' && (
+                <div className="flex items-center justify-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl mb-3.5 max-w-full">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTransferField('amount')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                      !isTargetAdmin
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                    }`}
+                  >
+                    Nominal Transfer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTransferField('adminFee')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                      isTargetAdmin
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                    }`}
+                  >
+                    Biaya Admin {parseAmountInput(adminFee) > 0 ? `(${formatIDR(parseAmountInput(adminFee))})` : ''}
+                  </button>
+                </div>
+              )}
+
+              {/* Field Switcher for Tabungan (Target Jumlah vs Dana Awal) */}
+              {activeForm === 'tabungan' && (
+                <div className="flex items-center justify-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl mb-3.5 max-w-full">
+                  <button
+                    type="button"
+                    onClick={() => setActiveSavingField('target')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                      activeSavingField === 'target'
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                    }`}
+                  >
+                    Target Jumlah {parseAmountInput(savingTarget) > 0 ? `(${formatIDR(parseAmountInput(savingTarget))})` : ''}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveSavingField('current')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                      activeSavingField === 'current'
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
+                        : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+                    }`}
+                  >
+                    Dana Awal {parseAmountInput(savingCurrent) > 0 ? `(${formatIDR(parseAmountInput(savingCurrent))})` : ''}
+                  </button>
+                </div>
+              )}
+
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                {activeForm === 'pengeluaran' 
+                  ? 'Nominal Pengeluaran' 
+                  : activeForm === 'pemasukan' 
+                    ? 'Nominal Pendapatan' 
+                    : activeForm === 'transfer'
+                      ? (isTargetAdmin ? 'Biaya Admin Transfer (Opsional)' : 'Nominal Transfer')
+                      : activeForm === 'budgeting'
+                        ? 'Batas Belanja Bulanan'
+                        : (activeSavingField === 'current' ? 'Dana Awal Terkumpul (Opsional)' : 'Target Jumlah Tabungan')}
+              </span>
+
+              {/* Centered Nominal Display */}
+              <div className="w-full flex items-center justify-center text-center my-1">
+                <div className="inline-flex items-center justify-center gap-2 max-w-full">
+                  <span className="text-2xl sm:text-3xl font-black text-slate-400 dark:text-slate-500 font-mono select-none shrink-0">
+                    Rp
+                  </span>
+                  <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-slate-900 dark:text-white truncate">
+                    {heroDisplay}
+                  </span>
+                </div>
+              </div>
+
+              {heroNum > 0 && (
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">
+                  {formatIDR(heroNum)}
                 </span>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder="0"
-                  className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-slate-900 dark:text-white bg-transparent outline-none border-none text-left p-0 m-0"
-                  style={{
-                    width: `${Math.max(1, (amount || '0').length) * 28 + 12}px`,
-                    maxWidth: 'calc(100vw - 160px)'
-                  }}
-                />
+              )}
+
+              {/* Quick Amount Shortcuts Pills */}
+              <div className="flex items-center gap-1.5 sm:gap-2 mt-4 flex-wrap justify-center">
+                {activeForm === 'transfer' && isTargetAdmin ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setQuickExactAmount('')}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-black text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      Gratis (Rp 0)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setQuickExactAmount('2500')}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      Rp 2.500
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setQuickExactAmount('6500')}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      Rp 6.500
+                    </button>
+                  </>
+                ) : activeForm === 'tabungan' && activeSavingField === 'current' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setQuickExactAmount('')}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-black text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      Rp 0 (Mulai dari Nol)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(50000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +50rb
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(100000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +100rb
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(500000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +500rb
+                    </button>
+                  </>
+                ) : activeForm === 'budgeting' || (activeForm === 'tabungan' && activeSavingField === 'target') ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(100000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +100rb
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(500000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +500rb
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(1000000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +1jt
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(5000000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +5jt
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(10000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +10rb
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(50000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +50rb
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(100000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +100rb
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addQuickAmount(500000)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                    >
+                      +500rb
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Integrated Custom Numpad */}
+              <div className="w-full max-w-[280px] sm:max-w-[320px] mx-auto mt-4 sm:mt-5 grid grid-cols-3 gap-2 sm:gap-2.5">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => handleNumpadPress(num.toString())}
+                    className="h-12 sm:h-13 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-bold text-lg sm:text-xl text-slate-800 dark:text-slate-100 flex items-center justify-center select-none cursor-pointer shadow-2xs"
+                  >
+                    {num}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => handleNumpadPress('+000')}
+                  className="h-12 sm:h-13 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-black text-xs sm:text-sm text-slate-700 dark:text-slate-200 flex items-center justify-center select-none cursor-pointer shadow-2xs"
+                >
+                  +000
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNumpadPress('0')}
+                  className="h-12 sm:h-13 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-bold text-lg sm:text-xl text-slate-800 dark:text-slate-100 flex items-center justify-center select-none cursor-pointer shadow-2xs"
+                >
+                  0
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNumpadBackspace}
+                  className="h-12 sm:h-13 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all text-slate-700 dark:text-slate-200 flex items-center justify-center select-none cursor-pointer shadow-2xs"
+                  aria-label="Hapus Digit"
+                >
+                  <Delete className="w-5 h-5 stroke-[2.2]" />
+                </button>
               </div>
             </div>
-
-            {currentNumericAmount > 0 && (
-              <span className="text-xs font-bold text-slate-500 dark:text-slate-400 mt-2">
-                {formatIDR(currentNumericAmount)}
-              </span>
-            )}
-
-            {/* Quick Amount Shortcuts Pills */}
-            <div className="flex items-center gap-2 mt-5 flex-wrap justify-center">
-              <button
-                type="button"
-                onClick={multiplyByThousand}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-black text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer"
-              >
-                +000
-              </button>
-              <button
-                type="button"
-                onClick={() => addQuickAmount(10000)}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer"
-              >
-                +10rb
-              </button>
-              <button
-                type="button"
-                onClick={() => addQuickAmount(50000)}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer"
-              >
-                +50rb
-              </button>
-              <button
-                type="button"
-                onClick={() => addQuickAmount(100000)}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer"
-              >
-                +100rb
-              </button>
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* MAIN FORM INPUTS CARD */}
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col gap-4">
@@ -1057,29 +1311,6 @@ export function TambahDataView({
                 </div>
               </div>
 
-              {/* Admin Fee Input with live spelled out nominal */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                  Biaya Admin (Opsional)
-                </label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-black text-xs text-slate-400">Rp</span>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={adminFee}
-                    onChange={(e) => setAdminFee(e.target.value.replace(/[^0-9]/g, ''))}
-                    placeholder="0"
-                    className={cleanInputClass + " pl-10 font-mono"}
-                  />
-                </div>
-                {parseAmountInput(adminFee) > 0 && (
-                  <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 pl-1">
-                    = {formatIDR(parseAmountInput(adminFee))}
-                  </span>
-                )}
-              </div>
-
               {/* Description */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300">
@@ -1143,40 +1374,6 @@ export function TambahDataView({
 
             return (
               <>
-                {/* Monthly Spending Limit (Rp) */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                    Batas Belanja Bulanan (Rp)
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-black text-xs text-slate-400">Rp</span>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={budgetLimit}
-                      onChange={(e) => setBudgetLimit(e.target.value.replace(/[^0-9]/g, ''))}
-                      placeholder="Estimasi limit pengeluaran"
-                      className={cleanInputClass + " pl-10 pr-16 font-mono"}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const cur = parseAmountInput(budgetLimit);
-                        setBudgetLimit(cur > 0 ? (cur * 1000).toString() : '1000000');
-                      }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[10px] font-black bg-purple-100 dark:bg-slate-800 text-purple-700 dark:text-purple-300 rounded-xl hover:bg-purple-200 transition cursor-pointer"
-                    >
-                      +000
-                    </button>
-                  </div>
-                  {parseAmountInput(budgetLimit) > 0 && (
-                    <span className="text-[11px] font-bold text-purple-600 dark:text-purple-400 pl-1">
-                      = {formatIDR(parseAmountInput(budgetLimit))}
-                    </span>
-                  )}
-                </div>
-
                 {/* Month Picker */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300">
@@ -1335,61 +1532,6 @@ export function TambahDataView({
                   className={cleanInputClass}
                   required
                 />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                    Target Jumlah (Rp)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={savingTarget}
-                      onChange={(e) => setSavingTarget(e.target.value.replace(/[^0-9]/g, ''))}
-                      placeholder="0"
-                      className={cleanInputClass + " pr-14 font-mono"}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const cur = parseAmountInput(savingTarget);
-                        setSavingTarget(cur > 0 ? (cur * 1000).toString() : '1000000');
-                      }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[10px] font-black bg-amber-100 dark:bg-slate-800 text-amber-800 dark:text-amber-300 rounded-xl hover:bg-amber-200 transition cursor-pointer"
-                    >
-                      +000
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                    Dana Terkumpul Awal (Rp)
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={savingCurrent}
-                      onChange={(e) => setSavingCurrent(e.target.value.replace(/[^0-9]/g, ''))}
-                      placeholder="0"
-                      className={cleanInputClass + " pr-14 font-mono"}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const cur = parseAmountInput(savingCurrent);
-                        setSavingCurrent(cur > 0 ? (cur * 1000).toString() : '100000');
-                      }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-[10px] font-black bg-amber-100 dark:bg-slate-800 text-amber-800 dark:text-amber-300 rounded-xl hover:bg-amber-200 transition cursor-pointer"
-                    >
-                      +000
-                    </button>
-                  </div>
-                </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
