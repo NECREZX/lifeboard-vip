@@ -1789,8 +1789,9 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                     <div 
                       className="w-full h-11 rounded-lg overflow-hidden relative shadow-2xs flex flex-col justify-between shrink-0 border border-black/10 bg-slate-100 dark:bg-slate-800"
                     >
-                      {/* Top banner colored segment */}
-                      <div className="relative w-full h-6" style={{ backgroundColor: activeThemeColor }}>
+                      {/* Top banner colored segment with motif overlay */}
+                      <div className="relative w-full h-6 overflow-hidden" style={{ backgroundColor: activeThemeColor }}>
+                        <BannerMotifOverlay motif={settings?.bannerMotif} idPrefix={`preview-style-${s.id}`} />
                         {s.id === 'curve' && (
                           <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
                             <path d="M 0 0 L 100 0 L 100 2 Q 50 18 0 2 Z" fill={activeThemeColor} />

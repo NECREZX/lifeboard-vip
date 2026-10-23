@@ -11,7 +11,6 @@ interface BannerShapeDividerProps {
   color: string;
   cardRadius?: CardRadius;
   className?: string;
-  overlap?: 'default' | 'auth';
 }
 
 /**
@@ -30,8 +29,7 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
   style = 'straight',
   color,
   cardRadius,
-  className = '',
-  overlap = 'default'
+  className = ''
 }) => {
   // Hanya aktif jika setelan sudut adalah 'sharp' (Tajam)
   const isSharp = cardRadius === 'sharp';
@@ -48,17 +46,12 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
 
   const effectiveStyle = resolvedStyle;
 
-  // Posisi presisi selaras dengan margin-top negatif (-mt) card pembungkus:
-  // - default (Dashboard, Kelola, Tambah Data, Lifeboard AI):
-  //   Mobile: -mt-[36px] -> top: -36px
-  //   Tablet: -mt-[88px] -> top: -88px
-  //   Desktop: -mt-[96px] -> top: -96px
-  // - auth (AuthView):
-  //   Mobile: -mt-8 (32px) -> top: -32px
-  //   Tablet/Desktop: -mt-10 (40px) -> top: -40px
-  const positionClasses = overlap === 'auth'
-    ? 'top-[-32px] sm:top-[-40px]'
-    : 'top-[-36px] sm:top-[-88px] lg:top-[-96px]';
+  // Posisi presisi selaras dengan margin-top negatif (-mt) card pembungkus
+  // (Dashboard, Kelola, Tambah Data, Lifeboard AI):
+  // Mobile: -mt-[36px] -> top: -36px
+  // Tablet: -mt-[88px] -> top: -88px
+  // Desktop: -mt-[96px] -> top: -96px
+  const positionClasses = 'top-[-36px] sm:top-[-88px] lg:top-[-96px]';
 
   return (
     <div className={`relative z-20 pointer-events-none -mx-4 sm:-mx-6 h-0 overflow-visible ${className}`}>
@@ -125,7 +118,7 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
           </svg>
         )}
 
-        {/* Gaya 3: Gelombang Wave (Sangat Rapih, Harmonis, Simetris Matematis + Lis Emas Ganda) */}
+        {/* Gaya 3: Gelombang Wave (Simetris Matematis Rapih + Lis Emas Ganda) */}
         {effectiveStyle === 'wave' && (
           <svg
             className="w-full h-6 sm:h-8 lg:h-9 block drop-shadow-[0_3px_6px_rgba(0,0,0,0.08)]"
@@ -156,7 +149,7 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
           </svg>
         )}
 
-        {/* Gaya 4: Chamfer 4 Titik Sudut (Melengkung Kebawah Geometris dengan 4 Sudut Persis Gambar 1 Kanan) */}
+        {/* Gaya 4: Chamfer 4 Titik Sudut (Trapesium 4 Sudut Persis Gambar 1 Kanan + Lis Emas Ganda) */}
         {effectiveStyle === 'chamfer' && (
           <svg
             className="w-full h-6 sm:h-8 lg:h-9 block drop-shadow-[0_3px_6px_rgba(0,0,0,0.08)]"
@@ -164,7 +157,7 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Siluet Melengkung Kebawah dengan 4 Titik Sudut Tegas (0,6 -> 260,48 -> 940,48 -> 1200,6) */}
+            {/* Siluet Melengkung Kebawah dengan 4 Titik Sudut Tegas */}
             <path
               d="M 0 0 L 1200 0 L 1200 6 L 940 48 L 260 48 L 0 6 Z"
               fill={color}
@@ -187,7 +180,7 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
           </svg>
         )}
 
-        {/* Gaya 5: Datar Presisi (Datar Minimalis Sekarang Dilengkapi Lis Emas Ganda Seperti Gaya Lain) */}
+        {/* Gaya 5: Datar Presisi (Lis Emas Ganda) */}
         {effectiveStyle === 'straight' && (
           <svg
             className="w-full h-3 sm:h-4 lg:h-4.5 block drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)]"
