@@ -30,26 +30,10 @@ export const BannerMotifOverlay: React.FC<BannerMotifOverlayProps> = ({
     motif;
 
   const patternId = `${idPrefix}-motif-${resolvedMotif}`;
-  const maskId = `${idPrefix}-edge-mask`;
-  const gradId = `${idPrefix}-edge-gradient`;
 
   return (
     <svg className={className} xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
       <defs>
-        {/* Soft edge termination gradient: Ensures left & right pattern endings dissolve smoothly without harsh chop */}
-        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#000000" />
-          <stop offset="3%" stopColor="#444444" />
-          <stop offset="8%" stopColor="#ffffff" />
-          <stop offset="92%" stopColor="#ffffff" />
-          <stop offset="97%" stopColor="#444444" />
-          <stop offset="100%" stopColor="#000000" />
-        </linearGradient>
-
-        <mask id={maskId}>
-          <rect width="100%" height="100%" fill={`url(#${gradId})`} />
-        </mask>
-
         {/* Motif 2: Songket Nusantara Tradisional (Belah Ketupat & Bunga Melati Mewah) */}
         {resolvedMotif === 'songket' && (
           <pattern id={patternId} width="48" height="48" patternUnits="userSpaceOnUse" x="50%">
@@ -287,7 +271,7 @@ export const BannerMotifOverlay: React.FC<BannerMotifOverlayProps> = ({
           </pattern>
         )}
       </defs>
-      <rect width="100%" height="100%" fill={`url(#${patternId})`} mask={`url(#${maskId})`} />
+      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
     </svg>
   );
 };
