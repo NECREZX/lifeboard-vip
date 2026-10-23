@@ -12,6 +12,7 @@ import {
 import Swal from 'sweetalert2';
 import { UserSettings } from '../../types';
 import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
+import { BannerMotifOverlay } from '../BannerMotif';
 
 interface AuthViewProps {
   onLogin: () => void;
@@ -135,38 +136,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
               WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 22%, rgba(0, 0, 0, 0.4) 45%, rgba(0, 0, 0, 0.9) 100%)'
             }}
           >
-            <svg className="w-full h-full opacity-35 mix-blend-overlay text-white" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                {/* Tradisional Songket Motif: Belah Ketupat / Bunga Melati / Tapak Catur Weave */}
-                <pattern id="banner-songket-motif" width="48" height="48" patternUnits="userSpaceOnUse">
-                  {/* Outer Diamond Weave */}
-                  <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                  {/* Secondary Inset Diamond */}
-                  <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                  {/* Tertiary Inset Diamond */}
-                  <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  
-                  {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
-                  <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.6" />
-                  <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.6" />
-                  <rect x="23" y="23" width="2" height="2" fill="white" />
-                  
-                  {/* Corner Songket Cross Weaves connecting the grid */}
-                  <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="1.2" />
-                  <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.4" />
-                  <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.4" />
-                  <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.4" />
-                  <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.4" />
-                  
-                  {/* Fine Songket Horizontal & Vertical Weave Ticks */}
-                  <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                  <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                  <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                  <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#banner-songket-motif)" />
-            </svg>
+            <BannerMotifOverlay motif={settings?.bannerMotif} idPrefix="auth-banner" />
           </div>
 
           {/* Form Content: Logo, Title, Username, Password */}

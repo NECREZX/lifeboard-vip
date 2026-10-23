@@ -52,9 +52,11 @@ import {
   CardStyle,
   CardRadius,
   TableStyle,
-  Language
+  Language,
+  BannerMotif
 } from '../../types';
 import { IconRenderer } from '../IconRenderer';
+import { BannerMotifOverlay } from '../BannerMotif';
 import { BRAND_WALLETS, BRAND_LOGOS_MAP, detectBrandFromWalletName } from '../BankLogos';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
@@ -1644,10 +1646,85 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
 
           </div>
 
-          {/* 2. Tipografi Utama */}
+          {/* 2. Motif Banner */}
+          <div>
+            <div className="flex items-center justify-between gap-2 mb-2.5">
+              <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block uppercase tracking-widest">
+                2. Motif Banner
+              </span>
+              <span className="text-[9.5px] font-bold text-slate-600 dark:text-slate-300">
+                {settings.bannerMotif === 'polos' 
+                  ? 'Polosan (Tanpa Motif)' 
+                  : settings.bannerMotif === 'kawung' 
+                    ? 'Batik Kawung Keraton' 
+                    : settings.bannerMotif === 'artdeco' 
+                      ? 'Art Deco Grand' 
+                      : settings.bannerMotif === 'moroccan' 
+                        ? 'Arabesque Andalusia' 
+                        : 'Songket Weave (Standar)'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              {[
+                { id: 'polos', label: '1. Polosan', desc: 'Tanpa Motif' },
+                { id: 'songket', label: '2. Songket', desc: 'Songket Nusantara' },
+                { id: 'kawung', label: '3. Kawung', desc: 'Batik Keraton' },
+                { id: 'artdeco', label: '4. Art Deco', desc: 'Gatsby Glamour' },
+                { id: 'moroccan', label: '5. Arabesque', desc: 'Bintang Andalusia' },
+              ].map((m) => {
+                const isSelected = (settings.bannerMotif || 'songket') === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => {
+                      if (setSettings) {
+                        setSettings({ ...settings, bannerMotif: m.id as BannerMotif });
+                      }
+                    }}
+                    className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col justify-between gap-2 select-none ${
+                      isSelected
+                        ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/80 font-bold shadow-xs scale-[1.02]'
+                        : 'border-slate-100 dark:border-slate-900 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                    }`}
+                  >
+                    {/* Visual pattern preview container */}
+                    <div 
+                      className="w-full h-11 rounded-lg overflow-hidden relative shadow-2xs flex items-center justify-center text-white shrink-0 border border-black/10"
+                      style={{ backgroundColor: activeThemeColor }}
+                    >
+                      <BannerMotifOverlay motif={m.id as BannerMotif} idPrefix={`preview-motif-${m.id}`} />
+                      {m.id === 'polos' && (
+                        <span className="text-[10px] font-black text-white/80 uppercase tracking-wider relative z-10">
+                          Polos
+                        </span>
+                      )}
+                      {isSelected && (
+                        <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white text-slate-900 flex items-center justify-center text-[10px] font-black shadow-xs">
+                          ✓
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <span className="font-bold text-xs text-slate-900 dark:text-white block truncate">
+                        {m.label}
+                      </span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium block truncate">
+                        {m.desc}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 3. Tipografi Utama */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              2. Tipografi Utama
+              3. Tipografi Utama
             </span>
             <div className="relative">
               <select 
@@ -1667,10 +1744,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 3. Gaya Visual UI */}
+          {/* 4. Gaya Visual UI */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              3. Gaya Visual UI
+              4. Gaya Visual UI
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
@@ -1703,10 +1780,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 4. Gaya Kartu & Border */}
+          {/* 5. Gaya Kartu & Border */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              4. Gaya Kartu &amp; Border
+              5. Gaya Kartu &amp; Border
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
@@ -1734,10 +1811,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 5. Sudut Kartu (Radius) */}
+          {/* 6. Sudut Kartu (Radius) */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              5. Sudut Kartu (Radius)
+              6. Sudut Kartu (Radius)
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
@@ -1765,10 +1842,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 6. Kerapatan Tabel / List */}
+          {/* 7. Kerapatan Tabel / List */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              6. Kerapatan Tabel / List
+              7. Kerapatan Tabel / List
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
@@ -2069,38 +2146,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)'
           }}
         >
-          <svg className="w-full h-full opacity-35 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              {/* Tradisional Songket Motif: Belah Ketupat / Bunga Melati / Tapak Catur Weave */}
-              <pattern id="banner-songket-motif-kelola" width="48" height="48" patternUnits="userSpaceOnUse">
-                {/* Outer Diamond Weave */}
-                <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                {/* Secondary Inset Diamond */}
-                <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                {/* Tertiary Inset Diamond */}
-                <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                
-                {/* Center Songket Floret (Pucuk Rebung / Bunga Intan) */}
-                <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.6" />
-                <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.6" />
-                <rect x="23" y="23" width="2" height="2" fill="white" />
-                
-                {/* Corner Songket Cross Weaves connecting the grid */}
-                <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="1.2" />
-                <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.4" />
-                
-                {/* Fine Songket Horizontal & Vertical Weave Ticks */}
-                <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#banner-songket-motif-kelola)" />
-          </svg>
+          <BannerMotifOverlay motif={settings?.bannerMotif} idPrefix="kelola-banner" />
 
           {/* Subtle luminous atmospheric glow in the lower corners matching activeThemeColor */}
           <div 

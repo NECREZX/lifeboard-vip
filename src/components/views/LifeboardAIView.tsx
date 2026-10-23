@@ -46,6 +46,7 @@ import {
 } from '../../lib/monthlyInsightGenerator';
 import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 import { Breadcrumb, BreadcrumbItem } from '../Breadcrumb';
+import { BannerMotifOverlay } from '../BannerMotif';
 
 interface LifeboardAIViewProps {
   transactions: Transaction[];
@@ -365,28 +366,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)'
           }}
         >
-          <svg className="w-full h-full opacity-35 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="lifeboard-songket-pattern-v4" width="48" height="48" patternUnits="userSpaceOnUse">
-                <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.6" />
-                <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.6" />
-                <rect x="23" y="23" width="2" height="2" fill="white" />
-                <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="1.2" />
-                <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.4" />
-                <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#lifeboard-songket-pattern-v4)" />
-          </svg>
+          <BannerMotifOverlay motif={settings?.bannerMotif} idPrefix="lifeboard-banner" />
 
           {/* Subtle luminous atmospheric glow matching activeThemeColor */}
           <div 

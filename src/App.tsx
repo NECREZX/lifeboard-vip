@@ -189,6 +189,7 @@ export default function App() {
       tableStyle: 'compact',
       fontStyle: 'instagram',
       themeColor: 'indigo',
+      bannerMotif: 'songket',
       isDarkMode: false
     };
 

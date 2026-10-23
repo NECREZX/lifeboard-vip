@@ -42,6 +42,7 @@ import {
 import { IconRenderer } from '../IconRenderer';
 import { formatIDR, getLocalDateString } from '../../lib/formatters';
 import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
+import { BannerMotifOverlay } from '../BannerMotif';
 
 export type FormType = 'pengeluaran' | 'pemasukan' | 'transfer' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist';
 
@@ -718,8 +719,33 @@ export function TambahDataView({
     onBack();
   };
 
-  // Clean Neutral Input Class without purple ring
-  const cleanInputClass = "w-full px-4 py-3 text-xs sm:text-sm font-medium rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 outline-none focus:outline-none focus:border-slate-400 dark:focus:border-slate-600 ring-0 focus:ring-0";
+  // Radius dinamis elemen input di dalam card pembungkus sesuai setelan cardRadius
+  const inputRadiusClass = useMemo(() => {
+    if (settings?.cardRadius === 'sharp') return 'rounded-none';
+    if (settings?.cardRadius === 'extra') return 'rounded-2xl';
+    return 'rounded-xl';
+  }, [settings?.cardRadius]);
+
+  const buttonRadiusClass = useMemo(() => {
+    if (settings?.cardRadius === 'sharp') return 'rounded-none';
+    if (settings?.cardRadius === 'extra') return 'rounded-2xl';
+    return 'rounded-xl';
+  }, [settings?.cardRadius]);
+
+  const numpadKeyRadiusClass = useMemo(() => {
+    if (settings?.cardRadius === 'sharp') return 'rounded-none';
+    if (settings?.cardRadius === 'extra') return 'rounded-3xl';
+    return 'rounded-2xl';
+  }, [settings?.cardRadius]);
+
+  const innerCardRadiusClass = useMemo(() => {
+    if (settings?.cardRadius === 'sharp') return 'rounded-none';
+    if (settings?.cardRadius === 'extra') return 'rounded-[32px]';
+    return 'rounded-3xl';
+  }, [settings?.cardRadius]);
+
+  // Clean Neutral Input Class adapting to settings.cardRadius
+  const cleanInputClass = `w-full px-4 py-3 text-xs sm:text-sm font-medium ${inputRadiusClass} border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 outline-none focus:outline-none focus:border-slate-400 dark:focus:border-slate-600 ring-0 focus:ring-0`;
 
   return (
     <div className="flex flex-col" id="view-tambah-data">
@@ -742,28 +768,7 @@ export function TambahDataView({
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 30%, rgba(0, 0, 0, 0.4) 55%, rgba(0, 0, 0, 0.9) 100%)'
           }}
         >
-          <svg className="w-full h-full opacity-35 mix-blend-overlay" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="tambah-songket-pattern-v19" width="48" height="48" patternUnits="userSpaceOnUse">
-                <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M 24 6 L 42 24 L 24 42 L 6 24 Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                <path d="M 24 12 L 36 24 L 24 36 L 12 24 Z" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                <polygon points="24,18 27,24 24,30 21,24" fill="currentColor" fillOpacity="0.6" />
-                <polygon points="18,24 24,21 30,24 24,27" fill="currentColor" fillOpacity="0.6" />
-                <rect x="23" y="23" width="2" height="2" fill="white" />
-                <path d="M 0 0 L 6 6 M 48 0 L 42 6 M 0 48 L 6 42 M 48 48 L 42 42" stroke="currentColor" strokeWidth="1.2" />
-                <polygon points="0,0 4,0 0,4" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="48,0 44,0 48,4" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="0,48 4,48 0,44" fill="currentColor" fillOpacity="0.4" />
-                <polygon points="48,48 44,48 48,44" fill="currentColor" fillOpacity="0.4" />
-                <line x1="24" y1="0" x2="24" y2="6" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="24" y1="42" x2="24" y2="48" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="0" y1="24" x2="6" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-                <line x1="42" y1="24" x2="48" y2="24" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1,1" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#tambah-songket-pattern-v19)" />
-          </svg>
+          <BannerMotifOverlay motif={settings?.bannerMotif} idPrefix="tambah-banner" />
 
           {/* Luminous soft atmospheric glow matching resolvedAccent (Bersih tanpa bayangan gelap berkabut) */}
           <div 
@@ -846,11 +851,11 @@ export function TambahDataView({
 
         {/* DATE SELECTOR BAR (Black Vector Calendar with < > navigation) */}
         {(activeForm === 'pengeluaran' || activeForm === 'pemasukan' || activeForm === 'transfer') && (
-          <div className="flex items-center justify-between bg-white dark:bg-slate-900 rounded-2xl px-4 py-3 border border-slate-200/80 dark:border-slate-800 shadow-xs">
+          <div className={`flex items-center justify-between bg-white dark:bg-slate-900 ${innerCardRadiusClass} px-4 py-3 border border-slate-200/80 dark:border-slate-800 shadow-xs`}>
             <button
               type="button"
               onClick={() => changeDateByDays(-1)}
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              className={`w-8 h-8 ${buttonRadiusClass} flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer`}
               title="Hari Sebelumnya"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -859,7 +864,7 @@ export function TambahDataView({
             <button
               type="button"
               onClick={() => setShowDatePickerModal(true)}
-              className="flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white hover:opacity-80 transition cursor-pointer px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+              className={`flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white hover:opacity-80 transition cursor-pointer px-3 py-1.5 ${buttonRadiusClass} hover:bg-slate-100 dark:hover:bg-slate-800`}
             >
               <Calendar className="w-4 h-4 text-slate-900 dark:text-white shrink-0 stroke-[2.2]" />
               <span>{formattedDateLabel}</span>
@@ -868,7 +873,7 @@ export function TambahDataView({
             <button
               type="button"
               onClick={() => changeDateByDays(1)}
-              className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              className={`w-8 h-8 ${buttonRadiusClass} flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer`}
               title="Hari Berikutnya"
             >
               <ChevronRight className="w-4 h-4" />
@@ -885,14 +890,14 @@ export function TambahDataView({
           const heroDisplay = heroValue ? Number(heroValue).toLocaleString('id-ID') : '0';
 
           return (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col items-center justify-center text-center relative overflow-hidden">
+            <div className={`bg-white dark:bg-slate-900 ${innerCardRadiusClass} p-5 sm:p-7 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col items-center justify-center text-center relative overflow-hidden`}>
               {/* Field Switcher for Transfer (Nominal Transfer vs Biaya Admin) */}
               {activeForm === 'transfer' && (
-                <div className="flex items-center justify-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl mb-3.5 max-w-full">
+                <div className={`flex items-center justify-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 ${inputRadiusClass} mb-3.5 max-w-full`}>
                   <button
                     type="button"
                     onClick={() => setActiveTransferField('amount')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                    className={`px-3 py-1.5 ${buttonRadiusClass} text-xs font-black transition cursor-pointer ${
                       !isTargetAdmin
                         ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
                         : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
@@ -903,7 +908,7 @@ export function TambahDataView({
                   <button
                     type="button"
                     onClick={() => setActiveTransferField('adminFee')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                    className={`px-3 py-1.5 ${buttonRadiusClass} text-xs font-black transition cursor-pointer ${
                       isTargetAdmin
                         ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
                         : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
@@ -916,11 +921,11 @@ export function TambahDataView({
 
               {/* Field Switcher for Tabungan (Target Jumlah vs Dana Awal) */}
               {activeForm === 'tabungan' && (
-                <div className="flex items-center justify-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl mb-3.5 max-w-full">
+                <div className={`flex items-center justify-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 ${inputRadiusClass} mb-3.5 max-w-full`}>
                   <button
                     type="button"
                     onClick={() => setActiveSavingField('target')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                    className={`px-3 py-1.5 ${buttonRadiusClass} text-xs font-black transition cursor-pointer ${
                       activeSavingField === 'target'
                         ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
                         : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
@@ -931,7 +936,7 @@ export function TambahDataView({
                   <button
                     type="button"
                     onClick={() => setActiveSavingField('current')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                    className={`px-3 py-1.5 ${buttonRadiusClass} text-xs font-black transition cursor-pointer ${
                       activeSavingField === 'current'
                         ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-2xs'
                         : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
@@ -979,21 +984,21 @@ export function TambahDataView({
                     <button
                       type="button"
                       onClick={() => setQuickExactAmount('')}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-black text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-black text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       Gratis (Rp 0)
                     </button>
                     <button
                       type="button"
                       onClick={() => setQuickExactAmount('2500')}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       Rp 2.500
                     </button>
                     <button
                       type="button"
                       onClick={() => setQuickExactAmount('6500')}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       Rp 6.500
                     </button>
@@ -1003,28 +1008,28 @@ export function TambahDataView({
                     <button
                       type="button"
                       onClick={() => setQuickExactAmount('')}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-black text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-black text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       Rp 0 (Mulai dari Nol)
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(50000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +50rb
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(100000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +100rb
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(500000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +500rb
                     </button>
@@ -1034,28 +1039,28 @@ export function TambahDataView({
                     <button
                       type="button"
                       onClick={() => addQuickAmount(100000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +100rb
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(500000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +500rb
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(1000000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +1jt
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(5000000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +5jt
                     </button>
@@ -1065,28 +1070,28 @@ export function TambahDataView({
                     <button
                       type="button"
                       onClick={() => addQuickAmount(10000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +10rb
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(50000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +50rb
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(100000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +100rb
                     </button>
                     <button
                       type="button"
                       onClick={() => addQuickAmount(500000)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs"
+                      className={`px-3 py-1.5 ${buttonRadiusClass} bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition active:scale-95 cursor-pointer shadow-2xs`}
                     >
                       +500rb
                     </button>
@@ -1101,7 +1106,7 @@ export function TambahDataView({
                     key={num}
                     type="button"
                     onClick={() => handleNumpadPress(num.toString())}
-                    className="h-12 sm:h-13 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-bold text-lg sm:text-xl text-slate-800 dark:text-slate-100 flex items-center justify-center select-none cursor-pointer shadow-2xs"
+                    className={`h-12 sm:h-13 ${numpadKeyRadiusClass} bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-bold text-lg sm:text-xl text-slate-800 dark:text-slate-100 flex items-center justify-center select-none cursor-pointer shadow-2xs`}
                   >
                     {num}
                   </button>
@@ -1109,21 +1114,21 @@ export function TambahDataView({
                 <button
                   type="button"
                   onClick={() => handleNumpadPress('+000')}
-                  className="h-12 sm:h-13 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-black text-xs sm:text-sm text-slate-700 dark:text-slate-200 flex items-center justify-center select-none cursor-pointer shadow-2xs"
+                  className={`h-12 sm:h-13 ${numpadKeyRadiusClass} bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-black text-xs sm:text-sm text-slate-700 dark:text-slate-200 flex items-center justify-center select-none cursor-pointer shadow-2xs`}
                 >
                   +000
                 </button>
                 <button
                   type="button"
                   onClick={() => handleNumpadPress('0')}
-                  className="h-12 sm:h-13 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-bold text-lg sm:text-xl text-slate-800 dark:text-slate-100 flex items-center justify-center select-none cursor-pointer shadow-2xs"
+                  className={`h-12 sm:h-13 ${numpadKeyRadiusClass} bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all font-mono font-bold text-lg sm:text-xl text-slate-800 dark:text-slate-100 flex items-center justify-center select-none cursor-pointer shadow-2xs`}
                 >
                   0
                 </button>
                 <button
                   type="button"
                   onClick={handleNumpadBackspace}
-                  className="h-12 sm:h-13 rounded-2xl bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all text-slate-700 dark:text-slate-200 flex items-center justify-center select-none cursor-pointer shadow-2xs"
+                  className={`h-12 sm:h-13 ${numpadKeyRadiusClass} bg-slate-100 hover:bg-slate-200/90 dark:bg-slate-800 dark:hover:bg-slate-700/90 active:scale-95 active:bg-slate-300 dark:active:bg-slate-600 transition-all text-slate-700 dark:text-slate-200 flex items-center justify-center select-none cursor-pointer shadow-2xs`}
                   aria-label="Hapus Digit"
                 >
                   <Delete className="w-5 h-5 stroke-[2.2]" />
@@ -1134,7 +1139,7 @@ export function TambahDataView({
         })()}
 
         {/* MAIN FORM INPUTS CARD */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col gap-4">
+        <div className={`bg-white dark:bg-slate-900 ${innerCardRadiusClass} p-5 sm:p-6 border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col gap-4`}>
           
           {/* PENGELUARAN & PEMASUKAN FORM DETAILS */}
           {(activeForm === 'pengeluaran' || activeForm === 'pemasukan') && (
@@ -1159,7 +1164,7 @@ export function TambahDataView({
                               key={w.id}
                               type="button"
                               onClick={onOpenManageWallets}
-                              className="w-full flex items-center justify-center gap-1.5 py-3 px-3 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+                              className={`w-full flex items-center justify-center gap-1.5 py-3 px-3 ${inputRadiusClass} border border-dashed border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer`}
                             >
                               <Plus className="w-4 h-4 shrink-0" />
                               <span className="truncate">Tambah Akun</span>
@@ -1178,7 +1183,7 @@ export function TambahDataView({
                               borderColor: resolvedAccent,
                               color: '#ffffff'
                             } : undefined}
-                            className={`w-full flex items-center justify-center gap-2 py-3 px-3 rounded-2xl border text-xs font-bold transition-all cursor-pointer ${
+                            className={`w-full flex items-center justify-center gap-2 py-3 px-3 ${inputRadiusClass} border text-xs font-bold transition-all cursor-pointer ${
                               isSelected 
                                 ? 'shadow-xs scale-100' 
                                 : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -1407,14 +1412,14 @@ export function TambahDataView({
                     <button
                       type="button"
                       onClick={toggleAllWallets}
-                      className={`flex items-center justify-between p-3 rounded-2xl border text-left transition cursor-pointer ${
+                      className={`flex items-center justify-between p-3 ${inputRadiusClass} border text-left transition cursor-pointer ${
                         isAllWals
                           ? 'bg-purple-50 dark:bg-purple-950/40 border-purple-300 dark:border-purple-700 text-purple-950 dark:text-purple-200'
                           : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0">
+                        <div className={`w-8 h-8 ${buttonRadiusClass} bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0`}>
                           <Layers className="w-4 h-4" />
                         </div>
                         <span className="text-xs font-bold truncate">Semua Dompet (Global)</span>
@@ -1429,7 +1434,7 @@ export function TambahDataView({
                           key={w.id}
                           type="button"
                           onClick={() => toggleSingleWallet(w.id)}
-                          className={`flex items-center justify-between p-3 rounded-2xl border text-left transition cursor-pointer ${
+                          className={`flex items-center justify-between p-3 ${inputRadiusClass} border text-left transition cursor-pointer ${
                             active && !isAllWals
                               ? 'bg-purple-50 dark:bg-purple-950/40 border-purple-300 dark:border-purple-700 text-purple-950 dark:text-purple-200'
                               : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
@@ -1437,7 +1442,7 @@ export function TambahDataView({
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <div 
-                              className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 overflow-hidden"
+                              className={`w-9 h-9 ${buttonRadiusClass} flex items-center justify-center shrink-0 overflow-hidden`}
                               style={{ backgroundColor: `${w.color || '#6366f1'}20`, color: w.color || '#6366f1' }}
                             >
                               <IconRenderer name={w.icon || 'Wallet'} className="w-7 h-7" />
@@ -1470,14 +1475,14 @@ export function TambahDataView({
                     <button
                       type="button"
                       onClick={toggleAllCategories}
-                      className={`flex items-center justify-between p-3 rounded-2xl border text-left transition cursor-pointer ${
+                      className={`flex items-center justify-between p-3 ${inputRadiusClass} border text-left transition cursor-pointer ${
                         isAllCats
                           ? 'bg-purple-50 dark:bg-purple-950/40 border-purple-300 dark:border-purple-700 text-purple-950 dark:text-purple-200'
                           : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
                       }`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0">
+                        <div className={`w-8 h-8 ${buttonRadiusClass} bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0`}>
                           <Layers className="w-4 h-4" />
                         </div>
                         <span className="text-xs font-bold truncate">Semua Kategori (Batas Total)</span>
@@ -1492,7 +1497,7 @@ export function TambahDataView({
                           key={c.id}
                           type="button"
                           onClick={() => toggleSingleCategory(c.id)}
-                          className={`flex items-center justify-between p-3 rounded-2xl border text-left transition cursor-pointer ${
+                          className={`flex items-center justify-between p-3 ${inputRadiusClass} border text-left transition cursor-pointer ${
                             active && !isAllCats
                               ? 'bg-purple-50 dark:bg-purple-950/40 border-purple-300 dark:border-purple-700 text-purple-950 dark:text-purple-200'
                               : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
@@ -1500,7 +1505,7 @@ export function TambahDataView({
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <div 
-                              className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                              className={`w-8 h-8 ${buttonRadiusClass} flex items-center justify-center shrink-0`}
                               style={{ backgroundColor: `${c.color || '#64748b'}22`, color: c.color || '#64748b' }}
                             >
                               <IconRenderer name={c.icon || 'Tag'} className="w-4 h-4" />
@@ -1646,7 +1651,7 @@ export function TambahDataView({
           <button
             type="button"
             onClick={onBack}
-            className="flex-1 py-4 px-4 rounded-2xl font-black text-sm border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-98 cursor-pointer text-center"
+            className={`flex-1 py-4 px-4 ${buttonRadiusClass} font-black text-sm border border-slate-200 dark:border-slate-800 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition active:scale-98 cursor-pointer text-center`}
           >
             Batal
           </button>
@@ -1654,7 +1659,7 @@ export function TambahDataView({
             type="button"
             onClick={handleSave}
             style={settings.themeColor === 'custom' ? { backgroundColor: resolvedAccent, color: '#ffffff' } : undefined}
-            className={`flex-1 py-4 px-6 rounded-2xl font-black text-sm shadow-md hover:shadow-lg transition active:scale-98 cursor-pointer text-center ${getAccentBg()}`}
+            className={`flex-1 py-4 px-6 ${buttonRadiusClass} font-black text-sm shadow-md hover:shadow-lg transition active:scale-98 cursor-pointer text-center ${getAccentBg()}`}
           >
             {isEdit ? 'Simpan Perubahan' : 'Simpan'}
           </button>
@@ -1669,7 +1674,7 @@ export function TambahDataView({
           onClick={() => setShowDatePickerModal(false)}
         >
           <div 
-            className="w-full max-w-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-2xl space-y-4"
+            className={`w-full max-w-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 ${innerCardRadiusClass} p-5 shadow-2xl space-y-4`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
@@ -1690,7 +1695,7 @@ export function TambahDataView({
                 setDate(e.target.value);
                 setShowDatePickerModal(false);
               }}
-              className="w-full px-3.5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm font-bold outline-none focus:border-slate-400"
+              className={`w-full px-3.5 py-3 ${inputRadiusClass} border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm font-bold outline-none focus:border-slate-400`}
             />
           </div>
         </div>
