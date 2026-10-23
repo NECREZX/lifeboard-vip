@@ -17,8 +17,8 @@ interface BannerShapeDividerProps {
 /**
  * BannerShapeDivider
  * 
- * Menampilkan siluet/gaya dekoratif mewah pada pertemuan batas bawah hero banner
- * dengan batas atas card pembungkus.
+ * Menampilkan siluet/gaya dekoratif presisi pada batas bawah hero banner
+ * dengan batas atas card pembungkus, dilengkapi aksen garis emas elegan sesuai contoh gambar.
  * 
  * ATURAN KETAT:
  * Hanya aktif jika setelan 'Sudut Elemen & Card' adalah 'sharp' (Tajam).
@@ -35,10 +35,10 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
   // Hanya aktif jika setelan sudut adalah 'sharp' (Tajam)
   const isSharp = cardRadius === 'sharp';
   
-  // Normalisasi & fallback compatibility (slant -> crown, chevron -> facet)
+  // Normalisasi & fallback compatibility
   const resolvedStyle = 
-    style === 'slant' ? 'crown' :
-    style === 'chevron' ? 'facet' :
+    style === 'crown' || style === 'slant' ? 'stepped' :
+    style === 'facet' || style === 'chevron' ? 'chamfer' :
     (style || 'straight');
 
   const effectiveStyle = isSharp ? resolvedStyle : 'straight';
@@ -62,115 +62,126 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
   return (
     <div className={`relative z-20 pointer-events-none -mx-4 sm:-mx-6 h-0 overflow-visible ${className}`}>
       <div className={`absolute left-0 right-0 w-full ${positionClasses}`}>
-        {/* Gaya 1: Lengkung Bawah (Royal Bottom Arc) */}
+        {/* Gaya 1: Lengkung Bawah (Melengkung Dalam Sesuai Contoh Gambar 2 + Garis Aksen Emas) */}
         {effectiveStyle === 'curve' && (
           <svg
-            className="w-full h-5 sm:h-7 lg:h-8 block drop-shadow-[0_2px_4px_rgba(0,0,0,0.06)]"
-            viewBox="0 0 1200 52"
+            className="w-full h-6 sm:h-8 lg:h-9 block drop-shadow-[0_3px_6px_rgba(0,0,0,0.08)]"
+            viewBox="0 0 1200 56"
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
+            {/* Siluet Lengkung Bawah Dalam */}
             <path
-              d="M 0 0 L 1200 0 L 1200 4 Q 600 50 0 4 Z"
+              d="M 0 0 L 1200 0 L 1200 6 Q 600 54 0 6 Z"
               fill={color}
+            />
+            {/* Garis Aksen Emas Utama */}
+            <path
+              d="M 0 6 Q 600 54 1200 6"
+              fill="none"
+              stroke="#E5B869"
+              strokeWidth="2.5"
+            />
+            {/* Garis Aksen Emas Paralel Dalam */}
+            <path
+              d="M 0 1 Q 600 48 1200 1"
+              fill="none"
+              stroke="#E5B869"
+              strokeOpacity="0.75"
+              strokeWidth="1.2"
             />
           </svg>
         )}
 
-        {/* Gaya 2: Kubah Mahkota (Imperial Crown / Royal Ogee Arch Mewah) */}
-        {effectiveStyle === 'crown' && (
+        {/* Gaya 2: Bertingkat (Geometric Steps Sesuai Contoh Gambar 1 Kiri + Garis Aksen Emas) */}
+        {effectiveStyle === 'stepped' && (
           <svg
             className="w-full h-6 sm:h-8 lg:h-9 block drop-shadow-[0_3px_6px_rgba(0,0,0,0.08)]"
-            viewBox="0 0 1200 54"
+            viewBox="0 0 1200 56"
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Siluet Kubah Utama */}
+            {/* Siluet Tangga Geometris Bertingkat */}
             <path
-              d="M 0 0 L 1200 0 L 1200 6 C 1060 6, 960 18, 860 18 C 750 18, 700 50, 600 50 C 500 50, 450 18, 340 18 C 240 18, 140 6, 0 6 Z"
+              d="M 0 0 L 1200 0 L 1200 6 L 1000 6 L 1000 24 L 800 24 L 800 48 L 400 48 L 400 24 L 200 24 L 200 6 L 0 6 Z"
               fill={color}
             />
-            {/* Aksen Kilau Kubah Halus */}
+            {/* Garis Aksen Emas Luar */}
             <path
-              d="M 340 18 C 450 18, 500 50, 600 50 C 700 50, 750 18, 860 18"
+              d="M 0 6 L 200 6 L 200 24 L 400 24 L 400 48 L 800 48 L 800 24 L 1000 24 L 1000 6 L 1200 6"
               fill="none"
-              stroke="white"
-              strokeOpacity="0.22"
-              strokeWidth="1.5"
+              stroke="#E5B869"
+              strokeWidth="2.5"
+            />
+            {/* Garis Aksen Emas Paralel Dalam */}
+            <path
+              d="M 0 1 L 206 1 L 206 19 L 406 19 L 406 43 L 794 43 L 794 19 L 994 19 L 994 1 L 1200 1"
+              fill="none"
+              stroke="#E5B869"
+              strokeOpacity="0.75"
+              strokeWidth="1.2"
             />
           </svg>
         )}
 
-        {/* Gaya 3: Gelombang Wave (Fluid Deep Oceanic Wave - Jauh Lebih Bergelombang & Mengalir) */}
+        {/* Gaya 3: Gelombang Wave (Wave Halus Proporsional - Dikurangi Sedikit Ombaknya) */}
         {effectiveStyle === 'wave' && (
           <svg
             className="w-full h-6 sm:h-8 lg:h-9 block drop-shadow-[0_3px_6px_rgba(0,0,0,0.08)]"
-            viewBox="0 0 1200 54"
+            viewBox="0 0 1200 56"
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Siluet Ombak Utama dengan Amplitudo Dalam & Berirama */}
+            {/* Siluet Ombak Halus Sedang */}
             <path
-              d="M 0 0 L 1200 0 L 1200 16 C 1060 52, 940 54, 840 40 C 740 26, 700 6, 600 8 C 500 10, 420 52, 300 52 C 180 52, 100 8, 0 14 Z"
+              d="M 0 0 L 1200 0 L 1200 10 C 1060 32, 980 34, 880 34 C 760 34, 700 14, 600 14 C 500 14, 440 32, 320 32 C 220 32, 140 10, 0 10 Z"
               fill={color}
             />
-            {/* Aksen Puncak Ombak (Wave Crest Highlight) */}
+            {/* Garis Aksen Emas Luar */}
             <path
-              d="M 0 14 C 100 8, 180 52, 300 52 C 420 52, 500 10, 600 8 C 700 6, 740 26, 840 40 C 940 54, 1060 52, 1200 16"
+              d="M 0 10 C 140 10, 220 32, 320 32 C 440 32, 500 14, 600 14 C 700 14, 760 34, 880 34 C 980 34, 1060 32, 1200 10"
               fill="none"
-              stroke="white"
-              strokeOpacity="0.2"
-              strokeWidth="1.5"
+              stroke="#E5B869"
+              strokeWidth="2.5"
+            />
+            {/* Garis Aksen Emas Paralel Dalam */}
+            <path
+              d="M 0 5 C 140 5, 220 27, 320 27 C 440 27, 500 9, 600 9 C 700 9, 760 29, 880 29 C 980 29, 1060 27, 1200 5"
+              fill="none"
+              stroke="#E5B869"
+              strokeOpacity="0.75"
+              strokeWidth="1.2"
             />
           </svg>
         )}
 
-        {/* Gaya 4: Facet Berlian (Royal Diamond Facet - Potongan Presisi Permata Mewah) */}
-        {effectiveStyle === 'facet' && (
+        {/* Gaya 4: Chamfer Sudut (Potongan Miring Trapesium Sesuai Contoh Gambar 1 Kanan + Garis Aksen Emas) */}
+        {effectiveStyle === 'chamfer' && (
           <svg
             className="w-full h-6 sm:h-8 lg:h-9 block drop-shadow-[0_3px_6px_rgba(0,0,0,0.08)]"
-            viewBox="0 0 1200 54"
+            viewBox="0 0 1200 56"
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Siluet Utama Potongan Berlian Bertingkat */}
+            {/* Siluet Potongan Trapesium Sudut Chamfer */}
             <path
-              d="M 0 0 L 1200 0 L 1200 6 L 980 14 L 780 26 L 600 50 L 420 26 L 220 14 L 0 6 Z"
+              d="M 0 0 L 1200 0 L 1200 6 L 1060 6 L 880 48 L 320 48 L 140 6 L 0 6 Z"
               fill={color}
             />
-            {/* Facet Kaca/Permata Internal Tengah (Refleksi Cahaya Mewah) */}
-            <polygon
-              points="600,50 420,26 780,26"
-              fill="white"
-              fillOpacity="0.08"
+            {/* Garis Aksen Emas Luar */}
+            <path
+              d="M 0 6 L 140 6 L 320 48 L 880 48 L 1060 6 L 1200 6"
+              fill="none"
+              stroke="#E5B869"
+              strokeWidth="2.5"
             />
-            {/* Garis Faset Geometris Berkilau */}
-            <line
-              x1="600"
-              y1="50"
-              x2="600"
-              y2="26"
-              stroke="white"
-              strokeOpacity="0.25"
-              strokeWidth="1.5"
-            />
-            <line
-              x1="420"
-              y1="26"
-              x2="600"
-              y2="50"
-              stroke="white"
-              strokeOpacity="0.2"
-              strokeWidth="1"
-            />
-            <line
-              x1="780"
-              y1="26"
-              x2="600"
-              y2="50"
-              stroke="black"
-              strokeOpacity="0.15"
-              strokeWidth="1"
+            {/* Garis Aksen Emas Paralel Dalam */}
+            <path
+              d="M 0 1 L 144 1 L 322 43 L 878 43 L 1056 1 L 1200 1"
+              fill="none"
+              stroke="#E5B869"
+              strokeOpacity="0.75"
+              strokeWidth="1.2"
             />
           </svg>
         )}

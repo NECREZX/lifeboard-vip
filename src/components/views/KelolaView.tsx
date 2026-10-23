@@ -1735,12 +1735,12 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 </span>
               ) : (
                 <span className="text-[9.5px] font-bold text-slate-600 dark:text-slate-300">
-                  {settings.bannerStyle === 'crown' || settings.bannerStyle === 'slant'
-                    ? 'Kubah Mahkota (Imperial Ogee)'
+                  {settings.bannerStyle === 'stepped' || settings.bannerStyle === 'crown' || settings.bannerStyle === 'slant'
+                    ? 'Bertingkat (Tangga Geometris)'
                     : settings.bannerStyle === 'wave'
-                      ? 'Gelombang Wave (Deep Oceanic Wave)'
-                      : settings.bannerStyle === 'facet' || settings.bannerStyle === 'chevron'
-                        ? 'Facet Berlian (Royal Gem Cut)'
+                      ? 'Gelombang Wave (Ombak Halus)'
+                      : settings.bannerStyle === 'chamfer' || settings.bannerStyle === 'facet' || settings.bannerStyle === 'chevron'
+                        ? 'Chamfer Sudut (Trapesium)'
                         : settings.bannerStyle === 'straight'
                           ? 'Datar Presisi (Standar Lurus)'
                           : 'Lengkung Bawah (Concave Arc)'}
@@ -1760,14 +1760,14 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             <div className={`grid grid-cols-2 sm:grid-cols-5 gap-2 ${settings.cardRadius !== 'sharp' ? 'opacity-40 pointer-events-none' : ''}`}>
               {[
                 { id: 'curve', label: '1. Lengkung Bawah', desc: 'Melengkung Halus Kebawah' },
-                { id: 'crown', label: '2. Kubah Mahkota', desc: 'Siluet Istana Megah & Mewah' },
-                { id: 'wave', label: '3. Gelombang Wave', desc: 'Aliran Ombak Dalam & Mengalir' },
-                { id: 'facet', label: '4. Facet Berlian', desc: 'Potongan Permata Presisi Elit' },
+                { id: 'stepped', label: '2. Bertingkat', desc: 'Tangga Geometris Presisi' },
+                { id: 'wave', label: '3. Gelombang Wave', desc: 'Ombak Halus Proporsional' },
+                { id: 'chamfer', label: '4. Chamfer Sudut', desc: 'Potongan Miring Trapesium' },
                 { id: 'straight', label: '5. Datar Presisi', desc: 'Standar Lurus Bersih' },
               ].map((s) => {
                 const currentStyle = 
-                  settings.bannerStyle === 'slant' ? 'crown' : 
-                  settings.bannerStyle === 'chevron' ? 'facet' : 
+                  settings.bannerStyle === 'crown' || settings.bannerStyle === 'slant' ? 'stepped' : 
+                  settings.bannerStyle === 'facet' || settings.bannerStyle === 'chevron' ? 'chamfer' : 
                   (settings.bannerStyle || 'curve');
                 const isSelected = currentStyle === s.id;
                 return (
@@ -1792,27 +1792,27 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                       {/* Top banner colored segment */}
                       <div className="relative w-full h-6" style={{ backgroundColor: activeThemeColor }}>
                         {s.id === 'curve' && (
-                          <svg className="absolute -bottom-2.5 left-0 w-full h-3" viewBox="0 0 100 20" preserveAspectRatio="none">
+                          <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
                             <path d="M 0 0 L 100 0 L 100 2 Q 50 18 0 2 Z" fill={activeThemeColor} />
+                            <path d="M 0 2 Q 50 18 100 2" fill="none" stroke="#E5B869" strokeWidth="0.9" />
                           </svg>
                         )}
-                        {s.id === 'crown' && (
+                        {s.id === 'stepped' && (
                           <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 2 C 88 2, 80 6, 70 6 C 62 6, 58 18, 50 18 C 42 18, 38 6, 30 6 C 20 6, 12 2, 0 2 Z" fill={activeThemeColor} />
-                            <path d="M 30 6 C 38 6, 42 18, 50 18 C 58 18, 62 6, 70 6" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="0.8" />
+                            <path d="M 0 0 L 100 0 L 100 2 L 83 2 L 83 8 L 67 8 L 67 16 L 33 16 L 33 8 L 17 8 L 17 2 L 0 2 Z" fill={activeThemeColor} />
+                            <path d="M 0 2 L 17 2 L 17 8 L 33 8 L 33 16 L 67 16 L 67 8 L 83 8 L 83 2 L 100 2" fill="none" stroke="#E5B869" strokeWidth="0.9" />
                           </svg>
                         )}
                         {s.id === 'wave' && (
                           <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 6 C 88 18, 78 19, 70 14 C 62 9, 58 2, 50 3 C 42 4, 35 18, 25 18 C 15 18, 8 3, 0 5 Z" fill={activeThemeColor} />
-                            <path d="M 0 5 C 8 3, 15 18, 25 18 C 35 18, 42 4, 50 3 C 58 2, 62 9, 70 14 C 78 19, 88 18, 100 6" fill="none" stroke="white" strokeOpacity="0.35" strokeWidth="0.8" />
+                            <path d="M 0 0 L 100 0 L 100 3 C 88 11, 80 12, 73 12 C 63 12, 58 5, 50 5 C 42 5, 37 11, 27 11 C 18 11, 12 3, 0 3 Z" fill={activeThemeColor} />
+                            <path d="M 0 3 C 12 3, 18 11, 27 11 C 37 11, 42 5, 50 5 C 58 5, 63 12, 73 12 C 80 12, 88 11, 100 3" fill="none" stroke="#E5B869" strokeWidth="0.9" />
                           </svg>
                         )}
-                        {s.id === 'facet' && (
+                        {s.id === 'chamfer' && (
                           <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 2 L 82 5 L 65 9 L 50 18 L 35 9 L 18 5 L 0 2 Z" fill={activeThemeColor} />
-                            <polygon points="50,18 35,9 65,9" fill="white" fillOpacity="0.2" />
-                            <line x1="50" y1="18" x2="50" y2="9" stroke="white" strokeOpacity="0.5" strokeWidth="0.8" />
+                            <path d="M 0 0 L 100 0 L 100 2 L 88 2 L 73 16 L 27 16 L 12 2 L 0 2 Z" fill={activeThemeColor} />
+                            <path d="M 0 2 L 12 2 L 27 16 L 73 16 L 88 2 L 100 2" fill="none" stroke="#E5B869" strokeWidth="0.9" />
                           </svg>
                         )}
                       </div>

@@ -108,7 +108,7 @@ export type TableStyle = 'compact' | 'spacious' | 'striped';
 export type FontStyle = 'sans' | 'mono' | 'serif' | 'instagram' | 'sfpro' | 'jakarta' | 'grotesk' | 'spotify' | 'ios' | 'petit' | 'playwrite' | 'flamenco' | 'pompiere' | 'rye' | 'architect' | 'badscript' | 'neobrutalism' | 'pixel' | 'slabo' | 'iceberg';
 export type ThemeColor = 'classic' | 'emerald' | 'amber' | 'indigo' | 'rose' | 'custom';
 export type BannerMotif = 'polos' | 'songket' | 'kawung' | 'damask' | 'artdeco' | 'moroccan' | 'dots' | 'stripes' | 'hexagon';
-export type BannerStyle = 'curve' | 'crown' | 'wave' | 'facet' | 'straight' | 'slant' | 'chevron';
+export type BannerStyle = 'curve' | 'stepped' | 'wave' | 'chamfer' | 'straight' | 'crown' | 'facet' | 'slant' | 'chevron';
 
 export interface UserProfile {
   name: string;
