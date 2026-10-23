@@ -1657,8 +1657,8 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   ? 'Polosan (Tanpa Motif)' 
                   : settings.bannerMotif === 'kawung' 
                     ? 'Batik Kawung Keraton' 
-                    : settings.bannerMotif === 'artdeco' 
-                      ? 'Art Deco Grand' 
+                    : (settings.bannerMotif === 'damask' || settings.bannerMotif === 'artdeco')
+                      ? 'Royal Damask Istana' 
                       : settings.bannerMotif === 'moroccan' 
                         ? 'Arabesque Andalusia' 
                         : 'Songket Weave (Standar)'}
@@ -1670,10 +1670,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 { id: 'polos', label: '1. Polosan', desc: 'Tanpa Motif' },
                 { id: 'songket', label: '2. Songket', desc: 'Songket Nusantara' },
                 { id: 'kawung', label: '3. Kawung', desc: 'Batik Keraton' },
-                { id: 'artdeco', label: '4. Art Deco', desc: 'Gatsby Glamour' },
+                { id: 'damask', label: '4. Damask', desc: 'Royal Damask Mewah' },
                 { id: 'moroccan', label: '5. Arabesque', desc: 'Bintang Andalusia' },
               ].map((m) => {
-                const isSelected = (settings.bannerMotif || 'songket') === m.id;
+                const isSelected = (settings.bannerMotif || 'songket') === m.id || (m.id === 'damask' && settings.bannerMotif === 'artdeco');
                 return (
                   <button
                     key={m.id}

@@ -107,7 +107,7 @@ export type CardRadius = 'sharp' | 'rounded' | 'extra';
 export type TableStyle = 'compact' | 'spacious' | 'striped';
 export type FontStyle = 'sans' | 'mono' | 'serif' | 'instagram' | 'sfpro' | 'jakarta' | 'grotesk' | 'spotify' | 'ios' | 'petit' | 'playwrite' | 'flamenco' | 'pompiere' | 'rye' | 'architect' | 'badscript' | 'neobrutalism' | 'pixel' | 'slabo' | 'iceberg';
 export type ThemeColor = 'classic' | 'emerald' | 'amber' | 'indigo' | 'rose' | 'custom';
-export type BannerMotif = 'polos' | 'songket' | 'kawung' | 'artdeco' | 'moroccan' | 'dots' | 'stripes' | 'hexagon';
+export type BannerMotif = 'polos' | 'songket' | 'kawung' | 'damask' | 'artdeco' | 'moroccan' | 'dots' | 'stripes' | 'hexagon';
 
 export interface UserProfile {
   name: string;

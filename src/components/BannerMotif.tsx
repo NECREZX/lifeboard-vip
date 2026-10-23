@@ -24,18 +24,35 @@ export const BannerMotifOverlay: React.FC<BannerMotifOverlayProps> = ({
   // Graceful fallback for legacy names if present in user localStorage
   const resolvedMotif = 
     motif === 'dots' ? 'kawung' :
-    motif === 'stripes' ? 'artdeco' :
+    motif === 'stripes' ? 'damask' :
+    motif === 'artdeco' ? 'damask' :
     motif === 'hexagon' ? 'moroccan' :
     motif;
 
   const patternId = `${idPrefix}-motif-${resolvedMotif}`;
+  const maskId = `${idPrefix}-edge-mask`;
+  const gradId = `${idPrefix}-edge-gradient`;
 
   return (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg">
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
       <defs>
+        {/* Soft edge termination gradient: Ensures left & right pattern endings dissolve smoothly without harsh chop */}
+        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#000000" />
+          <stop offset="3%" stopColor="#444444" />
+          <stop offset="8%" stopColor="#ffffff" />
+          <stop offset="92%" stopColor="#ffffff" />
+          <stop offset="97%" stopColor="#444444" />
+          <stop offset="100%" stopColor="#000000" />
+        </linearGradient>
+
+        <mask id={maskId}>
+          <rect width="100%" height="100%" fill={`url(#${gradId})`} />
+        </mask>
+
         {/* Motif 2: Songket Nusantara Tradisional (Belah Ketupat & Bunga Melati Mewah) */}
         {resolvedMotif === 'songket' && (
-          <pattern id={patternId} width="48" height="48" patternUnits="userSpaceOnUse">
+          <pattern id={patternId} width="48" height="48" patternUnits="userSpaceOnUse" x="50%">
             {/* Outer Diamond Weave */}
             <path d="M 24 0 L 48 24 L 24 48 L 0 24 Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeOpacity="0.9" />
             {/* Secondary Inset Diamond */}
@@ -65,7 +82,7 @@ export const BannerMotifOverlay: React.FC<BannerMotifOverlayProps> = ({
 
         {/* Motif 3: Batik Kawung Royal (Batik Geometris Keraton Mewah & Anggun) */}
         {resolvedMotif === 'kawung' && (
-          <pattern id={patternId} width="52" height="52" patternUnits="userSpaceOnUse">
+          <pattern id={patternId} width="52" height="52" patternUnits="userSpaceOnUse" x="50%">
             {/* Outer intersecting petal curves */}
             <path 
               d="M 0 26 C 13 18, 13 8, 26 0 M 26 0 C 39 8, 39 18, 52 26 M 52 26 C 39 34, 39 44, 26 52 M 26 52 C 13 44, 13 34, 0 26" 
@@ -105,33 +122,125 @@ export const BannerMotifOverlay: React.FC<BannerMotifOverlayProps> = ({
           </pattern>
         )}
 
-        {/* Motif 4: Art Deco Grand (Arsitektur Mewah Gatsby & Prisma Glamour) */}
-        {resolvedMotif === 'artdeco' && (
-          <pattern id={patternId} width="44" height="44" patternUnits="userSpaceOnUse">
-            {/* Primary Stepped Inverted Chevron Crest */}
-            <path d="M 0 14 L 22 28 L 44 14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeOpacity="0.9" />
-            <path d="M 0 6 L 22 20 L 44 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
-            <path d="M 0 22 L 22 36 L 44 22" fill="none" stroke="currentColor" strokeWidth="1.4" strokeOpacity="0.5" />
-            
-            {/* Base Fan / Arch palmette */}
-            <path d="M 0 44 A 22 22 0 0 1 44 44" fill="none" stroke="currentColor" strokeWidth="2.4" strokeOpacity="0.9" />
-            <path d="M 6 44 A 16 16 0 0 1 38 44" fill="currentColor" fillOpacity="0.12" stroke="currentColor" strokeWidth="1.8" strokeOpacity="0.75" />
-            <path d="M 12 44 A 10 10 0 0 1 32 44" fill="none" stroke="currentColor" strokeWidth="1.4" strokeOpacity="0.6" />
-            
-            {/* Radiating Sunburst Rays */}
-            <line x1="22" y1="44" x2="22" y2="28" stroke="currentColor" strokeWidth="2.2" strokeOpacity="0.9" />
-            <line x1="22" y1="44" x2="6" y2="30" stroke="currentColor" strokeWidth="1.8" strokeOpacity="0.8" />
-            <line x1="22" y1="44" x2="38" y2="30" stroke="currentColor" strokeWidth="1.8" strokeOpacity="0.8" />
-            
-            {/* Grand Crest Diamond at the peak */}
-            <polygon points="22,3 28,11 22,19 16,11" fill="currentColor" fillOpacity="0.6" stroke="currentColor" strokeWidth="1.6" />
-            <circle cx="22" cy="11" r="2" fill="white" />
+        {/* Motif 4: Royal Damask Istana (Pengganti Art Deco: Ornamen Kemewahan Kerajaan & Tapestri Klasik Modern) */}
+        {resolvedMotif === 'damask' && (
+          <pattern id={patternId} width="56" height="56" patternUnits="userSpaceOnUse" x="50%">
+            {/* Primary Ogival Damask Frame */}
+            <path 
+              d="M 28 4 C 14 4, 6 16, 6 28 C 6 40, 14 52, 28 52 C 42 52, 50 40, 50 28 C 50 16, 42 4, 28 4 Z" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="1.8" 
+              strokeOpacity="0.85" 
+            />
+            {/* Secondary Inner Filigree Ogee */}
+            <path 
+              d="M 28 9 C 18 9, 11 18, 11 28 C 11 37, 18 47, 28 47 C 38 47, 45 37, 45 28 C 45 18, 38 9, 28 9 Z" 
+              fill="currentColor" 
+              fillOpacity="0.08" 
+              stroke="currentColor" 
+              strokeWidth="1.2" 
+              strokeOpacity="0.6" 
+            />
+
+            {/* Central Palatial Fleur-de-lis Crest (Crown) */}
+            <path 
+              d="M 28 12 C 26 16, 26 20, 28 23 C 30 20, 30 16, 28 12 Z" 
+              fill="currentColor" 
+              fillOpacity="0.8" 
+              stroke="currentColor" 
+              strokeWidth="1" 
+            />
+            <path 
+              d="M 28 20 C 23 18, 19 20, 21 24 C 23 26, 26 23, 28 23" 
+              fill="currentColor" 
+              fillOpacity="0.7" 
+              stroke="currentColor" 
+              strokeWidth="1.2" 
+            />
+            <path 
+              d="M 28 20 C 33 18, 37 20, 35 24 C 33 26, 30 23, 28 23" 
+              fill="currentColor" 
+              fillOpacity="0.7" 
+              stroke="currentColor" 
+              strokeWidth="1.2" 
+            />
+            <rect x="23" y="22.5" width="10" height="2" rx="1" fill="currentColor" fillOpacity="0.9" />
+
+            {/* Center Royal Medallion Jewel */}
+            <polygon points="28,24 33,28 28,32 23,28" fill="currentColor" fillOpacity="0.4" stroke="currentColor" strokeWidth="1.6" />
+            <circle cx="28" cy="28" r="3" fill="currentColor" fillOpacity="0.95" />
+            <circle cx="28" cy="28" r="1.3" fill="white" />
+
+            {/* Lower Acanthus Palmette Flourish */}
+            <path 
+              d="M 28 32 C 25 36, 25 40, 28 43 C 31 40, 31 36, 28 32 Z" 
+              fill="currentColor" 
+              fillOpacity="0.65" 
+            />
+            <path 
+              d="M 28 41 C 24 43, 20 40, 22 36" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="1.4" 
+              strokeOpacity="0.75" 
+            />
+            <path 
+              d="M 28 41 C 32 43, 36 40, 34 36" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="1.4" 
+              strokeOpacity="0.75" 
+            />
+
+            {/* Side Acanthus Crest Leaflets */}
+            <path 
+              d="M 6 28 C 12 26, 16 30, 16 34" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="1.4" 
+              strokeOpacity="0.65" 
+            />
+            <path 
+              d="M 50 28 C 44 26, 40 30, 40 34" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="1.4" 
+              strokeOpacity="0.65" 
+            />
+
+            {/* Corner Interlocking Damask Trellis Flourishes */}
+            <path d="M 0 0 C 8 2, 12 8, 12 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
+            <path d="M 0 0 C 2 8, 8 12, 14 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
+            <circle cx="0" cy="0" r="3.5" fill="currentColor" fillOpacity="0.8" />
+            <circle cx="0" cy="0" r="1.5" fill="white" />
+
+            <path d="M 56 0 C 48 2, 44 8, 44 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
+            <path d="M 56 0 C 54 8, 48 12, 42 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
+            <circle cx="56" cy="0" r="3.5" fill="currentColor" fillOpacity="0.8" />
+            <circle cx="56" cy="0" r="1.5" fill="white" />
+
+            <path d="M 0 56 C 8 54, 12 48, 12 42" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
+            <path d="M 0 56 C 2 48, 8 44, 14 44" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
+            <circle cx="0" cy="56" r="3.5" fill="currentColor" fillOpacity="0.8" />
+            <circle cx="0" cy="56" r="1.5" fill="white" />
+
+            <path d="M 56 56 C 48 54, 44 48, 44 42" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
+            <path d="M 56 56 C 54 48, 48 44, 42 44" fill="none" stroke="currentColor" strokeWidth="1.6" strokeOpacity="0.7" />
+            <circle cx="56" cy="56" r="3.5" fill="currentColor" fillOpacity="0.8" />
+            <circle cx="56" cy="56" r="1.5" fill="white" />
+
+            {/* Mid-junction nodes on edges */}
+            <circle cx="28" cy="0" r="2.5" fill="currentColor" fillOpacity="0.75" />
+            <circle cx="28" cy="56" r="2.5" fill="currentColor" fillOpacity="0.75" />
+            <circle cx="0" cy="28" r="2.5" fill="currentColor" fillOpacity="0.75" />
+            <circle cx="56" cy="28" r="2.5" fill="currentColor" fillOpacity="0.75" />
           </pattern>
         )}
 
         {/* Motif 5: Arabesque Star (Bintang 8 Andalusia & Geometri Maroko Mewah) */}
         {resolvedMotif === 'moroccan' && (
-          <pattern id={patternId} width="52" height="52" patternUnits="userSpaceOnUse">
+          <pattern id={patternId} width="52" height="52" patternUnits="userSpaceOnUse" x="50%">
             {/* Interlocking 8-Pointed Star Center (2 overlapping rotated squares) */}
             <rect 
               x="15" 
@@ -178,7 +287,7 @@ export const BannerMotifOverlay: React.FC<BannerMotifOverlayProps> = ({
           </pattern>
         )}
       </defs>
-      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+      <rect width="100%" height="100%" fill={`url(#${patternId})`} mask={`url(#${maskId})`} />
     </svg>
   );
 };
