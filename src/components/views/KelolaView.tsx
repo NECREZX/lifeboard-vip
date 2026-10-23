@@ -1738,11 +1738,11 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                   {settings.bannerStyle === 'stepped' || settings.bannerStyle === 'crown' || settings.bannerStyle === 'slant'
                     ? 'Bertingkat (Tangga Geometris)'
                     : settings.bannerStyle === 'wave'
-                      ? 'Gelombang Wave (Ombak Halus)'
+                      ? 'Gelombang Wave (Ombak Simetris Rapih)'
                       : settings.bannerStyle === 'chamfer' || settings.bannerStyle === 'facet' || settings.bannerStyle === 'chevron'
-                        ? 'Chamfer Sudut (Trapesium)'
+                        ? 'Sudut 4 Titik (Trapesium Lengkung)'
                         : settings.bannerStyle === 'straight'
-                          ? 'Datar Presisi (Standar Lurus)'
+                          ? 'Datar Presisi (Berlis Emas)'
                           : 'Lengkung Bawah (Concave Arc)'}
                 </span>
               )}
@@ -1761,9 +1761,9 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               {[
                 { id: 'curve', label: '1. Lengkung Bawah', desc: 'Melengkung Halus Kebawah' },
                 { id: 'stepped', label: '2. Bertingkat', desc: 'Tangga Geometris Presisi' },
-                { id: 'wave', label: '3. Gelombang Wave', desc: 'Ombak Halus Proporsional' },
-                { id: 'chamfer', label: '4. Chamfer Sudut', desc: 'Potongan Miring Trapesium' },
-                { id: 'straight', label: '5. Datar Presisi', desc: 'Standar Lurus Bersih' },
+                { id: 'wave', label: '3. Gelombang Wave', desc: 'Ombak Simetris Rapih' },
+                { id: 'chamfer', label: '4. Sudut 4 Titik', desc: 'Trapesium 4 Sudut Presisi' },
+                { id: 'straight', label: '5. Datar Presisi', desc: 'Garis Lurus Berlis Emas' },
               ].map((s) => {
                 const currentStyle = 
                   settings.bannerStyle === 'crown' || settings.bannerStyle === 'slant' ? 'stepped' : 
@@ -1805,14 +1805,19 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                         )}
                         {s.id === 'wave' && (
                           <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 3 C 88 11, 80 12, 73 12 C 63 12, 58 5, 50 5 C 42 5, 37 11, 27 11 C 18 11, 12 3, 0 3 Z" fill={activeThemeColor} />
-                            <path d="M 0 3 C 12 3, 18 11, 27 11 C 37 11, 42 5, 50 5 C 58 5, 63 12, 73 12 C 80 12, 88 11, 100 3" fill="none" stroke="#E5B869" strokeWidth="0.9" />
+                            <path d="M 0 0 L 100 0 L 100 4 C 88 4, 86 12, 75 12 C 64 12, 62 4, 50 4 C 38 4, 36 12, 25 12 C 14 12, 12 4, 0 4 Z" fill={activeThemeColor} />
+                            <path d="M 0 4 C 12 4, 14 12, 25 12 C 36 12, 38 4, 50 4 C 62 4, 64 12, 75 12 C 86 12, 88 4, 100 4" fill="none" stroke="#E5B869" strokeWidth="0.9" />
                           </svg>
                         )}
                         {s.id === 'chamfer' && (
                           <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 2 L 88 2 L 73 16 L 27 16 L 12 2 L 0 2 Z" fill={activeThemeColor} />
-                            <path d="M 0 2 L 12 2 L 27 16 L 73 16 L 88 2 L 100 2" fill="none" stroke="#E5B869" strokeWidth="0.9" />
+                            <path d="M 0 0 L 100 0 L 100 2 L 78 16 L 22 16 L 0 2 Z" fill={activeThemeColor} />
+                            <path d="M 0 2 L 22 16 L 78 16 L 100 2" fill="none" stroke="#E5B869" strokeWidth="0.9" />
+                          </svg>
+                        )}
+                        {s.id === 'straight' && (
+                          <svg className="absolute -bottom-1 left-0 w-full h-2" viewBox="0 0 100 10" preserveAspectRatio="none">
+                            <line x1="0" y1="5" x2="100" y2="5" stroke="#E5B869" strokeWidth="1.2" />
                           </svg>
                         )}
                       </div>
