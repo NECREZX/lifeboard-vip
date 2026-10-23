@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import { UserSettings } from '../../types';
 import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 import { BannerMotifOverlay } from '../BannerMotif';
+import { BannerShapeDivider } from '../BannerShapeDivider';
 
 interface AuthViewProps {
   onLogin: () => void;
@@ -203,6 +204,14 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
             </div>
           </div>
         </div>
+
+        {/* Siluet Gaya Banner (Hanya aktif jika Sudut Kartu === 'sharp') */}
+        <BannerShapeDivider 
+          style={settings?.bannerStyle} 
+          color={activeThemeColor} 
+          cardRadius={settings?.cardRadius} 
+          overlap="auth"
+        />
 
         {/* ========================================================
             BAGIAN BAWAH:

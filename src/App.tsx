@@ -190,6 +190,7 @@ export default function App() {
       fontStyle: 'instagram',
       themeColor: 'indigo',
       bannerMotif: 'songket',
+      bannerStyle: 'curve',
       isDarkMode: false
     };
 

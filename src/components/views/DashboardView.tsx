@@ -38,6 +38,7 @@ import { t } from '../../lib/i18n';
 import { isCategoryMatch, isWalletMatch, getBudgetCategoryLabel } from '../../lib/budgetUtils';
 import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 import { BannerMotifOverlay } from '../BannerMotif';
+import { BannerShapeDivider } from '../BannerShapeDivider';
 
 // ... (DashboardView component remains largely the same)
 
@@ -341,6 +342,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Siluet Gaya Banner (Hanya aktif jika Sudut Kartu === 'sharp') */}
+      <BannerShapeDivider 
+        style={settings?.bannerStyle} 
+        color={activeThemeColor} 
+        cardRadius={settings?.cardRadius} 
+      />
 
       {/* 2. Main Enclosing Card (GoPay style Sheet Card: -mt-20 sm:-mt-22 lg:-mt-24 -> -mt-[80px] sm:-mt-[88px] lg:-mt-[96px]) */}
       {/* Overlaps the top banner halfway and wraps: */}

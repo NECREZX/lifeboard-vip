@@ -53,10 +53,12 @@ import {
   CardRadius,
   TableStyle,
   Language,
-  BannerMotif
+  BannerMotif,
+  BannerStyle
 } from '../../types';
 import { IconRenderer } from '../IconRenderer';
 import { BannerMotifOverlay } from '../BannerMotif';
+import { BannerShapeDivider } from '../BannerShapeDivider';
 import { BRAND_WALLETS, BRAND_LOGOS_MAP, detectBrandFromWalletName } from '../BankLogos';
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
@@ -1721,10 +1723,125 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 3. Tipografi Utama */}
+          {/* 3. Gaya Banner */}
+          <div>
+            <div className="flex items-center justify-between gap-2 mb-2.5">
+              <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block uppercase tracking-widest">
+                3. Gaya Banner
+              </span>
+              {settings.cardRadius !== 'sharp' ? (
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700/80 flex items-center gap-1">
+                  <Lock className="w-2.5 h-2.5" /> Terkunci (Khusus Sudut Tajam)
+                </span>
+              ) : (
+                <span className="text-[9.5px] font-bold text-slate-600 dark:text-slate-300">
+                  {settings.bannerStyle === 'crown' || settings.bannerStyle === 'slant'
+                    ? 'Kubah Mahkota (Imperial Ogee)'
+                    : settings.bannerStyle === 'wave'
+                      ? 'Gelombang Wave (Deep Oceanic Wave)'
+                      : settings.bannerStyle === 'facet' || settings.bannerStyle === 'chevron'
+                        ? 'Facet Berlian (Royal Gem Cut)'
+                        : settings.bannerStyle === 'straight'
+                          ? 'Datar Presisi (Standar Lurus)'
+                          : 'Lengkung Bawah (Concave Arc)'}
+                </span>
+              )}
+            </div>
+
+            {settings.cardRadius !== 'sharp' && (
+              <div className="mb-2.5 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 flex items-start gap-2 select-none">
+                <AlertOctagon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div className="text-[11px] text-amber-800 dark:text-amber-300 leading-snug">
+                  Gaya siluet banner hanya aktif saat opsi <button type="button" onClick={() => setSettings && setSettings({ ...settings, cardRadius: 'sharp' })} className="font-bold underline cursor-pointer text-amber-900 dark:text-amber-200 hover:opacity-80">Sudut Kartu diatur Tajam</button> agar tidak bertabrakan dengan kelengkungan card pembungkus.
+                </div>
+              </div>
+            )}
+
+            <div className={`grid grid-cols-2 sm:grid-cols-5 gap-2 ${settings.cardRadius !== 'sharp' ? 'opacity-40 pointer-events-none' : ''}`}>
+              {[
+                { id: 'curve', label: '1. Lengkung Bawah', desc: 'Melengkung Halus Kebawah' },
+                { id: 'crown', label: '2. Kubah Mahkota', desc: 'Siluet Istana Megah & Mewah' },
+                { id: 'wave', label: '3. Gelombang Wave', desc: 'Aliran Ombak Dalam & Mengalir' },
+                { id: 'facet', label: '4. Facet Berlian', desc: 'Potongan Permata Presisi Elit' },
+                { id: 'straight', label: '5. Datar Presisi', desc: 'Standar Lurus Bersih' },
+              ].map((s) => {
+                const currentStyle = 
+                  settings.bannerStyle === 'slant' ? 'crown' : 
+                  settings.bannerStyle === 'chevron' ? 'facet' : 
+                  (settings.bannerStyle || 'curve');
+                const isSelected = currentStyle === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => {
+                      if (setSettings) {
+                        setSettings({ ...settings, bannerStyle: s.id as BannerStyle });
+                      }
+                    }}
+                    className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col justify-between gap-2 select-none ${
+                      isSelected
+                        ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/80 font-bold shadow-xs scale-[1.02]'
+                        : 'border-slate-100 dark:border-slate-900 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                    }`}
+                  >
+                    {/* Visual silhouette preview thumbnail */}
+                    <div 
+                      className="w-full h-11 rounded-lg overflow-hidden relative shadow-2xs flex flex-col justify-between shrink-0 border border-black/10 bg-slate-100 dark:bg-slate-800"
+                    >
+                      {/* Top banner colored segment */}
+                      <div className="relative w-full h-6" style={{ backgroundColor: activeThemeColor }}>
+                        {s.id === 'curve' && (
+                          <svg className="absolute -bottom-2.5 left-0 w-full h-3" viewBox="0 0 100 20" preserveAspectRatio="none">
+                            <path d="M 0 0 L 100 0 L 100 2 Q 50 18 0 2 Z" fill={activeThemeColor} />
+                          </svg>
+                        )}
+                        {s.id === 'crown' && (
+                          <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
+                            <path d="M 0 0 L 100 0 L 100 2 C 88 2, 80 6, 70 6 C 62 6, 58 18, 50 18 C 42 18, 38 6, 30 6 C 20 6, 12 2, 0 2 Z" fill={activeThemeColor} />
+                            <path d="M 30 6 C 38 6, 42 18, 50 18 C 58 18, 62 6, 70 6" fill="none" stroke="white" strokeOpacity="0.4" strokeWidth="0.8" />
+                          </svg>
+                        )}
+                        {s.id === 'wave' && (
+                          <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
+                            <path d="M 0 0 L 100 0 L 100 6 C 88 18, 78 19, 70 14 C 62 9, 58 2, 50 3 C 42 4, 35 18, 25 18 C 15 18, 8 3, 0 5 Z" fill={activeThemeColor} />
+                            <path d="M 0 5 C 8 3, 15 18, 25 18 C 35 18, 42 4, 50 3 C 58 2, 62 9, 70 14 C 78 19, 88 18, 100 6" fill="none" stroke="white" strokeOpacity="0.35" strokeWidth="0.8" />
+                          </svg>
+                        )}
+                        {s.id === 'facet' && (
+                          <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
+                            <path d="M 0 0 L 100 0 L 100 2 L 82 5 L 65 9 L 50 18 L 35 9 L 18 5 L 0 2 Z" fill={activeThemeColor} />
+                            <polygon points="50,18 35,9 65,9" fill="white" fillOpacity="0.2" />
+                            <line x1="50" y1="18" x2="50" y2="9" stroke="white" strokeOpacity="0.5" strokeWidth="0.8" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="h-4 w-full bg-slate-100 dark:bg-slate-800" />
+                      {isSelected && (
+                        <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white text-slate-900 flex items-center justify-center text-[10px] font-black shadow-xs z-10">
+                          ✓
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <span className="font-bold text-xs text-slate-900 dark:text-white block truncate">
+                        {s.label}
+                      </span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium block truncate">
+                        {s.desc}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 4. Tipografi Utama */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              3. Tipografi Utama
+              4. Tipografi Utama
             </span>
             <div className="relative">
               <select 
@@ -1744,10 +1861,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 4. Gaya Visual UI */}
+          {/* 5. Gaya Visual UI */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              4. Gaya Visual UI
+              5. Gaya Visual UI
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
@@ -1780,10 +1897,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 5. Gaya Kartu & Border */}
+          {/* 6. Gaya Kartu & Border */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              5. Gaya Kartu &amp; Border
+              6. Gaya Kartu &amp; Border
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
@@ -1811,10 +1928,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 6. Sudut Kartu (Radius) */}
+          {/* 7. Sudut Kartu (Radius) */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              6. Sudut Kartu (Radius)
+              7. Sudut Kartu (Radius)
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
@@ -1842,10 +1959,10 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             </div>
           </div>
 
-          {/* 7. Kerapatan Tabel / List */}
+          {/* 8. Kerapatan Tabel / List */}
           <div>
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
-              7. Kerapatan Tabel / List
+              8. Kerapatan Tabel / List
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {[
@@ -2242,6 +2359,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Siluet Gaya Banner (Hanya aktif jika Sudut Kartu === 'sharp') */}
+      <BannerShapeDivider 
+        style={settings?.bannerStyle} 
+        color={activeThemeColor} 
+        cardRadius={settings?.cardRadius} 
+      />
 
       {/* 2. Main Enclosing Sheet Card wrapping Menu Items (Consistent 100% with Dashboard, Lifeboard AI & Tambah Data) */}
       <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-28 space-y-2.5`}>

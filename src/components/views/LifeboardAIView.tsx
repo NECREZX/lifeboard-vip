@@ -47,6 +47,7 @@ import {
 import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 import { Breadcrumb, BreadcrumbItem } from '../Breadcrumb';
 import { BannerMotifOverlay } from '../BannerMotif';
+import { BannerShapeDivider } from '../BannerShapeDivider';
 
 interface LifeboardAIViewProps {
   transactions: Transaction[];
@@ -400,6 +401,13 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
         </div>
       </div>
+
+      {/* Siluet Gaya Banner (Hanya aktif jika Sudut Kartu === 'sharp') */}
+      <BannerShapeDivider 
+        style={settings?.bannerStyle} 
+        color={activeThemeColor} 
+        cardRadius={settings?.cardRadius} 
+      />
 
       {/* =======================================================
           2. KONTEN UTAMA DENGAN CARD PEMBUNGKUS (KONSISTEN 100% SEJAJAR DENGAN DASHBOARD)

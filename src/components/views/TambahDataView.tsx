@@ -43,6 +43,7 @@ import { IconRenderer } from '../IconRenderer';
 import { formatIDR, getLocalDateString } from '../../lib/formatters';
 import { getEffectiveThemeColor, getThemeContrastColor } from '../../lib/theme';
 import { BannerMotifOverlay } from '../BannerMotif';
+import { BannerShapeDivider } from '../BannerShapeDivider';
 
 export type FormType = 'pengeluaran' | 'pemasukan' | 'transfer' | 'budgeting' | 'tabungan' | 'aktivitas' | 'wishlist';
 
@@ -843,6 +844,13 @@ export function TambahDataView({
           </div>
         </div>
       </div>
+
+      {/* Siluet Gaya Banner (Hanya aktif jika Sudut Kartu === 'sharp') */}
+      <BannerShapeDivider 
+        style={settings?.bannerStyle} 
+        color={resolvedAccent} 
+        cardRadius={settings?.cardRadius} 
+      />
 
       {/* =======================================================
           2. MAIN ENCLOSING SHEET CARD (100% SEJAJAR & KONSISTEN DENGAN DASHBOARD)
