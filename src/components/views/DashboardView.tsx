@@ -308,7 +308,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* GoPay-Style Monthly Expense & Income Report Bar */}
-          <div className="mt-3 pt-2.5 border-t border-white/20">
+          <div className="mt-3 pt-1">
             <div className="w-full flex items-center justify-between gap-3 p-1.5 -mx-1.5 text-white text-left select-none">
               <div className="flex items-center gap-2.5 min-w-0">
                 {/* 3 mini vertical bars icon matching GoPay */}

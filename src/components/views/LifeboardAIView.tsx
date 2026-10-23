@@ -574,7 +574,7 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
           </div>
         ) : (
           /* B. DETAIL LAPORAN INSIGHT BULAN */
-          <div className="space-y-4 -mt-10 sm:-mt-12 pb-10">
+          <div className="space-y-4 pt-1 pb-10">
             {/* Card Header Insight Bulan yang Menimpa Banner */}
             <div className={`${getCardClasses()} p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-lg flex items-center justify-between gap-3 relative z-20`}>
               <div>

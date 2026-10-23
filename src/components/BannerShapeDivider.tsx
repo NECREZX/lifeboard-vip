@@ -40,7 +40,7 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
 
   // Normalisasi & fallback compatibility
   const resolvedStyle = 
-    style === 'crown' || style === 'slant' ? 'stepped' :
+    style === 'tirai' || style === 'stepped' || style === 'crown' || style === 'slant' ? 'tirai' :
     style === 'facet' || style === 'chevron' ? 'chamfer' :
     (style || 'straight');
 
@@ -54,7 +54,7 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
   const positionClasses = 'top-[-36px] sm:top-[-88px] lg:top-[-96px]';
 
   return (
-    <div className={`relative z-20 pointer-events-none -mx-4 sm:-mx-6 h-0 overflow-visible ${className}`}>
+    <div className={`relative z-40 pointer-events-none -mx-4 sm:-mx-6 h-0 overflow-visible ${className}`}>
       <div className={`absolute left-0 right-0 w-full ${positionClasses}`}>
         {/* Gaya 1: Lengkung Bawah (Melengkung Dalam Sesuai Contoh Gambar 2 + Lis Emas Ganda) */}
         {effectiveStyle === 'curve' && (
@@ -87,29 +87,29 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
           </svg>
         )}
 
-        {/* Gaya 2: Bertingkat (Geometric Steps Sesuai Contoh Gambar 1 Kiri + Lis Emas Ganda) */}
-        {effectiveStyle === 'stepped' && (
+        {/* Gaya 2: Tirai (Lengkungan Tirai Mewah 3 Kelopak Sesuai Contoh Gambar User + Lis Emas Ganda) */}
+        {effectiveStyle === 'tirai' && (
           <svg
             className="w-full h-6 sm:h-8 lg:h-9 block drop-shadow-[0_3px_6px_rgba(0,0,0,0.08)]"
             viewBox="0 0 1200 56"
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Siluet Tangga Geometris Bertingkat */}
+            {/* Siluet Lengkungan Tirai Mewah 3 Gelombang Menjuntai */}
             <path
-              d="M 0 0 L 1200 0 L 1200 6 L 1000 6 L 1000 24 L 800 24 L 800 48 L 400 48 L 400 24 L 200 24 L 200 6 L 0 6 Z"
+              d="M 0 0 L 1200 0 L 1200 6 Q 1000 38 800 6 Q 600 38 400 6 Q 200 38 0 6 Z"
               fill={color}
             />
             {/* Garis Lis Emas Luar */}
             <path
-              d="M 0 6 L 200 6 L 200 24 L 400 24 L 400 48 L 800 48 L 800 24 L 1000 24 L 1000 6 L 1200 6"
+              d="M 0 6 Q 200 38 400 6 Q 600 38 800 6 Q 1000 38 1200 6"
               fill="none"
               stroke="#E5B869"
               strokeWidth="2.5"
             />
             {/* Garis Lis Emas Paralel Dalam */}
             <path
-              d="M 0 1 L 206 1 L 206 19 L 406 19 L 406 43 L 794 43 L 794 19 L 994 19 L 994 1 L 1200 1"
+              d="M 0 1 Q 200 33 400 1 Q 600 33 800 1 Q 1000 33 1200 1"
               fill="none"
               stroke="#E5B869"
               strokeOpacity="0.75"
@@ -149,7 +149,7 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
           </svg>
         )}
 
-        {/* Gaya 4: Chamfer 4 Titik Sudut (Trapesium 4 Sudut Persis Gambar 1 Kanan + Lis Emas Ganda) */}
+        {/* Gaya 4: Chamfer 4 Titik Sudut (Trapesium Presisi dengan 4 Sudut Titik Tegas) */}
         {effectiveStyle === 'chamfer' && (
           <svg
             className="w-full h-6 sm:h-8 lg:h-9 block drop-shadow-[0_3px_6px_rgba(0,0,0,0.08)]"
@@ -157,21 +157,21 @@ export const BannerShapeDivider: React.FC<BannerShapeDividerProps> = ({
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Siluet Melengkung Kebawah dengan 4 Titik Sudut Tegas */}
+            {/* Siluet Trapesium dengan 4 Titik Sudut Tegas (Chamfer Bersudut 45 derajat di kiri-kanan bawah) */}
             <path
-              d="M 0 0 L 1200 0 L 1200 6 L 940 48 L 260 48 L 0 6 Z"
+              d="M 0 0 L 1200 0 L 1200 6 L 940 32 L 260 32 L 0 6 Z"
               fill={color}
             />
             {/* Garis Lis Emas Luar */}
             <path
-              d="M 0 6 L 260 48 L 940 48 L 1200 6"
+              d="M 0 6 L 260 32 L 940 32 L 1200 6"
               fill="none"
               stroke="#E5B869"
               strokeWidth="2.5"
             />
             {/* Garis Lis Emas Paralel Dalam */}
             <path
-              d="M 0 1 L 262 43 L 938 43 L 1200 1"
+              d="M 0 1 L 262 27 L 938 27 L 1200 1"
               fill="none"
               stroke="#E5B869"
               strokeOpacity="0.75"

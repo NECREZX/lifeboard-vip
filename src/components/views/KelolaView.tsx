@@ -1760,13 +1760,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             <div className={`grid grid-cols-2 sm:grid-cols-5 gap-2 ${settings.cardRadius !== 'sharp' ? 'opacity-40 pointer-events-none' : ''}`}>
               {[
                 { id: 'curve', label: '1. Lengkung Bawah', desc: 'Melengkung Halus Kebawah' },
-                { id: 'stepped', label: '2. Bertingkat', desc: 'Tangga Geometris Presisi' },
+                { id: 'tirai', label: '2. Tirai', desc: 'Lengkungan Tirai 3 Kelopak' },
                 { id: 'wave', label: '3. Gelombang Wave', desc: 'Ombak Simetris Rapih' },
                 { id: 'chamfer', label: '4. Sudut 4 Titik', desc: 'Trapesium 4 Sudut Presisi' },
                 { id: 'straight', label: '5. Datar Presisi', desc: 'Garis Lurus Berlis Emas' },
               ].map((s) => {
                 const currentStyle = 
-                  settings.bannerStyle === 'crown' || settings.bannerStyle === 'slant' ? 'stepped' : 
+                  settings.bannerStyle === 'stepped' || settings.bannerStyle === 'crown' || settings.bannerStyle === 'slant' ? 'tirai' : 
                   settings.bannerStyle === 'facet' || settings.bannerStyle === 'chevron' ? 'chamfer' : 
                   (settings.bannerStyle || 'curve');
                 const isSelected = currentStyle === s.id;
@@ -1781,50 +1781,54 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                     }}
                     className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col justify-between gap-2 select-none ${
                       isSelected
-                        ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/80 font-bold shadow-xs scale-[1.02]'
-                        : 'border-slate-100 dark:border-slate-900 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                        ? 'border-indigo-600 bg-indigo-50/80 dark:border-indigo-400 dark:bg-indigo-950/40 font-bold shadow-sm scale-[1.02]'
+                        : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs'
                     }`}
                   >
-                    {/* Visual silhouette preview thumbnail */}
+                    {/* Visual silhouette preview thumbnail covering full height */}
                     <div 
-                      className="w-full h-11 rounded-lg overflow-hidden relative shadow-2xs flex flex-col justify-between shrink-0 border border-black/10 bg-slate-100 dark:bg-slate-800"
+                      className="w-full h-14 rounded-lg overflow-hidden relative shadow-inner flex flex-col justify-end shrink-0 border border-slate-300/80 dark:border-slate-700"
+                      style={{ backgroundColor: activeThemeColor }}
                     >
-                      {/* Top banner colored segment with motif overlay */}
-                      <div className="relative w-full h-6 overflow-hidden" style={{ backgroundColor: activeThemeColor }}>
+                      <div className="absolute inset-0">
                         <BannerMotifOverlay motif={settings?.bannerMotif} idPrefix={`preview-style-${s.id}`} />
+                      </div>
+                      
+                      {/* Full preview silhouette SVG */}
+                      <div className="relative w-full h-7">
                         {s.id === 'curve' && (
-                          <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 2 Q 50 18 0 2 Z" fill={activeThemeColor} />
-                            <path d="M 0 2 Q 50 18 100 2" fill="none" stroke="#E5B869" strokeWidth="0.9" />
+                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 30" preserveAspectRatio="none">
+                            <path d="M 0 0 L 100 0 L 100 6 Q 50 28 0 6 Z" fill={activeThemeColor} />
+                            <path d="M 0 6 Q 50 28 100 6" fill="none" stroke="#E5B869" strokeWidth="1.5" />
                           </svg>
                         )}
-                        {s.id === 'stepped' && (
-                          <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 2 L 83 2 L 83 8 L 67 8 L 67 16 L 33 16 L 33 8 L 17 8 L 17 2 L 0 2 Z" fill={activeThemeColor} />
-                            <path d="M 0 2 L 17 2 L 17 8 L 33 8 L 33 16 L 67 16 L 67 8 L 83 8 L 83 2 L 100 2" fill="none" stroke="#E5B869" strokeWidth="0.9" />
+                        {s.id === 'tirai' && (
+                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 30" preserveAspectRatio="none">
+                            <path d="M 0 0 L 100 0 L 100 6 Q 83 28 66 6 Q 50 28 33 6 Q 16 28 0 6 Z" fill={activeThemeColor} />
+                            <path d="M 0 6 Q 16 28 33 6 Q 50 28 66 6 Q 83 28 100 6" fill="none" stroke="#E5B869" strokeWidth="1.5" />
                           </svg>
                         )}
                         {s.id === 'wave' && (
-                          <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 4 C 88 4, 86 12, 75 12 C 64 12, 62 4, 50 4 C 38 4, 36 12, 25 12 C 14 12, 12 4, 0 4 Z" fill={activeThemeColor} />
-                            <path d="M 0 4 C 12 4, 14 12, 25 12 C 36 12, 38 4, 50 4 C 62 4, 64 12, 75 12 C 86 12, 88 4, 100 4" fill="none" stroke="#E5B869" strokeWidth="0.9" />
+                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 30" preserveAspectRatio="none">
+                            <path d="M 0 0 L 100 0 L 100 8 C 83 8, 80 24, 66 24 C 52 24, 50 8, 33 8 C 16 8, 14 24, 0 24 Z" fill={activeThemeColor} />
+                            <path d="M 0 8 C 14 8, 16 24, 33 24 C 50 24, 52 8, 66 8 C 80 8, 83 24, 100 8" fill="none" stroke="#E5B869" strokeWidth="1.5" />
                           </svg>
                         )}
                         {s.id === 'chamfer' && (
-                          <svg className="absolute -bottom-3 left-0 w-full h-3.5" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M 0 0 L 100 0 L 100 2 L 78 16 L 22 16 L 0 2 Z" fill={activeThemeColor} />
-                            <path d="M 0 2 L 22 16 L 78 16 L 100 2" fill="none" stroke="#E5B869" strokeWidth="0.9" />
+                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 30" preserveAspectRatio="none">
+                            <path d="M 0 0 L 100 0 L 100 6 L 78 22 L 22 22 L 0 6 Z" fill={activeThemeColor} />
+                            <path d="M 0 6 L 22 22 L 78 22 L 100 6" fill="none" stroke="#E5B869" strokeWidth="1.5" />
                           </svg>
                         )}
                         {s.id === 'straight' && (
-                          <svg className="absolute -bottom-1 left-0 w-full h-2" viewBox="0 0 100 10" preserveAspectRatio="none">
-                            <line x1="0" y1="5" x2="100" y2="5" stroke="#E5B869" strokeWidth="1.2" />
+                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 30" preserveAspectRatio="none">
+                            <line x1="0" y1="12" x2="100" y2="12" stroke="#E5B869" strokeWidth="2" />
                           </svg>
                         )}
                       </div>
-                      <div className="h-4 w-full bg-slate-100 dark:bg-slate-800" />
+
                       {isSelected && (
-                        <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-white text-slate-900 flex items-center justify-center text-[10px] font-black shadow-xs z-10">
+                        <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-black shadow-xs z-10">
                           ✓
                         </span>
                       )}
@@ -1834,7 +1838,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                       <span className="font-bold text-xs text-slate-900 dark:text-white block truncate">
                         {s.label}
                       </span>
-                      <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium block truncate">
+                      <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium block truncate">
                         {s.desc}
                       </span>
                     </div>
@@ -2258,7 +2262,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
       
       {/* 1. Backdrop Banner Atas (Persis Identik & Selaras dengan Dashboard Hero Banner) */}
       <div 
-        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-4 sm:pt-5 px-4 sm:px-6 h-[200px] sm:h-[215px] lg:h-[230px] transition-colors duration-200"
+        className="relative -mx-4 sm:-mx-6 -mt-1 z-0 overflow-hidden text-white rounded-b-none pt-3 sm:pt-4 px-4 sm:px-6 h-[200px] sm:h-[215px] lg:h-[230px] transition-colors duration-200"
         style={{ backgroundColor: activeThemeColor, color: contrastColor }}
       >
         {/* Authentic Indonesian Songket Weave Vector Motif (Identik 100% dengan Banner Dashboard) */}
@@ -2283,7 +2287,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
         </div>
 
         {/* Profil Icon & Card Nama Diletakkan di Banner (Bukan di Dalam Card Pembungkus) */}
-        <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-md mx-auto pt-7 sm:pt-9 pb-12 sm:pb-20">
+        <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-md mx-auto pt-3 sm:pt-4 pb-3">
           <div 
             onClick={() => {
               setTempProfileName(profile?.name || '');
@@ -2291,74 +2295,36 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
               setTempProfileAvatar(profile?.avatar || '/male_avatar.jpg');
               setShowEditProfileModal(true);
             }}
-            className={`p-4 sm:p-5 pt-8 sm:pt-9 ${getCardClasses()} !overflow-visible flex items-center justify-center w-full cursor-pointer group hover:border-slate-300 dark:hover:border-slate-700 relative shadow-sm`}
+            className="flex flex-col items-center justify-center w-full cursor-pointer group relative py-1"
             title="Klik untuk mengubah nama, email, dan avatar profil"
           >
-            {/* Ornamen Motif Batik Kawung di Sisi Kiri Card */}
-            <div 
-              className="absolute left-2.5 sm:left-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 dark:opacity-35 group-hover:opacity-60 transition-opacity"
-              style={{ color: activeThemeColor }}
-            >
-              <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 sm:w-8.5 sm:h-8.5">
-                <path d="M 19 19 C 14 13, 14 5, 19 2 C 24 5, 24 13, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="19" cy="8" r="1.2" fill="currentColor" />
-                <path d="M 19 19 C 14 25, 14 33, 19 36 C 24 33, 24 25, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="19" cy="30" r="1.2" fill="currentColor" />
-                <path d="M 19 19 C 13 14, 5 14, 2 19 C 5 24, 13 24, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="8" cy="19" r="1.2" fill="currentColor" />
-                <path d="M 19 19 C 25 14, 33 14, 36 19 C 33 24, 25 24, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="30" cy="19" r="1.2" fill="currentColor" />
-                <circle cx="19" cy="19" r="2.2" fill="none" stroke="currentColor" strokeWidth="1" />
-              </svg>
-            </div>
-
-            {/* Ornamen Motif Batik Kawung di Sisi Kanan Card */}
-            <div 
-              className="absolute right-2.5 sm:right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-40 dark:opacity-35 group-hover:opacity-60 transition-opacity"
-              style={{ color: activeThemeColor }}
-            >
-              <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 sm:w-8.5 sm:h-8.5">
-                <path d="M 19 19 C 14 13, 14 5, 19 2 C 24 5, 24 13, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="19" cy="8" r="1.2" fill="currentColor" />
-                <path d="M 19 19 C 14 25, 14 33, 19 36 C 24 33, 24 25, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="19" cy="30" r="1.2" fill="currentColor" />
-                <path d="M 19 19 C 13 14, 5 14, 2 19 C 5 24, 13 24, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="8" cy="19" r="1.2" fill="currentColor" />
-                <path d="M 19 19 C 25 14, 33 14, 36 19 C 33 24, 25 24, 19 19 Z" fill="currentColor" fillOpacity="0.22" stroke="currentColor" strokeWidth="1.2" />
-                <circle cx="30" cy="19" r="1.2" fill="currentColor" />
-                <circle cx="19" cy="19" r="2.2" fill="none" stroke="currentColor" strokeWidth="1" />
-              </svg>
-            </div>
-
-            {/* Foto Profil Dikeluarkan dan Terletak di Tengah Mengambang dengan Icon Pensil */}
-            <div className="absolute -top-8 sm:-top-9 left-1/2 -translate-x-1/2 z-30 pointer-events-auto">
-              <div className="relative group/avatar">
-                <div className={`w-16 h-16 sm:w-18 sm:h-18 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} overflow-hidden border-4 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover/avatar:scale-105 transition-transform`}>
-                  <img 
-                    src={profile?.avatar || '/male_avatar.jpg'} 
-                    alt="Avatar Profil" 
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = 'none';
-                    }} 
-                  />
-                </div>
-                {/* Icon Pensil di Foto Profil */}
-                <div 
-                  className={`absolute -bottom-0.5 -right-0.5 w-6 h-6 sm:w-6.5 sm:h-6.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} text-white border-2 border-white dark:border-slate-800 flex items-center justify-center group-hover/avatar:scale-110 transition-transform`}
-                  style={{ backgroundColor: activeThemeColor }}
-                >
-                  <Edit3 className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5]" />
-                </div>
+            {/* Foto Profil Langsung di Tengah dengan Icon Pensil */}
+            <div className="relative mb-1.5 group/avatar">
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} overflow-hidden border-3 border-white dark:border-slate-800 bg-slate-100 dark:bg-slate-800 shadow-md flex items-center justify-center group-hover/avatar:scale-105 transition-transform`}>
+                <img 
+                  src={profile?.avatar || '/male_avatar.jpg'} 
+                  alt="Avatar Profil" 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }} 
+                />
+              </div>
+              {/* Icon Pensil di Foto Profil */}
+              <div 
+                className={`absolute bottom-0 right-0 w-5.5 h-5.5 sm:w-6 sm:h-6 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-full'} text-white border-2 border-white dark:border-slate-800 flex items-center justify-center shadow-xs group-hover/avatar:scale-110 transition-transform`}
+                style={{ backgroundColor: activeThemeColor }}
+              >
+                <Edit3 className="w-3 h-3 stroke-[2.5]" />
               </div>
             </div>
 
             {/* Nama & Email (Rata Tengah) */}
-            <div className="flex flex-col min-w-0 items-center text-center px-10 sm:px-14 z-10">
-              <h3 className="font-black text-base sm:text-lg text-slate-900 dark:text-white tracking-tight truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors max-w-xs sm:max-w-md">
+            <div className="flex flex-col min-w-0 items-center text-center px-4">
+              <h3 className="font-black text-sm sm:text-base text-white tracking-tight truncate group-hover:opacity-80 transition-opacity max-w-xs sm:max-w-md drop-shadow-2xs">
                 {profile?.name || t('user_default_name', currentLang)}
               </h3>
-              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 truncate mt-0.5 max-w-xs sm:max-w-md">
+              <span className="text-[10px] sm:text-[11px] font-semibold text-white/85 truncate mt-0.5 max-w-xs sm:max-w-md">
                 {profile?.email || 'rifqithoohaa12@gmail.com'}
               </span>
             </div>
