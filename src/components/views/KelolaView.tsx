@@ -2243,17 +2243,6 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
       icon: Trash2,
       iconColor: 'bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400',
       action: () => setActiveSubPage('bahaya')
-    },
-    {
-      id: 'kunci_layar',
-      title: 'Kunci Layar & Form Login',
-      icon: Lock,
-      iconColor: 'bg-slate-500/10 border border-slate-500/20 text-slate-700 dark:text-slate-300',
-      action: () => {
-        if (onLockScreen) {
-          onLockScreen();
-        }
-      }
     }
   ];
 
