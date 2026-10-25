@@ -17,6 +17,12 @@ import {
   getBudgetCategories, 
   getBudgetWallets 
 } from '../../lib/budgetUtils';
+import { 
+  getRadiusClass, 
+  getFilterButtonClass, 
+  getSegmentedTabClass, 
+  CLAY_PALETTE 
+} from '../../lib/themeStyles';
 
 interface BudgetsViewProps {
   budgets: Budget[];
@@ -433,19 +439,12 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
     ? (isEn ? 'All Wallets' : 'Seluruh Dompet')
     : (wallets.find(w => w.id === selectedWalletId)?.name || 'Dompet Terpilih');
 
-  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
-
-  const filterBtnClass = useMemo(() => {
-    let cls = `relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 `;
-    if (settings?.cardStyle === 'bordered') {
-      cls += 'border-2 border-slate-300 dark:border-slate-700 shadow-none';
-    } else if (settings?.cardStyle === 'shadowed') {
-      cls += 'border border-slate-200/80 dark:border-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]';
-    } else {
-      cls += 'border border-slate-200/90 dark:border-slate-800 shadow-none';
-    }
-    return cls;
-  }, [settings?.cardStyle, btnRadius]);
+  const isClay = settings?.uiStyle === 'clay';
+  const cardRadius = settings?.cardRadius || 'rounded';
+  const cardRadiusClass = getRadiusClass('card', cardRadius);
+  const btnRadius = getRadiusClass('button', cardRadius);
+  const pillRadius = getRadiusClass('pill', cardRadius);
+  const iconRadius = getRadiusClass('icon', cardRadius);
 
   return (
     <div className="flex flex-col gap-5" id="view-budgeting">
@@ -453,15 +452,15 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
       <div className="flex items-center justify-end w-full">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Wallet Selector Dropdown */}
-          <div className={filterBtnClass}>
-            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+          <div className={getFilterButtonClass(settings, 'indigo')}>
+            <span className={`text-[9px] sm:text-[10px] font-extrabold ${isClay ? 'text-indigo-900/70 dark:text-indigo-200/70' : 'text-slate-400 dark:text-slate-500'} uppercase tracking-wider shrink-0`}>
               {isEn ? 'Wallet:' : 'Dompet:'}
             </span>
             <div className="relative flex items-center min-w-0 flex-1 justify-end">
               <select
                 value={selectedWalletId}
                 onChange={(e) => setSelectedWalletId(e.target.value)}
-                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+                className={`text-[11px] sm:text-xs font-bold bg-transparent border-none ${isClay ? 'text-indigo-950 dark:text-indigo-100 font-extrabold' : 'text-slate-700 dark:text-slate-200'} focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none`}
               >
                 <option value="all">{isEn ? 'All' : 'Semua'}</option>
                 {wallets.map((w) => (
@@ -473,12 +472,12 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
           </div>
 
           {/* Period Selector */}
-          <div className={filterBtnClass}>
-            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+          <div className={getFilterButtonClass(settings, 'amber')}>
+            <span className={`text-[9px] sm:text-[10px] font-extrabold ${isClay ? 'text-amber-900/70 dark:text-amber-200/70' : 'text-slate-400 dark:text-slate-500'} uppercase tracking-wider shrink-0`}>
               {isEn ? 'Period:' : 'Periode:'}
             </span>
             <div className="relative flex items-center min-w-0 flex-1 justify-end">
-              <span className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 truncate text-right pr-4 block">
+              <span className={`text-[11px] sm:text-xs font-bold ${isClay ? 'text-amber-950 dark:text-amber-100 font-extrabold' : 'text-slate-700 dark:text-slate-200'} truncate text-right pr-4 block`}>
                 {getIndonesianMonthName(selectedMonth)}
               </span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none absolute right-0 shrink-0" />
@@ -511,36 +510,28 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
           : (isEn ? 'Specific Budgets' : 'Pos Anggaran Spesifik');
 
         return (
-          <div className={getCardClasses() + " p-4 sm:p-5 relative overflow-hidden"}>
+          <div className={`${isClay ? `clay-card-purple ${cardRadiusClass}` : getCardClasses()} p-4 sm:p-5 relative overflow-hidden`}>
             {/* Header: Tab Switcher (if both exist) or Title + Status Badge */}
             <div className="flex flex-wrap items-center justify-between gap-2.5">
               {hasGrandTotal && hasSpecific ? (
-                <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60">
+                <div className={`inline-flex items-center p-1 ${pillRadius} ${isClay ? 'clay-panel' : 'bg-slate-100 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60'}`}>
                   <button
                     type="button"
                     onClick={() => setActiveSummaryTab('global')}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                      effectiveTab === 'global'
-                        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
+                    className={`px-3 py-1 text-xs cursor-pointer ${getSegmentedTabClass(settings, effectiveTab === 'global', 'purple')}`}
                   >
                     {isEn ? 'Global Budget' : 'Anggaran Global'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setActiveSummaryTab('specific')}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
-                      effectiveTab === 'specific'
-                        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs'
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                    }`}
+                    className={`px-3 py-1 text-xs cursor-pointer ${getSegmentedTabClass(settings, effectiveTab === 'specific', 'purple')}`}
                   >
                     {isEn ? 'Specific Budget' : 'Anggaran Spesifik'}
                   </button>
                 </div>
               ) : (
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <span className={`text-xs font-bold ${isClay ? 'text-purple-900 dark:text-purple-200' : 'text-slate-500 dark:text-slate-400'} uppercase tracking-wider`}>
                   {hasGrandTotal 
                     ? (isEn ? 'Global Budget' : 'Anggaran Global') 
                     : (isEn ? 'Specific Budget' : 'Anggaran Spesifik')}
@@ -612,7 +603,7 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
             </p>
           </div>
         ) : (
-          filteredBudgets.map((b) => {
+          filteredBudgets.map((b, bIdx) => {
             const isAllCat = isAllCategoriesBudget(b);
             const isAllWal = isAllWalletsBudget(b);
             const budgetCats = getBudgetCategories(b, categories);
@@ -687,15 +678,17 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
             const primaryColor = isAllCat
               ? (!isAllWal && budgetWals[0] ? budgetWals[0].color : '#8b5cf6')
               : (budgetCats[0]?.color || '#3b82f6');
+            const itemTone = CLAY_PALETTE[bIdx % CLAY_PALETTE.length];
+            const cardClass = isClay ? `clay-card-${itemTone} ${cardRadiusClass}` : getCardClasses();
 
             return (
-              <div key={b.id} className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between gap-3.5 relative overflow-hidden transition-all duration-200`}>
+              <div key={b.id} className={`${cardClass} p-4 sm:p-5 flex flex-col justify-between gap-3.5 relative overflow-hidden transition-all duration-200`}>
                 {/* Header Row: Category, Wallet & Actions */}
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-start gap-3 min-w-0 flex-1">
                     <div 
-                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm relative mt-0.5"
-                      style={{ backgroundColor: `${primaryColor || '#3b82f6'}20` }}
+                      className={`w-10 h-10 ${iconRadius} flex items-center justify-center shrink-0 shadow-sm relative mt-0.5 ${isClay ? 'bg-white/80 dark:bg-black/30 shadow-xs' : ''}`}
+                      style={{ backgroundColor: isClay ? undefined : `${primaryColor || '#3b82f6'}20` }}
                     >
                       {isAllCat ? (
                         !isAllWal && budgetWals.length === 1 && budgetWals[0]?.icon ? (
@@ -864,9 +857,11 @@ export const BudgetsView: React.FC<BudgetsViewProps> = ({
           }}
         >
           <div className={`relative w-full max-w-lg mx-auto rounded-t-[28px] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[78vh] sm:h-[560px] max-h-[85vh] sm:max-h-[80vh] border-t sm:border border-slate-200/90 dark:border-slate-800 ${
-            uiStyle === 'glass'
-              ? 'glass-card'
-              : 'bg-white dark:bg-slate-900'
+            uiStyle === 'clay'
+              ? 'clay-card'
+              : uiStyle === 'glass'
+                ? 'glass-card'
+                : 'bg-white dark:bg-slate-900'
           }`}>
             {/* Mobile Sheet Drag Indicator */}
             <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />

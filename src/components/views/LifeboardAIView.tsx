@@ -97,7 +97,9 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
   }, [settings?.cardRadius]);
 
   const enclosingCardBgClass = useMemo(() => {
-    if (settings?.uiStyle === 'glass') {
+    if (settings?.uiStyle === 'clay') {
+      return 'clay-panel border-t sm:border border-white/70 dark:border-white/10 shadow-none';
+    } else if (settings?.uiStyle === 'glass') {
       return 'bg-white/90 dark:bg-[#121212]/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none';
     } else if (settings?.uiStyle === 'minimal') {
       return 'bg-white dark:bg-[#121212] border-t sm:border border-slate-200 dark:border-slate-800 shadow-none';
@@ -421,60 +423,60 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             <div className="w-full max-w-md mx-auto px-1">
               <div className="grid grid-cols-3 gap-2">
                 {/* Card 1: Sebenarnya Insight Apa */}
-                <div className={`${getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
+                <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-purple' : getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
                   <div>
                     <div 
-                      className={`w-6 h-6 ${smallRadiusClass} flex items-center justify-center mb-1.5`}
-                      style={{ backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
+                      className={`w-6 h-6 ${smallRadiusClass} ${settings?.uiStyle === 'clay' ? 'bg-white/80 dark:bg-black/30 text-purple-700 dark:text-purple-300 shadow-xs' : ''} flex items-center justify-center mb-1.5`}
+                      style={settings?.uiStyle === 'clay' ? undefined : { backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
                     >
                       <Sparkles className="w-3.5 h-3.5" />
                     </div>
                     <span 
-                      className="text-[9px] font-extrabold uppercase tracking-wider block mb-0.5"
-                      style={{ color: activeThemeColor }}
+                      className={`text-[9px] font-extrabold uppercase tracking-wider block mb-0.5 ${settings?.uiStyle === 'clay' ? 'text-purple-900 dark:text-purple-200' : ''}`}
+                      style={settings?.uiStyle === 'clay' ? undefined : { color: activeThemeColor }}
                     >
                       Cakupan
                     </span>
                     <h4 className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-100 mb-1 leading-tight">
                       Seluruh Data
                     </h4>
-                    <p className="text-[9.5px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
+                    <p className={`text-[9.5px] sm:text-[10px] ${settings?.uiStyle === 'clay' ? 'text-purple-950/80 dark:text-purple-200/80' : 'text-slate-500 dark:text-slate-400'} leading-snug`}>
                       Mengevaluasi seluruh pos: mutasi, tabungan, budget, wishlist, dan agenda.
                     </p>
                   </div>
                 </div>
 
                 {/* Card 2: Seberapa Akurat */}
-                <div className={`${getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
+                <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-emerald' : getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
                   <div>
-                    <div className={`w-6 h-6 ${smallRadiusClass} bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-1.5`}>
+                    <div className={`w-6 h-6 ${smallRadiusClass} ${settings?.uiStyle === 'clay' ? 'bg-white/80 dark:bg-black/30 text-emerald-700 dark:text-emerald-300 shadow-xs' : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'} flex items-center justify-center mb-1.5`}>
                       <Target className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-0.5">
+                    <span className={`text-[9px] font-extrabold uppercase tracking-wider block mb-0.5 ${settings?.uiStyle === 'clay' ? 'text-emerald-900 dark:text-emerald-200' : 'text-emerald-600 dark:text-emerald-400'}`}>
                       Akurasi
                     </span>
                     <h4 className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-100 mb-1 leading-tight">
                       100% Catatanmu
                     </h4>
-                    <p className="text-[9.5px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
+                    <p className={`text-[9.5px] sm:text-[10px] ${settings?.uiStyle === 'clay' ? 'text-emerald-950/80 dark:text-emerald-200/80' : 'text-slate-500 dark:text-slate-400'} leading-snug`}>
                       Hitungan angkanya pas, kalimatnya dibantu Gemini AI.
                     </p>
                   </div>
                 </div>
 
                 {/* Card 3: Kekurangannya Apa (Berkaitan Langsung dengan AI) */}
-                <div className={`${getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
+                <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-amber' : getCardClasses()} p-2.5 sm:p-3 flex flex-col justify-between text-left`}>
                   <div>
-                    <div className={`w-6 h-6 ${smallRadiusClass} bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-1.5`}>
+                    <div className={`w-6 h-6 ${smallRadiusClass} ${settings?.uiStyle === 'clay' ? 'bg-white/80 dark:bg-black/30 text-amber-700 dark:text-amber-300 shadow-xs' : 'bg-amber-500/15 text-amber-600 dark:text-amber-400'} flex items-center justify-center mb-1.5`}>
                       <AlertTriangle className="w-3.5 h-3.5" />
                     </div>
-                    <span className="text-[9px] font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wider block mb-0.5">
+                    <span className={`text-[9px] font-extrabold uppercase tracking-wider block mb-0.5 ${settings?.uiStyle === 'clay' ? 'text-amber-900 dark:text-amber-200' : 'text-amber-600 dark:text-amber-400'}`}>
                       Kekurangan AI
                     </span>
                     <h4 className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-100 mb-1 leading-tight">
                       Bisa Salah Tafsir
                     </h4>
-                    <p className="text-[9.5px] sm:text-[10px] text-slate-500 dark:text-slate-400 leading-snug">
+                    <p className={`text-[9.5px] sm:text-[10px] ${settings?.uiStyle === 'clay' ? 'text-amber-950/80 dark:text-amber-200/80' : 'text-slate-500 dark:text-slate-400'} leading-snug`}>
                       Ulasan dibuat otomatis oleh AI, bisa keliru membaca situasi dan konteks transaksimu.
                     </p>
                   </div>
@@ -630,8 +632,8 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
               {/* Kolom Kiri: Hasil Evaluasi */}
               <div 
-                className={`${getCardClasses()} p-5 sm:p-6 bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border flex flex-col justify-between relative`}
-                style={{ borderColor: `${activeThemeColor}30` }}
+                className={`${settings?.uiStyle === 'clay' ? 'clay-card-purple' : `${getCardClasses()} bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border` } p-5 sm:p-6 flex flex-col justify-between relative`}
+                style={settings?.uiStyle === 'clay' ? undefined : { borderColor: `${activeThemeColor}30` }}
               >
                 {isGeneratingAI && (
                   <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs rounded-3xl flex items-center justify-center z-10">
@@ -645,23 +647,23 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                   <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center gap-2">
                       <div 
-                        className="w-6 h-6 rounded-lg flex items-center justify-center"
-                        style={{ backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center ${settings?.uiStyle === 'clay' ? 'bg-white/80 dark:bg-black/30 text-purple-700 dark:text-purple-300 shadow-xs' : ''}`}
+                        style={settings?.uiStyle === 'clay' ? undefined : { backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
                       >
                         <Award className="w-3.5 h-3.5" />
                       </div>
-                      <h4 className="text-xs font-black tracking-wider uppercase text-slate-800 dark:text-slate-200">
+                      <h4 className={`text-xs font-black tracking-wider uppercase ${settings?.uiStyle === 'clay' ? 'text-purple-950 dark:text-purple-100' : 'text-slate-800 dark:text-slate-200'}`}>
                         Hasil Evaluasi
                       </h4>
                     </div>
                     <span 
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                      style={{ backgroundColor: `${activeThemeColor}15`, color: activeThemeColor }}
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${settings?.uiStyle === 'clay' ? 'bg-white/70 dark:bg-black/30 text-purple-900 dark:text-purple-200' : ''}`}
+                      style={settings?.uiStyle === 'clay' ? undefined : { backgroundColor: `${activeThemeColor}15`, color: activeThemeColor }}
                     >
                       <Sparkles className="w-2.5 h-2.5" /> Gemini AI
                     </span>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-medium">
+                  <p className={`text-xs sm:text-sm ${settings?.uiStyle === 'clay' ? 'text-purple-950/90 dark:text-purple-100/90' : 'text-slate-700 dark:text-slate-200'} leading-relaxed font-medium`}>
                     {insightData.executiveSummary}
                   </p>
                 </div>
@@ -669,8 +671,8 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
 
               {/* Kolom Kanan: Rekomendasi Bulan Berikutnya */}
               <div 
-                className={`${getCardClasses()} p-5 sm:p-6 bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border flex flex-col justify-between relative`}
-                style={{ borderColor: `${activeThemeColor}30` }}
+                className={`${settings?.uiStyle === 'clay' ? 'clay-card-teal' : `${getCardClasses()} bg-gradient-to-br from-rose-50/50 to-white dark:from-rose-950/20 dark:to-slate-900 border` } p-5 sm:p-6 flex flex-col justify-between relative`}
+                style={settings?.uiStyle === 'clay' ? undefined : { borderColor: `${activeThemeColor}30` }}
               >
                 {isGeneratingAI && (
                   <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs rounded-3xl flex items-center justify-center z-10">
@@ -684,23 +686,23 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
                   <div className="flex items-center justify-between mb-2.5">
                     <div className="flex items-center gap-2">
                       <div 
-                        className="w-6 h-6 rounded-lg flex items-center justify-center"
-                        style={{ backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center ${settings?.uiStyle === 'clay' ? 'bg-white/80 dark:bg-black/30 text-teal-700 dark:text-teal-300 shadow-xs' : ''}`}
+                        style={settings?.uiStyle === 'clay' ? undefined : { backgroundColor: `${activeThemeColor}20`, color: activeThemeColor }}
                       >
                         <Target className="w-3.5 h-3.5" />
                       </div>
-                      <h4 className="text-xs font-black tracking-wider uppercase text-slate-800 dark:text-slate-200">
+                      <h4 className={`text-xs font-black tracking-wider uppercase ${settings?.uiStyle === 'clay' ? 'text-teal-950 dark:text-teal-100' : 'text-slate-800 dark:text-slate-200'}`}>
                         Rekomendasi Bulan Berikutnya
                       </h4>
                     </div>
                     <span 
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                      style={{ backgroundColor: `${activeThemeColor}15`, color: activeThemeColor }}
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${settings?.uiStyle === 'clay' ? 'bg-white/70 dark:bg-black/30 text-teal-900 dark:text-teal-200' : ''}`}
+                      style={settings?.uiStyle === 'clay' ? undefined : { backgroundColor: `${activeThemeColor}15`, color: activeThemeColor }}
                     >
                       Taktis
                     </span>
                   </div>
-                  <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-200 list-disc list-inside font-medium">
+                  <ul className={`space-y-2 text-xs ${settings?.uiStyle === 'clay' ? 'text-teal-950/90 dark:text-teal-100/90' : 'text-slate-700 dark:text-slate-200'} list-disc list-inside font-medium`}>
                     {insightData.strategicRecommendations.slice(0, 3).map((rec, i) => (
                       <li key={i} className="leading-relaxed">
                         {rec}
@@ -714,17 +716,17 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
             {/* Arus Kas Finansial (Pendapatan, Pengeluaran, Total Saldo Akhir) */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {/* Pendapatan */}
-              <div className={`${getCardClasses()} p-5 flex flex-col justify-between`}>
-                <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-emerald' : getCardClasses()} p-5 flex flex-col justify-between`}>
+                <div className={`flex items-center justify-between ${settings?.uiStyle === 'clay' ? 'text-emerald-900 dark:text-emerald-200' : 'text-slate-500 dark:text-slate-400'} mb-2`}>
                   <span className="text-[11px] font-extrabold uppercase tracking-wider">Pendapatan</span>
-                  <TrendingUp className="w-4 h-4 text-emerald-500" />
+                  <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <span className="text-lg sm:text-xl font-black font-mono text-emerald-600 dark:text-emerald-400 tracking-tight block">
+                  <span className={`text-lg sm:text-xl font-black font-mono tracking-tight block ${settings?.uiStyle === 'clay' ? 'text-emerald-950 dark:text-emerald-100' : 'text-emerald-600 dark:text-emerald-400'}`}>
                     {formatIDR(insightData.totalIncome)}
                   </span>
                   {insightData.topIncomeSources.length > 0 && (
-                    <p className="text-[11px] text-slate-400 mt-1 truncate">
+                    <p className={`text-[11px] ${settings?.uiStyle === 'clay' ? 'text-emerald-800/80 dark:text-emerald-200/80' : 'text-slate-400'} mt-1 truncate`}>
                       Sumber: {insightData.topIncomeSources[0].name}
                     </p>
                   )}
@@ -732,17 +734,17 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
               </div>
 
               {/* Pengeluaran */}
-              <div className={`${getCardClasses()} p-5 flex flex-col justify-between`}>
-                <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-rose' : getCardClasses()} p-5 flex flex-col justify-between`}>
+                <div className={`flex items-center justify-between ${settings?.uiStyle === 'clay' ? 'text-rose-900 dark:text-rose-200' : 'text-slate-500 dark:text-slate-400'} mb-2`}>
                   <span className="text-[11px] font-extrabold uppercase tracking-wider">Pengeluaran</span>
-                  <TrendingDown className="w-4 h-4 text-rose-500" />
+                  <TrendingDown className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                 </div>
                 <div>
-                  <span className="text-lg sm:text-xl font-black font-mono text-rose-600 dark:text-rose-400 tracking-tight block">
+                  <span className={`text-lg sm:text-xl font-black font-mono tracking-tight block ${settings?.uiStyle === 'clay' ? 'text-rose-950 dark:text-rose-100' : 'text-rose-600 dark:text-rose-400'}`}>
                     {formatIDR(insightData.totalExpense)}
                   </span>
                   {insightData.topExpenseCategories.length > 0 && (
-                    <p className="text-[11px] text-slate-400 mt-1 truncate">
+                    <p className={`text-[11px] ${settings?.uiStyle === 'clay' ? 'text-rose-800/80 dark:text-rose-200/80' : 'text-slate-400'} mt-1 truncate`}>
                       Terbesar: {insightData.topExpenseCategories[0].name}
                     </p>
                   )}
@@ -750,19 +752,21 @@ export const LifeboardAIView: React.FC<LifeboardAIViewProps> = ({
               </div>
 
               {/* Total Saldo Akhir */}
-              <div className={`${getCardClasses()} p-5 flex flex-col justify-between`}>
-                <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-2">
+              <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-blue' : getCardClasses()} p-5 flex flex-col justify-between`}>
+                <div className={`flex items-center justify-between ${settings?.uiStyle === 'clay' ? 'text-sky-900 dark:text-sky-200' : 'text-slate-500 dark:text-slate-400'} mb-2`}>
                   <span className="text-[11px] font-extrabold uppercase tracking-wider">Total Saldo Akhir</span>
-                  <DollarSign className="w-4 h-4 text-blue-500" />
+                  <DollarSign className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                 </div>
                 <div>
                   <span className={`text-lg sm:text-xl font-black font-mono tracking-tight block ${
-                    insightData.netCashflow >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600'
+                    settings?.uiStyle === 'clay' 
+                      ? 'text-sky-950 dark:text-sky-100'
+                      : (insightData.netCashflow >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600')
                   }`}>
                     {insightData.netCashflow >= 0 ? `+${formatIDR(insightData.netCashflow)}` : `-${formatIDR(Math.abs(insightData.netCashflow))}`}
                   </span>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Rasio Simpanan: {insightData.savingsRate}%
+                  <p className={`text-[11px] ${settings?.uiStyle === 'clay' ? 'text-sky-800/80 dark:text-sky-200/80' : 'text-slate-400'} mt-1 truncate`}>
+                    Arus Kas Bersih (Rasio Simpanan: {insightData.savingsRate}%)
                   </p>
                 </div>
               </div>

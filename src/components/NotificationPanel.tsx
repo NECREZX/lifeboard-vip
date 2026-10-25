@@ -5,7 +5,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { AlertTriangle, CheckCircle, Info, ChevronRight, Bell } from 'lucide-react';
-import { NotificationItem } from '../types';
+import { NotificationItem, UIStyle } from '../types';
 
 interface NotificationPanelProps {
   notifications: NotificationItem[];
@@ -17,7 +17,7 @@ interface NotificationPanelProps {
   onDeleteOne?: (id: string) => void;
   onViewAll: () => void;
   accentColor: string;
-  uiStyle?: 'modern' | 'glass';
+  uiStyle?: UIStyle;
 }
 
 export default function NotificationPanel({
@@ -88,17 +88,21 @@ export default function NotificationPanel({
       {isOpen && (
         <div 
           className={`fixed sm:absolute left-1/2 sm:left-auto sm:right-0 sm:translate-x-0 -translate-x-1/2 top-20 sm:top-full mt-2 w-[calc(100vw-32px)] sm:w-96 rounded-3xl z-[100] overflow-hidden transition-all ${
-            uiStyle === 'glass' 
-              ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)]' 
-              : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)]'
+            uiStyle === 'clay'
+              ? 'clay-panel !border-white/80 dark:!border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.18)]'
+              : uiStyle === 'glass' 
+                ? 'glass-panel !border-white dark:!border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)]' 
+                : 'bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800/90 shadow-[0_12px_40px_rgba(0,0,0,0.12)]'
           }`}
           id="notification-dropdown-panel"
         >
           {/* Header */}
           <div className={`p-3.5 px-4 border-b flex items-center justify-between transition-all ${
-            uiStyle === 'glass'
-              ? 'bg-white/20 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
-              : 'bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'
+            uiStyle === 'clay'
+              ? 'bg-slate-100/60 dark:bg-slate-900/40 border-white/40 dark:border-white/10'
+              : uiStyle === 'glass'
+                ? 'bg-white/20 dark:bg-slate-900/30 backdrop-blur-md border-white/40 dark:border-white/10'
+                : 'bg-slate-50/50 dark:bg-slate-900/50 border-slate-100 dark:border-slate-800'
           }`}>
             <div className="flex items-center gap-2">
               <h3 className="font-extrabold text-sm text-slate-950 dark:text-white">Notifikasi</h3>

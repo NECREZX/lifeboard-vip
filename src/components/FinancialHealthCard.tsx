@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Budget, Transaction } from '../types';
+import { Budget, Transaction, UIStyle } from '../types';
 
 interface FinancialHealthCardProps {
   transactions?: Transaction[];
@@ -14,6 +14,7 @@ interface FinancialHealthCardProps {
   getCardClasses: () => string;
   onNavigateToBudgets?: () => void;
   onNavigateToLaporan?: () => void;
+  uiStyle?: UIStyle;
 }
 
 export const FinancialHealthCard: React.FC<FinancialHealthCardProps> = ({
@@ -23,7 +24,8 @@ export const FinancialHealthCard: React.FC<FinancialHealthCardProps> = ({
   currentMonthExpenses,
   currentLang = 'id',
   getCardClasses,
-  onNavigateToLaporan
+  onNavigateToLaporan,
+  uiStyle
 }) => {
   const isEn = currentLang === 'en';
 
@@ -316,14 +318,14 @@ export const FinancialHealthCard: React.FC<FinancialHealthCardProps> = ({
         {/* PILAR KONDISI FINANSIAL: Tiap pilar dibingkai kotak berbatas (border) tersendiri agar rapih */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Pilar 1: Pengendalian Belanja */}
-          <div className="p-3.5 sm:p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 flex items-center justify-between gap-3 transition-colors hover:border-slate-300 dark:hover:border-slate-600 shadow-2xs">
+          <div className={`p-3.5 sm:p-4 rounded-xl ${uiStyle === 'clay' ? 'clay-card-rose' : 'border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 shadow-2xs hover:border-slate-300 dark:hover:border-slate-600'} flex items-center justify-between gap-3 transition-colors`}>
             <div className="min-w-0">
-              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <div className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${uiStyle === 'clay' ? 'text-rose-900 dark:text-rose-200' : 'text-slate-500 dark:text-slate-400'}`}>
                 {isEn ? 'Spending Control' : 'Pengendalian Belanja'}
               </div>
-              <div className="font-mono font-bold text-base sm:text-lg text-slate-900 dark:text-white mt-0.5 truncate">
+              <div className={`font-mono font-bold text-base sm:text-lg ${uiStyle === 'clay' ? 'text-rose-950 dark:text-rose-100' : 'text-slate-900 dark:text-white'} mt-0.5 truncate`}>
                 {income > 0 ? `${expenseRatio}%` : (currentMonthExpenses > 0 ? '100%' : '0%')}
-                <span className="text-xs font-normal text-slate-400 dark:text-slate-500 ml-1">dari pemasukan</span>
+                <span className={`text-xs font-normal ${uiStyle === 'clay' ? 'text-rose-800/70 dark:text-rose-200/70' : 'text-slate-400 dark:text-slate-500'} ml-1`}>dari pemasukan</span>
               </div>
             </div>
             <span className={`px-2.5 py-1 text-[11px] font-bold rounded-full border shrink-0 text-center shadow-2xs ${expenseBadge.class}`}>
@@ -332,14 +334,14 @@ export const FinancialHealthCard: React.FC<FinancialHealthCardProps> = ({
           </div>
 
           {/* Pilar 2: Kemampuan Menabung */}
-          <div className="p-3.5 sm:p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 flex items-center justify-between gap-3 transition-colors hover:border-slate-300 dark:hover:border-slate-600 shadow-2xs">
+          <div className={`p-3.5 sm:p-4 rounded-xl ${uiStyle === 'clay' ? 'clay-card-emerald' : 'border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 shadow-2xs hover:border-slate-300 dark:hover:border-slate-600'} flex items-center justify-between gap-3 transition-colors`}>
             <div className="min-w-0">
-              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <div className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${uiStyle === 'clay' ? 'text-emerald-900 dark:text-emerald-200' : 'text-slate-500 dark:text-slate-400'}`}>
                 {isEn ? 'Savings Capacity' : 'Kemampuan Menabung'}
               </div>
-              <div className="font-mono font-bold text-base sm:text-lg text-slate-900 dark:text-white mt-0.5 truncate">
+              <div className={`font-mono font-bold text-base sm:text-lg ${uiStyle === 'clay' ? 'text-emerald-950 dark:text-emerald-100' : 'text-slate-900 dark:text-white'} mt-0.5 truncate`}>
                 {savingsRate}%
-                <span className="text-xs font-normal text-slate-400 dark:text-slate-500 ml-1">tersimpan</span>
+                <span className={`text-xs font-normal ${uiStyle === 'clay' ? 'text-emerald-800/70 dark:text-emerald-200/70' : 'text-slate-400 dark:text-slate-500'} ml-1`}>tersimpan</span>
               </div>
             </div>
             <span className={`px-2.5 py-1 text-[11px] font-bold rounded-full border shrink-0 text-center shadow-2xs ${savingsBadge.class}`}>
@@ -348,14 +350,14 @@ export const FinancialHealthCard: React.FC<FinancialHealthCardProps> = ({
           </div>
 
           {/* Pilar 3: Kesiapan Dana Darurat */}
-          <div className="p-3.5 sm:p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 flex items-center justify-between gap-3 transition-colors hover:border-slate-300 dark:hover:border-slate-600 shadow-2xs">
+          <div className={`p-3.5 sm:p-4 rounded-xl ${uiStyle === 'clay' ? 'clay-card-blue' : 'border border-slate-200/80 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-800/40 shadow-2xs hover:border-slate-300 dark:hover:border-slate-600'} flex items-center justify-between gap-3 transition-colors`}>
             <div className="min-w-0">
-              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              <div className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wider ${uiStyle === 'clay' ? 'text-sky-900 dark:text-sky-200' : 'text-slate-500 dark:text-slate-400'}`}>
                 {isEn ? 'Emergency Preparedness' : 'Kesiapan Dana Darurat'}
               </div>
-              <div className="font-mono font-bold text-base sm:text-lg text-slate-900 dark:text-white mt-0.5 truncate">
+              <div className={`font-mono font-bold text-base sm:text-lg ${uiStyle === 'clay' ? 'text-sky-950 dark:text-sky-100' : 'text-slate-900 dark:text-white'} mt-0.5 truncate`}>
                 {reserveMultiple} Bulan
-                <span className="text-xs font-normal text-slate-400 dark:text-slate-500 ml-1">biaya hidup</span>
+                <span className={`text-xs font-normal ${uiStyle === 'clay' ? 'text-sky-800/70 dark:text-sky-200/70' : 'text-slate-400 dark:text-slate-500'} ml-1`}>biaya hidup</span>
               </div>
             </div>
             <span className={`px-2.5 py-1 text-[11px] font-bold rounded-full border shrink-0 text-center shadow-2xs ${reserveBadge.class}`}>

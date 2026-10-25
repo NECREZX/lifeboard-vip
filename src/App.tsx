@@ -94,6 +94,7 @@ import { TrendChart, CategoryPieChart, SourcePieChart } from './components/Inter
 import { formatIDR } from './lib/formatters';
 import { t } from './lib/i18n';
 import { getEffectiveThemeColor, getThemeContrastColor, THEME_PRESETS, normalizeHexColor } from './lib/theme';
+import { getRadiusClass } from './lib/themeStyles';
 
 import { DashboardView } from './components/views/DashboardView';
 import { TransactionsView } from './components/views/TransactionsView';
@@ -362,7 +363,7 @@ export default function App() {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.colorScheme = 'light';
       document.documentElement.style.backgroundColor = rawThemeColor;
-      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : "#f8fafc";
+      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : settings.uiStyle === 'clay' ? "#eef2f6" : "#f8fafc";
       if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'light');
     }
 
@@ -409,6 +410,13 @@ export default function App() {
     document.documentElement.style.setProperty('--app-accent', effectiveThemeColor);
     document.documentElement.style.setProperty('--app-accent-contrast', contrastColor);
     document.documentElement.style.setProperty('--accent-color', effectiveThemeColor);
+    
+    if (settings.cardRadius) {
+      document.documentElement.setAttribute('data-card-radius', settings.cardRadius);
+    }
+    if (settings.uiStyle) {
+      document.documentElement.setAttribute('data-ui-style', settings.uiStyle);
+    }
   }, [settings]);
 
   // Scroll to top effect and scroll handler
@@ -2126,7 +2134,9 @@ export default function App() {
     let cls = "overflow-hidden ";
     
     // 1. Apply UI Style baseline background & structural styles
-    if (settings.uiStyle === 'glass') {
+    if (settings.uiStyle === 'clay') {
+      cls += "clay-panel ";
+    } else if (settings.uiStyle === 'glass') {
       cls += "glass-panel ";
     } else if (settings.uiStyle === 'minimal') {
       cls += "bg-transparent dark:bg-transparent border-0 border-b border-slate-200 dark:border-slate-800 shadow-none ";
@@ -2135,15 +2145,11 @@ export default function App() {
       cls += "bg-white dark:bg-slate-900 ";
     }
 
-    // 2. Apply Border Radius
-    if (settings.uiStyle !== 'minimal') {
-      if (settings.cardRadius === 'sharp') cls += "rounded-none ";
-      else if (settings.cardRadius === 'rounded') cls += "rounded-2xl ";
-      else if (settings.cardRadius === 'extra') cls += "rounded-3xl ";
-    }
+    // 2. Apply Border Radius consistently across all styles
+    cls += getRadiusClass('card', settings.cardRadius) + " ";
 
-    // 3. Apply Card Borders & Shadows for non-glass styles
-    if (settings.uiStyle !== 'minimal' && settings.uiStyle !== 'glass') {
+    // 3. Apply Card Borders & Shadows for non-glass and non-clay styles
+    if (settings.uiStyle !== 'minimal' && settings.uiStyle !== 'glass' && settings.uiStyle !== 'clay') {
       if (settings.cardStyle === 'flat') {
         cls += "border border-slate-200/90 dark:border-slate-800/80 shadow-none ";
       } else if (settings.cardStyle === 'bordered') {
@@ -2217,6 +2223,12 @@ export default function App() {
 
   const getGestureBarClass = () => {
     const isDark = settings.isDarkMode;
+
+    if (settings.uiStyle === 'clay') {
+      return isDark
+        ? 'bg-[#182030] border-t border-slate-800/40 shadow-inner'
+        : 'bg-[#eef2f6] border-t border-white/60 shadow-inner';
+    }
 
     if (settings.uiStyle === 'glass') {
       return isDark
@@ -3115,11 +3127,12 @@ export default function App() {
               {/* UI Style Scheme */}
               <div>
                 <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">3. Gaya Visual UI</span>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
                     { id: 'modern', label: 'Modern Slate', desc: 'Sederhana & Elegan' },
                     { id: 'minimal', label: 'Minimalist', desc: 'Tanpa Pembatas' },
-                    { id: 'glass', label: 'Glassmorphic', desc: 'Liquid Frosted Glass' }
+                    { id: 'glass', label: 'Glassmorphic', desc: 'Liquid Frosted Glass' },
+                    { id: 'clay', label: 'Claymorphism', desc: 'Clay 3D Timbul' }
                   ].map((s) => {
                     const isActive = settings.uiStyle === s.id;
                     return (
@@ -3128,14 +3141,21 @@ export default function App() {
                         onClick={() => setSettings({ ...settings, uiStyle: s.id as UIStyle })}
                         className={`p-3 rounded-xl border text-left transition select-none focus:outline-none relative overflow-hidden ${
                           isActive 
-                            ? (s.id === 'glass' 
-                                ? 'glass-panel border-indigo-500/80 font-bold shadow-md' 
-                                : 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-sm')
-                            : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
+                            ? (s.id === 'clay'
+                                ? 'clay-panel border-indigo-500 font-bold shadow-md'
+                                : s.id === 'glass' 
+                                  ? 'glass-panel border-indigo-500/80 font-bold shadow-md' 
+                                  : 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-sm')
+                            : (s.id === 'clay'
+                                ? 'clay-button border-slate-200 dark:border-slate-800'
+                                : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900')
                         }`}
                       >
                         {s.id === 'glass' && (
                           <div className="absolute -right-2 -bottom-2 w-10 h-10 bg-gradient-to-br from-indigo-500/40 via-pink-400/30 to-cyan-400/40 rounded-full blur-md pointer-events-none" />
+                        )}
+                        {s.id === 'clay' && (
+                          <div className="absolute -right-2 -bottom-2 w-8 h-8 rounded-full bg-indigo-500/15 pointer-events-none blur-xs" />
                         )}
                         <span className="font-bold text-xs text-slate-900 dark:text-white block relative z-10">{s.label}</span>
                         <span className="text-[9px] text-slate-400 dark:text-slate-500 font-medium mt-0.5 block relative z-10">{s.desc}</span>

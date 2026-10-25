@@ -63,6 +63,7 @@ import { BRAND_WALLETS, BRAND_LOGOS_MAP, detectBrandFromWalletName } from '../Ba
 import { formatIDR } from '../../lib/formatters';
 import { t } from '../../lib/i18n';
 import { getEffectiveThemeColor, getThemeContrastColor, THEME_PRESETS, normalizeHexColor } from '../../lib/theme';
+import { getRadiusClass } from '../../lib/themeStyles';
 
 // Ikon Dompet Klasik
 const CLASSIC_WALLET_ICONS = [
@@ -286,7 +287,9 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   }, [settings?.cardRadius]);
 
   const enclosingCardBgClass = useMemo(() => {
-    if (settings?.uiStyle === 'glass') {
+    if (settings?.uiStyle === 'clay') {
+      return 'clay-panel border-t sm:border border-slate-200/60 dark:border-slate-800';
+    } else if (settings?.uiStyle === 'glass') {
       return 'bg-white/90 dark:bg-[#121212]/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none';
     } else if (settings?.uiStyle === 'minimal') {
       return 'bg-white dark:bg-[#121212] border-t sm:border border-slate-200 dark:border-slate-800 shadow-none';
@@ -395,7 +398,7 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
     } else {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.backgroundColor = '#ffffff';
-      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? '#f1f5f9' : '#f8fafc';
+      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? '#f1f5f9' : settings.uiStyle === 'clay' ? '#eef2f6' : '#f8fafc';
     }
   };
 
@@ -422,10 +425,14 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   };
 
   const getInputClass = (extra = "px-4") => {
-    if (settings?.uiStyle === 'glass') {
-      return `w-full py-2.5 text-xs rounded-xl glass-input text-slate-800 dark:text-slate-100 focus:outline-none ${extra}`;
+    const inputRadius = getRadiusClass('input', settings?.cardRadius);
+    if (settings?.uiStyle === 'clay') {
+      return `w-full py-2.5 text-xs ${inputRadius} clay-input text-slate-800 dark:text-slate-100 focus:outline-none ${extra}`;
     }
-    return `w-full py-2.5 text-xs rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none ${extra}`;
+    if (settings?.uiStyle === 'glass') {
+      return `w-full py-2.5 text-xs ${inputRadius} glass-input text-slate-800 dark:text-slate-100 focus:outline-none ${extra}`;
+    }
+    return `w-full py-2.5 text-xs ${inputRadius} border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none ${extra}`;
   };
 
   // Calculations for summary
@@ -1876,24 +1883,30 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
             <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 block mb-2 uppercase tracking-widest">
               5. Gaya Visual UI
             </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { id: 'modern', label: 'Modern Slate', desc: 'Sederhana & Elegan' },
                 { id: 'minimal', label: 'Minimalist', desc: 'Tanpa Pembatas' },
-                { id: 'glass', label: 'Glassmorphic', desc: 'Liquid Frosted Glass' }
+                { id: 'glass', label: 'Glassmorphic', desc: 'Liquid Frosted Glass' },
+                { id: 'clay', label: 'Claymorphism', desc: 'Clay 3D Timbul' }
               ].map((s) => {
                 const isActive = settings.uiStyle === s.id;
+                const optionRadius = getRadiusClass('button', settings.cardRadius);
                 return (
                   <button
                     key={s.id}
                     type="button"
                     onClick={() => setSettings && setSettings({ ...settings, uiStyle: s.id as UIStyle })}
-                    className={`p-3 rounded-xl border text-left cursor-pointer relative overflow-hidden ${
+                    className={`p-3 ${optionRadius} border text-left cursor-pointer relative overflow-hidden transition-all ${
                       isActive 
-                        ? (s.id === 'glass' 
-                            ? 'glass-panel border-indigo-500/80 font-bold shadow-xs' 
-                            : 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-xs')
-                        : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
+                        ? (s.id === 'clay'
+                            ? 'clay-panel border-indigo-500 font-bold shadow-md scale-[1.02]'
+                            : s.id === 'glass' 
+                              ? 'glass-panel border-indigo-500/80 font-bold shadow-xs scale-[1.02]' 
+                              : 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-xs scale-[1.02]')
+                        : (s.id === 'clay'
+                            ? 'clay-button border-slate-200 dark:border-slate-800'
+                            : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900')
                     }`}
                   >
                     {s.id === 'glass' && (
@@ -1919,12 +1932,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 { id: 'shadowed', label: 'Bayangan', desc: 'Efek Kedalaman' }
               ].map((c) => {
                 const isActive = settings.cardStyle === c.id;
+                const optionRadius = getRadiusClass('button', settings.cardRadius);
                 return (
                   <button
                     key={c.id}
                     type="button"
                     onClick={() => setSettings && setSettings({ ...settings, cardStyle: c.id as CardStyle })}
-                    className={`p-3 rounded-xl border text-left cursor-pointer ${
+                    className={`p-3 ${optionRadius} border text-left cursor-pointer ${
                       isActive 
                         ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-xs' 
                         : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
@@ -1950,12 +1964,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 { id: 'extra', label: 'Ekstra', desc: 'Sangat Bulat' }
               ].map((c) => {
                 const isActive = settings.cardRadius === c.id;
+                const optionRadius = getRadiusClass('button', settings.cardRadius);
                 return (
                   <button
                     key={c.id}
                     type="button"
                     onClick={() => setSettings && setSettings({ ...settings, cardRadius: c.id as CardRadius })}
-                    className={`p-3 rounded-xl border text-left cursor-pointer ${
+                    className={`p-3 ${optionRadius} border text-left cursor-pointer ${
                       isActive 
                         ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-xs' 
                         : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
@@ -1981,12 +1996,13 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
                 { id: 'striped', label: 'Zebra', desc: 'Garis Selang-Seling' }
               ].map((t) => {
                 const isActive = settings.tableStyle === t.id;
+                const optionRadius = getRadiusClass('button', settings.cardRadius);
                 return (
                   <button
                     key={t.id}
                     type="button"
                     onClick={() => setSettings && setSettings({ ...settings, tableStyle: t.id as TableStyle })}
-                    className={`p-3 rounded-xl border text-left cursor-pointer ${
+                    className={`p-3 ${optionRadius} border text-left cursor-pointer ${
                       isActive 
                         ? 'border-slate-900 bg-slate-50 dark:border-slate-100 dark:bg-slate-900/60 font-bold shadow-xs' 
                         : 'border-slate-100 dark:border-slate-900 hover:border-slate-200 dark:hover:border-slate-800 bg-white dark:bg-slate-900'
@@ -2332,22 +2348,40 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
       <div className={`relative z-10 -mx-4 sm:-mx-6 -mt-[36px] sm:-mt-[88px] lg:-mt-[96px] ${enclosingCardRadiusClass} ${enclosingCardBgClass} px-4 sm:px-5 pt-6 pb-28 space-y-2.5`}>
         {menuItems.map((item) => {
           const IconComp = item.icon;
+          const isClay = settings?.uiStyle === 'clay';
+          let clayColorClass = 'clay-card';
+          if (item.id === 'tampilan') clayColorClass = 'clay-card-indigo';
+          else if (item.id === 'dompet') clayColorClass = 'clay-card-amber';
+          else if (item.id === 'kategori') clayColorClass = 'clay-card-rose';
+          else if (item.id === 'sumber') clayColorClass = 'clay-card-teal';
+          else if (item.id === 'cadangan') clayColorClass = 'clay-card-blue';
+          else if (item.id === 'ekspor') clayColorClass = 'clay-card-emerald';
+          else if (item.id === 'bahaya') clayColorClass = 'clay-card-rose';
+
+          const buttonBgClass = isClay
+            ? `${clayColorClass} text-slate-900 dark:text-white`
+            : 'bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800/80 border border-slate-200/80 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700 shadow-none';
+
+          const iconContainerClass = isClay
+            ? 'bg-white/90 dark:bg-black/30 shadow-xs'
+            : item.iconColor;
+
           return (
             <button
               key={item.id}
               type="button"
               onClick={item.action}
-              className={`w-full flex items-center justify-between p-3.5 sm:p-4 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl'} bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800/80 border border-slate-200/80 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700 transition-all cursor-pointer group active:scale-[0.99] text-left shadow-none`}
+              className={`w-full flex items-center justify-between p-3.5 sm:p-4 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl'} ${buttonBgClass} transition-all cursor-pointer group active:scale-[0.99] text-left`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className={`w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg'} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${item.iconColor}`}>
+                <div className={`w-8.5 h-8.5 sm:w-9.5 sm:h-9.5 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg'} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${iconContainerClass}`}>
                   <IconComp className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
                 </div>
-                <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                <span className={`text-xs sm:text-sm font-bold ${isClay ? 'text-slate-900 dark:text-white' : 'text-slate-800 dark:text-slate-100'} truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors`}>
                   {item.title}
                 </span>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              <ChevronRight className={`w-4 h-4 ${isClay ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'} group-hover:translate-x-0.5 transition-all shrink-0 ml-2`} />
             </button>
           );
         })}

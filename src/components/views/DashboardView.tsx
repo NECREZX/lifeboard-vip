@@ -369,14 +369,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         }
 
         let enclosingCardBgClass = "bg-white dark:bg-[#121212] border-t sm:border border-slate-200/90 dark:border-slate-800 shadow-none";
-        if (settings?.uiStyle === 'glass') {
+        if (settings?.uiStyle === 'clay') {
+          enclosingCardBgClass = "clay-panel border-t sm:border border-slate-200/60 dark:border-slate-800 shadow-none";
+        } else if (settings?.uiStyle === 'glass') {
           enclosingCardBgClass = "bg-white/90 dark:bg-[#121212]/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none";
         } else if (settings?.uiStyle === 'minimal') {
           enclosingCardBgClass = "bg-white dark:bg-[#121212] border-t sm:border border-slate-200 dark:border-slate-800 shadow-none";
         }
 
         let metricCardBgClass = "bg-white dark:bg-slate-900 ";
-        if (settings?.uiStyle === 'glass') {
+        if (settings?.uiStyle === 'clay') {
+          metricCardBgClass = "clay-card ";
+        } else if (settings?.uiStyle === 'glass') {
           metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/70 shadow-xs";
         } else if (settings?.uiStyle === 'minimal') {
           metricCardBgClass = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-none";
@@ -397,9 +401,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-4 items-center justify-center w-full relative z-10">
               {/* Card 1: Total Pendapatan (Kiri) */}
               <div 
-                className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
+                className={`aspect-square ${metricCardRadiusClass} ${settings?.uiStyle === 'clay' ? 'clay-card-emerald' : metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-600 transition-all select-none overflow-hidden relative`}
               >
-                <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-100/90 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                <div className={`w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full ${settings?.uiStyle === 'clay' ? 'bg-white/90 dark:bg-black/30 shadow-xs text-emerald-700 dark:text-emerald-300' : 'bg-emerald-100/90 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-3xs'} flex items-center justify-center shrink-0 transition-transform group-hover:scale-110`}>
                   <TrendingUp className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div className="w-full my-auto px-0.5">
@@ -407,18 +411,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     {showHideBalance ? '••••••' : formatIDR(totalIncome)}
                   </span>
                 </div>
-                <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                <span className={`text-[9px] xs:text-[10px] sm:text-xs font-bold ${settings?.uiStyle === 'clay' ? 'text-emerald-900 dark:text-emerald-200' : 'text-slate-500 dark:text-slate-400'} uppercase tracking-wider block truncate`}>
                   Pendapatan
                 </span>
               </div>
 
               {/* Card 2: Biaya Admin Transfer (Tengah) */}
               <div 
-                className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative cursor-pointer`}
+                className={`aspect-square ${metricCardRadiusClass} ${settings?.uiStyle === 'clay' ? 'clay-card-blue' : metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all select-none overflow-hidden relative cursor-pointer`}
                 onClick={() => setIncludeAdminFee(prev => !prev)}
                 title="Klik untuk ubah pemotongan biaya admin"
               >
-                <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                <div className={`w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full ${settings?.uiStyle === 'clay' ? 'bg-white/90 dark:bg-black/30 shadow-xs text-sky-700 dark:text-sky-300' : 'bg-sky-100/90 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 shadow-3xs'} flex items-center justify-center shrink-0 transition-transform group-hover:scale-110`}>
                   <Receipt className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div className="w-full my-auto px-0.5">
@@ -426,16 +430,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     {showHideBalance ? '••••••' : formatIDR(totalTransferAdminFees)}
                   </span>
                 </div>
-                <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                <span className={`text-[9px] xs:text-[10px] sm:text-xs font-bold ${settings?.uiStyle === 'clay' ? 'text-sky-900 dark:text-sky-200' : 'text-slate-500 dark:text-slate-400'} uppercase tracking-wider block truncate`}>
                   Admin Transfer
                 </span>
               </div>
 
               {/* Card 3: Total Pengeluaran (Kanan) */}
               <div 
-                className={`aspect-square ${metricCardRadiusClass} ${metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
+                className={`aspect-square ${metricCardRadiusClass} ${settings?.uiStyle === 'clay' ? 'clay-card-rose' : metricCardBgClass} p-2 xs:p-2.5 sm:p-4 flex flex-col justify-between items-center text-center group hover:shadow-md hover:border-rose-300 dark:hover:border-rose-600 transition-all select-none overflow-hidden relative`}
               >
-                <div className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full bg-rose-100/90 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-3xs shrink-0 transition-transform group-hover:scale-110">
+                <div className={`w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full ${settings?.uiStyle === 'clay' ? 'bg-white/90 dark:bg-black/30 shadow-xs text-rose-700 dark:text-rose-300' : 'bg-rose-100/90 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-3xs'} flex items-center justify-center shrink-0 transition-transform group-hover:scale-110`}>
                   <TrendingDown className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div className="w-full my-auto px-0.5">
@@ -443,7 +447,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     {showHideBalance ? '••••••' : formatIDR(totalExpense)}
                   </span>
                 </div>
-                <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block truncate">
+                <span className={`text-[9px] xs:text-[10px] sm:text-xs font-bold ${settings?.uiStyle === 'clay' ? 'text-rose-900 dark:text-rose-200' : 'text-slate-500 dark:text-slate-400'} uppercase tracking-wider block truncate`}>
                   Pengeluaran
                 </span>
               </div>
@@ -455,13 +459,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <button
                 type="button"
                 onClick={() => onOpenNotifications ? onOpenNotifications() : setActiveTab('notifikasi')}
-                className={`group flex flex-col items-center justify-center p-2.5 sm:p-3 gap-1.5 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-center`}
+                className={`group flex flex-col items-center justify-center p-2.5 sm:p-3 gap-1.5 ${metricCardRadiusClass} ${settings?.uiStyle === 'clay' ? 'clay-card-amber' : metricCardBgClass} hover:border-amber-300 dark:hover:border-amber-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-center`}
                 title="Buka Pusat Notifikasi"
               >
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} ${settings?.uiStyle === 'clay' ? 'bg-white/80 dark:bg-black/30 text-amber-700 dark:text-amber-300 shadow-xs' : 'bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400'} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
                   <Bell className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </div>
-                <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                <span className={`text-[10px] sm:text-xs font-bold ${settings?.uiStyle === 'clay' ? 'text-amber-950 dark:text-amber-100' : 'text-slate-700 dark:text-slate-200'} truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors`}>
                   Notifikasi
                 </span>
               </button>
@@ -474,18 +478,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 title="Buka Lifeboard AI"
               >
                 <div 
-                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform"
-                  style={{
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform ${settings?.uiStyle === 'clay' ? 'clay-card-purple' : ''}`}
+                  style={settings?.uiStyle === 'clay' ? undefined : {
                     backgroundColor: `${activeThemeColor}20`,
                     color: activeThemeColor,
                     boxShadow: `0 4px 12px ${activeThemeColor}25`
                   }}
                 >
-                  <Bot className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: activeThemeColor }} />
+                  <Bot className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: settings?.uiStyle === 'clay' ? '#4c1d95' : activeThemeColor }} />
                 </div>
                 <span 
-                  className="text-[11px] sm:text-xs font-black tracking-wider transition-colors uppercase"
-                  style={{ color: activeThemeColor }}
+                  className={`text-[11px] sm:text-xs font-black tracking-wider transition-colors uppercase ${settings?.uiStyle === 'clay' ? 'text-purple-700 dark:text-purple-300' : ''}`}
+                  style={settings?.uiStyle === 'clay' ? undefined : { color: activeThemeColor }}
                 >
                   AI
                 </span>
@@ -495,10 +499,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('laporan')}
-                className={`group flex flex-col items-center justify-center p-2.5 sm:p-3 gap-1.5 ${metricCardRadiusClass} ${metricCardBgClass} hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-center`}
+                className={`group flex flex-col items-center justify-center p-2.5 sm:p-3 gap-1.5 ${metricCardRadiusClass} ${settings?.uiStyle === 'clay' ? 'clay-card-teal' : metricCardBgClass} hover:border-teal-300 dark:hover:border-teal-600 hover:shadow-sm transition-all cursor-pointer select-none active:scale-[0.98] text-center`}
                 title="Buka Laporan Keuangan & Mutasi"
               >
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 ${settings?.cardRadius === 'sharp' ? 'rounded-none' : 'rounded-lg sm:rounded-xl'} ${settings?.uiStyle === 'clay' ? 'bg-white/80 dark:bg-black/30 text-teal-700 dark:text-teal-300 shadow-xs' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400'} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform`}>
                   <svg 
                     viewBox="0 0 24 24" 
                     fill="none" 
@@ -513,7 +517,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     <line x1="12" y1="2" x2="12" y2="15" />
                   </svg>
                 </div>
-                <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <span className={`text-[10px] sm:text-xs font-bold ${settings?.uiStyle === 'clay' ? 'text-teal-950 dark:text-teal-100' : 'text-slate-700 dark:text-slate-200'} truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors`}>
                   Laporan
                 </span>
               </button>
@@ -534,7 +538,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
               ) : (
                 groupedWallets.map(group => (
-                  <div key={group.key} className={`p-4 sm:p-5 ${getCardClasses()} border border-slate-200/80 dark:border-slate-800 shadow-none space-y-3`}>
+                  <div key={group.key} className={`p-4 sm:p-5 ${settings?.uiStyle === 'clay' ? 'clay-panel' : getCardClasses() + ' border border-slate-200/80 dark:border-slate-800 shadow-none'} space-y-3`}>
                     {/* Header Kelompok: Bersih, Minimalis */}
                     <div className="flex items-center justify-between px-0.5">
                       <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -544,34 +548,50 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                     {/* Grid Card Saldo Dompet (4 Kolom per Baris) */}
                     <div className="grid grid-cols-4 gap-2 xs:gap-2.5 sm:gap-3.5">
-                      {group.items.map((w: any) => {
+                      {group.items.map((w: any, wIdx: number) => {
                         const balanceVal = w.currentBalance ?? w.initialBalance;
                         const cardColor = w.color || '#0284c7';
                         const isBrandLogo = !!BRAND_LOGOS_MAP[w.icon];
                         const cardRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+                        const iconRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+                        const pillRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg';
+                        const clayWalletPalettes = [
+                          'clay-card-blue',
+                          'clay-card-purple',
+                          'clay-card-emerald',
+                          'clay-card-amber',
+                          'clay-card-teal',
+                          'clay-card-indigo',
+                          'clay-card-rose'
+                        ];
+                        const walletBgClass = settings?.uiStyle === 'clay'
+                          ? clayWalletPalettes[wIdx % clayWalletPalettes.length]
+                          : 'bg-white dark:bg-[#18181b] border border-slate-200/90 dark:border-slate-800';
 
                         return (
                           <div 
                             key={w.id}
                             onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                            className={`group relative overflow-hidden ${cardRadius} bg-white dark:bg-[#18181b] border border-slate-200/90 dark:border-slate-800 p-2 xs:p-2.5 sm:p-3 flex flex-col items-center justify-between text-center hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-all cursor-pointer select-none active:scale-[0.98] min-h-[110px] xs:min-h-[118px] sm:min-h-[128px]`}
+                            className={`group relative overflow-hidden ${cardRadius} ${walletBgClass} p-2 xs:p-2.5 sm:p-3 flex flex-col items-center justify-between text-center hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-all cursor-pointer select-none active:scale-[0.98] min-h-[110px] xs:min-h-[118px] sm:min-h-[128px]`}
                             title={`Klik untuk kelola dompet ${w.name}`}
                           >
                             {/* Top Indicator Strip (Subtle brand color accent) */}
-                            <div 
-                              className="absolute top-0 inset-x-0 h-1"
-                              style={{ backgroundColor: cardColor }}
-                            />
+                            {settings?.uiStyle !== 'clay' && (
+                              <div 
+                                className="absolute top-0 inset-x-0 h-1"
+                                style={{ backgroundColor: cardColor }}
+                              />
+                            )}
 
                             {/* 1. Icon Container di Atas */}
                             <div className="pt-1">
                               <div 
-                                className="w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-3xs transition-transform group-hover:scale-105 overflow-hidden border border-slate-100 dark:border-slate-800"
-                                style={isBrandLogo ? undefined : { backgroundColor: `${cardColor}18`, color: cardColor }}
+                                className={`w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 ${iconRadius} flex items-center justify-center shrink-0 ${settings?.uiStyle === 'clay' ? 'bg-white/90 dark:bg-black/30 shadow-xs' : 'shadow-3xs border border-slate-100 dark:border-slate-800'} transition-transform group-hover:scale-105 overflow-hidden`}
+                                style={isBrandLogo ? undefined : { backgroundColor: settings?.uiStyle === 'clay' ? undefined : `${cardColor}18`, color: cardColor }}
                               >
                                 <IconRenderer 
                                   name={w.icon || 'Wallet'} 
-                                  className={isBrandLogo ? "w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 rounded-2xl object-cover" : "w-4 h-4 xs:w-5 xs:h-5"} 
+                                  className={isBrandLogo ? `w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 ${iconRadius} object-cover` : "w-4 h-4 xs:w-5 xs:h-5"} 
                                 />
                               </div>
                             </div>
@@ -584,7 +604,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                             </div>
 
                             {/* 3. Saldo Dompet di Bawah (Pill container yang rapi & khas kartu akun) */}
-                            <div className="w-full bg-slate-50 dark:bg-slate-900/80 py-1 px-1 rounded-lg border border-slate-200/60 dark:border-slate-800">
+                            <div className={`w-full ${settings?.uiStyle === 'clay' ? 'bg-white/70 dark:bg-black/25 border border-black/5 dark:border-white/5' : 'bg-slate-50 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800'} py-1 px-1 ${pillRadius}`}>
                               <span className="block font-bold font-mono text-slate-900 dark:text-white text-[9px] xs:text-[10px] sm:text-[11px] tracking-tight truncate w-full">
                                 {showHideBalance ? '••••••' : formatIDR(balanceVal)}
                               </span>
@@ -613,6 +633,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 getCardClasses={getCardClasses}
                 onNavigateToBudgets={() => setActiveTab('anggaran')}
                 onNavigateToLaporan={() => setActiveTab('laporan')}
+                uiStyle={settings?.uiStyle}
               />
             </div>
 
@@ -634,21 +655,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
               {/* 4. Secondary Insights Tables: Aktivitas, Wishlist, Tabungan, Anggaran */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700 dark:text-slate-300">
-                <div className={getCardClasses() + " p-4"}>
+                <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-indigo' : getCardClasses()} p-4`}>
                    <div className="flex justify-between items-center mb-2">
-                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Aktivitas</h4>
-                     <button onClick={() => setActiveTab('aktivitas')} className="text-[10px] font-bold text-indigo-500 hover:underline">Lihat Semua</button>
+                     <h4 className={`text-xs font-bold uppercase tracking-wider ${settings?.uiStyle === 'clay' ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-400'}`}>Aktivitas</h4>
+                     <button onClick={() => setActiveTab('aktivitas')} className={`text-[10px] font-bold ${settings?.uiStyle === 'clay' ? 'text-indigo-700 dark:text-indigo-300 font-black' : 'text-indigo-500'} hover:underline`}>Lihat Semua</button>
                    </div>
                    <table className="w-full text-[11px]">
                      <thead>
-                       <tr className="text-slate-500 border-b border-slate-100 dark:border-slate-800">
+                       <tr className={`${settings?.uiStyle === 'clay' ? 'text-indigo-800 dark:text-indigo-300 border-b border-indigo-200/60 dark:border-indigo-800/60' : 'text-slate-500 border-b border-slate-100 dark:border-slate-800'}`}>
                          <th className="text-left font-normal pb-1">Judul</th>
                          <th className="text-right font-normal pb-1">Status</th>
                        </tr>
                      </thead>
                      <tbody>
                        {activities.slice(0, 3).map(a => (
-                         <tr key={a.id} className="border-b border-slate-100 dark:border-slate-800">
+                         <tr key={a.id} className={`${settings?.uiStyle === 'clay' ? 'border-b border-indigo-200/40 dark:border-indigo-800/40' : 'border-b border-slate-100 dark:border-slate-800'}`}>
                            <td className="py-2 truncate max-w-[100px] text-slate-700 dark:text-slate-200">{a.title}</td>
                            <td className={`py-2 text-right font-bold ${a.status === 'completed' ? 'text-emerald-500' : 'text-amber-500 dark:text-amber-400'}`}>{a.status === 'completed' ? 'Selesai' : 'Pending'}</td>
                          </tr>
@@ -657,14 +678,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                    </table>
                 </div>
 
-                <div className={getCardClasses() + " p-4"}>
+                <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-purple' : getCardClasses()} p-4`}>
                    <div className="flex justify-between items-center mb-2">
-                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Wishlist</h4>
-                     <button onClick={() => setActiveTab('aktivitas')} className="text-[10px] font-bold text-indigo-500 hover:underline">Lihat Semua</button>
+                     <h4 className={`text-xs font-bold uppercase tracking-wider ${settings?.uiStyle === 'clay' ? 'text-purple-900 dark:text-purple-200' : 'text-slate-400'}`}>Wishlist</h4>
+                     <button onClick={() => setActiveTab('aktivitas')} className={`text-[10px] font-bold ${settings?.uiStyle === 'clay' ? 'text-purple-700 dark:text-purple-300 font-black' : 'text-indigo-500'} hover:underline`}>Lihat Semua</button>
                    </div>
                    <table className="w-full text-[11px]">
                      <thead>
-                       <tr className="text-slate-500 border-b border-slate-100 dark:border-slate-800">
+                       <tr className={`${settings?.uiStyle === 'clay' ? 'text-purple-800 dark:text-purple-300 border-b border-purple-200/60 dark:border-purple-800/60' : 'text-slate-500 border-b border-slate-100 dark:border-slate-800'}`}>
                          <th className="text-left font-normal pb-1">Barang</th>
                          <th className="text-right font-normal pb-1">Target</th>
                        </tr>
@@ -673,7 +694,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                        {wishlists
                         .filter(w => w.month === `${selectedYear}-${String(selectedMonth).padStart(2, '0')}` && !w.isPurchased)
                         .slice(0, 3).map(w => (
-                         <tr key={w.id} className="border-b border-slate-100 dark:border-slate-800">
+                         <tr key={w.id} className={`${settings?.uiStyle === 'clay' ? 'border-b border-purple-200/40 dark:border-purple-800/40' : 'border-b border-slate-100 dark:border-slate-800'}`}>
                            <td className="py-2 truncate max-w-[100px] text-slate-700 dark:text-slate-200">{w.title}</td>
                            <td className="py-2 text-right font-bold text-slate-800 dark:text-slate-100">{w.month}</td>
                          </tr>
@@ -682,37 +703,37 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                    </table>
                 </div>
 
-                <div className={getCardClasses() + " p-4"}>
+                <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-emerald' : getCardClasses()} p-4`}>
                    <div className="flex justify-between items-center mb-2">
-                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tabungan</h4>
-                     <button onClick={() => setActiveTab('tabungan')} className="text-[10px] font-bold text-indigo-500 hover:underline">Lihat Semua</button>
+                     <h4 className={`text-xs font-bold uppercase tracking-wider ${settings?.uiStyle === 'clay' ? 'text-emerald-900 dark:text-emerald-200' : 'text-slate-400'}`}>Tabungan</h4>
+                     <button onClick={() => setActiveTab('tabungan')} className={`text-[10px] font-bold ${settings?.uiStyle === 'clay' ? 'text-emerald-700 dark:text-emerald-300 font-black' : 'text-indigo-500'} hover:underline`}>Lihat Semua</button>
                    </div>
                    <table className="w-full text-[11px]">
                      <thead>
-                       <tr className="text-slate-500 border-b border-slate-100 dark:border-slate-800">
+                       <tr className={`${settings?.uiStyle === 'clay' ? 'text-emerald-800 dark:text-emerald-300 border-b border-emerald-200/60 dark:border-emerald-800/60' : 'text-slate-500 border-b border-slate-100 dark:border-slate-800'}`}>
                          <th className="text-left font-normal pb-1">Target</th>
                          <th className="text-right font-normal pb-1">Progres</th>
                        </tr>
                      </thead>
                      <tbody>
                        {savings.slice(0, 3).map(s => (
-                         <tr key={s.id} className="border-b border-slate-100 dark:border-slate-800">
+                         <tr key={s.id} className={`${settings?.uiStyle === 'clay' ? 'border-b border-emerald-200/40 dark:border-emerald-800/40' : 'border-b border-slate-100 dark:border-slate-800'}`}>
                            <td className="py-2 truncate max-w-[80px] text-slate-700 dark:text-slate-200">{s.name}</td>
-                           <td className="py-2 text-right font-bold text-indigo-600 dark:text-indigo-400">{Math.round((s.currentAmount / s.targetAmount) * 100)}%</td>
+                           <td className="py-2 text-right font-bold text-emerald-700 dark:text-emerald-300">{Math.round((s.currentAmount / s.targetAmount) * 100)}%</td>
                          </tr>
                        ))}
                      </tbody>
                    </table>
                 </div>
                 
-                <div className={getCardClasses() + " p-4"}>
+                <div className={`${settings?.uiStyle === 'clay' ? 'clay-card-amber' : getCardClasses()} p-4`}>
                    <div className="flex justify-between items-center mb-2">
-                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Anggaran</h4>
-                     <button onClick={() => setActiveTab('anggaran')} className="text-[10px] font-bold text-indigo-500 hover:underline">Lihat Semua</button>
+                     <h4 className={`text-xs font-bold uppercase tracking-wider ${settings?.uiStyle === 'clay' ? 'text-amber-900 dark:text-amber-200' : 'text-slate-400'}`}>Anggaran</h4>
+                     <button onClick={() => setActiveTab('anggaran')} className={`text-[10px] font-bold ${settings?.uiStyle === 'clay' ? 'text-amber-700 dark:text-amber-300 font-black' : 'text-indigo-500'} hover:underline`}>Lihat Semua</button>
                    </div>
                    <table className="w-full text-[11px]">
                      <thead>
-                       <tr className="text-slate-500 border-b border-slate-100 dark:border-slate-800">
+                       <tr className={`${settings?.uiStyle === 'clay' ? 'text-amber-800 dark:text-amber-300 border-b border-amber-200/60 dark:border-amber-800/60' : 'text-slate-500 border-b border-slate-100 dark:border-slate-800'}`}>
                          <th className="text-left font-normal pb-1">Kategori</th>
                          <th className="text-right font-normal pb-1">Sisa</th>
                        </tr>
@@ -726,9 +747,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                             .reduce((sum, t) => sum + t.amount, 0);
                           const categoryName = getBudgetCategoryLabel(b, categories);
                           return (
-                            <tr key={b.id} className="border-b border-slate-100 dark:border-slate-800">
+                            <tr key={b.id} className={`${settings?.uiStyle === 'clay' ? 'border-b border-amber-200/40 dark:border-amber-800/40' : 'border-b border-slate-100 dark:border-slate-800'}`}>
                               <td className="py-2 truncate max-w-[80px] text-slate-700 dark:text-slate-200">{categoryName}</td>
-                              <td className="py-2 text-right font-mono font-bold text-slate-800 dark:text-slate-100">{formatIDR(Math.max(0, b.limitAmount - spent))}</td>
+                              <td className="py-2 text-right font-mono font-bold text-amber-900 dark:text-amber-100">{formatIDR(Math.max(0, b.limitAmount - spent))}</td>
                             </tr>
                           );
                         })}

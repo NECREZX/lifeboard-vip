@@ -332,6 +332,418 @@ html[data-font-style="playwrite"] {
   color: #ffffff !important;
 }
 
+/* Claymorphism (Matte 3D Puffy Clay UI) Design System - Tanpa Cahaya/Glow */
+.clay-panel {
+  background: #f8fafc !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: 
+    0 8px 20px -3px rgba(100, 116, 139, 0.16),
+    0 3px 8px -2px rgba(100, 116, 139, 0.08),
+    inset -4px -4px 8px rgba(148, 163, 184, 0.16),
+    inset 2px 2px 5px rgba(255, 255, 255, 0.35) !important;
+}
+
+.dark .clay-panel {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 
+    0 10px 24px -3px rgba(0, 0, 0, 0.65),
+    0 4px 8px -2px rgba(0, 0, 0, 0.45),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 2px 2px 5px rgba(255, 255, 255, 0.06) !important;
+}
+
+.clay-card {
+  background: #f1f5f9 !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  box-shadow: 
+    0 7px 16px -2px rgba(100, 116, 139, 0.14),
+    0 3px 6px -1px rgba(100, 116, 139, 0.08),
+    inset -3px -3px 6px rgba(148, 163, 184, 0.15),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark .clay-card {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 
+    0 8px 18px -2px rgba(0, 0, 0, 0.6),
+    0 3px 6px -1px rgba(0, 0, 0, 0.4),
+    inset -3px -3px 6px rgba(0, 0, 0, 0.5),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Colorful Matte Clay Cards (Playful Pastel 3D Clay, Timbul Tanpa Cahaya/Glow) */
+.clay-card-purple {
+  background: #ede9fe !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  box-shadow: 
+    0 8px 18px -2px rgba(139, 92, 246, 0.22),
+    0 3px 6px -1px rgba(0, 0, 0, 0.04),
+    inset -4px -4px 8px rgba(109, 40, 217, 0.16),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.35) !important;
+  color: #3b0764 !important;
+}
+
+.dark .clay-card-purple {
+  background: #2e1065 !important;
+  border: 1px solid rgba(167, 139, 250, 0.18) !important;
+  box-shadow: 
+    0 10px 22px -3px rgba(0, 0, 0, 0.6),
+    0 3px 6px -1px rgba(0, 0, 0, 0.4),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.06) !important;
+  color: #f3e8ff !important;
+}
+
+.clay-card-blue {
+  background: #e0f2fe !important;
+  border: 1px solid rgba(14, 165, 233, 0.2) !important;
+  box-shadow: 
+    0 8px 18px -2px rgba(14, 165, 233, 0.22),
+    0 3px 6px -1px rgba(0, 0, 0, 0.04),
+    inset -4px -4px 8px rgba(3, 105, 161, 0.16),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.35) !important;
+  color: #082f49 !important;
+}
+
+.dark .clay-card-blue {
+  background: #082f49 !important;
+  border: 1px solid rgba(56, 189, 248, 0.18) !important;
+  box-shadow: 
+    0 10px 22px -3px rgba(0, 0, 0, 0.6),
+    0 3px 6px -1px rgba(0, 0, 0, 0.4),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.06) !important;
+  color: #e0f2fe !important;
+}
+
+.clay-card-emerald {
+  background: #dcfce7 !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  box-shadow: 
+    0 8px 18px -2px rgba(16, 185, 129, 0.22),
+    0 3px 6px -1px rgba(0, 0, 0, 0.04),
+    inset -4px -4px 8px rgba(4, 120, 87, 0.16),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.35) !important;
+  color: #064e3b !important;
+}
+
+.dark .clay-card-emerald {
+  background: #064e3b !important;
+  border: 1px solid rgba(52, 211, 153, 0.18) !important;
+  box-shadow: 
+    0 10px 22px -3px rgba(0, 0, 0, 0.6),
+    0 3px 6px -1px rgba(0, 0, 0, 0.4),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.06) !important;
+  color: #d1fae5 !important;
+}
+
+.clay-card-amber {
+  background: #fef3c7 !important;
+  border: 1px solid rgba(245, 158, 11, 0.2) !important;
+  box-shadow: 
+    0 8px 18px -2px rgba(245, 158, 11, 0.22),
+    0 3px 6px -1px rgba(0, 0, 0, 0.04),
+    inset -4px -4px 8px rgba(180, 83, 9, 0.16),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.35) !important;
+  color: #78350f !important;
+}
+
+.dark .clay-card-amber {
+  background: #451a03 !important;
+  border: 1px solid rgba(251, 191, 36, 0.18) !important;
+  box-shadow: 
+    0 10px 22px -3px rgba(0, 0, 0, 0.6),
+    0 3px 6px -1px rgba(0, 0, 0, 0.4),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.06) !important;
+  color: #fef3c7 !important;
+}
+
+.clay-card-rose {
+  background: #ffe4e6 !important;
+  border: 1px solid rgba(244, 63, 94, 0.2) !important;
+  box-shadow: 
+    0 8px 18px -2px rgba(244, 63, 94, 0.22),
+    0 3px 6px -1px rgba(0, 0, 0, 0.04),
+    inset -4px -4px 8px rgba(190, 18, 60, 0.16),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.35) !important;
+  color: #881337 !important;
+}
+
+.dark .clay-card-rose {
+  background: #3f0717 !important;
+  border: 1px solid rgba(251, 113, 133, 0.18) !important;
+  box-shadow: 
+    0 10px 22px -3px rgba(0, 0, 0, 0.6),
+    0 3px 6px -1px rgba(0, 0, 0, 0.4),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.06) !important;
+  color: #ffe4e6 !important;
+}
+
+.clay-card-teal {
+  background: #ccfbf1 !important;
+  border: 1px solid rgba(20, 184, 166, 0.2) !important;
+  box-shadow: 
+    0 8px 18px -2px rgba(20, 184, 166, 0.22),
+    0 3px 6px -1px rgba(0, 0, 0, 0.04),
+    inset -4px -4px 8px rgba(15, 118, 110, 0.16),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.35) !important;
+  color: #134e4a !important;
+}
+
+.dark .clay-card-teal {
+  background: #042f2e !important;
+  border: 1px solid rgba(45, 212, 191, 0.18) !important;
+  box-shadow: 
+    0 10px 22px -3px rgba(0, 0, 0, 0.6),
+    0 3px 6px -1px rgba(0, 0, 0, 0.4),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.06) !important;
+  color: #ccfbf1 !important;
+}
+
+.clay-card-indigo {
+  background: #e0e7ff !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  box-shadow: 
+    0 8px 18px -2px rgba(99, 102, 241, 0.22),
+    0 3px 6px -1px rgba(0, 0, 0, 0.04),
+    inset -4px -4px 8px rgba(67, 56, 202, 0.16),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.35) !important;
+  color: #312e81 !important;
+}
+
+.dark .clay-card-indigo {
+  background: #17153a !important;
+  border: 1px solid rgba(129, 140, 248, 0.18) !important;
+  box-shadow: 
+    0 10px 22px -3px rgba(0, 0, 0, 0.6),
+    0 3px 6px -1px rgba(0, 0, 0, 0.4),
+    inset -4px -4px 8px rgba(0, 0, 0, 0.55),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.06) !important;
+  color: #e0e7ff !important;
+}
+
+.clay-input {
+  background: #f1f5f9 !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  box-shadow: 
+    inset 2px 2px 4px rgba(100, 116, 139, 0.15), 
+    inset -1px -1px 3px rgba(255, 255, 255, 0.3) !important;
+  color: #0f172a !important;
+}
+
+.dark .clay-input {
+  background: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 
+    inset 2px 2px 4px rgba(0, 0, 0, 0.6), 
+    inset -1px -1px 3px rgba(255, 255, 255, 0.04) !important;
+  color: #f8fafc !important;
+}
+
+.clay-button {
+  background: #f1f5f9;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  box-shadow: 
+    0 5px 12px -2px rgba(100, 116, 139, 0.16), 
+    0 2px 4px -1px rgba(100, 116, 139, 0.08),
+    inset -2.5px -2.5px 5px rgba(100, 116, 139, 0.12), 
+    inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.35);
+  transition: all 0.15s ease;
+}
+
+.clay-button:active {
+  transform: scale(0.97);
+  box-shadow: 
+    inset 2.5px 2.5px 5px rgba(100, 116, 139, 0.22), 
+    inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.25);
+}
+
+.dark .clay-button {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 
+    0 5px 12px -2px rgba(0, 0, 0, 0.5), 
+    0 2px 4px -1px rgba(0, 0, 0, 0.3),
+    inset -2.5px -2.5px 5px rgba(0, 0, 0, 0.45), 
+    inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05);
+}
+
+.dark .clay-button:active {
+  box-shadow: 
+    inset 2.5px 2.5px 5px rgba(0, 0, 0, 0.7), 
+    inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.04);
+}
+
+/* Clay Puffy Badges & Pills (Matte 3D, Tanpa Cahaya) */
+.clay-pill-purple {
+  background: #ede9fe !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  box-shadow: 0 3px 8px -1px rgba(139, 92, 246, 0.2), inset -2px -2px 4px rgba(109, 40, 217, 0.14), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.3) !important;
+  color: #4c1d95 !important;
+}
+.dark .clay-pill-purple {
+  background: #2e1065 !important;
+  border: 1px solid rgba(167, 139, 250, 0.15) !important;
+  box-shadow: 0 3px 8px -1px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05) !important;
+  color: #f3e8ff !important;
+}
+
+.clay-pill-blue {
+  background: #e0f2fe !important;
+  border: 1px solid rgba(14, 165, 233, 0.2) !important;
+  box-shadow: 0 3px 8px -1px rgba(14, 165, 233, 0.2), inset -2px -2px 4px rgba(3, 105, 161, 0.14), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.3) !important;
+  color: #0369a1 !important;
+}
+.dark .clay-pill-blue {
+  background: #082f49 !important;
+  border: 1px solid rgba(56, 189, 248, 0.15) !important;
+  box-shadow: 0 3px 8px -1px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05) !important;
+  color: #e0f2fe !important;
+}
+
+.clay-pill-emerald {
+  background: #dcfce7 !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+  box-shadow: 0 3px 8px -1px rgba(16, 185, 129, 0.2), inset -2px -2px 4px rgba(4, 120, 87, 0.14), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.3) !important;
+  color: #047857 !important;
+}
+.dark .clay-pill-emerald {
+  background: #064e3b !important;
+  border: 1px solid rgba(52, 211, 153, 0.15) !important;
+  box-shadow: 0 3px 8px -1px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05) !important;
+  color: #d1fae5 !important;
+}
+
+.clay-pill-amber {
+  background: #fef3c7 !important;
+  border: 1px solid rgba(245, 158, 11, 0.2) !important;
+  box-shadow: 0 3px 8px -1px rgba(245, 158, 11, 0.2), inset -2px -2px 4px rgba(180, 83, 9, 0.14), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.3) !important;
+  color: #b45309 !important;
+}
+.dark .clay-pill-amber {
+  background: #451a03 !important;
+  border: 1px solid rgba(251, 191, 36, 0.15) !important;
+  box-shadow: 0 3px 8px -1px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05) !important;
+  color: #fef3c7 !important;
+}
+
+.clay-pill-rose {
+  background: #ffe4e6 !important;
+  border: 1px solid rgba(244, 63, 94, 0.2) !important;
+  box-shadow: 0 3px 8px -1px rgba(244, 63, 94, 0.2), inset -2px -2px 4px rgba(190, 18, 60, 0.14), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.3) !important;
+  color: #be123c !important;
+}
+.dark .clay-pill-rose {
+  background: #3f0717 !important;
+  border: 1px solid rgba(251, 113, 133, 0.15) !important;
+  box-shadow: 0 3px 8px -1px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05) !important;
+  color: #ffe4e6 !important;
+}
+
+.clay-pill-teal {
+  background: #ccfbf1 !important;
+  border: 1px solid rgba(20, 184, 166, 0.2) !important;
+  box-shadow: 0 3px 8px -1px rgba(20, 184, 166, 0.2), inset -2px -2px 4px rgba(15, 118, 110, 0.14), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.3) !important;
+  color: #0f766e !important;
+}
+.dark .clay-pill-teal {
+  background: #042f2e !important;
+  border: 1px solid rgba(45, 212, 191, 0.15) !important;
+  box-shadow: 0 3px 8px -1px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05) !important;
+  color: #ccfbf1 !important;
+}
+
+.clay-pill-indigo {
+  background: #e0e7ff !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  box-shadow: 0 3px 8px -1px rgba(99, 102, 241, 0.2), inset -2px -2px 4px rgba(67, 56, 202, 0.14), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.3) !important;
+  color: #3730a3 !important;
+}
+.dark .clay-pill-indigo {
+  background: #1e1b4b !important;
+  border: 1px solid rgba(129, 140, 248, 0.15) !important;
+  box-shadow: 0 3px 8px -1px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05) !important;
+  color: #e0e7ff !important;
+}
+
+.clay-pill-slate {
+  background: #f1f5f9 !important;
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  box-shadow: 0 3px 8px -1px rgba(100, 116, 139, 0.16), inset -2px -2px 4px rgba(100, 116, 139, 0.14), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.35) !important;
+  color: #0f172a !important;
+}
+.dark .clay-pill-slate {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 3px 8px -1px rgba(0, 0, 0, 0.5), inset -2px -2px 4px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.05) !important;
+  color: #f8fafc !important;
+}
+
+
+/* Ensure text legibility within dark mode colorful clay cards */
+.dark [class*="clay-card-"] .text-slate-800,
+.dark [class*="clay-card-"] .text-slate-900,
+.dark [class*="clay-card-"] .text-slate-700 {
+  color: #ffffff !important;
+}
+.dark [class*="clay-card-"] .text-slate-500,
+.dark [class*="clay-card-"] .text-slate-400 {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+.dark [class*="clay-card-"] .border-slate-100,
+.dark [class*="clay-card-"] .border-slate-200,
+.dark [class*="clay-card-"] .border-slate-800 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* =========================================================================
+   STRICT CLAY THEME BORDER RADIUS ENFORCEMENT (CONSISTENT CORNERS)
+   ========================================================================= */
+html[data-ui-style="clay"][data-card-radius="sharp"] .clay-card,
+html[data-ui-style="clay"][data-card-radius="sharp"] .clay-panel,
+html[data-ui-style="clay"][data-card-radius="sharp"] [class*="clay-card-"],
+html[data-ui-style="clay"][data-card-radius="sharp"] .clay-button,
+html[data-ui-style="clay"][data-card-radius="sharp"] .clay-input,
+html[data-ui-style="clay"][data-card-radius="sharp"] [class*="clay-pill-"] {
+  border-radius: 0px !important;
+}
+
+html[data-ui-style="clay"][data-card-radius="rounded"] .clay-card,
+html[data-ui-style="clay"][data-card-radius="rounded"] .clay-panel,
+html[data-ui-style="clay"][data-card-radius="rounded"] [class*="clay-card-"] {
+  border-radius: 1rem !important; /* rounded-2xl */
+}
+
+html[data-ui-style="clay"][data-card-radius="rounded"] .clay-button,
+html[data-ui-style="clay"][data-card-radius="rounded"] .clay-input {
+  border-radius: 0.75rem !important; /* rounded-xl */
+}
+
+html[data-ui-style="clay"][data-card-radius="rounded"] [class*="clay-pill-"] {
+  border-radius: 0.5rem !important; /* rounded-lg */
+}
+
+html[data-ui-style="clay"][data-card-radius="extra"] .clay-card,
+html[data-ui-style="clay"][data-card-radius="extra"] .clay-panel,
+html[data-ui-style="clay"][data-card-radius="extra"] [class*="clay-card-"] {
+  border-radius: 1.5rem !important; /* rounded-3xl */
+}
+
+html[data-ui-style="clay"][data-card-radius="extra"] .clay-button,
+html[data-ui-style="clay"][data-card-radius="extra"] .clay-input {
+  border-radius: 1rem !important; /* rounded-2xl */
+}
+
+html[data-ui-style="clay"][data-card-radius="extra"] [class*="clay-pill-"] {
+  border-radius: 9999px !important; /* rounded-full */
+}
+
 /* Print layout for high-quality export to PDF */
 @media print {
   body {

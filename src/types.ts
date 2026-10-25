@@ -101,7 +101,7 @@ export interface NotificationItem {
   type: 'info' | 'warning' | 'success';
 }
 
-export type UIStyle = 'modern' | 'minimal' | 'glass';
+export type UIStyle = 'modern' | 'minimal' | 'glass' | 'clay';
 export type CardStyle = 'flat' | 'bordered' | 'shadowed';
 export type CardRadius = 'sharp' | 'rounded' | 'extra';
 export type TableStyle = 'compact' | 'spacious' | 'striped';

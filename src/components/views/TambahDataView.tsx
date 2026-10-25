@@ -138,7 +138,9 @@ export function TambahDataView({
   }, [settings?.cardRadius]);
 
   const enclosingCardBgClass = useMemo(() => {
-    if (settings?.uiStyle === 'glass') {
+    if (settings?.uiStyle === 'clay') {
+      return 'clay-panel border-t sm:border border-white/70 dark:border-white/10 shadow-none';
+    } else if (settings?.uiStyle === 'glass') {
       return 'bg-white/90 dark:bg-[#121212]/90 backdrop-blur-md border-t sm:border border-slate-200/60 dark:border-slate-800/80 shadow-none';
     } else if (settings?.uiStyle === 'minimal') {
       return 'bg-white dark:bg-[#121212] border-t sm:border border-slate-200 dark:border-slate-800 shadow-none';
@@ -795,7 +797,7 @@ export function TambahDataView({
                       key={tab.id}
                       type="button"
                       onClick={() => setActiveForm(tab.id)}
-                      className={`w-full py-2.5 px-2 rounded-2xl text-xs font-black text-center truncate transition-all duration-150 cursor-pointer ${
+                      className={`w-full py-2.5 px-2 ${buttonRadiusClass} text-xs font-black text-center truncate transition-all duration-150 cursor-pointer ${
                         isActive 
                           ? 'bg-white text-slate-900 shadow-md font-black scale-100 ring-2 ring-white/50' 
                           : 'text-white hover:bg-white/20 bg-white/10 backdrop-blur-xs border border-white/20'

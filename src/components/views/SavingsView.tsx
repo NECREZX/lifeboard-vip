@@ -21,6 +21,7 @@ import {
 import { Saving, SavingLog, Wallet } from '../../types';
 import { formatIDR } from '../../lib/formatters';
 import { parseAmountInput } from '../FormsModal';
+import { getRadiusClass, getFilterButtonClass, CLAY_PALETTE } from '../../lib/themeStyles';
 
 interface SavingsViewProps {
   savings: Saving[];
@@ -606,19 +607,12 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
     });
   }, [savings, savingLogs, savingFilter, selectedWalletFilter]);
 
-  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
-
-  const filterBtnClass = useMemo(() => {
-    let cls = `relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 `;
-    if (settings?.cardStyle === 'bordered') {
-      cls += 'border-2 border-slate-300 dark:border-slate-700 shadow-none';
-    } else if (settings?.cardStyle === 'shadowed') {
-      cls += 'border border-slate-200/80 dark:border-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]';
-    } else {
-      cls += 'border border-slate-200/90 dark:border-slate-800 shadow-none';
-    }
-    return cls;
-  }, [settings?.cardStyle, btnRadius]);
+  const isClay = settings?.uiStyle === 'clay';
+  const cardRadius = settings?.cardRadius || 'rounded';
+  const cardRadiusClass = getRadiusClass('card', cardRadius);
+  const btnRadius = getRadiusClass('button', cardRadius);
+  const pillRadius = getRadiusClass('pill', cardRadius);
+  const iconRadius = getRadiusClass('icon', cardRadius);
 
   return (
     <div className="flex flex-col gap-6" id="view-savings">
@@ -626,15 +620,15 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
       <div className="flex items-center justify-end w-full">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Status Selector Dropdown Card */}
-          <div className={filterBtnClass}>
-            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+          <div className={getFilterButtonClass(settings, 'indigo')}>
+            <span className={`text-[9px] sm:text-[10px] font-extrabold ${isClay ? 'text-indigo-900/70 dark:text-indigo-200/70' : 'text-slate-400 dark:text-slate-500'} uppercase tracking-wider shrink-0`}>
               Status:
             </span>
             <div className="relative flex items-center min-w-0 flex-1 justify-end">
               <select
                 value={savingFilter}
                 onChange={(e) => setSavingFilter(e.target.value as 'semua' | 'berjalan' | 'tercapai')}
-                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+                className={`text-[11px] sm:text-xs font-bold bg-transparent border-none ${isClay ? 'text-indigo-950 dark:text-indigo-100 font-extrabold' : 'text-slate-700 dark:text-slate-200'} focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none`}
               >
                 <option value="semua">Semua</option>
                 <option value="berjalan">Berjalan</option>
@@ -645,15 +639,15 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
           </div>
 
           {/* Wallet Selector Dropdown Card */}
-          <div className={filterBtnClass}>
-            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+          <div className={getFilterButtonClass(settings, 'amber')}>
+            <span className={`text-[9px] sm:text-[10px] font-extrabold ${isClay ? 'text-amber-900/70 dark:text-amber-200/70' : 'text-slate-400 dark:text-slate-500'} uppercase tracking-wider shrink-0`}>
               Dompet:
             </span>
             <div className="relative flex items-center min-w-0 flex-1 justify-end">
               <select
                 value={selectedWalletFilter}
                 onChange={(e) => setSelectedWalletFilter(e.target.value)}
-                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+                className={`text-[11px] sm:text-xs font-bold bg-transparent border-none ${isClay ? 'text-amber-950 dark:text-amber-100 font-extrabold' : 'text-slate-700 dark:text-slate-200'} focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none`}
               >
                 <option value="all">Semua</option>
                 {wallets.map((w) => (
@@ -685,37 +679,37 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
       {savings.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Card 1: Total Target Tabungan Dibuat & Status Count */}
-          <div className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
+          <div className={`${isClay ? `clay-card-indigo ${cardRadiusClass}` : getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
             <div>
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+              <span className={`text-[10px] font-bold ${isClay ? 'text-indigo-900/70 dark:text-indigo-200/70' : 'text-slate-400 dark:text-slate-500'} uppercase tracking-wider block`}>
                 Total Target Tabungan
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-slate-100 font-mono">
+                <span className={`text-2xl sm:text-3xl font-black ${isClay ? 'text-indigo-950 dark:text-indigo-50' : 'text-slate-800 dark:text-slate-100'} font-mono`}>
                   {savings.length}
                 </span>
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                <span className={`text-xs font-bold ${isClay ? 'text-indigo-800 dark:text-indigo-200' : 'text-slate-500 dark:text-slate-400'}`}>
                   Target Dibuat
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 pt-3 mt-3 border-t border-slate-100 dark:border-slate-800/80">
+            <div className={`flex flex-col gap-2 pt-3 mt-3 border-t ${isClay ? 'border-indigo-200/60 dark:border-indigo-800/40' : 'border-slate-100 dark:border-slate-800/80'}`}>
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-                  <span className="text-slate-600 dark:text-slate-400 font-medium">Berjalan:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{runningCount} Target</span>
+                  <span className={`${isClay ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-600 dark:text-slate-400'} font-medium`}>Berjalan:</span>
+                  <span className={`font-bold ${isClay ? 'text-indigo-950 dark:text-white' : 'text-slate-800 dark:text-slate-200'}`}>{runningCount} Target</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  <span className="text-slate-600 dark:text-slate-400 font-medium">Tercapai:</span>
+                  <span className={`${isClay ? 'text-indigo-900 dark:text-indigo-200' : 'text-slate-600 dark:text-slate-400'} font-medium`}>Tercapai:</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">{completedCount} Target</span>
                 </div>
               </div>
 
               {completedCount > 0 && (
-                <div className="p-2 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-800/40 flex items-center justify-between text-[11px] mt-1">
+                <div className={`p-2 ${btnRadius} ${isClay ? 'bg-white/70 dark:bg-black/30' : 'bg-emerald-50/70 dark:bg-emerald-950/20'} border border-emerald-200/50 dark:border-emerald-800/40 flex items-center justify-between text-[11px] mt-1`}>
                   <span className="font-semibold text-emerald-700 dark:text-emerald-400">
                     Uang Target Tercapai:
                   </span>
@@ -728,17 +722,17 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
           </div>
 
           {/* Card 2: Total Nominal Target Tabungan & Detail Target Berjalan */}
-          <div className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
+          <div className={`${isClay ? `clay-card-emerald ${cardRadiusClass}` : getCardClasses()} p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden`}>
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                <span className={`text-[10px] font-bold ${isClay ? 'text-emerald-900/70 dark:text-emerald-200/70' : 'text-slate-400 dark:text-slate-500'} uppercase tracking-wider block`}>
                   Total Nominal Target Tabungan
                 </span>
-                <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 font-mono">
+                <span className={`text-[11px] font-bold ${isClay ? 'text-emerald-900 dark:text-emerald-200 font-black' : 'text-indigo-600 dark:text-indigo-400'} font-mono`}>
                   {overallPercentage.toFixed(0)}% Terkumpul
                 </span>
               </div>
-              <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 font-mono block mt-1">
+              <span className={`text-xl sm:text-2xl font-black ${isClay ? 'text-emerald-950 dark:text-white' : 'text-slate-800 dark:text-slate-100'} font-mono block mt-1`}>
                 {formatIDR(totalTargetAmount)}
               </span>
 
@@ -749,8 +743,8 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                     overallPercentage >= 100 
                       ? 'bg-gradient-to-r from-emerald-500 to-teal-500' 
                       : 'bg-indigo-600'
-                  }`}
-                  style={{ width: `${overallPercentage}%` }}
+                  }`} 
+                  style={{ width: `${overallPercentage}%` }} 
                 />
               </div>
             </div>
@@ -817,16 +811,20 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {filteredSavings.map((s) => {
+          {filteredSavings.map((s, sIdx) => {
             const pct = Math.min((s.currentAmount / s.targetAmount) * 100, 100);
             const isDone = s.currentAmount >= s.targetAmount;
             const remaining = Math.max(0, s.targetAmount - s.currentAmount);
             const cardLogs = savingLogs.filter(l => l.savingId === s.id);
 
+            const itemCardClass = isClay
+              ? `clay-card-${CLAY_PALETTE[sIdx % CLAY_PALETTE.length]} ${cardRadiusClass} p-4 sm:p-5 flex flex-col justify-between gap-4 relative overflow-hidden transition-all duration-200`
+              : `${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between gap-4 relative overflow-hidden transition-all duration-200`;
+
             return (
               <div 
                 key={s.id} 
-                className={`${getCardClasses()} p-4 sm:p-5 flex flex-col justify-between gap-4 relative overflow-hidden transition-all duration-200`}
+                className={itemCardClass}
               >
                   {/* Top Bar: Title, Badge & Actions */}
                   <div className="flex items-start justify-between gap-3">
@@ -843,12 +841,12 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                       
                       <div className="flex flex-wrap items-center gap-2 mt-1.5">
                         {s.deadline && (
-                          <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                          <span className={`text-[10px] ${isClay ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'} font-semibold uppercase tracking-wider`}>
                             Tenggat: {new Date(s.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                           </span>
                         )}
                         {isDone && (
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 font-bold text-[10px] uppercase flex items-center gap-1 tracking-wider shadow-2xs border border-emerald-200/60 dark:border-emerald-800/40">
+                          <span className={`px-2 py-0.5 ${pillRadius} ${isClay ? 'clay-pill-emerald' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40'} font-bold text-[10px] uppercase flex items-center gap-1 tracking-wider shadow-2xs`}>
                             <Check className="w-2.5 h-2.5 stroke-[3]" /> Target Terpenuhi
                           </span>
                         )}
@@ -859,14 +857,14 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                       <button 
                         onClick={() => onEdit(s)} 
                         title="Edit Target Tabungan"
-                        className="p-1.5 rounded-xl text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition cursor-pointer"
+                        className={`p-1.5 ${btnRadius} ${isClay ? 'clay-button bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 hover:text-indigo-600' : 'text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20'} transition cursor-pointer`}
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button 
                         onClick={() => handleDeleteSaving(s.id)} 
                         title="Hapus Target Tabungan"
-                        className="p-1.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition cursor-pointer"
+                        className={`p-1.5 ${btnRadius} ${isClay ? 'clay-button bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 hover:text-rose-600' : 'text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20'} transition cursor-pointer`}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -874,9 +872,9 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                   </div>
 
                   {/* Progress Bar & Amount Numbers */}
-                  <div className="bg-slate-50/80 dark:bg-slate-800/40 p-3 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                  <div className={`${isClay ? 'bg-white/40 dark:bg-slate-900/40 border border-white/50 dark:border-white/5 shadow-inner' : 'bg-slate-50/80 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80'} p-3 ${cardRadiusClass}`}>
                     <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className="font-semibold text-slate-500 dark:text-slate-400 text-[11px]">
+                      <span className={`font-semibold ${isClay ? 'text-slate-700 dark:text-slate-300' : 'text-slate-500 dark:text-slate-400'} text-[11px]`}>
                         Terkumpul saat ini:
                       </span>
                       <span className="font-mono font-bold text-slate-900 dark:text-white text-xs sm:text-sm">
@@ -902,15 +900,15 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                   </div>
 
                   {/* Action Row: Rincian Transaksi (Teks Saja) & Tombol (+) */}
-                  <div className="border-t border-slate-100 dark:border-slate-800/80 pt-2.5 flex items-center justify-between gap-2">
+                  <div className={`border-t ${isClay ? 'border-black/5 dark:border-white/5' : 'border-slate-100 dark:border-slate-800/80'} pt-2.5 flex items-center justify-between gap-2`}>
                     <button
                       type="button"
                       onClick={() => setInspectingSaving(s)}
-                      className="flex-1 flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50/80 hover:bg-slate-100/80 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 border border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer group"
+                      className={`flex-1 flex items-center justify-between py-2 px-3 ${btnRadius} ${isClay ? 'clay-button bg-white/70 dark:bg-slate-800/70 border border-white/40' : 'bg-slate-50/80 hover:bg-slate-100/80 dark:bg-slate-800/40 dark:hover:bg-slate-800/70 border border-slate-100 dark:border-slate-800'} text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors cursor-pointer group`}
                     >
                       <div className="flex items-center gap-2">
                         <span>Rincian Transaksi</span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-extrabold border border-slate-200/60 dark:border-slate-700">
+                        <span className={`text-[10px] px-1.5 py-0.2 ${pillRadius} ${isClay ? 'bg-white/80 dark:bg-slate-900/80 font-black' : 'bg-white dark:bg-slate-900'} text-slate-600 dark:text-slate-300 font-extrabold border border-slate-200/60 dark:border-slate-700`}>
                           {cardLogs.length}
                         </span>
                       </div>
@@ -925,7 +923,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                       type="button"
                       onClick={() => openActionModal(s, 'setor')}
                       title="Setor / Tarik Tabungan"
-                      className="h-[36px] w-[36px] rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white shadow-xs transition flex items-center justify-center cursor-pointer shrink-0"
+                      className={`h-[36px] w-[36px] ${btnRadius} ${isClay ? 'clay-button bg-indigo-600 hover:bg-indigo-700' : 'bg-indigo-600 hover:bg-indigo-700'} active:scale-95 text-white shadow-xs transition flex items-center justify-center cursor-pointer shrink-0`}
                     >
                       <Plus className="w-4 h-4 stroke-[2.5]" />
                     </button>

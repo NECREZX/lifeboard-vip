@@ -520,6 +520,9 @@ export default function FormsModal({
   };
 
   const getFormInputClass = (extra = "") => {
+    if (uiStyle === 'clay') {
+      return `clay-input text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all ${extra}`;
+    }
     if (uiStyle === 'glass') {
       return `glass-input text-slate-950 dark:text-white font-extrabold placeholder:text-slate-500/80 dark:placeholder:text-slate-400/80 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 transition-all ${extra}`;
     }
@@ -543,9 +546,11 @@ export default function FormsModal({
           maxHeight: 'min(580px, 82vh)'
         }}
         className={`relative w-full max-w-lg mx-auto rounded-t-[40px] sm:rounded-[40px] shadow-none overflow-hidden flex flex-col border-t sm:border border-slate-200/90 dark:border-slate-800 animate-in slide-in-from-bottom duration-200 ${
-        uiStyle === 'glass' 
-          ? 'glass-card' 
-          : 'bg-white dark:bg-[#121212]'
+        uiStyle === 'clay'
+          ? 'clay-card'
+          : uiStyle === 'glass' 
+            ? 'glass-card' 
+            : 'bg-white dark:bg-[#121212]'
       }`}>
         {/* Mobile Sheet Drag Indicator */}
         <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />

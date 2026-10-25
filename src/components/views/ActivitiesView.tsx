@@ -19,6 +19,7 @@ import {
 import { Activity, Wishlist } from '../../types';
 import { formatIDR } from '../../lib/formatters';
 import { WishlistIcon } from '../CustomIcons';
+import { getRadiusClass, getFilterButtonClass, CLAY_PALETTE } from '../../lib/themeStyles';
 
 interface ActivitiesViewProps {
   activities: Activity[];
@@ -66,19 +67,12 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
     }
   };
 
-  const btnRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
-
-  const filterBtnClass = useMemo(() => {
-    let cls = `relative flex items-center justify-between gap-1.5 px-3 py-2 ${btnRadius} transition-all min-w-0 overflow-hidden bg-white dark:bg-slate-900 `;
-    if (settings?.cardStyle === 'bordered') {
-      cls += 'border-2 border-slate-300 dark:border-slate-700 shadow-none';
-    } else if (settings?.cardStyle === 'shadowed') {
-      cls += 'border border-slate-200/80 dark:border-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)]';
-    } else {
-      cls += 'border border-slate-200/90 dark:border-slate-800 shadow-none';
-    }
-    return cls;
-  }, [settings?.cardStyle, btnRadius]);
+  const isClay = settings?.uiStyle === 'clay';
+  const cardRadius = settings?.cardRadius || 'rounded';
+  const cardRadiusClass = getRadiusClass('card', cardRadius);
+  const btnRadius = getRadiusClass('button', cardRadius);
+  const pillRadius = getRadiusClass('pill', cardRadius);
+  const iconRadius = getRadiusClass('icon', cardRadius);
 
   // --- Statistics Calculations ---
   const totalActivities = activities.length;
@@ -171,15 +165,15 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
       <div className="flex items-center justify-end w-full">
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 w-full sm:w-auto">
           {/* Tipe Selector: Semua, Agenda Kerja, Wishlist */}
-          <div className={filterBtnClass}>
-            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+          <div className={getFilterButtonClass(settings, 'indigo')}>
+            <span className={`text-[9px] sm:text-[10px] font-extrabold ${isClay ? 'text-indigo-950/70 dark:text-indigo-200/70' : 'text-slate-400 dark:text-slate-500'} uppercase tracking-wider shrink-0`}>
               Tipe:
             </span>
             <div className="relative flex items-center min-w-0 flex-1 justify-end">
               <select
                 value={currentType}
                 onChange={(e) => handleTypeChange(e.target.value as 'all' | 'agenda' | 'wishlist')}
-                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+                className={`text-[11px] sm:text-xs font-bold bg-transparent border-none ${isClay ? 'text-indigo-950 dark:text-indigo-100 font-extrabold' : 'text-slate-700 dark:text-slate-200'} focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none`}
               >
                 <option value="all">Semua</option>
                 <option value="agenda">Agenda Kerja</option>
@@ -189,16 +183,16 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
             </div>
           </div>
 
-          {/* Status Selector Dropdown Card (Menyatu Secara Cerdas) */}
-          <div className={filterBtnClass}>
-            <span className="text-[9px] sm:text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-wider shrink-0">
+          {/* Status Selector Dropdown Card */}
+          <div className={getFilterButtonClass(settings, 'purple')}>
+            <span className={`text-[9px] sm:text-[10px] font-extrabold ${isClay ? 'text-purple-950/70 dark:text-purple-200/70' : 'text-slate-400 dark:text-slate-500'} uppercase tracking-wider shrink-0`}>
               Status:
             </span>
             <div className="relative flex items-center min-w-0 flex-1 justify-end">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="text-[11px] sm:text-xs font-bold bg-transparent border-none text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none"
+                className={`text-[11px] sm:text-xs font-bold bg-transparent border-none ${isClay ? 'text-purple-950 dark:text-purple-100 font-extrabold' : 'text-slate-700 dark:text-slate-200'} focus:outline-none cursor-pointer py-0 pl-1 pr-4 min-w-0 w-full truncate text-right appearance-none`}
               >
                 <option value="all">Semua Status</option>
                 {currentType === 'agenda' ? (
@@ -229,10 +223,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
          ======================================================= */}
       <div className="grid grid-cols-3 gap-2 sm:gap-3.5">
         {/* Card Ringkasan 1: Agenda Kerja */}
-        <div className={`${getCardClasses()} p-2.5 sm:p-4 flex flex-col justify-between relative overflow-hidden transition-all`}>
+        <div className={`${isClay ? `clay-card-indigo ${cardRadiusClass}` : getCardClasses()} p-2.5 sm:p-4 flex flex-col justify-between relative overflow-hidden transition-all`}>
           <div className="flex items-start justify-between gap-1 sm:gap-2 mb-1.5 sm:mb-2.5">
             <div className="min-w-0">
-              <span className="text-[8.5px] sm:text-[10px] font-extrabold uppercase tracking-wider text-indigo-500 dark:text-indigo-400 block truncate mb-0.5">
+              <span className={`text-[8.5px] sm:text-[10px] font-extrabold uppercase tracking-wider ${isClay ? 'text-indigo-900/80 dark:text-indigo-200' : 'text-indigo-500 dark:text-indigo-400'} block truncate mb-0.5`}>
                 Agenda
               </span>
               <div className="flex items-baseline gap-1">
@@ -242,12 +236,12 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                 <span className="text-[9px] sm:text-xs font-semibold text-slate-400 hidden xs:inline">tugas</span>
               </div>
             </div>
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 shadow-xs">
+            <div className={`w-7 h-7 sm:w-9 sm:h-9 ${iconRadius} ${isClay ? 'clay-button bg-indigo-500/15 text-indigo-700 dark:text-indigo-200' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'} flex items-center justify-center shrink-0 shadow-xs`}>
               <CheckSquare className="w-3.5 h-3.5 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
           </div>
 
-          <div className="flex flex-col gap-1 sm:gap-1.5 pt-1.5 sm:pt-2 border-t border-slate-100 dark:border-slate-800/80">
+          <div className={`flex flex-col gap-1 sm:gap-1.5 pt-1.5 sm:pt-2 border-t ${isClay ? 'border-black/5 dark:border-white/5' : 'border-slate-100 dark:border-slate-800/80'}`}>
             <div className="flex items-center justify-between text-[9px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">
               <span className="flex items-center gap-0.5 sm:gap-1 truncate">
                 <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 shrink-0" />
@@ -269,10 +263,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
         </div>
 
         {/* Card Ringkasan 2: Wishlist (Daftar Keinginan) */}
-        <div className={`${getCardClasses()} p-2.5 sm:p-4 flex flex-col justify-between relative overflow-hidden transition-all`}>
+        <div className={`${isClay ? `clay-card-rose ${cardRadiusClass}` : getCardClasses()} p-2.5 sm:p-4 flex flex-col justify-between relative overflow-hidden transition-all`}>
           <div className="flex items-start justify-between gap-1 sm:gap-2 mb-1.5 sm:mb-2.5">
             <div className="min-w-0">
-              <span className="text-[8.5px] sm:text-[10px] font-extrabold uppercase tracking-wider text-rose-500 dark:text-rose-400 block truncate mb-0.5">
+              <span className={`text-[8.5px] sm:text-[10px] font-extrabold uppercase tracking-wider ${isClay ? 'text-rose-900/80 dark:text-rose-200' : 'text-rose-500 dark:text-rose-400'} block truncate mb-0.5`}>
                 Wishlist
               </span>
               <div className="flex items-baseline gap-1">
@@ -282,12 +276,12 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                 <span className="text-[9px] sm:text-xs font-semibold text-slate-400 hidden xs:inline">barang</span>
               </div>
             </div>
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 shadow-xs">
+            <div className={`w-7 h-7 sm:w-9 sm:h-9 ${iconRadius} ${isClay ? 'clay-button bg-rose-500/15 text-rose-700 dark:text-rose-200' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400'} flex items-center justify-center shrink-0 shadow-xs`}>
               <ShoppingBag className="w-3.5 h-3.5 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
           </div>
 
-          <div className="flex flex-col gap-1 sm:gap-1.5 pt-1.5 sm:pt-2 border-t border-slate-100 dark:border-slate-800/80">
+          <div className={`flex flex-col gap-1 sm:gap-1.5 pt-1.5 sm:pt-2 border-t ${isClay ? 'border-black/5 dark:border-white/5' : 'border-slate-100 dark:border-slate-800/80'}`}>
             <div className="flex items-center justify-between text-[9px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">
               <span className="flex items-center gap-0.5 sm:gap-1 truncate">
                 <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-500 shrink-0" />
@@ -309,10 +303,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
         </div>
 
         {/* Card Ringkasan 3: Progres Keseluruhan */}
-        <div className={`${getCardClasses()} p-2.5 sm:p-4 flex flex-col justify-between relative overflow-hidden transition-all`}>
+        <div className={`${isClay ? `clay-card-teal ${cardRadiusClass}` : getCardClasses()} p-2.5 sm:p-4 flex flex-col justify-between relative overflow-hidden transition-all`}>
           <div className="flex items-start justify-between gap-1 sm:gap-2 mb-1.5 sm:mb-2.5">
             <div className="min-w-0">
-              <span className="text-[8.5px] sm:text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block truncate mb-0.5">
+              <span className={`text-[8.5px] sm:text-[10px] font-extrabold uppercase tracking-wider ${isClay ? 'text-teal-900/80 dark:text-teal-200' : 'text-emerald-600 dark:text-emerald-400'} block truncate mb-0.5`}>
                 Progres
               </span>
               <div className="flex items-baseline gap-1">
@@ -322,17 +316,17 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                 <span className="text-[9px] sm:text-xs font-semibold text-slate-400 hidden xs:inline">tercapai</span>
               </div>
             </div>
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-xs">
+            <div className={`w-7 h-7 sm:w-9 sm:h-9 ${iconRadius} ${isClay ? 'clay-button bg-teal-500/15 text-teal-700 dark:text-teal-200' : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'} flex items-center justify-center shrink-0 shadow-xs`}>
               <Target className="w-3.5 h-3.5 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
           </div>
 
-          <div className="flex flex-col gap-1 sm:gap-1.5 pt-1.5 sm:pt-2 border-t border-slate-100 dark:border-slate-800/80">
+          <div className={`flex flex-col gap-1 sm:gap-1.5 pt-1.5 sm:pt-2 border-t ${isClay ? 'border-black/5 dark:border-white/5' : 'border-slate-100 dark:border-slate-800/80'}`}>
             <div className="flex items-center justify-between text-[9px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400">
               <span className="truncate font-mono">
-                <strong className="text-emerald-600 dark:text-emerald-400">{totalDoneCombined}</strong>/{totalCombined}
+                <strong className={isClay ? 'text-teal-800 dark:text-teal-200' : 'text-emerald-600 dark:text-emerald-400'}>{totalDoneCombined}</strong>/{totalCombined}
               </span>
-              <span className="text-[8.5px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+              <span className={`text-[8.5px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.5 ${pillRadius} ${isClay ? 'clay-pill-emerald' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'} shrink-0`}>
                 {overallProgressPct}%
               </span>
             </div>
@@ -522,10 +516,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
             {/* 4 Kartu Metrik Kuadran di Bawah Radar */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full pt-3 mt-2 border-t border-slate-100 dark:border-slate-800/80">
               {[
-                { id: 'north', label: 'Agenda Selesai', count: completedActivities, color: 'bg-emerald-500', textCol: 'text-emerald-600 dark:text-emerald-400' },
-                { id: 'west', label: 'Agenda Tertunda', count: pendingActivities, color: 'bg-indigo-500', textCol: 'text-indigo-600 dark:text-indigo-400' },
-                { id: 'east', label: 'Wishlist Terbeli', count: purchasedWishlists, color: 'bg-cyan-500', textCol: 'text-cyan-600 dark:text-cyan-400' },
-                { id: 'south', label: 'Wishlist Rencana', count: pendingWishlists, color: 'bg-rose-500', textCol: 'text-rose-600 dark:text-rose-400' }
+                { id: 'north', label: 'Agenda Selesai', count: completedActivities, color: 'bg-emerald-500', textCol: 'text-emerald-600 dark:text-emerald-400', clayCard: 'clay-card-emerald' },
+                { id: 'west', label: 'Agenda Tertunda', count: pendingActivities, color: 'bg-indigo-500', textCol: 'text-indigo-600 dark:text-indigo-400', clayCard: 'clay-card-indigo' },
+                { id: 'east', label: 'Wishlist Terbeli', count: purchasedWishlists, color: 'bg-cyan-500', textCol: 'text-cyan-600 dark:text-cyan-400', clayCard: 'clay-card-blue' },
+                { id: 'south', label: 'Wishlist Rencana', count: pendingWishlists, color: 'bg-rose-500', textCol: 'text-rose-600 dark:text-rose-400', clayCard: 'clay-card-rose' }
               ].map((m) => {
                 const isHovered = hoveredAxis === m.id;
                 const pct = totalCombined > 0 ? Math.round((m.count / totalCombined) * 100) : 0;
@@ -534,15 +528,17 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                     key={m.id}
                     onMouseEnter={() => setHoveredAxis(m.id)}
                     onMouseLeave={() => setHoveredAxis(null)}
-                    className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
-                      isHovered
-                        ? 'bg-slate-50 dark:bg-slate-800 border-indigo-300 dark:border-indigo-600 scale-[1.02]'
-                        : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800'
+                    className={`p-2.5 ${btnRadius} transition-all cursor-pointer ${
+                      isClay
+                        ? `${m.clayCard} ${isHovered ? 'scale-[1.02]' : ''}`
+                        : isHovered
+                          ? 'bg-slate-50 dark:bg-slate-800 border border-indigo-300 dark:border-indigo-600 scale-[1.02]'
+                          : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800'
                     }`}
                   >
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className={`w-2 h-2 rounded-full shrink-0 ${m.color}`} />
-                      <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300 truncate">
+                      <span className={`text-[10px] font-bold ${isClay ? 'text-slate-800 dark:text-slate-100' : 'text-slate-600 dark:text-slate-300'} truncate`}>
                         {m.label}
                       </span>
                     </div>
@@ -579,7 +575,11 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
             </p>
           </div>
         ) : (
-          unifiedItems.map((item) => {
+          unifiedItems.map((item, idx) => {
+            const cardBg = isClay
+              ? `clay-card-${CLAY_PALETTE[idx % CLAY_PALETTE.length]} ${cardRadiusClass}`
+              : getCardClasses();
+
             if (item.itemType === 'activity') {
               const a = item.data;
               const isDone = a.status === 'completed';
@@ -587,10 +587,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
               return (
                 <div 
                   key={`act-${a.id}`} 
-                  className={getCardClasses() + ` p-4 flex flex-col gap-3 transition-all duration-300 ${
+                  className={`${cardBg} p-4 flex flex-col gap-3 transition-all duration-300 ${
                     isDone 
-                      ? 'opacity-60 bg-slate-50/50 dark:bg-slate-900/40 grayscale-[0.4]' 
-                      : 'hover:border-indigo-200 dark:hover:border-indigo-900'
+                      ? 'opacity-70 grayscale-[0.3]' 
+                      : isClay ? '' : 'hover:border-indigo-200 dark:hover:border-indigo-900'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -616,7 +616,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                         {a.title}
                       </h4>
                       {a.description && (
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">
+                        <p className={`text-[11px] ${isClay ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500 dark:text-slate-400'} mt-1 line-clamp-2`}>
                           {a.description}
                         </p>
                       )}
@@ -626,7 +626,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                       <button 
                         type="button"
                         onClick={() => onEditActivity(a)} 
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition cursor-pointer"
+                        className={`p-1.5 ${btnRadius} ${isClay ? 'clay-button bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 hover:text-indigo-600' : 'text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/20'} transition cursor-pointer`}
                         title="Edit agenda"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -634,7 +634,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                       <button 
                         type="button"
                         onClick={() => handleDeleteActivity(a.id)} 
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition cursor-pointer"
+                        className={`p-1.5 ${btnRadius} ${isClay ? 'clay-button bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 hover:text-rose-600' : 'text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20'} transition cursor-pointer`}
                         title="Hapus agenda"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -643,10 +643,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                   </div>
 
                   {/* Footer Tag & Date */}
-                  <div className="flex items-center justify-between pt-2 mt-auto border-t border-slate-100 dark:border-slate-800/80">
+                  <div className={`flex items-center justify-between pt-2 mt-auto border-t ${isClay ? 'border-black/5 dark:border-white/5' : 'border-slate-100 dark:border-slate-800/80'}`}>
                     <div className="flex items-center gap-1.5 text-slate-400">
                       <Calendar className="w-3 h-3" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${isClay ? 'text-slate-600 dark:text-slate-300' : ''}`}>
                         {a.deadline 
                           ? new Date(a.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
                           : '-'}
@@ -655,14 +655,16 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
 
                     <div className="flex items-center gap-1.5">
                       {/* Type Badge: Agenda */}
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 text-[9px] font-bold uppercase tracking-wider">
+                      <span className={`flex items-center gap-1 px-2 py-0.5 ${pillRadius} ${isClay ? 'clay-pill-indigo' : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400'} text-[9px] font-bold uppercase tracking-wider`}>
                         <Bookmark className="w-2.5 h-2.5" />
                         <span>Agenda</span>
                       </span>
 
                       {/* Status Pill */}
-                      <span className={`px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-widest ${
-                        isDone ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                      <span className={`px-2 py-0.5 ${pillRadius} text-[9px] font-bold uppercase tracking-widest ${
+                        isDone 
+                          ? isClay ? 'clay-pill-emerald' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400' 
+                          : isClay ? 'clay-pill-slate' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                       }`}>
                         {isDone ? 'Selesai' : 'Pending'}
                       </span>
@@ -678,10 +680,10 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
               return (
                 <div 
                   key={`wish-${w.id}`} 
-                  className={getCardClasses() + ` p-4 flex flex-col gap-3 transition-all duration-300 ${
+                  className={`${cardBg} p-4 flex flex-col gap-3 transition-all duration-300 ${
                     isPurchased 
-                      ? 'opacity-60 bg-slate-50/50 dark:bg-slate-900/40 grayscale-[0.4]' 
-                      : 'hover:border-rose-200 dark:hover:border-rose-900'
+                      ? 'opacity-70 grayscale-[0.3]' 
+                      : isClay ? '' : 'hover:border-rose-200 dark:hover:border-rose-900'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -707,16 +709,16 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                         {w.title}
                       </h4>
                       <div className="flex flex-col gap-0.5 mt-1">
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">
+                        <p className={`text-[10px] ${isClay ? 'text-slate-600 dark:text-slate-300' : 'text-slate-500 dark:text-slate-400'} uppercase font-bold tracking-wider`}>
                           Target: {w.month}
                         </p>
                         {w.price ? (
-                          <p className="text-[10.5px] font-mono text-rose-500 dark:text-rose-400 font-bold">
+                          <p className={`text-[10.5px] font-mono font-bold ${isClay ? 'text-rose-700 dark:text-rose-300' : 'text-rose-500 dark:text-rose-400'}`}>
                             {formatIDR(w.price)}
                           </p>
                         ) : null}
                         {w.notes && (
-                          <p className="text-[10px] text-slate-400 dark:text-slate-500 italic line-clamp-1">
+                          <p className={`text-[10px] ${isClay ? 'text-slate-600 dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'} italic line-clamp-1`}>
                             "{w.notes}"
                           </p>
                         )}
@@ -727,7 +729,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                       <button 
                         type="button"
                         onClick={() => onEditWishlist(w)} 
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition cursor-pointer"
+                        className={`p-1.5 ${btnRadius} ${isClay ? 'clay-button bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 hover:text-rose-600' : 'text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20'} transition cursor-pointer`}
                         title="Edit wishlist"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -735,7 +737,7 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                       <button 
                         type="button"
                         onClick={() => handleDeleteWishlist(w.id)} 
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 transition cursor-pointer"
+                        className={`p-1.5 ${btnRadius} ${isClay ? 'clay-button bg-white/70 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 hover:text-rose-600' : 'text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20'} transition cursor-pointer`}
                         title="Hapus wishlist"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -744,24 +746,26 @@ export const ActivitiesView: React.FC<ActivitiesViewProps> = ({
                   </div>
 
                   {/* Footer Tag & Type */}
-                  <div className="flex items-center justify-between pt-2 mt-auto border-t border-slate-100 dark:border-slate-800/80">
+                  <div className={`flex items-center justify-between pt-2 mt-auto border-t ${isClay ? 'border-black/5 dark:border-white/5' : 'border-slate-100 dark:border-slate-800/80'}`}>
                     <div className="flex items-center gap-1.5 text-slate-400">
                       <ShoppingBag className="w-3 h-3" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${isClay ? 'text-slate-600 dark:text-slate-300' : ''}`}>
                         {w.month || 'Target'}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       {/* Type Badge: Wishlist */}
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-[9px] font-bold uppercase tracking-wider">
+                      <span className={`flex items-center gap-1 px-2 py-0.5 ${pillRadius} ${isClay ? 'clay-pill-rose' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400'} text-[9px] font-bold uppercase tracking-wider`}>
                         <WishlistIcon className="w-2.5 h-2.5 fill-current" />
                         <span>Wishlist</span>
                       </span>
 
                       {/* Status Pill */}
-                      <span className={`px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-widest ${
-                        isPurchased ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                      <span className={`px-2 py-0.5 ${pillRadius} text-[9px] font-bold uppercase tracking-widest ${
+                        isPurchased 
+                          ? isClay ? 'clay-pill-emerald' : 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400' 
+                          : isClay ? 'clay-pill-slate' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                       }`}>
                         {isPurchased ? 'Terbeli' : 'Rencana'}
                       </span>

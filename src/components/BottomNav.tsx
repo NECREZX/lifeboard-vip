@@ -105,6 +105,9 @@ export default function BottomNav({
   };
 
   const getNavBgClasses = () => {
+    if (uiStyle === 'clay') {
+      return 'clay-panel';
+    }
     return 'bg-white dark:bg-[#121212]';
   };
 
@@ -145,7 +148,7 @@ export default function BottomNav({
     >
       {/* Ekstensi latar belakang solid ke bawah agar 100% tidak ada celah konten halaman terlihat */}
       <div 
-        className="absolute left-0 right-0 top-full h-16 bg-white dark:bg-slate-950 pointer-events-none" 
+        className={`absolute left-0 right-0 top-full h-16 ${uiStyle === 'clay' ? 'bg-[#f8fafc] dark:bg-[#182030]' : 'bg-white dark:bg-slate-950'} pointer-events-none`} 
         aria-hidden="true" 
       />
 
@@ -163,10 +166,10 @@ export default function BottomNav({
                   id="center-nav-add"
                 >
                   <div 
-                    className={`w-10 h-10 xs:w-11 xs:h-11 rounded-full flex items-center justify-center text-white bg-gradient-to-tr ${getFabGradient()} shadow-sm hover:shadow-md group-hover:scale-105 group-active:scale-95 transition-all duration-150`}
-                    style={isHex ? { backgroundColor: accentColor, backgroundImage: 'none', color: getThemeContrastColor(accentColor) } : undefined}
+                    className={`w-10 h-10 xs:w-11 xs:h-11 rounded-full flex items-center justify-center text-white ${uiStyle === 'clay' ? 'clay-button bg-gradient-to-tr from-rose-500 to-pink-500 shadow-md border-rose-400/30' : `bg-gradient-to-tr ${getFabGradient()} shadow-sm hover:shadow-md`} group-hover:scale-105 group-active:scale-95 transition-all duration-150`}
+                    style={isHex && uiStyle !== 'clay' ? { backgroundColor: accentColor, backgroundImage: 'none', color: getThemeContrastColor(accentColor) } : undefined}
                   >
-                    <Plus className="w-5.5 h-5.5 xs:w-6 xs:h-6 stroke-[2.8]" style={isHex ? { color: getThemeContrastColor(accentColor) } : undefined} />
+                    <Plus className="w-5.5 h-5.5 xs:w-6 xs:h-6 stroke-[2.8]" style={isHex && uiStyle !== 'clay' ? { color: getThemeContrastColor(accentColor) } : undefined} />
                   </div>
                 </button>
               );
@@ -174,6 +177,17 @@ export default function BottomNav({
 
             const isActive = activeTab === tab.id;
             const Icon = tab.icon;
+            const isClay = uiStyle === 'clay';
+
+            let clayTabPill = '';
+            if (isClay && isActive) {
+              if (tab.id === 'dashboard') clayTabPill = 'clay-pill-purple';
+              else if (tab.id === 'transaksi') clayTabPill = 'clay-pill-blue';
+              else if (tab.id === 'tabungan') clayTabPill = 'clay-pill-emerald';
+              else if (tab.id === 'anggaran') clayTabPill = 'clay-pill-amber';
+              else if (tab.id === 'aktivitas') clayTabPill = 'clay-pill-teal';
+              else if (tab.id === 'kelola') clayTabPill = 'clay-pill-rose';
+            }
 
             return (
               <button
@@ -186,15 +200,15 @@ export default function BottomNav({
                 id={`nav-tab-${tab.id}`}
               >
                 <div 
-                  className={`w-7.5 h-7.5 xs:w-8 xs:h-8 flex items-center justify-center shrink-0 ${getItemRadiusClass()} transition-all duration-150`}
-                  style={isActive ? { 
+                  className={`w-7.5 h-7.5 xs:w-8 xs:h-8 flex items-center justify-center shrink-0 ${getItemRadiusClass()} ${clayTabPill} transition-all duration-150`}
+                  style={isActive && !isClay ? { 
                     backgroundColor: isDarkMode ? `${resolvedAccent}33` : `${resolvedAccent}18`,
                     color: resolvedAccent,
                   } : undefined}
                 >
                   <Icon 
                     className={`w-5 h-5 ${isActive ? 'stroke-[2.3]' : 'stroke-[1.9] text-slate-400 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'}`} 
-                    style={isActive ? { color: resolvedAccent } : undefined} 
+                    style={isActive && !isClay ? { color: resolvedAccent } : undefined} 
                   />
                 </div>
 
@@ -204,7 +218,7 @@ export default function BottomNav({
                       ? 'font-extrabold' 
                       : 'font-semibold text-slate-400 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'
                   }`}
-                  style={isActive ? { color: resolvedAccent } : undefined}
+                  style={isActive && !isClay ? { color: resolvedAccent } : undefined}
                 >
                   {tab.label}
                 </span>
