@@ -546,73 +546,145 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       </span>
                     </div>
 
-                    {/* Grid Card Saldo Dompet (4 Kolom per Baris) */}
-                    <div className="grid grid-cols-4 gap-2 xs:gap-2.5 sm:gap-3.5">
-                      {group.items.map((w: any, wIdx: number) => {
-                        const balanceVal = w.currentBalance ?? w.initialBalance;
-                        const cardColor = w.color || '#0284c7';
-                        const isBrandLogo = !!BRAND_LOGOS_MAP[w.icon];
-                        const cardRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
-                        const iconRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
-                        const pillRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg';
-                        const clayWalletPalettes = [
-                          'clay-card-blue',
-                          'clay-card-purple',
-                          'clay-card-emerald',
-                          'clay-card-amber',
-                          'clay-card-teal',
-                          'clay-card-indigo',
-                          'clay-card-rose'
-                        ];
-                        const walletBgClass = settings?.uiStyle === 'clay'
-                          ? clayWalletPalettes[wIdx % clayWalletPalettes.length]
-                          : 'bg-white dark:bg-[#18181b] border border-slate-200/90 dark:border-slate-800';
+                    {/* Kondisi Tampilan: Khusus kategori Bank dibuat numpuk kebawah (vertikal), sedangkan E-Wallet dan Tunai tetap grid 4 kolom */}
+                    {group.key === 'Bank' ? (
+                      /* Mode Vertikal / Numpuk Kebawah Khusus Bank agar Saldo Masing-masing Terlihat Jelas */
+                      <div className="flex flex-col gap-2 sm:gap-2.5">
+                        {group.items.map((w: any, wIdx: number) => {
+                          const balanceVal = w.currentBalance ?? w.initialBalance;
+                          const cardColor = w.color || '#0284c7';
+                          const isBrandLogo = !!BRAND_LOGOS_MAP[w.icon];
+                          const cardRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+                          const iconRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+                          const pillRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg';
+                          const clayWalletPalettes = [
+                            'clay-card-blue',
+                            'clay-card-purple',
+                            'clay-card-emerald',
+                            'clay-card-amber',
+                            'clay-card-teal',
+                            'clay-card-indigo',
+                            'clay-card-rose'
+                          ];
+                          const walletBgClass = settings?.uiStyle === 'clay'
+                            ? clayWalletPalettes[wIdx % clayWalletPalettes.length]
+                            : 'bg-white dark:bg-[#18181b] border border-slate-200/90 dark:border-slate-800';
 
-                        return (
-                          <div 
-                            key={w.id}
-                            onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
-                            className={`group relative overflow-hidden ${cardRadius} ${walletBgClass} p-2 xs:p-2.5 sm:p-3 flex flex-col items-center justify-between text-center hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-all cursor-pointer select-none active:scale-[0.98] min-h-[110px] xs:min-h-[118px] sm:min-h-[128px]`}
-                            title={`Klik untuk kelola dompet ${w.name}`}
-                          >
-                            {/* Top Indicator Strip (Subtle brand color accent) */}
-                            {settings?.uiStyle !== 'clay' && (
-                              <div 
-                                className="absolute top-0 inset-x-0 h-1"
-                                style={{ backgroundColor: cardColor }}
-                              />
-                            )}
-
-                            {/* 1. Icon Container di Atas */}
-                            <div className="pt-1">
-                              <div 
-                                className={`w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 ${iconRadius} flex items-center justify-center shrink-0 ${settings?.uiStyle === 'clay' ? 'bg-white/90 dark:bg-black/30 shadow-xs' : 'shadow-3xs border border-slate-100 dark:border-slate-800'} transition-transform group-hover:scale-105 overflow-hidden`}
-                                style={isBrandLogo ? undefined : { backgroundColor: settings?.uiStyle === 'clay' ? undefined : `${cardColor}18`, color: cardColor }}
-                              >
-                                <IconRenderer 
-                                  name={w.icon || 'Wallet'} 
-                                  className={isBrandLogo ? `w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 ${iconRadius} object-cover` : "w-4 h-4 xs:w-5 xs:h-5"} 
+                          return (
+                            <div 
+                              key={w.id}
+                              onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
+                              className={`group relative overflow-hidden ${cardRadius} ${walletBgClass} p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-all cursor-pointer select-none active:scale-[0.99]`}
+                              title={`Klik untuk kelola dompet ${w.name}`}
+                            >
+                              {/* Left Indicator Strip (Subtle brand color accent) */}
+                              {settings?.uiStyle !== 'clay' && (
+                                <div 
+                                  className="absolute left-0 inset-y-0 w-1"
+                                  style={{ backgroundColor: cardColor }}
                                 />
+                              )}
+
+                              {/* Sisi Kiri: Ikon & Nama Dompet */}
+                              <div className="flex items-center gap-3 min-w-0 pl-1">
+                                <div 
+                                  className={`w-10 h-10 sm:w-11 sm:h-11 ${iconRadius} flex items-center justify-center shrink-0 ${settings?.uiStyle === 'clay' ? 'bg-white/90 dark:bg-black/30 shadow-xs' : 'shadow-3xs border border-slate-100 dark:border-slate-800'} transition-transform group-hover:scale-105 overflow-hidden`}
+                                  style={isBrandLogo ? undefined : { backgroundColor: settings?.uiStyle === 'clay' ? undefined : `${cardColor}18`, color: cardColor }}
+                                >
+                                  <IconRenderer 
+                                    name={w.icon || 'Wallet'} 
+                                    className={isBrandLogo ? `w-10 h-10 sm:w-11 sm:h-11 ${iconRadius} object-cover` : "w-5 h-5"} 
+                                  />
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                  <h4 className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm leading-snug truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                    {w.name}
+                                  </h4>
+                                  <span className="text-[10px] sm:text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                                    Rekening Bank
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Sisi Kanan: Saldo Dompet Jelas & Tidak Terpotong */}
+                              <div className={`shrink-0 ${settings?.uiStyle === 'clay' ? 'bg-white/70 dark:bg-black/25 border border-black/5 dark:border-white/5' : 'bg-slate-50 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800'} py-1.5 px-3 sm:px-3.5 ${pillRadius}`}>
+                                <span className="block font-bold font-mono text-slate-900 dark:text-white text-xs sm:text-sm tracking-tight whitespace-nowrap">
+                                  {showHideBalance ? '••••••••' : formatIDR(balanceVal)}
+                                </span>
                               </div>
                             </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      /* Grid Card Saldo Dompet 4 Kolom Khusus E-Wallet & Tunai (Tetap Seperti Semula) */
+                      <div className="grid grid-cols-4 gap-2 xs:gap-2.5 sm:gap-3.5">
+                        {group.items.map((w: any, wIdx: number) => {
+                          const balanceVal = w.currentBalance ?? w.initialBalance;
+                          const cardColor = w.color || '#0284c7';
+                          const isBrandLogo = !!BRAND_LOGOS_MAP[w.icon];
+                          const cardRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+                          const iconRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-2xl' : 'rounded-xl';
+                          const pillRadius = settings?.cardRadius === 'sharp' ? 'rounded-none' : settings?.cardRadius === 'extra' ? 'rounded-xl' : 'rounded-lg';
+                          const clayWalletPalettes = [
+                            'clay-card-blue',
+                            'clay-card-purple',
+                            'clay-card-emerald',
+                            'clay-card-amber',
+                            'clay-card-teal',
+                            'clay-card-indigo',
+                            'clay-card-rose'
+                          ];
+                          const walletBgClass = settings?.uiStyle === 'clay'
+                            ? clayWalletPalettes[wIdx % clayWalletPalettes.length]
+                            : 'bg-white dark:bg-[#18181b] border border-slate-200/90 dark:border-slate-800';
 
-                            {/* 2. Nama Dompet di Tengah */}
-                            <div className="w-full my-auto px-0.5 py-1">
-                              <h4 className="font-bold text-slate-800 dark:text-slate-100 text-[10px] xs:text-[11px] sm:text-xs leading-tight truncate w-full group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                {w.name}
-                              </h4>
-                            </div>
+                          return (
+                            <div 
+                              key={w.id}
+                              onClick={() => onOpenWalletManage ? onOpenWalletManage() : setActiveTab('kelola')}
+                              className={`group relative overflow-hidden ${cardRadius} ${walletBgClass} p-2 xs:p-2.5 sm:p-3 flex flex-col items-center justify-between text-center hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs transition-all cursor-pointer select-none active:scale-[0.98] min-h-[110px] xs:min-h-[118px] sm:min-h-[128px]`}
+                              title={`Klik untuk kelola dompet ${w.name}`}
+                            >
+                              {/* Top Indicator Strip (Subtle brand color accent) */}
+                              {settings?.uiStyle !== 'clay' && (
+                                <div 
+                                  className="absolute top-0 inset-x-0 h-1"
+                                  style={{ backgroundColor: cardColor }}
+                                />
+                              )}
 
-                            {/* 3. Saldo Dompet di Bawah (Pill container yang rapi & khas kartu akun) */}
-                            <div className={`w-full ${settings?.uiStyle === 'clay' ? 'bg-white/70 dark:bg-black/25 border border-black/5 dark:border-white/5' : 'bg-slate-50 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800'} py-1 px-1 ${pillRadius}`}>
-                              <span className="block font-bold font-mono text-slate-900 dark:text-white text-[9px] xs:text-[10px] sm:text-[11px] tracking-tight truncate w-full">
-                                {showHideBalance ? '••••••' : formatIDR(balanceVal)}
-                              </span>
+                              {/* 1. Icon Container di Atas */}
+                              <div className="pt-1">
+                                <div 
+                                  className={`w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 ${iconRadius} flex items-center justify-center shrink-0 ${settings?.uiStyle === 'clay' ? 'bg-white/90 dark:bg-black/30 shadow-xs' : 'shadow-3xs border border-slate-100 dark:border-slate-800'} transition-transform group-hover:scale-105 overflow-hidden`}
+                                  style={isBrandLogo ? undefined : { backgroundColor: settings?.uiStyle === 'clay' ? undefined : `${cardColor}18`, color: cardColor }}
+                                >
+                                  <IconRenderer 
+                                    name={w.icon || 'Wallet'} 
+                                    className={isBrandLogo ? `w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 ${iconRadius} object-cover` : "w-4 h-4 xs:w-5 xs:h-5"} 
+                                  />
+                                </div>
+                              </div>
+
+                              {/* 2. Nama Dompet di Tengah */}
+                              <div className="w-full my-auto px-0.5 py-1">
+                                <h4 className="font-bold text-slate-800 dark:text-slate-100 text-[10px] xs:text-[11px] sm:text-xs leading-tight truncate w-full group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                  {w.name}
+                                </h4>
+                              </div>
+
+                              {/* 3. Saldo Dompet di Bawah (Pill container yang rapi & khas kartu akun) */}
+                              <div className={`w-full ${settings?.uiStyle === 'clay' ? 'bg-white/70 dark:bg-black/25 border border-black/5 dark:border-white/5' : 'bg-slate-50 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800'} py-1 px-1 ${pillRadius}`}>
+                                <span className="block font-bold font-mono text-slate-900 dark:text-white text-[9px] xs:text-[10px] sm:text-[11px] tracking-tight truncate w-full">
+                                  {showHideBalance ? '••••••' : formatIDR(balanceVal)}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 ))
               )}
