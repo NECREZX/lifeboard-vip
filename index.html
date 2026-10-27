@@ -10,8 +10,8 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="color-scheme" id="meta-color-scheme" content="light" />
-    <meta name="theme-color" id="meta-theme-color" content="#FF7777" />
-    <meta name="msapplication-navbutton-color" content="#FF7777" />
+    <meta name="theme-color" id="meta-theme-color" content="#ffffff" />
+    <meta name="msapplication-navbutton-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -19,36 +19,22 @@
       (function() {
         try {
           var s = localStorage.getItem('fin_settings');
+          var isDark = false;
           if (s) {
             var p = JSON.parse(s);
-            var map = {
-              rose: '#f43f5e',
-              pink: '#ec4899',
-              emerald: '#10b981',
-              amber: '#f59e0b',
-              sky: '#0ea5e9',
-              purple: '#8b5cf6',
-              orange: '#f97316',
-              teal: '#14b8a6',
-              indigo: '#6366f1'
-            };
-            var isDark = !!p.isDarkMode;
-            if (isDark) {
-              document.documentElement.classList.add('dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-            }
-            var color = (p.themeColor === 'custom' && p.customAccentColor) 
-              ? p.customAccentColor 
-              : (map[p.themeColor] || '#FF7777');
-            if (color) {
-              var meta = document.getElementById('meta-theme-color');
-              if (meta) meta.setAttribute('content', color);
-              var ms = document.querySelector('meta[name=msapplication-navbutton-color]');
-              if (ms) ms.setAttribute('content', color);
-              document.documentElement.style.backgroundColor = isDark ? '#121212' : '#ffffff';
-            }
+            isDark = !!p.isDarkMode;
           }
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+          var sysBg = isDark ? '#121212' : '#ffffff';
+          var meta = document.getElementById('meta-theme-color');
+          if (meta) meta.setAttribute('content', sysBg);
+          var ms = document.querySelector('meta[name=msapplication-navbutton-color]');
+          if (ms) ms.setAttribute('content', sysBg);
+          document.documentElement.style.backgroundColor = sysBg;
         } catch(e) {}
       })();
     </script>

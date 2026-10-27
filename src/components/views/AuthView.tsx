@@ -30,17 +30,17 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   const contrastColor = getThemeContrastColor(rawThemeColor);
 
   useEffect(() => {
-    // Pastikan status bar HP menyatu seketika dengan warna tema form login
-    const metaColor = rawThemeColor;
+    // Pastikan navigasi sistem HP tetap putih bersih (#ffffff) / #121212
+    const sysBgColor = isDark ? '#121212' : '#ffffff';
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", metaColor);
+      metaTheme.setAttribute("content", sysBgColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", metaColor);
+      msMeta.setAttribute("content", sysBgColor);
     }
-    document.documentElement.style.backgroundColor = isDark ? '#121212' : rawThemeColor;
+    document.documentElement.style.backgroundColor = sysBgColor;
 
     // Cek jika sudah pernah login sebelumnya
     const savedAuth = localStorage.getItem('fin_auth');

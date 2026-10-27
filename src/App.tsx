@@ -332,28 +332,30 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
-    // Match mobile status bar & gesture bar with system top bar color
+    // Keep Android system gesture & navigation bar pure white (#ffffff) in light mode and #121212 in dark mode
     const rawThemeColor = getEffectiveThemeColor(settings);
     const effectiveThemeColor = rawThemeColor;
     const contrastColor = getThemeContrastColor(rawThemeColor);
+    const isDark = !!settings.isDarkMode;
+    const sysBgColor = isDark ? '#121212' : '#ffffff';
 
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {
       const meta = document.createElement("meta");
       meta.name = "theme-color";
-      meta.content = rawThemeColor;
+      meta.content = sysBgColor;
       document.head.appendChild(meta);
     } else {
       metaThemeColors.forEach((meta) => {
-        meta.setAttribute("content", rawThemeColor);
+        meta.setAttribute("content", sysBgColor);
       });
     }
 
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
-    if (msMeta) msMeta.setAttribute("content", rawThemeColor);
+    if (msMeta) msMeta.setAttribute("content", sysBgColor);
 
     const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
-    if (settings.isDarkMode) {
+    if (isDark) {
       document.documentElement.classList.add('dark');
       document.documentElement.style.colorScheme = 'dark';
       document.documentElement.style.backgroundColor = '#121212';
@@ -362,7 +364,7 @@ export default function App() {
     } else {
       document.documentElement.classList.remove('dark');
       document.documentElement.style.colorScheme = 'light';
-      document.documentElement.style.backgroundColor = rawThemeColor;
+      document.documentElement.style.backgroundColor = '#ffffff';
       document.body.style.backgroundColor = settings.uiStyle === 'glass' ? "#f1f5f9" : settings.uiStyle === 'clay' ? "#eef2f6" : "#f8fafc";
       if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'light');
     }
