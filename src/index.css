@@ -744,6 +744,67 @@ html[data-ui-style="clay"][data-card-radius="extra"] [class*="clay-pill-"] {
   border-radius: 9999px !important; /* rounded-full */
 }
 
+/* =========================================================================
+   BOTTOM DOCK NAV: ZERO BOTTOM BORDER & ZERO BOTTOM RADIUS IN ALL THEMES
+   Pastikan navigasi bawah 100% menyatu tanpa garis pembatas bawah dengan
+   gesture navigation bar bawaan sistem HP Android/iOS
+   ========================================================================= */
+#bottom-dock-nav,
+nav#bottom-dock-nav,
+nav#bottom-dock-nav.clay-panel,
+html #bottom-dock-nav,
+html.dark #bottom-dock-nav,
+html[data-ui-style="clay"] #bottom-dock-nav,
+html[data-ui-style="clay"] nav#bottom-dock-nav.clay-panel,
+html[data-ui-style="clay"][data-card-radius="sharp"] #bottom-dock-nav,
+html[data-ui-style="clay"][data-card-radius="rounded"] #bottom-dock-nav,
+html[data-ui-style="clay"][data-card-radius="extra"] #bottom-dock-nav {
+  border-bottom: 0px none transparent !important;
+  border-bottom-width: 0px !important;
+  border-bottom-style: none !important;
+  border-bottom-color: transparent !important;
+  border-left: 0px none transparent !important;
+  border-left-width: 0px !important;
+  border-right: 0px none transparent !important;
+  border-right-width: 0px !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  margin-bottom: 0px !important;
+  outline: none !important;
+}
+
+#bottom-dock-nav.clay-panel,
+html[data-ui-style="clay"] #bottom-dock-nav.clay-panel,
+html[data-ui-style="clay"] #bottom-dock-nav {
+  background: #ffffff !important;
+  border-top: 1px solid rgba(148, 163, 184, 0.25) !important;
+  border-bottom: 0px none transparent !important;
+  border-bottom-width: 0px !important;
+  border-left: 0px none transparent !important;
+  border-right: 0px none transparent !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  box-shadow: 
+    0 -6px 20px -3px rgba(100, 116, 139, 0.16),
+    inset 0 1.5px 3px rgba(255, 255, 255, 0.45) !important;
+}
+
+.dark #bottom-dock-nav.clay-panel,
+html.dark[data-ui-style="clay"] #bottom-dock-nav.clay-panel,
+html.dark[data-ui-style="clay"] #bottom-dock-nav {
+  background: #121212 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-bottom: 0px none transparent !important;
+  border-bottom-width: 0px !important;
+  border-left: 0px none transparent !important;
+  border-right: 0px none transparent !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  box-shadow: 
+    0 -8px 24px -3px rgba(0, 0, 0, 0.65),
+    inset 0 1.5px 3px rgba(255, 255, 255, 0.08) !important;
+}
+
 /* Print layout for high-quality export to PDF */
 @media print {
   body {

@@ -95,18 +95,18 @@ export default function BottomNav({
 
   const getNavContainerClasses = () => {
     if (isSharp) {
-      return `border-t ${borderClasses} shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.45)]`;
+      return `border-t ${borderClasses} border-b-0 border-x-0 rounded-b-none shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.45)]`;
     }
     if (isExtra) {
-      return `border-t ${borderClasses} shadow-[0_-8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_-8px_32px_rgba(0,0,0,0.5)]`;
+      return `border-t ${borderClasses} border-b-0 border-x-0 rounded-b-none shadow-[0_-8px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_-8px_32px_rgba(0,0,0,0.5)]`;
     }
     // Default rounded
-    return `border-t ${borderClasses} shadow-[0_-6px_25px_rgba(0,0,0,0.08)] dark:shadow-[0_-6px_25px_rgba(0,0,0,0.45)]`;
+    return `border-t ${borderClasses} border-b-0 border-x-0 rounded-b-none shadow-[0_-6px_25px_rgba(0,0,0,0.08)] dark:shadow-[0_-6px_25px_rgba(0,0,0,0.45)]`;
   };
 
   const getNavBgClasses = () => {
     if (uiStyle === 'clay') {
-      return 'clay-panel';
+      return 'clay-panel bg-white dark:bg-[#121212]';
     }
     return 'bg-white dark:bg-[#121212]';
   };
@@ -135,20 +135,25 @@ export default function BottomNav({
 
   return (
     <nav 
-      className={`fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none transition-all duration-200 ${getNavBgClasses()} ${getNavContainerClasses()}`}
+      className={`fixed bottom-0 left-0 right-0 z-40 w-full no-print select-none transition-all duration-200 border-b-0 border-x-0 rounded-b-none ${getNavBgClasses()} ${getNavContainerClasses()}`}
       id="bottom-dock-nav"
       style={{
         boxSizing: 'border-box',
         paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 12px)',
         paddingLeft: 'env(safe-area-inset-left, 0px)',
         paddingRight: 'env(safe-area-inset-right, 0px)',
-        overflow: 'hidden',
+        borderBottom: 'none',
+        borderLeft: 'none',
+        borderRight: 'none',
+        borderBottomLeftRadius: '0px',
+        borderBottomRightRadius: '0px',
+        marginBottom: '0px',
         ...getNavRadiusStyle()
       }}
     >
-      {/* Ekstensi latar belakang solid ke bawah agar 100% menyatu dengan gesture bar sistem HP */}
+      {/* Ekstensi latar belakang solid 100% menyatu tanpa garis pembatas dengan navigasi gesture sistem HP */}
       <div 
-        className={`absolute left-0 right-0 top-full h-24 ${uiStyle === 'clay' ? 'bg-[#f8fafc] dark:bg-[#182030]' : 'bg-white dark:bg-[#121212]'} pointer-events-none`} 
+        className="absolute left-0 right-0 top-full h-32 bg-white dark:bg-[#121212] pointer-events-none border-none" 
         aria-hidden="true" 
       />
 

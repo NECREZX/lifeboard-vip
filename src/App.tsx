@@ -2817,12 +2817,10 @@ export default function App() {
          ======================================================= */}
       {activeTab !== 'lifeboard_ai' && (
         <>
-          {/* Latar belakang solid navigasi sistem HP paling bawah agar 100% menyatu dengan bottom nav */}
+          {/* Latar belakang solid navigasi sistem HP paling bawah agar 100% menyatu dengan bottom nav tanpa garis batas */}
           <div 
-            className={`fixed bottom-0 left-0 right-0 pointer-events-none z-39 transition-colors duration-200 ${
-              settings.isDarkMode ? 'bg-[#121212]' : (settings.uiStyle === 'clay' ? 'bg-[#f8fafc]' : 'bg-white')
-            }`}
-            style={{ height: 'max(env(safe-area-inset-bottom, 0px), 24px)' }}
+            className="fixed bottom-0 left-0 right-0 pointer-events-none z-39 transition-colors duration-200 bg-white dark:bg-[#121212] border-none outline-none"
+            style={{ height: 'max(env(safe-area-inset-bottom, 0px), 36px)' }}
             aria-hidden="true"
           />
           <BottomNav
