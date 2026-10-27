@@ -330,30 +330,59 @@ export default function App() {
     localStorage.setItem('fin_profile', JSON.stringify(profile));
   }, [profile]);
 
+  // --- Dynamic Phone System Dark/Light Mode Listener ---
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleSystemThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      const isSystemDark = e.matches;
+      setSettings(prev => {
+        if (prev.isDarkMode !== isSystemDark) {
+          return { ...prev, isDarkMode: isSystemDark };
+        }
+        return prev;
+      });
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleSystemThemeChange);
+    } else {
+      mediaQuery.addListener(handleSystemThemeChange);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleSystemThemeChange);
+      } else {
+        mediaQuery.removeListener(handleSystemThemeChange);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('fin_settings', JSON.stringify(settings));
-    // Keep Android system gesture & navigation bar pure white (#ffffff) in light mode and #121212 in dark mode
     const rawThemeColor = getEffectiveThemeColor(settings);
     const effectiveThemeColor = rawThemeColor;
     const contrastColor = getThemeContrastColor(rawThemeColor);
     const isDark = !!settings.isDarkMode;
     const sysBgColor = isDark ? '#121212' : '#ffffff';
 
-    // Status bar HP bawaan (bagian atas) mengikuti tema kustomisasi warna aktif
+    // Navigasi sistem HP (gesture chin) menyatu sempurna: putih #ffffff di mode terang, #121212 di mode gelap
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {
       const meta = document.createElement("meta");
       meta.name = "theme-color";
-      meta.content = effectiveThemeColor;
+      meta.content = sysBgColor;
       document.head.appendChild(meta);
     } else {
       metaThemeColors.forEach((meta) => {
-        meta.setAttribute("content", effectiveThemeColor);
+        meta.setAttribute("content", sysBgColor);
       });
     }
 
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
-    if (msMeta) msMeta.setAttribute("content", effectiveThemeColor);
+    if (msMeta) msMeta.setAttribute("content", sysBgColor);
 
     const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
     if (isDark) {
@@ -2816,14 +2845,7 @@ export default function App() {
           6. STICKY BOTTOM TAB NAVIGATION (SEAMLESS FLUID INTEGRATION)
          ======================================================= */}
       {activeTab !== 'lifeboard_ai' && (
-        <>
-          {/* Latar belakang solid navigasi sistem HP paling bawah agar 100% menyatu dengan bottom nav tanpa garis batas */}
-          <div 
-            className="fixed bottom-0 left-0 right-0 pointer-events-none z-39 transition-colors duration-200 bg-white dark:bg-[#121212] border-none outline-none"
-            style={{ height: 'max(env(safe-area-inset-bottom, 0px), 36px)' }}
-            aria-hidden="true"
-          />
-          <BottomNav
+        <BottomNav
             activeTab={activeTab}
             setActiveTab={(tab) => {
               setActiveTab(tab);
@@ -2848,7 +2870,6 @@ export default function App() {
               else openAddModal('pengeluaran');
             }}
           />
-        </>
       )}
 
       {/* =======================================================

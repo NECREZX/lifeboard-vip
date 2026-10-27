@@ -105,9 +105,6 @@ export default function BottomNav({
   };
 
   const getNavBgClasses = () => {
-    if (uiStyle === 'clay') {
-      return 'clay-panel bg-white dark:bg-[#121212]';
-    }
     return 'bg-white dark:bg-[#121212]';
   };
 
@@ -139,7 +136,7 @@ export default function BottomNav({
       id="bottom-dock-nav"
       style={{
         boxSizing: 'border-box',
-        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 12px)',
+        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 10px)',
         paddingLeft: 'env(safe-area-inset-left, 0px)',
         paddingRight: 'env(safe-area-inset-right, 0px)',
         borderBottom: 'none',
@@ -151,12 +148,6 @@ export default function BottomNav({
         ...getNavRadiusStyle()
       }}
     >
-      {/* Ekstensi latar belakang solid 100% menyatu tanpa garis pembatas dengan navigasi gesture sistem HP */}
-      <div 
-        className="absolute left-0 right-0 top-full h-32 bg-white dark:bg-[#121212] pointer-events-none border-none" 
-        aria-hidden="true" 
-      />
-
       <div className="w-full max-w-lg mx-auto h-[62px] sm:h-[66px] px-1 sm:px-2 grid grid-cols-7 items-center justify-items-center">
           {allTabs.map((tab) => {
             if (tab.isAction) {

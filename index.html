@@ -10,8 +10,8 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="color-scheme" id="meta-color-scheme" content="light dark" />
-    <meta name="theme-color" id="meta-theme-color" content="#FF7777" />
-    <meta name="msapplication-navbutton-color" content="#FF7777" />
+    <meta name="theme-color" id="meta-theme-color" content="#ffffff" />
+    <meta name="msapplication-navbutton-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -19,34 +19,15 @@
       (function() {
         try {
           var s = localStorage.getItem('fin_settings');
-          var isDark = false;
-          var map = {
-            rose: '#f43f5e',
-            pink: '#ec4899',
-            emerald: '#10b981',
-            amber: '#f59e0b',
-            sky: '#0ea5e9',
-            purple: '#8b5cf6',
-            orange: '#f97316',
-            teal: '#14b8a6',
-            indigo: '#6366f1'
-          };
-          var topThemeColor = '#FF7777';
+          var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = systemDark;
           if (s) {
             var p = JSON.parse(s);
             if (typeof p.isDarkMode === 'boolean') {
               isDark = p.isDarkMode;
-            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-              isDark = true;
             }
-            if (p.themeColor === 'custom' && p.customAccentColor) {
-              topThemeColor = p.customAccentColor;
-            } else if (p.themeColor && map[p.themeColor]) {
-              topThemeColor = map[p.themeColor];
-            }
-          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            isDark = true;
           }
+          var sysColor = isDark ? '#121212' : '#ffffff';
           if (isDark) {
             document.documentElement.classList.add('dark');
             document.documentElement.style.colorScheme = 'dark';
@@ -57,15 +38,44 @@
           var colorSchemeMeta = document.getElementById('meta-color-scheme');
           if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', isDark ? 'dark' : 'light');
 
-          // Top status bar follows theme color
           var meta = document.getElementById('meta-theme-color');
-          if (meta) meta.setAttribute('content', topThemeColor);
+          if (meta) meta.setAttribute('content', sysColor);
           var ms = document.querySelector('meta[name=msapplication-navbutton-color]');
-          if (ms) ms.setAttribute('content', topThemeColor);
+          if (ms) ms.setAttribute('content', sysColor);
 
-          // Bottom system navigation background blends with bottom nav (#ffffff in light, #121212 in dark)
-          var sysBg = isDark ? '#121212' : '#ffffff';
-          document.documentElement.style.backgroundColor = sysBg;
+          document.documentElement.style.backgroundColor = sysColor;
+
+          if (window.matchMedia) {
+            var mq = window.matchMedia('(prefers-color-scheme: dark)');
+            var applyMode = function(e) {
+              var dark = e.matches;
+              var curSaved = localStorage.getItem('fin_settings');
+              if (curSaved) {
+                try {
+                  var cp = JSON.parse(curSaved);
+                  cp.isDarkMode = dark;
+                  localStorage.setItem('fin_settings', JSON.stringify(cp));
+                } catch(err) {}
+              }
+              var c = dark ? '#121212' : '#ffffff';
+              if (dark) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.style.colorScheme = 'dark';
+              } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.style.colorScheme = 'light';
+              }
+              document.documentElement.style.backgroundColor = c;
+              if (document.body) document.body.style.backgroundColor = c;
+              if (meta) meta.setAttribute('content', c);
+              if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', dark ? 'dark' : 'light');
+            };
+            if (mq.addEventListener) {
+              mq.addEventListener('change', applyMode);
+            } else if (mq.addListener) {
+              mq.addListener(applyMode);
+            }
+          }
         } catch(e) {}
       })();
     </script>

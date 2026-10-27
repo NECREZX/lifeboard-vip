@@ -30,17 +30,16 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   const contrastColor = getThemeContrastColor(rawThemeColor);
 
   useEffect(() => {
-    // Status bar HP bawaan (bagian atas) mengikuti tema kustomisasi warna aktif
+    // Navigasi sistem bawaan HP (bagian bawah) menyatu dengan background putih (#ffffff) / #121212
+    const sysBgColor = isDark ? '#121212' : '#ffffff';
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", activeThemeColor);
+      metaTheme.setAttribute("content", sysBgColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", activeThemeColor);
+      msMeta.setAttribute("content", sysBgColor);
     }
-    // Navigasi sistem bawaan HP (bagian bawah) menyatu dengan background putih (#ffffff) / #121212
-    const sysBgColor = isDark ? '#121212' : '#ffffff';
     document.documentElement.style.backgroundColor = sysBgColor;
     document.body.style.backgroundColor = sysBgColor;
     document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
