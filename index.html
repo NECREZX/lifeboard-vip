@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
-    <meta name="color-scheme" id="meta-color-scheme" content="light" />
+    <meta name="color-scheme" id="meta-color-scheme" content="light dark" />
     <meta name="theme-color" id="meta-theme-color" content="#FF7777" />
     <meta name="msapplication-navbutton-color" content="#FF7777" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -34,25 +34,38 @@
           var topThemeColor = '#FF7777';
           if (s) {
             var p = JSON.parse(s);
-            isDark = !!p.isDarkMode;
+            if (typeof p.isDarkMode === 'boolean') {
+              isDark = p.isDarkMode;
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              isDark = true;
+            }
             if (p.themeColor === 'custom' && p.customAccentColor) {
               topThemeColor = p.customAccentColor;
             } else if (p.themeColor && map[p.themeColor]) {
               topThemeColor = map[p.themeColor];
             }
+          } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            isDark = true;
           }
           if (isDark) {
             document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
           } else {
             document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
           }
+          var colorSchemeMeta = document.getElementById('meta-color-scheme');
+          if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', isDark ? 'dark' : 'light');
+
           // Top status bar follows theme color
           var meta = document.getElementById('meta-theme-color');
           if (meta) meta.setAttribute('content', topThemeColor);
           var ms = document.querySelector('meta[name=msapplication-navbutton-color]');
           if (ms) ms.setAttribute('content', topThemeColor);
+
           // Bottom system navigation background blends with bottom nav (#ffffff in light, #121212 in dark)
-          document.documentElement.style.backgroundColor = isDark ? '#121212' : '#ffffff';
+          var sysBg = isDark ? '#121212' : '#ffffff';
+          document.documentElement.style.backgroundColor = sysBg;
         } catch(e) {}
       })();
     </script>

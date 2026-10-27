@@ -26,6 +26,12 @@ export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
     }
     // Navigasi sistem bawaan HP (bagian bawah) tetap bersih putih (#ffffff) / #121212
     document.documentElement.style.backgroundColor = bottomBgColor;
+    document.body.style.backgroundColor = bottomBgColor;
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+    const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
+    if (colorSchemeMeta) {
+      colorSchemeMeta.setAttribute('content', isDark ? 'dark' : 'light');
+    }
 
     // Selesai loading langsung tampilkan form login seketika tanpa jeda/delay kosong
     const timer = setTimeout(() => {

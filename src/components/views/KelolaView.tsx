@@ -391,14 +391,19 @@ export const KelolaView: React.FC<KelolaViewProps> = ({
   const setDarkModeValue = (isDark: boolean) => {
     if (!setSettings || !settings) return;
     setSettings({ ...settings, isDarkMode: isDark });
+    const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
     if (isDark) {
       document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
       document.documentElement.style.backgroundColor = '#121212';
       document.body.style.backgroundColor = '#121212';
+      if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
       document.documentElement.style.backgroundColor = '#ffffff';
-      document.body.style.backgroundColor = settings.uiStyle === 'glass' ? '#f1f5f9' : settings.uiStyle === 'clay' ? '#eef2f6' : '#f8fafc';
+      document.body.style.backgroundColor = '#ffffff';
+      if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', 'light');
     }
   };
 

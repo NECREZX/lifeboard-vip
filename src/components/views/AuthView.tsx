@@ -42,6 +42,12 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
     // Navigasi sistem bawaan HP (bagian bawah) menyatu dengan background putih (#ffffff) / #121212
     const sysBgColor = isDark ? '#121212' : '#ffffff';
     document.documentElement.style.backgroundColor = sysBgColor;
+    document.body.style.backgroundColor = sysBgColor;
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+    const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
+    if (colorSchemeMeta) {
+      colorSchemeMeta.setAttribute('content', isDark ? 'dark' : 'light');
+    }
 
     // Cek jika sudah pernah login sebelumnya
     const savedAuth = localStorage.getItem('fin_auth');
@@ -217,6 +223,11 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
           className="relative z-20 -mt-8 sm:-mt-10 bg-white dark:bg-[#121212] rounded-t-[40px] sm:rounded-t-[40px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
           style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
         >
+          {/* Ekstensi solid 100% menyatu ke bilah gesture navigasi HP */}
+          <div 
+            className="absolute left-0 right-0 top-full h-32 bg-white dark:bg-[#121212] pointer-events-none border-none" 
+            aria-hidden="true" 
+          />
           <div className="max-w-sm mx-auto flex flex-col gap-5">
             {/* 3 Quick Action Badges: Data Aman, 100% Offline, Terintegrasi AI */}
             <div className="grid grid-cols-3 gap-2.5 sm:gap-3 justify-items-center max-w-[320px] mx-auto w-full">
