@@ -15,15 +15,16 @@ export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
   const bottomBgColor = isDark ? '#121212' : '#ffffff';
 
   useEffect(() => {
+    // Status bar HP (bagian atas) mengikuti topBgColor
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", bottomBgColor);
+      metaTheme.setAttribute("content", topBgColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", bottomBgColor);
+      msMeta.setAttribute("content", topBgColor);
     }
-    // Navigasi sistem bawaan HP (bagian bawah) tetap bersih putih (#ffffff) / #121212
+    // Navigasi sistem bawaan HP (bagian bawah) tetap menyatu dengan bottomBgColor
     document.documentElement.style.backgroundColor = bottomBgColor;
     document.body.style.backgroundColor = bottomBgColor;
     document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';

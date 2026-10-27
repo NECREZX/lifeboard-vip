@@ -368,21 +368,21 @@ export default function App() {
     const isDark = !!settings.isDarkMode;
     const sysBgColor = isDark ? '#121212' : '#ffffff';
 
-    // Navigasi sistem HP (gesture chin) menyatu sempurna: putih #ffffff di mode terang, #121212 di mode gelap
+    // Status bar HP bawaan (bagian atas) WAJIB mengikuti kustomisasi tema banner yang sedang diterapkan
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {
       const meta = document.createElement("meta");
       meta.name = "theme-color";
-      meta.content = sysBgColor;
+      meta.content = effectiveThemeColor;
       document.head.appendChild(meta);
     } else {
       metaThemeColors.forEach((meta) => {
-        meta.setAttribute("content", sysBgColor);
+        meta.setAttribute("content", effectiveThemeColor);
       });
     }
 
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
-    if (msMeta) msMeta.setAttribute("content", sysBgColor);
+    if (msMeta) msMeta.setAttribute("content", effectiveThemeColor);
 
     const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
     if (isDark) {

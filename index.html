@@ -10,8 +10,8 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="color-scheme" id="meta-color-scheme" content="light dark" />
-    <meta name="theme-color" id="meta-theme-color" content="#ffffff" />
-    <meta name="msapplication-navbutton-color" content="#ffffff" />
+    <meta name="theme-color" id="meta-theme-color" content="#FF7777" />
+    <meta name="msapplication-navbutton-color" content="#FF7777" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -21,10 +21,31 @@
           var s = localStorage.getItem('fin_settings');
           var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
           var isDark = systemDark;
+          var themeColor = '#FF7777';
           if (s) {
             var p = JSON.parse(s);
             if (typeof p.isDarkMode === 'boolean') {
               isDark = p.isDarkMode;
+            }
+            if (p.themeColor === 'custom' && p.customAccentColor) {
+              themeColor = p.customAccentColor;
+            } else if (p.customAccentColor) {
+              themeColor = p.customAccentColor;
+            } else {
+              var presets = {
+                coral: '#FF7777',
+                sakura: '#EC4899',
+                emerald: '#10B981',
+                blue: '#3B82F6',
+                indigo: '#6366F1',
+                amber: '#F59E0B',
+                violet: '#8B5CF6',
+                rose: '#F43F5E',
+                classic: '#0F172A'
+              };
+              if (p.themeColor && presets[p.themeColor]) {
+                themeColor = presets[p.themeColor];
+              }
             }
           }
           var sysColor = isDark ? '#121212' : '#ffffff';
@@ -38,11 +59,13 @@
           var colorSchemeMeta = document.getElementById('meta-color-scheme');
           if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', isDark ? 'dark' : 'light');
 
+          // Status bar bawaan HP (bagian atas) WAJIB mengikuti kustomisasi tema banner
           var meta = document.getElementById('meta-theme-color');
-          if (meta) meta.setAttribute('content', sysColor);
+          if (meta) meta.setAttribute('content', themeColor);
           var ms = document.querySelector('meta[name=msapplication-navbutton-color]');
-          if (ms) ms.setAttribute('content', sysColor);
+          if (ms) ms.setAttribute('content', themeColor);
 
+          // Navigasi sistem bawaan HP (bagian bawah) menyatu dengan background
           document.documentElement.style.backgroundColor = sysColor;
 
           if (window.matchMedia) {
@@ -67,7 +90,6 @@
               }
               document.documentElement.style.backgroundColor = c;
               if (document.body) document.body.style.backgroundColor = c;
-              if (meta) meta.setAttribute('content', c);
               if (colorSchemeMeta) colorSchemeMeta.setAttribute('content', dark ? 'dark' : 'light');
             };
             if (mq.addEventListener) {
