@@ -339,20 +339,21 @@ export default function App() {
     const isDark = !!settings.isDarkMode;
     const sysBgColor = isDark ? '#121212' : '#ffffff';
 
+    // Status bar HP bawaan (bagian atas) mengikuti tema kustomisasi warna aktif
     const metaThemeColors = document.querySelectorAll("meta[name=theme-color]");
     if (metaThemeColors.length === 0) {
       const meta = document.createElement("meta");
       meta.name = "theme-color";
-      meta.content = sysBgColor;
+      meta.content = effectiveThemeColor;
       document.head.appendChild(meta);
     } else {
       metaThemeColors.forEach((meta) => {
-        meta.setAttribute("content", sysBgColor);
+        meta.setAttribute("content", effectiveThemeColor);
       });
     }
 
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
-    if (msMeta) msMeta.setAttribute("content", sysBgColor);
+    if (msMeta) msMeta.setAttribute("content", effectiveThemeColor);
 
     const colorSchemeMeta = document.getElementById('meta-color-scheme') || document.querySelector('meta[name=color-scheme]');
     if (isDark) {
@@ -2815,31 +2816,41 @@ export default function App() {
           6. STICKY BOTTOM TAB NAVIGATION (SEAMLESS FLUID INTEGRATION)
          ======================================================= */}
       {activeTab !== 'lifeboard_ai' && (
-        <BottomNav
-          activeTab={activeTab}
-          setActiveTab={(tab) => {
-            setActiveTab(tab);
-            if (tab === 'kelola') {
-              setKelolaSubPage('menu');
-            }
-          }}
-          accentColor={effectiveThemeColor}
-          uiStyle={settings.uiStyle}
-          cardRadius={settings.cardRadius}
-          cardStyle={settings.cardStyle}
-          isDarkMode={settings.isDarkMode}
-          language={settings.language || 'id'}
-          onAddClick={() => {
-            if (activeTab === 'aktivitas') {
-              if (activeActivitiesSubTab === 'agenda') openAddModal('aktivitas');
-              else openAddModal('wishlist');
-            }
-            else if (activeTab === 'tabungan') openAddModal('tabungan');
-            else if (activeTab === 'anggaran' || activeTab === 'budgeting') openAddModal('budgeting');
-            else if (activeTab === 'transaksi') openAddModal('pengeluaran');
-            else openAddModal('pengeluaran');
-          }}
-        />
+        <>
+          {/* Latar belakang solid navigasi sistem HP paling bawah agar 100% menyatu dengan bottom nav */}
+          <div 
+            className={`fixed bottom-0 left-0 right-0 pointer-events-none z-39 transition-colors duration-200 ${
+              settings.isDarkMode ? 'bg-[#121212]' : (settings.uiStyle === 'clay' ? 'bg-[#f8fafc]' : 'bg-white')
+            }`}
+            style={{ height: 'max(env(safe-area-inset-bottom, 0px), 24px)' }}
+            aria-hidden="true"
+          />
+          <BottomNav
+            activeTab={activeTab}
+            setActiveTab={(tab) => {
+              setActiveTab(tab);
+              if (tab === 'kelola') {
+                setKelolaSubPage('menu');
+              }
+            }}
+            accentColor={effectiveThemeColor}
+            uiStyle={settings.uiStyle}
+            cardRadius={settings.cardRadius}
+            cardStyle={settings.cardStyle}
+            isDarkMode={settings.isDarkMode}
+            language={settings.language || 'id'}
+            onAddClick={() => {
+              if (activeTab === 'aktivitas') {
+                if (activeActivitiesSubTab === 'agenda') openAddModal('aktivitas');
+                else openAddModal('wishlist');
+              }
+              else if (activeTab === 'tabungan') openAddModal('tabungan');
+              else if (activeTab === 'anggaran' || activeTab === 'budgeting') openAddModal('budgeting');
+              else if (activeTab === 'transaksi') openAddModal('pengeluaran');
+              else openAddModal('pengeluaran');
+            }}
+          />
+        </>
       )}
 
       {/* =======================================================

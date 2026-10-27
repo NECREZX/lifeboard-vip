@@ -15,17 +15,17 @@ export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
   const bottomBgColor = isDark ? '#121212' : '#ffffff';
 
   useEffect(() => {
-    // Pastikan navigasi sistem HP tetap bersih putih (#ffffff) / #121212
-    const sysBgColor = bottomBgColor;
+    // Status bar HP bawaan (bagian atas) menyatu dengan warna tema
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", sysBgColor);
+      metaTheme.setAttribute("content", topBgColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", sysBgColor);
+      msMeta.setAttribute("content", topBgColor);
     }
-    document.documentElement.style.backgroundColor = sysBgColor;
+    // Navigasi sistem bawaan HP (bagian bawah) tetap bersih putih (#ffffff) / #121212
+    document.documentElement.style.backgroundColor = bottomBgColor;
 
     // Selesai loading langsung tampilkan form login seketika tanpa jeda/delay kosong
     const timer = setTimeout(() => {

@@ -139,16 +139,16 @@ export default function BottomNav({
       id="bottom-dock-nav"
       style={{
         boxSizing: 'border-box',
-        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 6px)',
+        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 12px)',
         paddingLeft: 'env(safe-area-inset-left, 0px)',
         paddingRight: 'env(safe-area-inset-right, 0px)',
         overflow: 'hidden',
         ...getNavRadiusStyle()
       }}
     >
-      {/* Ekstensi latar belakang solid ke bawah agar 100% tidak ada celah konten halaman terlihat */}
+      {/* Ekstensi latar belakang solid ke bawah agar 100% menyatu dengan gesture bar sistem HP */}
       <div 
-        className={`absolute left-0 right-0 top-full h-16 ${uiStyle === 'clay' ? 'bg-[#f8fafc] dark:bg-[#182030]' : 'bg-white dark:bg-slate-950'} pointer-events-none`} 
+        className={`absolute left-0 right-0 top-full h-24 ${uiStyle === 'clay' ? 'bg-[#f8fafc] dark:bg-[#182030]' : 'bg-white dark:bg-[#121212]'} pointer-events-none`} 
         aria-hidden="true" 
       />
 

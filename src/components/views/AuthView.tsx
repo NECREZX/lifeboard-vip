@@ -30,16 +30,17 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   const contrastColor = getThemeContrastColor(rawThemeColor);
 
   useEffect(() => {
-    // Pastikan navigasi sistem HP tetap putih bersih (#ffffff) / #121212
-    const sysBgColor = isDark ? '#121212' : '#ffffff';
+    // Status bar HP bawaan (bagian atas) mengikuti tema kustomisasi warna aktif
     const metaTheme = document.querySelector("meta[name=theme-color]");
     if (metaTheme) {
-      metaTheme.setAttribute("content", sysBgColor);
+      metaTheme.setAttribute("content", activeThemeColor);
     }
     const msMeta = document.querySelector("meta[name=msapplication-navbutton-color]");
     if (msMeta) {
-      msMeta.setAttribute("content", sysBgColor);
+      msMeta.setAttribute("content", activeThemeColor);
     }
+    // Navigasi sistem bawaan HP (bagian bawah) menyatu dengan background putih (#ffffff) / #121212
+    const sysBgColor = isDark ? '#121212' : '#ffffff';
     document.documentElement.style.backgroundColor = sysBgColor;
 
     // Cek jika sudah pernah login sebelumnya
@@ -111,8 +112,8 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
 
   return (
     <div 
-      className={`fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none transition-colors duration-200 ${isDark ? 'dark bg-[#121212]' : ''}`}
-      style={{ backgroundColor: isDark ? '#121212' : activeThemeColor }}
+      className={`fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto select-none transition-colors duration-200 ${isDark ? 'dark bg-[#121212]' : 'bg-white'}`}
+      style={{ backgroundColor: isDark ? '#121212' : '#ffffff' }}
     >
       <form onSubmit={handleSubmit} className="min-h-[100dvh] flex flex-col justify-between relative z-10 w-full">
         {/* ========================================================
