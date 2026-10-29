@@ -182,6 +182,7 @@ export default function App() {
   });
 
   const [settings, setSettings] = useState<UserSettings>(() => {
+    const isSystemDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const saved = localStorage.getItem('fin_settings');
     const defaultSettings: UserSettings = {
       uiStyle: 'glass',
@@ -192,7 +193,7 @@ export default function App() {
       themeColor: 'indigo',
       bannerMotif: 'songket',
       bannerStyle: 'curve',
-      isDarkMode: false
+      isDarkMode: isSystemDark
     };
 
     if (saved) {
@@ -201,8 +202,8 @@ export default function App() {
         if (parsed.fontStyle === 'sfpro' || parsed.fontStyle === 'sans' || parsed.fontStyle === 'jakarta') {
           parsed.fontStyle = 'instagram';
         }
-        // Merge saved settings with defaults to keep all properties intact
-        return { ...defaultSettings, ...parsed };
+        // Merge saved settings with defaults, prioritizing system dark mode setting
+        return { ...defaultSettings, ...parsed, isDarkMode: isSystemDark };
       } catch (e) {
         return defaultSettings;
       }
@@ -334,7 +335,10 @@ export default function App() {
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+    // Sinkronisasi awal status tema sistem HP saat komponen di-mount
+    const initialDark = mediaQuery.matches;
+    setSettings(prev => prev.isDarkMode !== initialDark ? { ...prev, isDarkMode: initialDark } : prev);
+
     const handleSystemThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
       const isSystemDark = e.matches;
       setSettings(prev => {

@@ -222,6 +222,12 @@ export default function BottomNav({
             );
           })}
         </div>
+        {/* Seamless bottom bleed extension to ensure 100% zero-gap flush union with Android gesture chin */}
+        <div 
+          className="absolute left-0 right-0 top-full h-32 bg-white dark:bg-[#121212] pointer-events-none" 
+          style={{ border: 'none', outline: 'none' }}
+          aria-hidden="true" 
+        />
       </nav>
   );
 }

@@ -8,7 +8,7 @@ interface SplashViewProps {
 }
 
 export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
-  const isDark = !!settings?.isDarkMode;
+  const isDark = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : !!settings?.isDarkMode;
   const rawThemeColor = getEffectiveThemeColor(settings);
   const activeThemeColor = rawThemeColor;
   const topBgColor = rawThemeColor;

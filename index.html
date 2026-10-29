@@ -19,14 +19,14 @@
       (function() {
         try {
           var s = localStorage.getItem('fin_settings');
-          var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var isDark = systemDark;
+          var systemDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = !!systemDark;
           var themeColor = '#FF7777';
           if (s) {
-            var p = JSON.parse(s);
-            if (typeof p.isDarkMode === 'boolean') {
-              isDark = p.isDarkMode;
-            }
+            try {
+              var p = JSON.parse(s);
+              p.isDarkMode = isDark;
+              localStorage.setItem('fin_settings', JSON.stringify(p));
             if (p.themeColor === 'custom' && p.customAccentColor) {
               themeColor = p.customAccentColor;
             } else if (p.customAccentColor) {
@@ -47,7 +47,7 @@
                 themeColor = presets[p.themeColor];
               }
             }
-          }
+          } catch (err) {}
           var sysColor = isDark ? '#121212' : '#ffffff';
           if (isDark) {
             document.documentElement.classList.add('dark');

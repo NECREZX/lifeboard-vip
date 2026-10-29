@@ -24,7 +24,7 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const isDark = !!settings?.isDarkMode;
+  const isDark = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)').matches : !!settings?.isDarkMode;
   const rawThemeColor = getEffectiveThemeColor(settings);
   const activeThemeColor = rawThemeColor;
   const contrastColor = getThemeContrastColor(rawThemeColor);

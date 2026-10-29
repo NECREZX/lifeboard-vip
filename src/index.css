@@ -50,11 +50,33 @@
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+  html {
+    background-color: #121212 !important;
+  }
+  body {
+    background-color: #121212 !important;
+    color: #f8fafc !important;
+  }
 }
 
 :root.dark, html.dark {
   color-scheme: dark;
+}
+
+#bottom-dock-nav,
+nav[id="bottom-dock-nav"] {
+  border-bottom: none !important;
+  border-bottom-width: 0px !important;
+  border-bottom-style: none !important;
+  border-bottom-color: transparent !important;
+  outline: none !important;
 }
 
 @layer base {
