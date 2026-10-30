@@ -219,12 +219,13 @@ export const AuthView = ({ onLogin, settings }: AuthViewProps) => {
             Sudut Atas Konsisten 40px
             ======================================================== */}
         <div 
-          className="relative z-20 -mt-8 sm:-mt-10 bg-white dark:bg-[#121212] rounded-t-[40px] sm:rounded-t-[40px] shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-slate-100/60 dark:border-slate-800/80"
-          style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }}
+          className="relative z-20 -mt-8 sm:-mt-10 bg-white dark:bg-[#121212] rounded-t-[40px] sm:rounded-t-[40px] rounded-b-none shadow-[0_-12px_36px_rgba(0,0,0,0.12)] pt-6 px-6 pb-6 w-full border-t border-b-0 border-x-0 border-slate-100/60 dark:border-slate-800/80"
+          style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 24px)', borderBottom: 'none', borderBottomLeftRadius: '0px', borderBottomRightRadius: '0px' }}
         >
           {/* Ekstensi solid 100% menyatu ke bilah gesture navigasi HP */}
           <div 
             className="absolute left-0 right-0 top-full h-32 bg-white dark:bg-[#121212] pointer-events-none border-none" 
+            style={{ border: 'none', outline: 'none' }}
             aria-hidden="true" 
           />
           <div className="max-w-sm mx-auto flex flex-col gap-5">

@@ -59,6 +59,13 @@ export const SplashView = ({ onFinish, settings }: SplashViewProps) => {
         style={{ backgroundColor: bottomBgColor }}
       />
 
+      {/* Seamless bottom bleed extension to eliminate any bottom chin line in APK/WebAPK */}
+      <div 
+        className="absolute inset-x-0 -bottom-32 h-32 pointer-events-none"
+        style={{ backgroundColor: bottomBgColor, border: 'none', outline: 'none' }}
+        aria-hidden="true"
+      />
+
       {/* ========================================================
           KONTEN UTAMA:
           1. Logo tepat di garis pembatas 50% layar:

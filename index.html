@@ -67,6 +67,13 @@
 
           // Navigasi sistem bawaan HP (bagian bawah) menyatu dengan background
           document.documentElement.style.backgroundColor = sysColor;
+          if (document.body) {
+            document.body.style.backgroundColor = sysColor;
+          } else {
+            document.addEventListener('DOMContentLoaded', function() {
+              if (document.body) document.body.style.backgroundColor = sysColor;
+            });
+          }
 
           if (window.matchMedia) {
             var mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -134,7 +141,7 @@
       }
     </style>
   </head>
-  <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased">
+  <body class="bg-white dark:bg-[#121212] text-slate-900 dark:text-slate-100 antialiased min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     

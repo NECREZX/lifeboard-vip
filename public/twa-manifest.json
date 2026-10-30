@@ -1,0 +1,21 @@
+{
+  "packageId": "app.vercel.lifeboard_vip.twa",
+  "host": "lifeboard-vip.vercel.app",
+  "name": "Lifeboard",
+  "launcherName": "Lifeboard",
+  "display": "standalone",
+  "themeColor": "#ffffff",
+  "themeColorDark": "#121212",
+  "navigationColor": "#ffffff",
+  "navigationColorDark": "#121212",
+  "navigationDividerColor": "#00000000",
+  "navigationDividerColorDark": "#00000000",
+  "backgroundColor": "#ffffff",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://lifeboard-vip.vercel.app/icon-512.png",
+  "maskableIconUrl": "https://lifeboard-vip.vercel.app/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "appVersion": "1.0.0",
+  "appVersionCode": 1
+}
