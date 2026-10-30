@@ -10,8 +10,8 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="color-scheme" id="meta-color-scheme" content="light dark" />
-    <meta name="theme-color" id="meta-theme-color" content="#FF7777" />
-    <meta name="msapplication-navbutton-color" content="#FF7777" />
+    <meta name="theme-color" id="meta-theme-color" content="#ffffff" />
+    <meta name="msapplication-navbutton-color" content="#ffffff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -21,7 +21,7 @@
           var s = localStorage.getItem('fin_settings');
           var systemDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
           var isDark = !!systemDark;
-          var themeColor = '#FF7777';
+          var themeColor = '#ffffff';
           if (s) {
             try {
               var p = JSON.parse(s);

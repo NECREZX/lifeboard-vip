@@ -28,7 +28,7 @@ export const THEME_PRESETS: ThemePreset[] = [
  * Returns the resolved hexadecimal color code based on user settings.
  */
 export function getEffectiveThemeColor(settings?: Partial<UserSettings> | null): string {
-  if (!settings) return '#FF7777';
+  if (!settings) return '#6366F1';
   
   if (settings.themeColor === 'custom' && settings.customAccentColor) {
     return normalizeHexColor(settings.customAccentColor);
@@ -41,7 +41,7 @@ export function getEffectiveThemeColor(settings?: Partial<UserSettings> | null):
     return normalizeHexColor(settings.customAccentColor);
   }
 
-  return '#FF7777';
+  return '#6366F1';
 }
 
 /**

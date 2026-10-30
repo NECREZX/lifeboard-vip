@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-const CACHE_NAME = 'fin-act-pwa-v9';
+const CACHE_NAME = 'fin-act-pwa-v12';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
   '/icon.svg'
@@ -55,7 +54,8 @@ self.addEventListener('fetch', (event) => {
     url.pathname.startsWith('/api/') ||
     url.pathname.startsWith('/@') ||
     url.pathname.includes('node_modules') ||
-    url.pathname.endsWith('/sw.js')
+    url.pathname.endsWith('/sw.js') ||
+    url.pathname.endsWith('/manifest.json')
   ) {
     return;
   }
