@@ -96,7 +96,8 @@ export interface NotificationItem {
   id: string;
   title: string;
   message: string;
-  date: string; // ISO string or time label
+  date: string; // Formatted date string (Hari, Tanggal Bulan Tahun • Jam WIB)
+  createdAt?: number; // Real-time timestamp epoch in ms
   isRead: boolean;
   type: 'info' | 'warning' | 'success';
 }

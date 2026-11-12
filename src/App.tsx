@@ -91,7 +91,7 @@ import ProfileDropdown from './components/ProfileDropdown';
 import FormsModal from './components/FormsModal';
 import { TrendChart, CategoryPieChart, SourcePieChart } from './components/InteractiveCharts';
 
-import { formatIDR } from './lib/formatters';
+import { formatIDR, formatNotificationDateTime } from './lib/formatters';
 import { t } from './lib/i18n';
 import { getEffectiveThemeColor, getThemeContrastColor, THEME_PRESETS, normalizeHexColor } from './lib/theme';
 import { getRadiusClass } from './lib/themeStyles';
@@ -161,7 +161,31 @@ export default function App() {
 
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     const saved = localStorage.getItem('fin_notifications');
-    return saved ? JSON.parse(saved) : DEFAULT_NOTIFICATIONS;
+    if (!saved) return DEFAULT_NOTIFICATIONS;
+    try {
+      const parsed: NotificationItem[] = JSON.parse(saved);
+      // Migrasi notifikasi lama yang masih bertuliskan "Baru saja" ke tanggal & waktu aktual
+      return parsed.map((n) => {
+        let ts = n.createdAt;
+        if (!ts && n.id && n.id.startsWith('n-')) {
+          const raw = parseInt(n.id.slice(2), 10);
+          if (!isNaN(raw) && raw > 1600000000000) {
+            ts = raw;
+          }
+        }
+        if (!ts) ts = Date.now();
+        const dateStr = (!n.date || n.date.trim().toLowerCase() === 'baru saja' || n.date.trim().toLowerCase() === 'just now')
+          ? formatNotificationDateTime(ts, n.id, 'id')
+          : n.date;
+        return {
+          ...n,
+          createdAt: ts,
+          date: dateStr
+        };
+      });
+    } catch {
+      return DEFAULT_NOTIFICATIONS;
+    }
   });
 
   const [profile, setProfile] = useState<UserProfile>(() => {
@@ -811,11 +835,14 @@ export default function App() {
 
   // --- Notification triggers & warnings ---
   const triggerNotification = (title: string, message: string, type: 'info' | 'warning' | 'success') => {
+    const now = Date.now();
+    const formattedDate = formatNotificationDateTime(now, undefined, settings.language || 'id');
     const newNotif: NotificationItem = {
-      id: `n-${Date.now()}`,
+      id: `n-${now}`,
       title,
       message,
-      date: 'Baru saja',
+      date: formattedDate,
+      createdAt: now,
       isRead: false,
       type
     };

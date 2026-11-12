@@ -16,10 +16,12 @@ import {
   Inbox,
   ChevronDown,
   Home,
-  Bell
+  Bell,
+  Clock
 } from 'lucide-react';
 import { NotificationItem, UserSettings } from '../../types';
 import { Breadcrumb } from '../Breadcrumb';
+import { formatNotificationDateTime } from '../../lib/formatters';
 
 interface NotificationsViewProps {
   notifications: NotificationItem[];
@@ -315,9 +317,12 @@ export const NotificationsView: React.FC<NotificationsViewProps> = ({
                       {n.message}
                     </p>
 
-                    <span className="text-[9.5px] text-slate-400 dark:text-slate-500 font-semibold block mt-1">
-                      {n.date}
-                    </span>
+                    <div className="flex items-center gap-1.5 mt-1.5 text-slate-500 dark:text-slate-400">
+                      <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                      <span className="text-[10px] sm:text-[10.5px] font-semibold tracking-tight">
+                        {formatNotificationDateTime(n.createdAt || n.date, n.id, settings.language || 'id')}
+                      </span>
+                    </div>
                   </div>
                 </div>
 

@@ -4,8 +4,9 @@
  */
 
 import React, { useRef, useEffect } from 'react';
-import { AlertTriangle, CheckCircle, Info, ChevronRight, Bell } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Info, ChevronRight, Bell, Clock } from 'lucide-react';
 import { NotificationItem, UIStyle } from '../types';
+import { formatNotificationDateTime } from '../lib/formatters';
 
 interface NotificationPanelProps {
   notifications: NotificationItem[];
@@ -18,6 +19,7 @@ interface NotificationPanelProps {
   onViewAll: () => void;
   accentColor: string;
   uiStyle?: UIStyle;
+  language?: string;
 }
 
 export default function NotificationPanel({
@@ -26,7 +28,8 @@ export default function NotificationPanel({
   setIsOpen,
   onViewAll,
   accentColor,
-  uiStyle = 'glass'
+  uiStyle = 'glass',
+  language = 'id'
 }: NotificationPanelProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -175,9 +178,12 @@ export default function NotificationPanel({
                       <p className="text-[11px] text-slate-700 dark:text-slate-300 mt-0.5 leading-relaxed font-sans break-words font-medium line-clamp-2">
                         {n.message}
                       </p>
-                      <span className="text-[9.5px] text-slate-500 dark:text-slate-400 font-semibold block mt-1">
-                        {n.date}
-                      </span>
+                      <div className="flex items-center gap-1 mt-1 text-slate-500 dark:text-slate-400">
+                        <Clock className="w-3 h-3 text-slate-400 dark:text-slate-500 shrink-0" />
+                        <span className="text-[9.5px] font-semibold tracking-tight">
+                          {formatNotificationDateTime(n.createdAt || n.date, n.id, language)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );
